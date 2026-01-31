@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1080">
+<title>ChatGPT Resume — Meta Feed 1080x1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;800&family=Kanit:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: 'Kanit', sans-serif;
+  }
+
+  .ad {
+    width: 1080px;
+    height: 1080px;
+    background: linear-gradient(165deg, #181830 0%, #1a1a3e 40%, #1f1048 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 60px;
+    color: #FFFFFF;
+  }
+
+  /* ── Top bar: logo + credibility ── */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 38px;
+    color: #FFFFFF;
+    letter-spacing: 1px;
+  }
+
+  .logo span {
+    color: #3B82F6;
+  }
+
+  .credibility {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .credibility strong {
+    color: #D7EF3F;
+  }
+
+  /* ── Chat bubble (visual hook) ── */
+  .chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 30px 0;
+  }
+
+  .chat-bubble {
+    background: rgba(107, 83, 193, 0.2);
+    border: 1px solid rgba(107, 83, 193, 0.35);
+    border-radius: 20px;
+    padding: 28px 36px;
+    max-width: 85%;
+    position: relative;
+  }
+
+  .chat-bubble .label {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6F53C1;
+    margin-bottom: 8px;
+  }
+
+  .chat-bubble .text {
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .chat-bubble .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 22px;
+    background: #6F53C1;
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .rejection-stamp {
+    position: absolute;
+    top: -16px;
+    right: 30px;
+    background: #ef4444;
+    color: #fff;
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 6px 18px;
+    border-radius: 6px;
+    transform: rotate(3deg);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── Headline ── */
+  .headline {
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 72px;
+    line-height: 1.05;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+  }
+
+  .headline em {
+    font-style: normal;
+    color: #D7EF3F;
+  }
+
+  /* ── Subtext ── */
+  .subtext {
+    font-size: 26px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* ── CTA + bottom bar ── */
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .cta-btn {
+    background: #D7EF3F;
+    color: #181830;
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    padding: 18px 48px;
+    border-radius: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+  }
+
+  .tech-stack {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .tech-tag {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3B82F6;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+  }
+
+  .price-badge {
+    text-align: right;
+  }
+
+  .price-badge .price {
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    color: #D7EF3F;
+  }
+
+  .price-badge .detail {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* ── Accent glow ── */
+  .glow-blue {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+    top: -50px;
+    right: -50px;
+    pointer-events: none;
+  }
+
+  .glow-purple {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(111,83,193,0.12) 0%, transparent 70%);
+    bottom: -80px;
+    left: -80px;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="ad">
+  <div class="glow-blue"></div>
+  <div class="glow-purple"></div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="logo">code<span>basics</span></div>
+    <div class="credibility"><strong>1.4M+</strong> YouTube &bull; <strong>4.9</strong> Rating</div>
+  </div>
+
+  <!-- Visual hook: fake AI-generated resume snippet -->
+  <div class="chat-area">
+    <div class="chat-bubble">
+      <div class="label">ChatGPT output</div>
+      <div class="text">
+        "Proficient in SQL, Python, and data analysis.<br>
+        Strong communicator with a passion for insights..."<span class="cursor"></span>
+      </div>
+      <div class="rejection-stamp">Rejected</div>
+    </div>
+
+    <!-- Headline -->
+    <div class="headline">
+      ChatGPT Wrote Your Resume.<br><em>HR Can Tell.</em>
+    </div>
+
+    <!-- Subtext -->
+    <div class="subtext">
+      Generic buzzwords won't land interviews.<br>
+      7 real-world projects and a portfolio website will.
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom">
+    <div>
+      <button class="cta-btn">Build Real Projects &rarr;</button>
+      <div class="tech-stack" style="margin-top: 16px;">
+        <span class="tech-tag">SQL</span>
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">Spark</span>
+        <span class="tech-tag">AWS</span>
+        <span class="tech-tag">Snowflake</span>
+      </div>
+    </div>
+    <div class="price-badge">
+      <div class="price">₹12,000</div>
+      <div class="detail">Lifetime access &bull; 100% refund</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
