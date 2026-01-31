@@ -1,0 +1,28 @@
+# Codebasics Brand Configuration
+brand:
+  name: Codebasics
+  tagline: "Learn Data Science & Analytics"
+
+colors:
+  primary: "#1a73e8"
+  secondary: "#ffffff"
+  accent: "#fbbc04"
+  background: "#0d1117"
+  text_primary: "#ffffff"
+  text_secondary: "#8b949e"
+
+typography:
+  heading_font: "Montserrat-Bold"
+  body_font: "Open Sans"
+  accent_font: "Roboto Mono"
+
+logo:
+  primary: "assets/logos/codebasics_logo.png"
+  icon: "assets/logos/codebasics_icon.png"
+  watermark: "assets/logos/codebasics_watermark.png"
+
+defaults:
+  thumbnail_style: "modern"
+  overlay_opacity: 0.6
+  border_radius: 12
+  padding: 40
