@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080,height=1080">
+<title>Concept 1 — ChatGPT Portfolio — Square 1080x1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;800;900&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Kanit',sans-serif}
+.ad{width:1080px;height:1080px;background:#18183D;position:relative;display:flex;flex-direction:column;color:#fff}
+
+/* ── Top bar ── */
+.top{display:flex;justify-content:space-between;align-items:center;padding:28px 36px 0}
+.logo img{height:30px;width:auto;display:block}
+.yt-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border-radius:20px;padding:6px 14px}
+.yt-icon{width:20px;height:14px;background:#FF0000;border-radius:4px;position:relative;flex-shrink:0}
+.yt-icon::after{content:'';position:absolute;left:7px;top:3px;border-left:8px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.yt-text{font-size:11px;color:rgba(255,255,255,.7);line-height:1.3}
+.yt-text strong{color:#fff;font-weight:600}
+
+/* ── Main content ── */
+.main{flex:1;display:flex;gap:24px;padding:24px 36px;min-height:0}
+
+/* Left: chat */
+.chat-panel{flex:0 0 46%;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.chat-msg{border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.45}
+.chat-user{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.25);color:#93b4f5;align-self:flex-end;max-width:90%}
+.chat-ai{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.5);max-width:95%}
+.chat-ai .label{font-size:10px;color:#3B82F6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;font-weight:600}
+.chat-ai.faded{opacity:.5}
+.chat-user.q2{background:rgba(215,239,63,.1);border-color:rgba(215,239,63,.2);color:#D7EF3F}
+.chat-ai.honest{border-color:rgba(239,68,68,.25);color:rgba(255,255,255,.6)}
+.chat-ai.honest .label{color:#ef4444}
+
+/* Right: headline + badges */
+.right-panel{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.headline{font-family:'Saira Condensed',sans-serif;font-weight:900;text-transform:uppercase;line-height:1.0}
+.h-white{font-size:38px;color:#fff}
+.h-lime{font-size:38px;color:#D7EF3F}
+.tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tech-badge{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:#3B82F6;text-align:center}
+
+/* ── CTA bar ── */
+.cta-bar{display:flex;justify-content:space-between;align-items:center;padding:20px 36px;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.cta-label{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:2px;color:#8892b0}
+.cta-btn{background:#D7EF3F;color:#18183D;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:16px;padding:10px 28px;border-radius:8px;border:none;text-transform:uppercase;letter-spacing:1px;cursor:pointer;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="ad">
+  <div class="top">
+    <div class="logo"><img src="../../brand-assets/logos/codebasics-primary.svg" alt="codebasics" height="30"></div>
+    <div class="yt-badge">
+      <div class="yt-icon"></div>
+      <div class="yt-text"><strong>1.4M+ Subscribers</strong><br>★★★★★ 4.9 Rating</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="chat-panel">
+      <div class="chat-msg chat-user">Build me a data engineering resume</div>
+      <div class="chat-msg chat-ai faded">
+        <div class="label">ChatGPT</div>
+        Proficient in SQL, Python, and data pipelines. Experience with ETL processes and cloud platforms. Strong problem-solving skills...
+      </div>
+      <div class="chat-msg chat-ai faded">
+        <div class="label">ChatGPT</div>
+        Projects:<br>• Weather Data Pipeline<br>• CSV File Processor<br>• Student Grade Calculator
+      </div>
+      <div class="chat-msg chat-user q2">Will this actually get me hired?</div>
+      <div class="chat-msg chat-ai honest">
+        <div class="label">ChatGPT</div>
+        I should be transparent — these are generic suggestions. Real hiring managers look for production-scale projects with specific tools...
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="headline">
+        <div class="h-white">CHATGPT CAN WRITE<br>YOUR RESUME.</div>
+        <div class="h-lime">IT CAN'T BUILD<br>YOUR PORTFOLIO.</div>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-badge">SQL</div>
+        <div class="tech-badge">Python</div>
+        <div class="tech-badge">Spark</div>
+        <div class="tech-badge">Databricks</div>
+        <div class="tech-badge">AWS S3</div>
+        <div class="tech-badge">Lambda</div>
+        <div class="tech-badge">Snowflake</div>
+        <div class="tech-badge">Airflow</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <div class="cta-label">Data Engineering Bootcamp 1.0</div>
+    <div class="cta-btn">Build Real Projects →</div>
+  </div>
+</div>
+</body>
+</html>

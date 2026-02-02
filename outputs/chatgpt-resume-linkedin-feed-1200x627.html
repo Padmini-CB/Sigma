@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, height=627">
+<title>ChatGPT Resume — LinkedIn Feed 1200x627</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Saira+Condensed:wght@700;800&family=Kanit:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 627px;
+    overflow: hidden;
+    font-family: 'Kanit', sans-serif;
+  }
+
+  .ad {
+    width: 1200px;
+    height: 627px;
+    background: linear-gradient(140deg, #181830 0%, #1a1a3e 45%, #1f1048 100%);
+    position: relative;
+    display: flex;
+    color: #FFFFFF;
+  }
+
+  /* ── Left panel (55%) ── */
+  .left {
+    flex: 0 0 55%;
+    padding: 30px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .logo img {
+    height: 26px;
+    width: auto;
+    display: block;
+  }
+
+  .credibility {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+  }
+  .credibility strong { color: #D7EF3F; }
+
+  .headline {
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 42px;
+    line-height: 1.0;
+    text-transform: uppercase;
+  }
+  .headline em {
+    font-style: normal;
+    color: #D7EF3F;
+  }
+
+  .subtext {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+
+  .bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: #D7EF3F;
+    color: #181830;
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.2;
+    padding: 10px 28px;
+    border-radius: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .price-info {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+  }
+  .price-info strong {
+    color: #D7EF3F;
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  /* ── Right panel (45%) ── */
+  .right {
+    flex: 0 0 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px 30px;
+    gap: 18px;
+    z-index: 1;
+  }
+
+  /* ── Chat bubble ── */
+  .chat-bubble {
+    background: rgba(107,83,193,0.18);
+    border: 1px solid rgba(107,83,193,0.3);
+    border-radius: 14px;
+    padding: 16px 20px;
+    position: relative;
+  }
+
+  .chat-bubble .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6F53C1;
+    margin-bottom: 6px;
+  }
+
+  .chat-bubble .text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.45;
+    font-style: italic;
+  }
+
+  .chat-bubble .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #6F53C1;
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .rejection-stamp {
+    position: absolute;
+    top: -11px;
+    right: 18px;
+    background: #ef4444;
+    color: #fff;
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 12px;
+    border-radius: 5px;
+    transform: rotate(3deg);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── Project proof (compact) ── */
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .project-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(59,130,246,0.07);
+    border: 1px solid rgba(59,130,246,0.14);
+    border-radius: 8px;
+    padding: 9px 14px;
+  }
+
+  .project-check {
+    color: #D7EF3F;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .project-name {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .project-tech {
+    margin-left: auto;
+    font-size: 11px;
+    color: #6F53C1;
+    background: rgba(111,83,193,0.15);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* ── Divider ── */
+  .v-divider {
+    position: absolute;
+    left: 55%;
+    top: 8%;
+    height: 84%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(59,130,246,0.2), rgba(111,83,193,0.2), transparent);
+  }
+
+  /* ── Glows ── */
+  .glow-blue {
+    position: absolute;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%);
+    top: -60px; right: 30%;
+    pointer-events: none;
+  }
+  .glow-purple {
+    position: absolute;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(111,83,193,0.08) 0%, transparent 70%);
+    bottom: -60px; left: -40px;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="ad">
+  <div class="glow-blue"></div>
+  <div class="glow-purple"></div>
+  <div class="v-divider"></div>
+
+  <!-- Left panel -->
+  <div class="left">
+    <div class="top-row">
+      <div class="logo"><img src="../brand-assets/logos/codebasics-primary.svg" alt="codebasics"></div>
+      <div class="credibility"><strong>1.4M+</strong> YouTube &bull; Ex-Bloomberg, NVIDIA</div>
+    </div>
+
+    <div>
+      <div class="headline">
+        ChatGPT Wrote<br>Your Resume.<br><em>HR Can Tell.</em>
+      </div>
+      <div class="subtext">
+        Generic buzzwords won't survive screening.<br>
+        7 enterprise-grade projects and a portfolio will.
+      </div>
+    </div>
+
+    <div class="bottom-left">
+      <button class="cta-btn">Build Real Projects &rarr;</button>
+      <div class="price-info">
+        <strong>₹12,000</strong> &middot; Lifetime &middot; 100% refund
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="right">
+    <div class="chat-bubble">
+      <div class="label">ChatGPT output</div>
+      <div class="text">
+        "Proficient in SQL, Python, and data analysis.
+        Strong communicator..."<span class="cursor"></span>
+      </div>
+      <div class="rejection-stamp">Rejected</div>
+    </div>
+
+    <div class="projects">
+      <div class="project-row">
+        <span class="project-check">&#10003;</span>
+        <span class="project-name">ETL Pipeline</span>
+        <span class="project-tech">AWS</span>
+      </div>
+      <div class="project-row">
+        <span class="project-check">&#10003;</span>
+        <span class="project-name">E-commerce Pipeline</span>
+        <span class="project-tech">Spark</span>
+      </div>
+      <div class="project-row">
+        <span class="project-check">&#10003;</span>
+        <span class="project-name">Securities Pricing</span>
+        <span class="project-tech">Airflow</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

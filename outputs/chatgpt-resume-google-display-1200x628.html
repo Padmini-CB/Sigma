@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200, height=628">
+<title>ChatGPT Resume — Google Display 1200x628</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Saira+Condensed:wght@700;800&family=Kanit:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 628px;
+    overflow: hidden;
+    font-family: 'Kanit', sans-serif;
+  }
+
+  .ad {
+    width: 1200px;
+    height: 628px;
+    background: linear-gradient(135deg, #181830 0%, #1a1a3e 50%, #1f1048 100%);
+    position: relative;
+    display: flex;
+    color: #FFFFFF;
+  }
+
+  /* ── Left panel (60%) ── */
+  .left {
+    flex: 0 0 60%;
+    padding: 32px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo img {
+    height: 26px;
+    width: auto;
+    display: block;
+  }
+
+  .headline {
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 800;
+    font-size: 44px;
+    line-height: 1.0;
+    text-transform: uppercase;
+  }
+  .headline em {
+    font-style: normal;
+    color: #D7EF3F;
+  }
+
+  .subtext {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.45;
+    max-width: 520px;
+    margin-top: 10px;
+  }
+
+  .bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: #D7EF3F;
+    color: #181830;
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.2;
+    padding: 10px 28px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .tech-stack {
+    display: flex;
+    gap: 8px;
+  }
+
+  .tech-tag {
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.25);
+    color: #3B82F6;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 5px;
+  }
+
+  /* ── Right panel (40%) ── */
+  .right {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Chat bubble (compact for landscape) ── */
+  .chat-bubble {
+    background: rgba(107,83,193,0.18);
+    border: 1px solid rgba(107,83,193,0.3);
+    border-radius: 14px;
+    padding: 16px 20px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .chat-bubble .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6F53C1;
+    margin-bottom: 6px;
+  }
+
+  .chat-bubble .text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.45;
+    font-style: italic;
+  }
+
+  .chat-bubble .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #6F53C1;
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .rejection-stamp {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #ef4444;
+    color: #fff;
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 14px;
+    border-radius: 5px;
+    transform: rotate(3deg);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── Credibility + price ── */
+  .right-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .credibility {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+  }
+  .credibility strong { color: #D7EF3F; }
+
+  .price-line {
+    font-family: 'Saira Condensed', 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #D7EF3F;
+  }
+
+  .refund {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* ── Vertical divider ── */
+  .v-divider {
+    position: absolute;
+    left: 60%;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(59,130,246,0.25), rgba(111,83,193,0.25), transparent);
+  }
+
+  /* ── Accent glows ── */
+  .glow-blue {
+    position: absolute;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+    top: -80px; left: 50%;
+    pointer-events: none;
+  }
+  .glow-purple {
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(111,83,193,0.10) 0%, transparent 70%);
+    bottom: -80px; right: -60px;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="ad">
+  <div class="glow-blue"></div>
+  <div class="glow-purple"></div>
+  <div class="v-divider"></div>
+
+  <!-- Left panel -->
+  <div class="left">
+    <div class="logo"><img src="../brand-assets/logos/codebasics-primary.svg" alt="codebasics"></div>
+
+    <div>
+      <div class="headline">
+        ChatGPT Wrote<br>Your Resume.<br><em>HR Can Tell.</em>
+      </div>
+      <div class="subtext">
+        Generic buzzwords won't land interviews.<br>
+        7 real-world projects and a portfolio will.
+      </div>
+    </div>
+
+    <div class="bottom-left">
+      <button class="cta-btn">Build Real Projects &rarr;</button>
+      <div class="tech-stack">
+        <span class="tech-tag">SQL</span>
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">Spark</span>
+        <span class="tech-tag">AWS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="right">
+    <div class="chat-bubble">
+      <div class="label">ChatGPT output</div>
+      <div class="text">
+        "Proficient in SQL, Python, and data analysis.
+        Strong communicator..."<span class="cursor"></span>
+      </div>
+      <div class="rejection-stamp">Rejected</div>
+    </div>
+
+    <div class="right-info">
+      <div class="credibility"><strong>1.4M+</strong> YouTube &bull; <strong>4.9</strong> Rating</div>
+      <div class="price-line">₹12,000</div>
+      <div class="refund">Lifetime access &middot; 100% refund in 30 days</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

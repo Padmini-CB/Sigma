@@ -1,0 +1,19 @@
+{
+  "brand": "Codebasics",
+  "palette": {
+    "blue": "#3B82F6",
+    "purple": "#6F53C1",
+    "navy": "#181830",
+    "lime_yellow": "#D7EF3F",
+    "white": "#FFFFFF",
+    "light_gray": "#F3F4F6"
+  },
+  "cta": {
+    "background": "#D7EF3F",
+    "text": "#181830"
+  },
+  "gradients": {
+    "primary": "linear-gradient(135deg, #3B82F6, #6F53C1)",
+    "dark": "linear-gradient(180deg, #181830, #0F0F1E)"
+  }
+}
