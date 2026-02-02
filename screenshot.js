@@ -50,7 +50,7 @@ const files = [
     await page.evaluateHandle('document.fonts.ready');
 
     // Extra wait for full render
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 3000));
 
     await page.screenshot({
       path: outPath,
