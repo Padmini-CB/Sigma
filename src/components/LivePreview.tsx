@@ -1,7 +1,7 @@
 'use client';
 
 import { EditorFields } from '@/app/editor/[id]/page';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
 
 interface Template {
   id: string;
@@ -23,7 +23,17 @@ interface LivePreviewProps {
   fields: EditorFields;
 }
 
-export default function LivePreview({ template, fields }: LivePreviewProps) {
+export interface LivePreviewHandle {
+  getExportElement: () => HTMLDivElement | null;
+}
+
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields }, ref) {
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    getExportElement: () => exportRef.current,
+  }));
+
   const [zoom, setZoom] = useState(100);
 
   // Calculate the preview container sizing
@@ -144,9 +154,36 @@ export default function LivePreview({ template, fields }: LivePreviewProps) {
           {template.useCase}
         </span>
       </div>
+
+      {/* Hidden Export Container - Renders at full template dimensions */}
+      <div
+        style={{
+          position: 'fixed',
+          left: '-99999px',
+          top: '-99999px',
+          pointerEvents: 'none',
+        }}
+        aria-hidden="true"
+      >
+        <div
+          ref={exportRef}
+          style={{
+            width: template.dimensions.width,
+            height: template.dimensions.height,
+            overflow: 'hidden',
+          }}
+        >
+          <TemplateContent
+            fields={fields}
+            template={template}
+            isVertical={isVertical}
+            isSquare={isSquare}
+          />
+        </div>
+      </div>
     </main>
   );
-}
+});
 
 interface TemplateContentProps {
   fields: EditorFields;
@@ -429,3 +466,5 @@ function TemplateContent({ fields, template, isVertical, isSquare }: TemplateCon
     </div>
   );
 }
+
+export default LivePreview;
