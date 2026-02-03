@@ -1,10 +1,23 @@
 'use client';
 
 import { EditorFields } from '@/app/editor/[id]/page';
+import templateDesignsData from '@/data/templateDesigns.json';
+
+interface TemplateDesign {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  applicableTo: string[];
+  fields: EditorFields;
+  previewColors: string[];
+}
 
 interface EditorSidebarProps {
   fields: EditorFields;
   onFieldChange: (field: keyof EditorFields, value: string) => void;
+  onDesignSelect: (design: TemplateDesign) => void;
+  selectedDesignId: string | null;
 }
 
 interface FieldConfig {
@@ -72,7 +85,9 @@ const fieldConfigs: FieldConfig[] = [
   },
 ];
 
-export default function EditorSidebar({ fields, onFieldChange }: EditorSidebarProps) {
+const designs = templateDesignsData.designs as TemplateDesign[];
+
+export default function EditorSidebar({ fields, onFieldChange, onDesignSelect, selectedDesignId }: EditorSidebarProps) {
   return (
     <aside className="w-96 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden">
       {/* Sidebar Header */}
@@ -83,6 +98,33 @@ export default function EditorSidebar({ fields, onFieldChange }: EditorSidebarPr
         <p className="font-body text-sm text-gray-500 mt-1">
           Changes update the preview in real-time
         </p>
+      </div>
+
+      {/* Template Design Selector */}
+      <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-brand-blue/5 to-brand-purple/5 flex-shrink-0">
+        <label className="block font-ui text-sm font-semibold text-brand-navy mb-2">
+          Quick Start: Select a Design
+        </label>
+        <select
+          value={selectedDesignId || ''}
+          onChange={(e) => {
+            const design = designs.find(d => d.id === e.target.value);
+            if (design) onDesignSelect(design);
+          }}
+          className="w-full px-3 py-2.5 rounded-lg border border-gray-300 font-body text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors cursor-pointer"
+        >
+          <option value="">— Choose a pre-made design —</option>
+          {designs.map((design) => (
+            <option key={design.id} value={design.id}>
+              {design.name} — {design.category}
+            </option>
+          ))}
+        </select>
+        {selectedDesignId && (
+          <p className="font-ui text-xs text-brand-purple mt-2">
+            {designs.find(d => d.id === selectedDesignId)?.description}
+          </p>
+        )}
       </div>
 
       {/* Form Fields */}
