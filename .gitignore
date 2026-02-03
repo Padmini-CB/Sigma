@@ -28,3 +28,10 @@ Thumbs.db
 # Project output
 output/*
 !output/.gitkeep
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Font build cache
+fonts/*.b64

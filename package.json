@@ -1,0 +1,26 @@
+{
+  "name": "sigma",
+  "version": "1.0.0",
+  "description": "A marketing asset generator for **Codebasics** that automates the creation of thumbnails, banners, social media posts, and carousels across multiple platforms.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:21841/git/Padmini-CB/Sigma"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource/kanit": "^5.2.8",
+    "@fontsource/saira-condensed": "^5.2.8",
+    "playwright": "^1.58.1",
+    "puppeteer-core": "^24.36.1"
+  }
+}
