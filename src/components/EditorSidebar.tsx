@@ -2,6 +2,7 @@
 
 import { EditorFields } from '@/app/editor/[id]/page';
 import templateDesignsData from '@/data/templateDesigns.json';
+import { useEffect } from 'react';
 
 interface TemplateDesign {
   id: string;
@@ -18,6 +19,9 @@ interface EditorSidebarProps {
   onFieldChange: (field: keyof EditorFields, value: string) => void;
   onDesignSelect: (design: TemplateDesign) => void;
   selectedDesignId: string | null;
+  isOpen?: boolean;
+  onClose?: () => void;
+  isMobile?: boolean;
 }
 
 interface FieldConfig {
@@ -87,17 +91,39 @@ const fieldConfigs: FieldConfig[] = [
 
 const designs = templateDesignsData.designs as TemplateDesign[];
 
-export default function EditorSidebar({ fields, onFieldChange, onDesignSelect, selectedDesignId }: EditorSidebarProps) {
+function SidebarContent({
+  fields,
+  onFieldChange,
+  onDesignSelect,
+  selectedDesignId,
+  onClose,
+  isMobile
+}: Omit<EditorSidebarProps, 'isOpen'>) {
   return (
-    <aside className="w-96 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden">
+    <>
       {/* Sidebar Header */}
       <div className="p-4 border-b border-gray-200 flex-shrink-0">
-        <h2 className="font-headline text-lg font-bold text-brand-navy">
-          Edit Content
-        </h2>
-        <p className="font-body text-sm text-gray-500 mt-1">
-          Changes update the preview in real-time
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-headline text-lg font-bold text-brand-navy">
+              Edit Content
+            </h2>
+            <p className="font-body text-sm text-gray-500 mt-1">
+              Changes update the preview in real-time
+            </p>
+          </div>
+          {isMobile && onClose && (
+            <button
+              onClick={onClose}
+              className="p-2 -mr-2 text-gray-400 hover:text-gray-600 transition-colors lg:hidden"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Template Design Selector */}
@@ -132,14 +158,14 @@ export default function EditorSidebar({ fields, onFieldChange, onDesignSelect, s
         {fieldConfigs.map((config) => (
           <div key={config.key} className="space-y-1.5">
             <label
-              htmlFor={config.key}
+              htmlFor={`${isMobile ? 'mobile-' : ''}${config.key}`}
               className="block font-ui text-sm font-semibold text-brand-navy"
             >
               {config.label}
             </label>
             {config.type === 'textarea' ? (
               <textarea
-                id={config.key}
+                id={`${isMobile ? 'mobile-' : ''}${config.key}`}
                 value={fields[config.key]}
                 onChange={(e) => onFieldChange(config.key, e.target.value)}
                 placeholder={config.placeholder}
@@ -149,7 +175,7 @@ export default function EditorSidebar({ fields, onFieldChange, onDesignSelect, s
             ) : (
               <input
                 type="text"
-                id={config.key}
+                id={`${isMobile ? 'mobile-' : ''}${config.key}`}
                 value={fields[config.key]}
                 onChange={(e) => onFieldChange(config.key, e.target.value)}
                 placeholder={config.placeholder}
@@ -168,7 +194,7 @@ export default function EditorSidebar({ fields, onFieldChange, onDesignSelect, s
         <p className="font-ui text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
           Brand Colors
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-5 rounded bg-brand-blue" title="#3B82F6" />
             <span className="font-ui text-xs text-gray-500">Blue</span>
@@ -187,6 +213,72 @@ export default function EditorSidebar({ fields, onFieldChange, onDesignSelect, s
           </div>
         </div>
       </div>
+    </>
+  );
+}
+
+export default function EditorSidebar({
+  fields,
+  onFieldChange,
+  onDesignSelect,
+  selectedDesignId,
+  isOpen = true,
+  onClose,
+  isMobile = false
+}: EditorSidebarProps) {
+  // Prevent body scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isMobile, isOpen]);
+
+  // Mobile drawer mode
+  if (isMobile) {
+    return (
+      <>
+        {/* Overlay */}
+        {isOpen && (
+          <div
+            className="fixed inset-0 drawer-overlay z-40 lg:hidden animate-fade-in"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Drawer */}
+        <aside
+          className={`fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white z-50 flex flex-col lg:hidden transform transition-transform duration-300 ease-out ${
+            isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+          aria-label="Edit sidebar"
+        >
+          <SidebarContent
+            fields={fields}
+            onFieldChange={onFieldChange}
+            onDesignSelect={onDesignSelect}
+            selectedDesignId={selectedDesignId}
+            onClose={onClose}
+            isMobile={true}
+          />
+        </aside>
+      </>
+    );
+  }
+
+  // Desktop sidebar mode
+  return (
+    <aside className="w-80 xl:w-96 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden hidden lg:flex">
+      <SidebarContent
+        fields={fields}
+        onFieldChange={onFieldChange}
+        onDesignSelect={onDesignSelect}
+        selectedDesignId={selectedDesignId}
+        isMobile={false}
+      />
     </aside>
   );
 }
