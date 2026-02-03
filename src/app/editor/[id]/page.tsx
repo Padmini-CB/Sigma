@@ -1,10 +1,11 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import templatesData from '@/data/templates.json';
 import EditorSidebar from '@/components/EditorSidebar';
-import LivePreview from '@/components/LivePreview';
+import LivePreview, { LivePreviewHandle } from '@/components/LivePreview';
+import { useExportPng } from '@/hooks/useExportPng';
 
 interface Template {
   id: string;
@@ -53,6 +54,8 @@ export default function EditorPage() {
   }, [templateId]);
 
   const [fields, setFields] = useState<EditorFields>(defaultFields);
+  const previewRef = useRef<LivePreviewHandle>(null);
+  const { exportPng, isExporting } = useExportPng();
 
   const handleFieldChange = (field: keyof EditorFields, value: string) => {
     setFields((prev) => ({
@@ -63,6 +66,17 @@ export default function EditorPage() {
 
   const handleReset = () => {
     setFields(defaultFields);
+  };
+
+  const handleExport = async () => {
+    if (!template || !previewRef.current) return;
+
+    const element = previewRef.current.getExportElement();
+    await exportPng(element, {
+      templateName: template.name,
+      width: template.dimensions.width,
+      height: template.dimensions.height,
+    });
   };
 
   if (!template) {
@@ -122,11 +136,22 @@ export default function EditorPage() {
                 </svg>
                 Reset
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-lime text-brand-navy hover:bg-brand-lime/90 transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Export
+              <button
+                onClick={handleExport}
+                disabled={isExporting}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-lime text-brand-navy hover:bg-brand-lime/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isExporting ? (
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                )}
+                {isExporting ? 'Exporting...' : 'Export'}
               </button>
             </div>
           </div>
@@ -143,6 +168,7 @@ export default function EditorPage() {
 
         {/* Right Panel - Live Preview */}
         <LivePreview
+          ref={previewRef}
           template={template}
           fields={fields}
         />
