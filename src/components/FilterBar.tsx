@@ -65,25 +65,26 @@ export default function FilterBar({ categories, activeFilter, onFilterChange, te
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-6 sm:mb-8">
       {/* Filter Pills */}
-      <div className="flex flex-wrap items-center gap-3 mb-4">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
         {/* All filter */}
         <button
           onClick={() => onFilterChange('All')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium transition-all duration-200 ${
+          className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-ui text-xs sm:text-sm font-medium transition-all duration-200 ${
             activeFilter === 'All'
               ? 'bg-brand-navy text-white shadow-md'
               : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-blue hover:text-brand-blue'
           }`}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <rect x="3" y="3" width="7" height="7" strokeWidth="2" />
             <rect x="14" y="3" width="7" height="7" strokeWidth="2" />
             <rect x="3" y="14" width="7" height="7" strokeWidth="2" />
             <rect x="14" y="14" width="7" height="7" strokeWidth="2" />
           </svg>
-          All Templates
+          <span className="hidden xs:inline">All Templates</span>
+          <span className="xs:hidden">All</span>
         </button>
 
         {/* Category filters */}
@@ -91,13 +92,13 @@ export default function FilterBar({ categories, activeFilter, onFilterChange, te
           <button
             key={category.id}
             onClick={() => onFilterChange(category.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-ui text-xs sm:text-sm font-medium transition-all duration-200 ${
               activeFilter === category.id
                 ? 'bg-brand-blue text-white shadow-md'
                 : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-blue hover:text-brand-blue'
             }`}
           >
-            {getIcon(category.icon)}
+            <span className="hidden sm:inline">{getIcon(category.icon)}</span>
             {category.name}
           </button>
         ))}
@@ -105,7 +106,7 @@ export default function FilterBar({ categories, activeFilter, onFilterChange, te
 
       {/* Results count */}
       <div className="flex items-center justify-between">
-        <p className="font-body text-sm text-gray-500">
+        <p className="font-body text-xs sm:text-sm text-gray-500">
           Showing <span className="font-semibold text-brand-navy">{templateCount}</span> template{templateCount !== 1 ? 's' : ''}
           {activeFilter !== 'All' && (
             <span> in <span className="text-brand-blue">{activeFilter}</span></span>

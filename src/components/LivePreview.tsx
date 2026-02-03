@@ -1,7 +1,7 @@
 'use client';
 
 import { EditorFields } from '@/app/editor/[id]/page';
-import { useState, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
+import { useState, useMemo, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 
 interface Template {
   id: string;
@@ -30,24 +30,43 @@ export interface LivePreviewHandle {
 
 const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
     getExportElement: () => exportRef.current,
   }));
 
   const [zoom, setZoom] = useState(100);
+  const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
 
   // Use custom colors from design if provided, otherwise use template default colors
   const activeColors = customColors || template.previewColors;
+
+  // Track container size for responsive scaling
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerSize({
+          width: Math.max(rect.width - 64, 200), // Account for padding
+          height: Math.max(rect.height - 64, 200),
+        });
+      }
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   // Calculate the preview container sizing
   const previewStyle = useMemo(() => {
     const { width, height } = template.dimensions;
     const scale = zoom / 100;
 
-    // Max container size based on available space
-    const maxContainerWidth = 800;
-    const maxContainerHeight = 600;
+    // Use actual container size for responsive scaling
+    const maxContainerWidth = containerSize.width;
+    const maxContainerHeight = containerSize.height;
 
     // Calculate scale to fit within container
     const scaleToFitWidth = maxContainerWidth / width;
@@ -62,7 +81,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       transform: `scale(${finalScale})`,
       transformOrigin: 'center center',
     };
-  }, [template.dimensions, zoom]);
+  }, [template.dimensions, zoom, containerSize]);
 
   // Determine layout type based on aspect ratio
   const isVertical = template.dimensions.height > template.dimensions.width;
@@ -71,30 +90,32 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   return (
     <main className="flex-1 bg-gray-100 flex flex-col overflow-hidden">
       {/* Preview Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-4">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-4">
           <h3 className="font-ui text-sm font-semibold text-gray-700">Preview</h3>
-          <span className="font-ui text-xs text-gray-400">
+          <span className="font-ui text-xs text-gray-400 hidden sm:inline">
             {template.dimensions.width} × {template.dimensions.height}px
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="font-ui text-xs text-gray-500">Zoom:</span>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="font-ui text-xs text-gray-500 hidden sm:inline">Zoom:</span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setZoom(Math.max(25, zoom - 25))}
               className="w-7 h-7 rounded bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
               title="Zoom out"
+              aria-label="Zoom out"
             >
               <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
               </svg>
             </button>
-            <span className="font-ui text-sm text-gray-700 w-12 text-center">{zoom}%</span>
+            <span className="font-ui text-sm text-gray-700 w-10 sm:w-12 text-center">{zoom}%</span>
             <button
               onClick={() => setZoom(Math.min(150, zoom + 25))}
               className="w-7 h-7 rounded bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
               title="Zoom in"
+              aria-label="Zoom in"
             >
               <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -103,7 +124,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           </div>
           <button
             onClick={() => setZoom(100)}
-            className="px-2 py-1 rounded text-xs font-ui text-gray-500 hover:bg-gray-100 transition-colors"
+            className="px-2 py-1 rounded text-xs font-ui text-gray-500 hover:bg-gray-100 transition-colors hidden sm:block"
           >
             Reset
           </button>
@@ -111,7 +132,10 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       </div>
 
       {/* Preview Canvas Area */}
-      <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
+      <div
+        ref={containerRef}
+        className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center"
+      >
         <div className="relative">
           {/* Checkerboard Background (transparency indicator) */}
           <div
@@ -146,18 +170,21 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       </div>
 
       {/* Preview Footer Info */}
-      <div className="bg-white border-t border-gray-200 px-6 py-2 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-4">
-          <span className="font-ui text-xs text-gray-500">
-            Platform: <span className="font-semibold text-gray-700">{template.platform}</span>
-          </span>
-          <span className="font-ui text-xs text-gray-500">
-            Category: <span className="font-semibold text-gray-700">{template.category}</span>
+      <div className="bg-white border-t border-gray-200 px-4 sm:px-6 py-2 flex-shrink-0">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+            <span className="font-ui text-xs text-gray-500 truncate">
+              <span className="hidden sm:inline">Platform: </span>
+              <span className="font-semibold text-gray-700">{template.platform}</span>
+            </span>
+            <span className="font-ui text-xs text-gray-500 truncate hidden sm:inline">
+              Category: <span className="font-semibold text-gray-700">{template.category}</span>
+            </span>
+          </div>
+          <span className="font-ui text-xs text-gray-400 truncate hidden md:inline">
+            {template.useCase}
           </span>
         </div>
-        <span className="font-ui text-xs text-gray-400">
-          {template.useCase}
-        </span>
       </div>
 
       {/* Hidden Export Container - Renders at full template dimensions */}
@@ -285,8 +312,8 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
           </div>
 
           {/* CTA Button */}
-          <button
-            className="w-full font-ui font-semibold rounded-lg transition-transform hover:scale-105"
+          <div
+            className="w-full font-ui font-semibold rounded-lg text-center"
             style={{
               backgroundColor: '#D7EF3F',
               color: '#181830',
@@ -295,7 +322,7 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
             }}
           >
             {cta}
-          </button>
+          </div>
         </div>
       </div>
     );
@@ -352,8 +379,8 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
         {/* Bottom Section - CTA & Price */}
         <div className="flex items-center justify-between">
           {/* CTA Button */}
-          <button
-            className="font-ui font-semibold rounded-lg transition-transform hover:scale-105"
+          <div
+            className="font-ui font-semibold rounded-lg"
             style={{
               backgroundColor: '#D7EF3F',
               color: '#181830',
@@ -362,7 +389,7 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
             }}
           >
             {cta}
-          </button>
+          </div>
 
           {/* Price */}
           <div className="flex items-center gap-2">
@@ -428,8 +455,8 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
         </div>
 
         {/* Bottom - CTA */}
-        <button
-          className="font-ui font-semibold rounded-lg transition-transform hover:scale-105 self-start"
+        <div
+          className="font-ui font-semibold rounded-lg self-start"
           style={{
             backgroundColor: '#D7EF3F',
             color: '#181830',
@@ -438,7 +465,7 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
           }}
         >
           {cta}
-        </button>
+        </div>
       </div>
 
       {/* Right Content - Price & Features */}

@@ -6,6 +6,7 @@ import templatesData from '@/data/templates.json';
 import EditorSidebar from '@/components/EditorSidebar';
 import LivePreview, { LivePreviewHandle } from '@/components/LivePreview';
 import { useExportPng } from '@/hooks/useExportPng';
+import { useToast } from '@/components/Toast';
 
 interface Template {
   id: string;
@@ -58,6 +59,7 @@ export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
   const templateId = params.id as string;
+  const { showToast } = useToast();
 
   const template = useMemo(() => {
     return templatesData.templates.find((t) => t.id === templateId) as Template | undefined;
@@ -66,6 +68,7 @@ export default function EditorPage() {
   const [fields, setFields] = useState<EditorFields>(defaultFields);
   const [selectedDesignId, setSelectedDesignId] = useState<string | null>(null);
   const [customColors, setCustomColors] = useState<string[] | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -80,39 +83,56 @@ export default function EditorPage() {
     setSelectedDesignId(design.id);
     setFields(design.fields);
     setCustomColors(design.previewColors);
+    showToast('success', 'Design Applied', `"${design.name}" template loaded`);
+    // Close mobile sidebar after selecting
+    setIsSidebarOpen(false);
   };
 
   const handleReset = () => {
     setFields(defaultFields);
     setSelectedDesignId(null);
     setCustomColors(null);
+    showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
   const handleExport = async () => {
     if (!template || !previewRef.current) return;
 
-    const element = previewRef.current.getExportElement();
-    await exportPng(element, {
-      templateName: template.name,
-      width: template.dimensions.width,
-      height: template.dimensions.height,
-    });
+    try {
+      const element = previewRef.current.getExportElement();
+      await exportPng(element, {
+        templateName: template.name,
+        width: template.dimensions.width,
+        height: template.dimensions.height,
+      });
+      showToast('success', 'Export Complete', `${template.name} saved as PNG`);
+    } catch {
+      showToast('error', 'Export Failed', 'Unable to generate PNG. Please try again.');
+    }
   };
 
   if (!template) {
     return (
-      <div className="min-h-screen bg-brand-gray/30 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="font-headline text-2xl font-bold text-brand-navy mb-4">
+      <div className="min-h-screen bg-brand-gray/30 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="font-headline text-2xl font-bold text-brand-navy mb-2">
             Template Not Found
           </h1>
           <p className="font-body text-gray-600 mb-6">
-            The template you&apos;re looking for doesn&apos;t exist.
+            The template you&apos;re looking for doesn&apos;t exist or may have been removed.
           </p>
           <button
             onClick={() => router.push('/')}
-            className="btn-cta"
+            className="btn-cta inline-flex items-center gap-2"
           >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
             Back to Dashboard
           </button>
         </div>
@@ -124,42 +144,53 @@ export default function EditorPage() {
     <div className="min-h-screen bg-brand-gray/30 flex flex-col">
       {/* Header */}
       <header className="bg-gradient-dark border-b border-white/10 flex-shrink-0">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors lg:hidden"
+                aria-label="Open editor sidebar"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+
               <button
                 onClick={() => router.push('/')}
-                className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                className="hidden sm:flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>
                 <span className="font-ui text-sm">Back</span>
               </button>
-              <div className="h-6 w-px bg-white/20" />
-              <div>
-                <h1 className="font-headline text-xl font-bold text-white">
+              <div className="h-6 w-px bg-white/20 hidden sm:block" />
+              <div className="min-w-0">
+                <h1 className="font-headline text-lg sm:text-xl font-bold text-white truncate">
                   {template.name}
                 </h1>
-                <p className="font-ui text-xs text-gray-400">
+                <p className="font-ui text-xs text-gray-400 truncate">
                   {template.dimensions.width} × {template.dimensions.height} • {template.platform}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-colors"
+                className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Reset
+                <span className="hidden md:inline">Reset</span>
               </button>
               <button
                 onClick={handleExport}
                 disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-lime text-brand-navy hover:bg-brand-lime/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-lime text-brand-navy hover:bg-brand-lime/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isExporting ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -171,7 +202,7 @@ export default function EditorPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                 )}
-                {isExporting ? 'Exporting...' : 'Export'}
+                <span className="hidden xs:inline">{isExporting ? 'Exporting...' : 'Export'}</span>
               </button>
             </div>
           </div>
@@ -180,12 +211,23 @@ export default function EditorPage() {
 
       {/* Main Editor Area */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar - Form Fields */}
+        {/* Desktop Sidebar */}
         <EditorSidebar
           fields={fields}
           onFieldChange={handleFieldChange}
           onDesignSelect={handleDesignSelect}
           selectedDesignId={selectedDesignId}
+        />
+
+        {/* Mobile Sidebar Drawer */}
+        <EditorSidebar
+          fields={fields}
+          onFieldChange={handleFieldChange}
+          onDesignSelect={handleDesignSelect}
+          selectedDesignId={selectedDesignId}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          isMobile={true}
         />
 
         {/* Right Panel - Live Preview */}
@@ -195,6 +237,39 @@ export default function EditorPage() {
           fields={fields}
           customColors={customColors}
         />
+      </div>
+
+      {/* Mobile Bottom Bar */}
+      <div className="lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-blue text-white"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Edit Content
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleReset}
+            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+            aria-label="Reset"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <button
+            onClick={() => router.push('/')}
+            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+            aria-label="Back to dashboard"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
