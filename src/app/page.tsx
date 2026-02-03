@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import TemplateCard from '@/components/TemplateCard';
 import FilterBar from '@/components/FilterBar';
 import templatesData from '@/data/templates.json';
@@ -28,6 +29,7 @@ interface Category {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const templates: Template[] = templatesData.templates;
   const categories: Category[] = templatesData.categories;
@@ -52,8 +54,7 @@ export default function Dashboard() {
   }, [templates, categories, activeFilter]);
 
   const handleTemplateClick = (template: Template) => {
-    // Future: Navigate to template editor
-    console.log('Selected template:', template.id);
+    router.push(`/editor/${template.id}`);
   };
 
   return (
