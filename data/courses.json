@@ -1,0 +1,424 @@
+{
+  "metadata": {
+    "source": "codebasics.io",
+    "crawledAt": "2026-02-03",
+    "version": "1.0"
+  },
+  "company": {
+    "name": "Codebasics",
+    "website": "https://codebasics.io",
+    "description": "A new-age learning tech platform focused on getting people job-ready in the field of data analytics and data science",
+    "youtubeSubscribers": "1.4M+",
+    "trustpilotReviews": 75,
+    "refundPolicy": "Full refund within 30 days",
+    "instructors": [
+      {
+        "name": "Dhaval Patel",
+        "title": "Founder & Lead Instructor",
+        "experience": "17 years in Programming and Data Science",
+        "companies": ["NVIDIA", "Bloomberg"],
+        "credentials": "AI entrepreneur, YouTuber with 1.4M+ subscribers",
+        "skills": ["Python", "C++", "UNIX", "Machine Learning", "Deep Learning", "Time Series Forecasting"]
+      },
+      {
+        "name": "Hemanand Vadivel",
+        "title": "Co-Founder",
+        "experience": "10+ years in the data industry",
+        "companies": ["Bloomberg", "Edgewell"],
+        "credentials": "International data industry experience"
+      }
+    ]
+  },
+  "bootcamps": [
+    {
+      "id": "de-bootcamp",
+      "name": "Data Engineering Bootcamp",
+      "shortName": "DE Bootcamp",
+      "version": "1.0",
+      "url": "https://codebasics.io/bootcamps/data-engineering-bootcamp-with-virtual-internship",
+      "price": {
+        "INR": null,
+        "USD": null,
+        "note": "Differential pricing available if individual courses already purchased"
+      },
+      "duration": "10 weeks",
+      "targetRoles": [
+        "Data Engineer",
+        "Cloud Data Engineer",
+        "Analytics Engineer"
+      ],
+      "tools": [
+        "SQL",
+        "Python",
+        "Apache Spark",
+        "Apache Airflow",
+        "Apache Kafka",
+        "Snowflake",
+        "Databricks",
+        "AWS (S3, Glue, Lambda, Athena, Redshift)",
+        "Azure",
+        "DBT",
+        "Power BI"
+      ],
+      "projects": 7,
+      "highlights": [
+        "Build end-to-end data pipelines",
+        "Automate workflows",
+        "GitHub public portfolio building",
+        "Production-grade projects",
+        "Virtual internship included"
+      ],
+      "outcomes": [
+        "Build production-ready data pipelines",
+        "Work with cloud tools and data architecture",
+        "Create a GitHub portfolio that stands out to recruiters"
+      ],
+      "targetAudience": "Aspiring data engineers, analysts looking to transition, developers wanting to specialize in data",
+      "includes": [
+        "Job assistance",
+        "Live problem-solving sessions",
+        "Resume & interview preparation",
+        "Virtual internship"
+      ],
+      "uniqueSellingPoint": "GitHub portfolio building - core USP for DE Bootcamp"
+    },
+    {
+      "id": "da-bootcamp",
+      "name": "Data Analytics Bootcamp 5.0",
+      "shortName": "DA Bootcamp",
+      "version": "5.0",
+      "url": "https://codebasics.io/bootcamps/data-analytics-bootcamp-with-practical-job-assistance",
+      "price": {
+        "INR": {
+          "installments": [
+            {"step": 1, "item": "Excel Course", "amount": 1200},
+            {"step": 2, "item": "Power BI Course", "amount": 2700},
+            {"step": 3, "item": "Bootcamp", "amount": 4500}
+          ],
+          "total": 8400,
+          "note": "Pay difference if courses already purchased"
+        },
+        "USD": {
+          "installments": [
+            {"step": 1, "item": "Excel Course", "amount": 30},
+            {"step": 2, "item": "Power BI Course", "amount": 50},
+            {"step": 3, "item": "Bootcamp", "amount": 100}
+          ],
+          "total": 180
+        }
+      },
+      "duration": "11 weeks",
+      "targetRoles": [
+        "Data Analyst",
+        "Business Analyst",
+        "Finance Analyst",
+        "Marketing Analyst",
+        "BI Developer"
+      ],
+      "tools": [
+        "Excel",
+        "SQL",
+        "Python",
+        "Power BI",
+        "AI Tools"
+      ],
+      "projects": null,
+      "highlights": [
+        "AI-enabled Data Analyst training",
+        "Data Engineering basics module (pipelines, ETL, data prep)",
+        "Virtual internship with AtliQ Technologies",
+        "Career transformation focus",
+        "Business case studies"
+      ],
+      "outcomes": [
+        "Master data analytics with real-world tools",
+        "Become AI-enabled Data Analyst",
+        "Career transformation from non-tech to data analytics"
+      ],
+      "targetAudience": "Beginners, students, career switchers, non-IT professionals looking to transition",
+      "includes": [
+        "Self-paced video lectures",
+        "Live monthly webinars",
+        "Discord community support",
+        "Resume builder",
+        "LinkedIn optimizer",
+        "Portfolio website",
+        "Mock interviews with industry experts",
+        "Interview preparation comics"
+      ],
+      "uniqueSellingPoint": "Career transformation - core USP for DA Bootcamp"
+    },
+    {
+      "id": "ds-bootcamp",
+      "name": "Gen AI & Data Science Bootcamp",
+      "shortName": "DS Bootcamp",
+      "version": "1.0",
+      "url": "https://codebasics.io/bootcamps/gen-ai-data-science-bootcamp-with-virtual-internship",
+      "price": {
+        "INR": null,
+        "USD": null,
+        "note": "Differential pricing available if individual courses already purchased"
+      },
+      "duration": "12 months",
+      "targetRoles": [
+        "Data Scientist",
+        "Machine Learning Engineer",
+        "NLP Engineer",
+        "AI Engineer"
+      ],
+      "tools": [
+        "Python",
+        "Machine Learning",
+        "Deep Learning",
+        "Neural Networks",
+        "CNNs",
+        "RNNs",
+        "Transformers",
+        "LangChain",
+        "ChromaDB",
+        "Streamlit",
+        "LLMs",
+        "RAG",
+        "Vector Databases"
+      ],
+      "projects": null,
+      "highlights": [
+        "Live mentorship",
+        "Real-world projects",
+        "Generative AI fundamentals",
+        "Agentic AI and multi-agent systems",
+        "LLM fine-tuning",
+        "AI ethics and responsible AI",
+        "Virtual internship",
+        "Placement support"
+      ],
+      "outcomes": [
+        "Build AI-driven business solutions",
+        "Create autonomous agents",
+        "Develop portfolio that stands out"
+      ],
+      "targetAudience": "Aspiring data scientists, ML engineers, professionals wanting to break into AI",
+      "includes": [
+        "Dedicated guidance",
+        "Lifetime content validity",
+        "AI Toolkit for Professionals (50% subsidy)",
+        "Virtual internship",
+        "Placement support"
+      ],
+      "uniqueSellingPoint": "Career transformation with AI/ML focus - core USP for DS Bootcamp"
+    }
+  ],
+  "courses": [
+    {
+      "id": "excel",
+      "name": "Excel Course",
+      "category": "Data Analytics",
+      "url": "https://codebasics.io/courses",
+      "price": {
+        "INR": 1200,
+        "USD": 30
+      },
+      "partOfBootcamp": ["da-bootcamp"]
+    },
+    {
+      "id": "sql",
+      "name": "SQL Course",
+      "category": "Data Analytics",
+      "url": "https://codebasics.io/courses",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "partOfBootcamp": ["da-bootcamp"]
+    },
+    {
+      "id": "python",
+      "name": "Python Course",
+      "category": "Data Science",
+      "url": "https://codebasics.io/courses",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "partOfBootcamp": ["da-bootcamp", "ds-bootcamp"]
+    },
+    {
+      "id": "power-bi",
+      "name": "Power BI Data Analytics Course 3.0",
+      "category": "Data Analytics",
+      "url": "https://codebasics.io/courses/power-bi-data-analysis-with-end-to-end-project",
+      "price": {
+        "INR": 2700,
+        "USD": 50
+      },
+      "partOfBootcamp": ["da-bootcamp"]
+    },
+    {
+      "id": "machine-learning",
+      "name": "Machine Learning for Data Science",
+      "category": "Data Science",
+      "url": "https://codebasics.io/courses/machine-learning-for-data-science-beginners-to-advanced",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "description": "Beginner to advanced ML course with deep intuition on algorithms, cinematic experiences, end-to-end projects",
+      "partOfBootcamp": ["ds-bootcamp"]
+    },
+    {
+      "id": "deep-learning",
+      "name": "Deep Learning Course",
+      "category": "Data Science",
+      "url": "https://codebasics.io/courses/deep-learning-beginner-to-advanced",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "description": "Covers fundamentals of neural networks to advanced architectures (CNNs, RNNs, Transformers)",
+      "partOfBootcamp": ["ds-bootcamp"]
+    },
+    {
+      "id": "gen-ai-agentic-ai",
+      "name": "Gen AI to Agentic AI Course",
+      "category": "AI",
+      "url": "https://codebasics.io/courses/gen-ai-agentic-ai",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "description": "Practical project-based approach covering LLMs, RAG, vector databases, LangChain, and autonomous agents",
+      "partOfBootcamp": ["ds-bootcamp"]
+    },
+    {
+      "id": "data-engineering-basics",
+      "name": "Data Engineering Basics for Freshers & Analysts",
+      "category": "Data Engineering",
+      "url": "https://codebasics.io/courses/data-engineering-basics-for-data-analysts",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "description": "OLAP vs OLTP, ETL vs ELT, Medallion Architecture, AWS tools (S3, Glue, Lambda, Athena, Redshift), Power BI dashboards",
+      "partOfBootcamp": ["da-bootcamp"]
+    },
+    {
+      "id": "ds-ml-projects",
+      "name": "Data Science & Machine Learning Projects",
+      "category": "Data Science",
+      "url": "https://codebasics.io/courses/data-science-machine-learning-projects",
+      "price": {
+        "INR": null,
+        "USD": null
+      },
+      "partOfBootcamp": ["ds-bootcamp"]
+    },
+    {
+      "id": "career-guidance",
+      "name": "Career Guidance",
+      "category": "Career",
+      "url": "https://codebasics.io/courses/career-guidance",
+      "price": {
+        "INR": 0,
+        "USD": 0
+      },
+      "description": "Free career guidance course"
+    },
+    {
+      "id": "data-analysis-projects",
+      "name": "Data Analysis Projects in Power BI",
+      "category": "Data Analytics",
+      "url": "https://codebasics.io/courses/data-analysis-projects",
+      "price": {
+        "INR": 0,
+        "USD": 0
+      },
+      "description": "Free project-based course"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "testimonial-1",
+      "learnerName": "Anonymous Learner",
+      "previousRole": "Non-tech background",
+      "newRole": "Data Analyst",
+      "company": null,
+      "quote": "Codebasics made me believe that career transitions are truly possible when you learn the right way - patiently, practically, and purposefully.",
+      "bootcamp": "da-bootcamp"
+    },
+    {
+      "id": "testimonial-2",
+      "learnerName": "Anonymous Learner",
+      "previousRole": "Data Analyst",
+      "newRole": "Data Analyst (with DE skills)",
+      "company": "Top Logistics Organization",
+      "quote": "As a data analyst stepping into the world of data engineering, I found this course extremely valuable. The concepts were explained in a way that felt approachable, even for someone without a deep engineering background.",
+      "bootcamp": "de-bootcamp"
+    },
+    {
+      "id": "testimonial-3",
+      "learnerName": "Anonymous Learner",
+      "previousRole": null,
+      "newRole": "Data Analytics Professional",
+      "company": null,
+      "quote": "I recently completed the Data Analytics bootcamp offered by Codebasics, which included a virtual internship with AtliQ Technologies. One of the best decisions I made for my career!",
+      "bootcamp": "da-bootcamp"
+    },
+    {
+      "id": "testimonial-4",
+      "learnerName": "Anonymous Learner",
+      "previousRole": "40+ years old, non-tech",
+      "newRole": "Data Analyst",
+      "company": null,
+      "quote": "Age doesn't matter - what matters is your attitude. Codebasics has proven that folks at 40+ age can still crack into the data analytics industry.",
+      "bootcamp": "da-bootcamp"
+    },
+    {
+      "id": "testimonial-5",
+      "learnerName": "Anonymous Learner",
+      "previousRole": null,
+      "newRole": "Data Professional",
+      "company": null,
+      "quote": "Codebasics doesn't just teach tools; it builds an analytical mindset. Each project pushed me to think critically, connect data insights to business problems, and tell meaningful stories with data.",
+      "bootcamp": null
+    }
+  ],
+  "templateApplicability": {
+    "ai-vs-real-skills": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+    "price-transparency": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+    "learning-journey": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+    "github-portfolio": ["de-bootcamp"],
+    "career-transformation": ["da-bootcamp", "ds-bootcamp"],
+    "testimonial": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+    "ai-powered-career": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+    "webinar-banner": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+    "social-announcement": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"]
+  },
+  "brandCharacters": [
+    {
+      "name": "Peter Pandey",
+      "role": "The learner avatar",
+      "description": "Mirrors the audience's journey - shown learning, struggling, then succeeding",
+      "adUsage": "Testimonial-style and journey ads"
+    },
+    {
+      "name": "Tony Sharma",
+      "role": "The helpful mentor/senior",
+      "description": "Appears as the guiding expert figure",
+      "adUsage": "Guided by experts and mentorship-themed ads"
+    },
+    {
+      "name": "Bruce Hariyali",
+      "role": "The business stakeholder",
+      "description": "Has real business problems that need solving",
+      "adUsage": "Solve real business problems and case study ads"
+    }
+  ],
+  "credibilityIndicators": {
+    "youtubeSubscribers": "1.4M+",
+    "trustpilotReviews": "75+ reviews",
+    "refundPolicy": "30-day full refund",
+    "lifetimeAccess": true,
+    "virtualInternship": true,
+    "jobAssistance": true
+  }
+}
