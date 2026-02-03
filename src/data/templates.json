@@ -1,0 +1,274 @@
+{
+  "templates": [
+    {
+      "id": "meta-feed-square",
+      "name": "Meta Feed Square",
+      "category": "PPC",
+      "platform": "Meta",
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "aspectRatio": "1:1",
+      "useCase": "Facebook & Instagram feed posts",
+      "description": "Square format optimized for Meta feed placements with high engagement",
+      "previewColors": ["#3B82F6", "#6F53C1"]
+    },
+    {
+      "id": "meta-stories-vertical",
+      "name": "Meta Stories",
+      "category": "PPC",
+      "platform": "Meta",
+      "dimensions": {
+        "width": 1080,
+        "height": 1920
+      },
+      "aspectRatio": "9:16",
+      "useCase": "Instagram & Facebook Stories ads",
+      "description": "Vertical full-screen format for immersive story experiences",
+      "previewColors": ["#6F53C1", "#3B82F6"]
+    },
+    {
+      "id": "google-display-landscape",
+      "name": "Google Display",
+      "category": "PPC",
+      "platform": "Google",
+      "dimensions": {
+        "width": 1200,
+        "height": 628
+      },
+      "aspectRatio": "1.91:1",
+      "useCase": "Google Display Network banner ads",
+      "description": "Standard landscape format for Google Display Network campaigns",
+      "previewColors": ["#3B82F6", "#181830"]
+    },
+    {
+      "id": "linkedin-landscape",
+      "name": "LinkedIn Sponsored",
+      "category": "PPC",
+      "platform": "LinkedIn",
+      "dimensions": {
+        "width": 1200,
+        "height": 627
+      },
+      "aspectRatio": "1.91:1",
+      "useCase": "LinkedIn sponsored content & ads",
+      "description": "Professional format for B2B and career-focused advertising",
+      "previewColors": ["#181830", "#3B82F6"]
+    },
+    {
+      "id": "instagram-post-square",
+      "name": "Instagram Post",
+      "category": "Social",
+      "platform": "Instagram",
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "aspectRatio": "1:1",
+      "useCase": "Organic Instagram feed posts",
+      "description": "Square format for organic social media engagement",
+      "previewColors": ["#6F53C1", "#D7EF3F"]
+    },
+    {
+      "id": "instagram-carousel",
+      "name": "Instagram Carousel",
+      "category": "Social",
+      "platform": "Instagram",
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "aspectRatio": "1:1",
+      "useCase": "Multi-slide carousel posts",
+      "description": "Swipeable carousel format for storytelling and product showcases",
+      "previewColors": ["#3B82F6", "#D7EF3F"]
+    },
+    {
+      "id": "linkedin-post",
+      "name": "LinkedIn Post",
+      "category": "Social",
+      "platform": "LinkedIn",
+      "dimensions": {
+        "width": 1200,
+        "height": 627
+      },
+      "aspectRatio": "1.91:1",
+      "useCase": "Organic LinkedIn posts",
+      "description": "Professional format for thought leadership and company updates",
+      "previewColors": ["#181830", "#6F53C1"]
+    },
+    {
+      "id": "twitter-post",
+      "name": "Twitter/X Post",
+      "category": "Social",
+      "platform": "Twitter",
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      },
+      "aspectRatio": "16:9",
+      "useCase": "Twitter/X feed images",
+      "description": "Optimized format for Twitter/X timeline visibility",
+      "previewColors": ["#3B82F6", "#181830"]
+    },
+    {
+      "id": "youtube-thumbnail-standard",
+      "name": "YouTube Thumbnail",
+      "category": "YouTube",
+      "platform": "YouTube",
+      "dimensions": {
+        "width": 1280,
+        "height": 720
+      },
+      "aspectRatio": "16:9",
+      "useCase": "Video thumbnails",
+      "description": "High-impact thumbnails designed for maximum click-through rate",
+      "previewColors": ["#D7EF3F", "#181830"]
+    },
+    {
+      "id": "youtube-community-post",
+      "name": "YouTube Community",
+      "category": "YouTube",
+      "platform": "YouTube",
+      "dimensions": {
+        "width": 1080,
+        "height": 1080
+      },
+      "aspectRatio": "1:1",
+      "useCase": "Community tab posts",
+      "description": "Engaging visuals for YouTube community tab engagement",
+      "previewColors": ["#6F53C1", "#D7EF3F"]
+    },
+    {
+      "id": "youtube-end-screen",
+      "name": "YouTube End Screen",
+      "category": "YouTube",
+      "platform": "YouTube",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080
+      },
+      "aspectRatio": "16:9",
+      "useCase": "Video end screen elements",
+      "description": "Call-to-action elements for video end screens",
+      "previewColors": ["#181830", "#D7EF3F"]
+    },
+    {
+      "id": "email-header-banner",
+      "name": "Email Header Banner",
+      "category": "Email",
+      "platform": "Email",
+      "dimensions": {
+        "width": 600,
+        "height": 200
+      },
+      "aspectRatio": "3:1",
+      "useCase": "Email newsletter headers",
+      "description": "Compact header banner for email campaigns",
+      "previewColors": ["#3B82F6", "#6F53C1"]
+    },
+    {
+      "id": "email-hero-banner",
+      "name": "Email Hero Banner",
+      "category": "Email",
+      "platform": "Email",
+      "dimensions": {
+        "width": 600,
+        "height": 400
+      },
+      "aspectRatio": "3:2",
+      "useCase": "Email hero sections",
+      "description": "Prominent hero image for email marketing campaigns",
+      "previewColors": ["#6F53C1", "#3B82F6"]
+    },
+    {
+      "id": "email-promo-card",
+      "name": "Email Promo Card",
+      "category": "Email",
+      "platform": "Email",
+      "dimensions": {
+        "width": 600,
+        "height": 300
+      },
+      "aspectRatio": "2:1",
+      "useCase": "Promotional sections in emails",
+      "description": "Promotional card format for offers and announcements",
+      "previewColors": ["#D7EF3F", "#181830"]
+    },
+    {
+      "id": "flyer-a4-portrait",
+      "name": "A4 Portrait Flyer",
+      "category": "Flyer",
+      "platform": "Print",
+      "dimensions": {
+        "width": 2480,
+        "height": 3508
+      },
+      "aspectRatio": "1:1.41",
+      "useCase": "Printed flyers and handouts",
+      "description": "Standard A4 portrait format for print distribution",
+      "previewColors": ["#181830", "#D7EF3F"]
+    },
+    {
+      "id": "flyer-a4-landscape",
+      "name": "A4 Landscape Flyer",
+      "category": "Flyer",
+      "platform": "Print",
+      "dimensions": {
+        "width": 3508,
+        "height": 2480
+      },
+      "aspectRatio": "1.41:1",
+      "useCase": "Landscape printed materials",
+      "description": "A4 landscape format for brochures and inserts",
+      "previewColors": ["#3B82F6", "#D7EF3F"]
+    },
+    {
+      "id": "flyer-square",
+      "name": "Square Flyer",
+      "category": "Flyer",
+      "platform": "Print",
+      "dimensions": {
+        "width": 2000,
+        "height": 2000
+      },
+      "aspectRatio": "1:1",
+      "useCase": "Square printed materials",
+      "description": "Modern square format for premium print materials",
+      "previewColors": ["#6F53C1", "#D7EF3F"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "PPC",
+      "name": "PPC Ads",
+      "description": "Paid advertising formats for Meta, Google, and LinkedIn",
+      "icon": "target"
+    },
+    {
+      "id": "Social",
+      "name": "Social Media",
+      "description": "Organic social media post formats",
+      "icon": "share"
+    },
+    {
+      "id": "YouTube",
+      "name": "YouTube",
+      "description": "YouTube thumbnails and channel assets",
+      "icon": "play"
+    },
+    {
+      "id": "Email",
+      "name": "Email",
+      "description": "Email marketing banners and graphics",
+      "icon": "mail"
+    },
+    {
+      "id": "Flyer",
+      "name": "Flyer",
+      "description": "Print-ready flyers and handouts",
+      "icon": "file"
+    }
+  ]
+}
