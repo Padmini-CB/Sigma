@@ -21,13 +21,14 @@ interface Template {
 interface LivePreviewProps {
   template: Template;
   fields: EditorFields;
+  customColors?: string[] | null;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
@@ -35,6 +36,9 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   }));
 
   const [zoom, setZoom] = useState(100);
+
+  // Use custom colors from design if provided, otherwise use template default colors
+  const activeColors = customColors || template.previewColors;
 
   // Calculate the preview container sizing
   const previewStyle = useMemo(() => {
@@ -135,6 +139,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               template={template}
               isVertical={isVertical}
               isSquare={isSquare}
+              colors={activeColors}
             />
           </div>
         </div>
@@ -178,6 +183,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             template={template}
             isVertical={isVertical}
             isSquare={isSquare}
+            colors={activeColors}
           />
         </div>
       </div>
@@ -190,9 +196,10 @@ interface TemplateContentProps {
   template: Template;
   isVertical: boolean;
   isSquare: boolean;
+  colors: string[];
 }
 
-function TemplateContent({ fields, template, isVertical, isSquare }: TemplateContentProps) {
+function TemplateContent({ fields, template, isVertical, isSquare, colors }: TemplateContentProps) {
   const { headline, subheadline, cta, price, originalPrice, courseName, credibility, bodyText } = fields;
 
   // Calculate responsive font sizes based on template dimensions
@@ -215,7 +222,7 @@ function TemplateContent({ fields, template, isVertical, isSquare }: TemplateCon
       <div
         className="w-full h-full flex flex-col"
         style={{
-          background: `linear-gradient(180deg, ${template.previewColors[0]}, ${template.previewColors[1]})`,
+          background: `linear-gradient(180deg, ${colors[0]}, ${colors[1]})`,
           padding: padding,
         }}
       >
@@ -300,7 +307,7 @@ function TemplateContent({ fields, template, isVertical, isSquare }: TemplateCon
       <div
         className="w-full h-full flex flex-col"
         style={{
-          background: `linear-gradient(135deg, ${template.previewColors[0]}, ${template.previewColors[1]})`,
+          background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`,
           padding: padding,
         }}
       >
@@ -384,7 +391,7 @@ function TemplateContent({ fields, template, isVertical, isSquare }: TemplateCon
     <div
       className="w-full h-full flex"
       style={{
-        background: `linear-gradient(135deg, ${template.previewColors[0]}, ${template.previewColors[1]})`,
+        background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`,
         padding: padding,
       }}
     >

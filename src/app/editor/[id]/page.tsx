@@ -22,6 +22,16 @@ interface Template {
   previewColors: string[];
 }
 
+interface TemplateDesign {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  applicableTo: string[];
+  fields: EditorFields;
+  previewColors: string[];
+}
+
 export interface EditorFields {
   headline: string;
   subheadline: string;
@@ -54,6 +64,8 @@ export default function EditorPage() {
   }, [templateId]);
 
   const [fields, setFields] = useState<EditorFields>(defaultFields);
+  const [selectedDesignId, setSelectedDesignId] = useState<string | null>(null);
+  const [customColors, setCustomColors] = useState<string[] | null>(null);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -64,8 +76,16 @@ export default function EditorPage() {
     }));
   };
 
+  const handleDesignSelect = (design: TemplateDesign) => {
+    setSelectedDesignId(design.id);
+    setFields(design.fields);
+    setCustomColors(design.previewColors);
+  };
+
   const handleReset = () => {
     setFields(defaultFields);
+    setSelectedDesignId(null);
+    setCustomColors(null);
   };
 
   const handleExport = async () => {
@@ -164,6 +184,8 @@ export default function EditorPage() {
         <EditorSidebar
           fields={fields}
           onFieldChange={handleFieldChange}
+          onDesignSelect={handleDesignSelect}
+          selectedDesignId={selectedDesignId}
         />
 
         {/* Right Panel - Live Preview */}
@@ -171,6 +193,7 @@ export default function EditorPage() {
           ref={previewRef}
           template={template}
           fields={fields}
+          customColors={customColors}
         />
       </div>
     </div>

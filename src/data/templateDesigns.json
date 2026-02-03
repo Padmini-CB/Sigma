@@ -1,0 +1,198 @@
+{
+  "designs": [
+    {
+      "id": "ai-vs-real-skills",
+      "name": "AI vs Real Skills",
+      "description": "Highlights why AI-generated resumes fail vs building real portfolio",
+      "category": "Awareness",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "ChatGPT Wrote Your Resume. HR Can Tell.",
+        "subheadline": "Build a GitHub portfolio that proves your skills instead",
+        "cta": "Build Real Projects",
+        "price": "₹8,400",
+        "originalPrice": "",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "1.4M+ YouTube Subscribers",
+        "bodyText": "7 Business Projects • Virtual Internship • Portfolio Website"
+      },
+      "previewColors": ["#181830", "#6F53C1"]
+    },
+    {
+      "id": "price-transparency",
+      "name": "Price Transparency",
+      "description": "Clear pricing breakdown with installment options",
+      "category": "Conversion",
+      "applicableTo": ["da-bootcamp"],
+      "fields": {
+        "headline": "₹8,400 for Career Transformation",
+        "subheadline": "Pay in 3 easy installments. Start with Excel at ₹1,200.",
+        "cta": "Start for ₹1,200",
+        "price": "₹8,400",
+        "originalPrice": "",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "44K+ Paid Learners",
+        "bodyText": "Step 1: Excel ₹1,200 • Step 2: Power BI ₹2,700 • Step 3: Bootcamp ₹4,500"
+      },
+      "previewColors": ["#3B82F6", "#181830"]
+    },
+    {
+      "id": "learning-journey",
+      "name": "Learning Journey",
+      "description": "Shows progression from beginner to job-ready professional",
+      "category": "Consideration",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "From Zero to Production-Ready in 11 Weeks",
+        "subheadline": "Master Excel, SQL, Python & Power BI with real business projects",
+        "cta": "Start Your Journey",
+        "price": "$180",
+        "originalPrice": "",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "4.9 Rating • 44K+ Learners",
+        "bodyText": "Self-paced • Live Webinars • Mock Interviews • Resume Builder"
+      },
+      "previewColors": ["#6F53C1", "#3B82F6"]
+    },
+    {
+      "id": "github-portfolio",
+      "name": "GitHub Portfolio",
+      "description": "DE Bootcamp USP - Build portfolio recruiters notice",
+      "category": "Conversion",
+      "applicableTo": ["de-bootcamp"],
+      "fields": {
+        "headline": "Your GitHub is Empty. Recruiters Noticed.",
+        "subheadline": "Build 7 production-grade data pipelines for your portfolio",
+        "cta": "Build Your Portfolio",
+        "price": "₹12,000",
+        "originalPrice": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "Ex-Bloomberg, Ex-NVIDIA Instructors",
+        "bodyText": "SQL • Python • Spark • Airflow • Snowflake • AWS • Azure • Kafka"
+      },
+      "previewColors": ["#181830", "#3B82F6"]
+    },
+    {
+      "id": "career-transformation",
+      "name": "Career Transformation",
+      "description": "For career switchers and non-tech professionals",
+      "category": "Awareness",
+      "applicableTo": ["da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "Non-Tech to Data Analyst. It's Possible.",
+        "subheadline": "Age doesn't matter. Attitude does. Join learners who made the switch at 40+.",
+        "cta": "Transform Your Career",
+        "price": "₹8,400",
+        "originalPrice": "",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "30-Day Full Refund Guarantee",
+        "bodyText": "Career Guidance • LinkedIn Optimizer • Virtual Internship with AtliQ"
+      },
+      "previewColors": ["#6F53C1", "#D7EF3F"]
+    },
+    {
+      "id": "testimonial-success",
+      "name": "Testimonial Success",
+      "description": "Real learner success stories",
+      "category": "Social Proof",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "\"One of the Best Decisions for My Career\"",
+        "subheadline": "Virtual internship with AtliQ Technologies included",
+        "cta": "Read More Success Stories",
+        "price": "₹8,400",
+        "originalPrice": "",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "75+ Trustpilot Reviews",
+        "bodyText": "Real learner • Career transformation • Data Analytics professional"
+      },
+      "previewColors": ["#3B82F6", "#6F53C1"]
+    },
+    {
+      "id": "ai-powered-career",
+      "name": "AI-Powered Career",
+      "description": "Gen AI and Data Science focus",
+      "category": "Awareness",
+      "applicableTo": ["ds-bootcamp"],
+      "fields": {
+        "headline": "Become an AI-Enabled Data Scientist",
+        "subheadline": "Master LLMs, RAG, LangChain, and build autonomous agents",
+        "cta": "Start AI Journey",
+        "price": "Enroll Now",
+        "originalPrice": "",
+        "courseName": "Gen AI & Data Science Bootcamp",
+        "credibility": "1.4M+ YouTube • Live Mentorship",
+        "bodyText": "Python • ML • Deep Learning • Transformers • LangChain • Vector DBs"
+      },
+      "previewColors": ["#181830", "#6F53C1"]
+    },
+    {
+      "id": "webinar-banner",
+      "name": "Webinar Banner",
+      "description": "Promote live problem-solving sessions",
+      "category": "Engagement",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "Live Problem-Solving Session",
+        "subheadline": "Join Dhaval & Hemanand for bi-weekly mentorship",
+        "cta": "Register Free",
+        "price": "FREE",
+        "originalPrice": "",
+        "courseName": "Codebasics Live",
+        "credibility": "17+ Years Industry Experience",
+        "bodyText": "Real business problems • Production-grade solutions • Q&A with experts"
+      },
+      "previewColors": ["#D7EF3F", "#181830"]
+    },
+    {
+      "id": "social-announcement",
+      "name": "Social Announcement",
+      "description": "New batch or course launch announcements",
+      "category": "Announcement",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "New Batch Starting Soon",
+        "subheadline": "Join 44K+ learners building real-world data skills",
+        "cta": "Reserve Your Spot",
+        "price": "Limited Seats",
+        "originalPrice": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "Lifetime Access • Job Assistance",
+        "bodyText": "10 Weeks • 7 Projects • 2 Virtual Internships • Discord Community"
+      },
+      "previewColors": ["#3B82F6", "#D7EF3F"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "Awareness",
+      "name": "Top of Funnel",
+      "description": "Attract new potential learners"
+    },
+    {
+      "id": "Consideration",
+      "name": "Middle of Funnel",
+      "description": "Help prospects evaluate the offering"
+    },
+    {
+      "id": "Conversion",
+      "name": "Bottom of Funnel",
+      "description": "Drive enrollment decisions"
+    },
+    {
+      "id": "Social Proof",
+      "name": "Testimonials",
+      "description": "Build trust with success stories"
+    },
+    {
+      "id": "Engagement",
+      "name": "Community",
+      "description": "Promote live events and community"
+    },
+    {
+      "id": "Announcement",
+      "name": "News",
+      "description": "New batches, updates, launches"
+    }
+  ]
+}
