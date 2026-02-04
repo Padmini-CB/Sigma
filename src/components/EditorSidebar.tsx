@@ -19,6 +19,7 @@ interface EditorSidebarProps {
   onFieldChange: (field: keyof EditorFields, value: string) => void;
   onDesignSelect: (design: TemplateDesign) => void;
   selectedDesignId: string | null;
+  templateCategory: string;
   isOpen?: boolean;
   onClose?: () => void;
   isMobile?: boolean;
@@ -32,7 +33,7 @@ interface FieldConfig {
   hint?: string;
 }
 
-const fieldConfigs: FieldConfig[] = [
+const topFieldConfigs: FieldConfig[] = [
   {
     key: 'headline',
     label: 'Headline',
@@ -60,26 +61,25 @@ const fieldConfigs: FieldConfig[] = [
     type: 'textarea',
     hint: 'Highlight what the learner gets',
   },
-  {
-    key: 'cta',
-    label: 'Call to Action',
-    placeholder: 'Enter CTA text...',
-    type: 'text',
-    hint: 'What should the learner do next?',
-  },
+];
+
+const priceFieldConfigs: FieldConfig[] = [
   {
     key: 'price',
-    label: 'Price',
+    label: 'Price (Optional)',
     placeholder: '₹12,000',
     type: 'text',
   },
   {
     key: 'originalPrice',
-    label: 'Compare At Price',
+    label: 'Original Price (Optional)',
     placeholder: '₹24,000',
     type: 'text',
-    hint: 'Shows value compared to full program investment',
+    hint: 'Optional \u2014 shows crossed-out price for comparison',
   },
+];
+
+const bottomFieldConfigs: FieldConfig[] = [
   {
     key: 'credibility',
     label: 'Trust Signal',
@@ -89,16 +89,136 @@ const fieldConfigs: FieldConfig[] = [
   },
 ];
 
+const CTA_PRESETS = [
+  'Start Learning Today',
+  'Explore the Bootcamp',
+  'Join 44,000+ Learners',
+  'Build Your Data Career',
+  'Watch Free Lessons First',
+  'Download Curriculum',
+  'Talk to Our Team',
+  'Claim Your Seat',
+];
+
+const CUSTOM_CTA_VALUE = '___custom___';
+
 const designs = templateDesignsData.designs as TemplateDesign[];
+
+function FieldRenderer({
+  config,
+  fields,
+  onFieldChange,
+  isMobile,
+}: {
+  config: FieldConfig;
+  fields: EditorFields;
+  onFieldChange: (field: keyof EditorFields, value: string) => void;
+  isMobile?: boolean;
+}) {
+  const fieldId = `${isMobile ? 'mobile-' : ''}${config.key}`;
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={fieldId}
+        className="block font-ui text-sm font-semibold text-brand-navy"
+      >
+        {config.label}
+      </label>
+      {config.type === 'textarea' ? (
+        <textarea
+          id={fieldId}
+          value={fields[config.key]}
+          onChange={(e) => onFieldChange(config.key, e.target.value)}
+          placeholder={config.placeholder}
+          rows={3}
+          className="w-full px-3 py-2 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors resize-none"
+        />
+      ) : (
+        <input
+          type="text"
+          id={fieldId}
+          value={fields[config.key]}
+          onChange={(e) => onFieldChange(config.key, e.target.value)}
+          placeholder={config.placeholder}
+          className="w-full px-3 py-2 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors"
+        />
+      )}
+      {config.hint && (
+        <p className="font-ui text-xs text-gray-400">{config.hint}</p>
+      )}
+    </div>
+  );
+}
+
+function CtaField({
+  fields,
+  onFieldChange,
+  isMobile,
+}: {
+  fields: EditorFields;
+  onFieldChange: (field: keyof EditorFields, value: string) => void;
+  isMobile?: boolean;
+}) {
+  const isPreset = CTA_PRESETS.includes(fields.cta);
+  const selectValue = isPreset ? fields.cta : CUSTOM_CTA_VALUE;
+  const selectId = `${isMobile ? 'mobile-' : ''}cta-select`;
+  const customId = `${isMobile ? 'mobile-' : ''}cta-custom`;
+
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={selectId}
+        className="block font-ui text-sm font-semibold text-brand-navy"
+      >
+        Call to Action
+      </label>
+      <select
+        id={selectId}
+        value={selectValue}
+        onChange={(e) => {
+          if (e.target.value === CUSTOM_CTA_VALUE) {
+            onFieldChange('cta', '');
+          } else {
+            onFieldChange('cta', e.target.value);
+          }
+        }}
+        className="w-full px-3 py-2.5 rounded-lg border border-gray-300 font-body text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors cursor-pointer"
+      >
+        {CTA_PRESETS.map((preset) => (
+          <option key={preset} value={preset}>
+            {preset}
+          </option>
+        ))}
+        <option value={CUSTOM_CTA_VALUE}>Custom...</option>
+      </select>
+      {!isPreset && (
+        <input
+          type="text"
+          id={customId}
+          value={fields.cta}
+          onChange={(e) => onFieldChange('cta', e.target.value)}
+          placeholder="Enter custom CTA text..."
+          className="w-full px-3 py-2 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors"
+        />
+      )}
+      <p className="font-ui text-xs text-gray-400">
+        What should the learner do next?
+      </p>
+    </div>
+  );
+}
 
 function SidebarContent({
   fields,
   onFieldChange,
   onDesignSelect,
   selectedDesignId,
+  templateCategory,
   onClose,
-  isMobile
+  isMobile,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
+  const isPpc = templateCategory === 'PPC';
+
   return (
     <>
       {/* Sidebar Header */}
@@ -155,37 +275,40 @@ function SidebarContent({
 
       {/* Form Fields */}
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
-        {fieldConfigs.map((config) => (
-          <div key={config.key} className="space-y-1.5">
-            <label
-              htmlFor={`${isMobile ? 'mobile-' : ''}${config.key}`}
-              className="block font-ui text-sm font-semibold text-brand-navy"
-            >
-              {config.label}
-            </label>
-            {config.type === 'textarea' ? (
-              <textarea
-                id={`${isMobile ? 'mobile-' : ''}${config.key}`}
-                value={fields[config.key]}
-                onChange={(e) => onFieldChange(config.key, e.target.value)}
-                placeholder={config.placeholder}
-                rows={3}
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors resize-none"
-              />
-            ) : (
-              <input
-                type="text"
-                id={`${isMobile ? 'mobile-' : ''}${config.key}`}
-                value={fields[config.key]}
-                onChange={(e) => onFieldChange(config.key, e.target.value)}
-                placeholder={config.placeholder}
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors"
-              />
-            )}
-            {config.hint && (
-              <p className="font-ui text-xs text-gray-400">{config.hint}</p>
-            )}
-          </div>
+        {topFieldConfigs.map((config) => (
+          <FieldRenderer
+            key={config.key}
+            config={config}
+            fields={fields}
+            onFieldChange={onFieldChange}
+            isMobile={isMobile}
+          />
+        ))}
+
+        <CtaField
+          fields={fields}
+          onFieldChange={onFieldChange}
+          isMobile={isMobile}
+        />
+
+        {isPpc && priceFieldConfigs.map((config) => (
+          <FieldRenderer
+            key={config.key}
+            config={config}
+            fields={fields}
+            onFieldChange={onFieldChange}
+            isMobile={isMobile}
+          />
+        ))}
+
+        {bottomFieldConfigs.map((config) => (
+          <FieldRenderer
+            key={config.key}
+            config={config}
+            fields={fields}
+            onFieldChange={onFieldChange}
+            isMobile={isMobile}
+          />
         ))}
       </div>
 
@@ -222,6 +345,7 @@ export default function EditorSidebar({
   onFieldChange,
   onDesignSelect,
   selectedDesignId,
+  templateCategory,
   isOpen = true,
   onClose,
   isMobile = false
@@ -261,6 +385,7 @@ export default function EditorSidebar({
             onFieldChange={onFieldChange}
             onDesignSelect={onDesignSelect}
             selectedDesignId={selectedDesignId}
+            templateCategory={templateCategory}
             onClose={onClose}
             isMobile={true}
           />
@@ -277,6 +402,7 @@ export default function EditorSidebar({
         onFieldChange={onFieldChange}
         onDesignSelect={onDesignSelect}
         selectedDesignId={selectedDesignId}
+        templateCategory={templateCategory}
         isMobile={false}
       />
     </aside>

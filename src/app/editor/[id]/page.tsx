@@ -217,6 +217,7 @@ export default function EditorPage() {
           onFieldChange={handleFieldChange}
           onDesignSelect={handleDesignSelect}
           selectedDesignId={selectedDesignId}
+          templateCategory={template.category}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -225,6 +226,7 @@ export default function EditorPage() {
           onFieldChange={handleFieldChange}
           onDesignSelect={handleDesignSelect}
           selectedDesignId={selectedDesignId}
+          templateCategory={template.category}
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           isMobile={true}
