@@ -25,72 +25,53 @@ export function useExportPng(): UseExportPngReturn {
     isExportingRef.current = true;
     setIsExporting(true);
 
-    // The export element lives inside a wrapper div that is positioned
-    // offscreen (position: fixed; left: -99999px). html2canvas cannot
-    // capture elements at extreme offscreen positions — it produces a
-    // blank canvas. Rather than cloning (which loses computed layout and
-    // styles), we temporarily reposition the actual wrapper on-screen
-    // behind all page content, capture it, then restore it.
-    const wrapper = element.parentElement;
-
     try {
-      // Dynamic import avoids SSR/build failures on Vercel.
-      // Handle both ESM default export and CJS module.exports, since
-      // Turbopack's CJS→ESM interop may or may not wrap html2canvas.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const html2canvasMod = await import('html2canvas') as any;
-      const html2canvas = html2canvasMod.default || html2canvasMod;
-
-      if (typeof html2canvas !== 'function') {
-        throw new Error('html2canvas failed to load');
-      }
-
-      // Wait for Google Fonts to finish loading. html2canvas v1.4.1 does
-      // NOT do this internally — without it, text renders with fallback
-      // fonts or invisible glyphs.
+      // Wait for all fonts (Google Fonts loaded via <link>) to finish
+      // loading before we capture. Without this, text can render with
+      // fallback fonts or invisible glyphs.
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
 
-      // Temporarily move the wrapper on-screen behind all content.
-      // z-index: -1 keeps it invisible to the user.
-      let canvas: HTMLCanvasElement;
-      try {
-        if (wrapper) {
-          wrapper.style.left = '0px';
-          wrapper.style.top = '0px';
-          wrapper.style.zIndex = '-1';
-        }
+      // Dynamic import to avoid SSR/build failures on Vercel.
+      // Handle both ESM default export and CJS module.exports since
+      // Turbopack's interop behavior varies between dev and production.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mod = await import('dom-to-image-more') as any;
+      const domtoimage = mod.default || mod;
 
-        // Wait one animation frame so the browser computes layout at
-        // the new position. Without this, getComputedStyle() returns
-        // stale values and html2canvas renders a blank canvas.
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-
-        canvas = await html2canvas(element, {
-          width,
-          height,
-          scale: 2,
-          useCORS: true,
-          backgroundColor: null,
-          logging: false,
-        });
-      } finally {
-        // ALWAYS restore offscreen position, even if capture throws
-        if (wrapper) {
-          wrapper.style.left = '-99999px';
-          wrapper.style.top = '-99999px';
-          wrapper.style.zIndex = '';
-        }
+      if (typeof domtoimage.toBlob !== 'function') {
+        throw new Error(
+          `dom-to-image-more loaded but toBlob is not a function. ` +
+          `Module keys: [${Object.keys(mod).join(', ')}]`
+        );
       }
 
-      // Convert canvas to blob
-      const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob(resolve, 'image/png', 1.0);
+      // dom-to-image-more works by:
+      //   1. Cloning the target element
+      //   2. Inlining every computed style (already resolved by the
+      //      browser — CSS custom properties, Tailwind utilities, etc.
+      //      are all collapsed to final values)
+      //   3. Embedding fonts by fetching cross-origin @font-face rules
+      //      and converting font files to base64 data URIs
+      //   4. Serializing the clone to an SVG foreignObject
+      //   5. Drawing the SVG to a canvas
+      //   6. Exporting the canvas as a PNG blob
+      //
+      // This bypasses every issue html2canvas had:
+      //   - CSS custom property chains  → resolved by getComputedStyle
+      //   - backdrop-filter             → serialized into SVG correctly
+      //   - Offscreen elements          → computed styles are valid
+      //   - Cross-origin Google Fonts   → fetched and embedded as base64
+
+      const blob: Blob = await domtoimage.toBlob(element, {
+        width,
+        height,
+        cacheBust: true,
       });
 
-      if (!blob) {
-        throw new Error('Failed to create PNG blob');
+      if (!blob || blob.size === 0) {
+        throw new Error(`Export produced empty image (blob size: ${blob?.size ?? 'null'})`);
       }
 
       // Trigger file download
@@ -111,7 +92,7 @@ export function useExportPng(): UseExportPngReturn {
       // download. Revoking immediately after click() silently kills it.
       setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (error) {
-      console.error('Export failed:', error);
+      console.error('PNG export failed:', error);
       throw error;
     } finally {
       isExportingRef.current = false;

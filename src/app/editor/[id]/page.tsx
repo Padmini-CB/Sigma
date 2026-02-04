@@ -106,8 +106,9 @@ export default function EditorPage() {
         height: template.dimensions.height,
       });
       showToast('success', 'Export Complete', `${template.name} saved as PNG`);
-    } catch {
-      showToast('error', 'Export Failed', 'Unable to generate PNG. Please try again.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      showToast('error', 'Export Failed', message);
     }
   };
 
