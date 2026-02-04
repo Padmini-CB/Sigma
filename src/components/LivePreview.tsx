@@ -202,7 +202,6 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           style={{
             width: template.dimensions.width,
             height: template.dimensions.height,
-            overflow: 'hidden',
           }}
         >
           <TemplateContent
