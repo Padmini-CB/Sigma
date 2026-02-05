@@ -229,96 +229,168 @@ interface TemplateContentProps {
 function TemplateContent({ fields, template, isVertical, isSquare, colors }: TemplateContentProps) {
   const { headline, subheadline, cta, price, originalPrice, courseName, credibility, bodyText } = fields;
 
+  // Brand colors
+  const BRAND_BLUE = '#3B82F6';
+  const BRAND_PURPLE = '#6F53C1';
+  const BRAND_NAVY = '#181830';
+  const BRAND_LIME = '#D7EF3F';
+
+  // Check if this is a PPC template (only PPC shows price)
+  const isPPC = template.category === 'PPC';
+
   // Calculate responsive font sizes based on template dimensions
-  const baseFontSize = Math.min(template.dimensions.width, template.dimensions.height) / 20;
+  // Reduced headline size to prevent overflow
+  const { width, height } = template.dimensions;
+  const baseFontSize = Math.min(width, height) / 25;
 
   const fontSizes = {
-    headline: isVertical ? baseFontSize * 2.2 : baseFontSize * 2,
-    subheadline: baseFontSize * 1.1,
-    body: baseFontSize * 0.85,
-    cta: baseFontSize * 0.9,
-    price: baseFontSize * 1.4,
-    small: baseFontSize * 0.7,
+    headline: isVertical ? baseFontSize * 1.6 : baseFontSize * 1.4,
+    subheadline: baseFontSize * 0.9,
+    body: baseFontSize * 0.75,
+    cta: baseFontSize * 0.8,
+    price: baseFontSize * 1.1,
+    small: baseFontSize * 0.6,
   };
 
-  const padding = baseFontSize * 1.5;
+  // Padding at ~5% of template width
+  const padding = width * 0.05;
+
+  // Determine gradient based on template colors
+  const getGradient = () => {
+    // Use brand-accurate gradients
+    const color1 = colors[0] || BRAND_BLUE;
+    const color2 = colors[1] || BRAND_PURPLE;
+
+    // If dark navy is first, use dark variant gradient
+    if (color1 === BRAND_NAVY || color1 === '#181830') {
+      return `linear-gradient(135deg, ${BRAND_NAVY}, ${BRAND_PURPLE})`;
+    }
+    // Default to primary gradient (blue to purple)
+    return `linear-gradient(135deg, ${BRAND_BLUE}, ${BRAND_PURPLE})`;
+  };
 
   if (isVertical) {
-    // Vertical Layout (Stories format)
+    // Vertical Layout (Stories format) - Flexbox with hard boundaries
     return (
       <div
-        className="w-full h-full flex flex-col"
         style={{
-          background: `linear-gradient(180deg, ${colors[0]}, ${colors[1]})`,
+          width: width,
+          height: height,
+          background: getGradient(),
           padding: padding,
+          display: 'flex',
+          flexDirection: 'column',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        {/* Top Section - Credibility */}
-        <div className="flex items-center justify-between mb-auto">
+        {/* Top Bar - Credibility & Course Name (flex-shrink: 0) */}
+        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div
-            className="bg-white/20 backdrop-blur rounded-full px-4 py-2"
-            style={{ fontSize: fontSizes.small }}
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '9999px',
+              padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`,
+              fontSize: fontSizes.small,
+            }}
           >
-            <span className="font-ui font-semibold text-white">{credibility}</span>
+            <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{credibility}</span>
           </div>
-        </div>
-
-        {/* Middle Section - Main Content */}
-        <div className="flex-1 flex flex-col justify-center text-center" style={{ gap: padding }}>
           <p
-            className="font-body text-white/80 uppercase tracking-wider"
-            style={{ fontSize: fontSizes.small }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: fontSizes.small,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
           >
             {courseName}
           </p>
+        </div>
+
+        {/* Main Content Section (flex: 1, overflow: hidden) */}
+        <div
+          style={{
+            flex: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            textAlign: 'center',
+            gap: padding * 0.5,
+            paddingTop: padding * 0.5,
+            paddingBottom: padding * 0.5,
+          }}
+        >
           <h1
-            className="font-headline font-extrabold text-white leading-tight"
-            style={{ fontSize: fontSizes.headline }}
+            className="font-headline font-extrabold"
+            style={{
+              color: '#FFFFFF',
+              fontSize: fontSizes.headline,
+              lineHeight: 1.1,
+            }}
           >
             {headline}
           </h1>
           <p
-            className="font-body text-white/90"
-            style={{ fontSize: fontSizes.subheadline }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: fontSizes.subheadline,
+            }}
           >
             {subheadline}
           </p>
           <p
-            className="font-body text-white/70"
-            style={{ fontSize: fontSizes.body }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: fontSizes.body,
+            }}
           >
             {bodyText}
           </p>
         </div>
 
-        {/* Bottom Section - CTA & Price */}
-        <div className="mt-auto space-y-4">
-          {/* Price */}
-          <div className="flex items-center justify-center gap-3">
-            <span
-              className="font-headline font-bold text-white"
-              style={{ fontSize: fontSizes.price }}
-            >
-              {price}
-            </span>
-            {originalPrice && (
+        {/* Bottom Bar - CTA & Price (flex-shrink: 0) */}
+        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3 }}>
+          {/* Price - Only show on PPC templates */}
+          {isPPC && price && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: fontSizes.small }}>
               <span
-                className="font-body text-white/50 line-through"
-                style={{ fontSize: fontSizes.body }}
+                className="font-headline font-bold"
+                style={{ color: '#FFFFFF', fontSize: fontSizes.price }}
               >
-                {originalPrice}
+                {price}
               </span>
-            )}
-          </div>
+              {originalPrice && (
+                <span
+                  className="font-body"
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontSize: fontSizes.body,
+                    textDecoration: 'line-through',
+                  }}
+                >
+                  {originalPrice}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* CTA Button */}
           <div
-            className="w-full font-ui font-semibold rounded-lg text-center"
+            className="font-ui font-semibold"
             style={{
-              backgroundColor: '#D7EF3F',
-              color: '#181830',
+              backgroundColor: BRAND_LIME,
+              color: BRAND_NAVY,
               fontSize: fontSizes.cta,
-              padding: `${fontSizes.cta * 0.8}px ${fontSizes.cta * 1.5}px`,
+              padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`,
+              borderRadius: '8px',
+              textAlign: 'center',
+              width: '100%',
             }}
           >
             {cta}
@@ -329,174 +401,311 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
   }
 
   if (isSquare) {
-    // Square Layout (Feed posts)
+    // Square Layout (Feed posts) - Flexbox with hard boundaries
     return (
       <div
-        className="w-full h-full flex flex-col"
         style={{
-          background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`,
+          width: width,
+          height: height,
+          background: getGradient(),
           padding: padding,
+          display: 'flex',
+          flexDirection: 'column',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        {/* Top Section - Credibility & Course Name */}
-        <div className="flex items-center justify-between">
+        {/* Top Bar - Credibility & Course Name (flex-shrink: 0) */}
+        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div
-            className="bg-white/20 backdrop-blur rounded-full px-4 py-2"
-            style={{ fontSize: fontSizes.small }}
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '9999px',
+              padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`,
+              fontSize: fontSizes.small,
+            }}
           >
-            <span className="font-ui font-semibold text-white">{credibility}</span>
+            <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{credibility}</span>
           </div>
           <p
-            className="font-body text-white/80 uppercase tracking-wider"
-            style={{ fontSize: fontSizes.small }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: fontSizes.small,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
           >
             {courseName}
           </p>
         </div>
 
-        {/* Middle Section - Main Content */}
-        <div className="flex-1 flex flex-col justify-center" style={{ gap: padding * 0.8 }}>
+        {/* Main Content Section (flex: 1, overflow: hidden) */}
+        <div
+          style={{
+            flex: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: padding * 0.4,
+          }}
+        >
           <h1
-            className="font-headline font-extrabold text-white leading-tight"
-            style={{ fontSize: fontSizes.headline }}
+            className="font-headline font-extrabold"
+            style={{
+              color: '#FFFFFF',
+              fontSize: fontSizes.headline,
+              lineHeight: 1.1,
+            }}
           >
             {headline}
           </h1>
           <p
-            className="font-body text-white/90"
-            style={{ fontSize: fontSizes.subheadline }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: fontSizes.subheadline,
+            }}
           >
             {subheadline}
           </p>
           <p
-            className="font-body text-white/70"
-            style={{ fontSize: fontSizes.body }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: fontSizes.body,
+            }}
           >
             {bodyText}
           </p>
         </div>
 
-        {/* Bottom Section - CTA & Price */}
-        <div className="flex items-center justify-between">
+        {/* Bottom Bar - CTA & Price (flex-shrink: 0) */}
+        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* CTA Button */}
           <div
-            className="font-ui font-semibold rounded-lg"
+            className="font-ui font-semibold"
             style={{
-              backgroundColor: '#D7EF3F',
-              color: '#181830',
+              backgroundColor: BRAND_LIME,
+              color: BRAND_NAVY,
               fontSize: fontSizes.cta,
               padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`,
+              borderRadius: '8px',
             }}
           >
             {cta}
           </div>
 
-          {/* Price */}
-          <div className="flex items-center gap-2">
-            <span
-              className="font-headline font-bold text-white"
-              style={{ fontSize: fontSizes.price }}
-            >
-              {price}
-            </span>
-            {originalPrice && (
+          {/* Price - Only show on PPC templates */}
+          {isPPC && price && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: fontSizes.small * 0.5 }}>
               <span
-                className="font-body text-white/50 line-through"
-                style={{ fontSize: fontSizes.body }}
+                className="font-headline font-bold"
+                style={{ color: '#FFFFFF', fontSize: fontSizes.price }}
               >
-                {originalPrice}
+                {price}
               </span>
-            )}
-          </div>
+              {originalPrice && (
+                <span
+                  className="font-body"
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontSize: fontSizes.body,
+                    textDecoration: 'line-through',
+                  }}
+                >
+                  {originalPrice}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // Landscape Layout (Display ads, LinkedIn, etc.)
+  // Landscape Layout (Display ads, LinkedIn, etc.) - Flexbox with hard boundaries
   return (
     <div
-      className="w-full h-full flex"
       style={{
-        background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`,
+        width: width,
+        height: height,
+        background: getGradient(),
         padding: padding,
+        display: 'flex',
+        flexDirection: 'row',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
       }}
     >
-      {/* Left Content */}
-      <div className="flex-1 flex flex-col justify-between pr-8">
-        {/* Top - Credibility */}
+      {/* Left Content - Main area */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          paddingRight: padding * 0.5,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Top - Credibility (flex-shrink: 0) */}
         <div
-          className="bg-white/20 backdrop-blur rounded-full px-4 py-2 self-start"
-          style={{ fontSize: fontSizes.small }}
+          style={{
+            flexShrink: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '9999px',
+            padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`,
+            fontSize: fontSizes.small,
+            alignSelf: 'flex-start',
+          }}
         >
-          <span className="font-ui font-semibold text-white">{credibility}</span>
+          <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{credibility}</span>
         </div>
 
-        {/* Middle - Main Content */}
-        <div style={{ gap: padding * 0.5 }} className="flex flex-col">
+        {/* Middle - Main Content (flex: 1, overflow: hidden) */}
+        <div
+          style={{
+            flex: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: padding * 0.25,
+          }}
+        >
           <p
-            className="font-body text-white/80 uppercase tracking-wider"
-            style={{ fontSize: fontSizes.small }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: fontSizes.small,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
           >
             {courseName}
           </p>
           <h1
-            className="font-headline font-extrabold text-white leading-tight"
-            style={{ fontSize: fontSizes.headline }}
+            className="font-headline font-extrabold"
+            style={{
+              color: '#FFFFFF',
+              fontSize: fontSizes.headline,
+              lineHeight: 1.1,
+            }}
           >
             {headline}
           </h1>
           <p
-            className="font-body text-white/90"
-            style={{ fontSize: fontSizes.subheadline }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: fontSizes.subheadline,
+            }}
           >
             {subheadline}
           </p>
         </div>
 
-        {/* Bottom - CTA */}
+        {/* Bottom - CTA (flex-shrink: 0) */}
         <div
-          className="font-ui font-semibold rounded-lg self-start"
+          className="font-ui font-semibold"
           style={{
-            backgroundColor: '#D7EF3F',
-            color: '#181830',
+            flexShrink: 0,
+            backgroundColor: BRAND_LIME,
+            color: BRAND_NAVY,
             fontSize: fontSizes.cta,
-            padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`,
+            padding: `${fontSizes.cta * 0.6}px ${fontSizes.cta * 1}px`,
+            borderRadius: '8px',
+            alignSelf: 'flex-start',
           }}
         >
           {cta}
         </div>
       </div>
 
-      {/* Right Content - Price & Features */}
-      <div className="w-1/3 flex flex-col justify-center items-end text-right">
-        <div className="bg-white/10 backdrop-blur rounded-xl p-4" style={{ padding: padding * 0.8 }}>
-          {/* Price */}
-          <div className="mb-3">
-            <span
-              className="font-headline font-bold text-white block"
-              style={{ fontSize: fontSizes.price }}
-            >
-              {price}
-            </span>
-            {originalPrice && (
-              <span
-                className="font-body text-white/50 line-through"
-                style={{ fontSize: fontSizes.body }}
-              >
-                {originalPrice}
-              </span>
+      {/* Right Content - Price & Features (only show price box on PPC) */}
+      {isPPC ? (
+        <div
+          style={{
+            width: '35%',
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            textAlign: 'right',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '12px',
+              padding: padding * 0.6,
+            }}
+          >
+            {/* Price */}
+            {price && (
+              <div style={{ marginBottom: fontSizes.small * 0.5 }}>
+                <span
+                  className="font-headline font-bold"
+                  style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}
+                >
+                  {price}
+                </span>
+                {originalPrice && (
+                  <span
+                    className="font-body"
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      fontSize: fontSizes.body,
+                      textDecoration: 'line-through',
+                    }}
+                  >
+                    {originalPrice}
+                  </span>
+                )}
+              </div>
             )}
+            {/* Features */}
+            <p
+              className="font-body"
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: fontSizes.small,
+              }}
+            >
+              {bodyText}
+            </p>
           </div>
-          {/* Features */}
+        </div>
+      ) : (
+        /* Non-PPC: Show body text without price box */
+        <div
+          style={{
+            width: '35%',
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            textAlign: 'right',
+          }}
+        >
           <p
-            className="font-body text-white/70"
-            style={{ fontSize: fontSizes.small }}
+            className="font-body"
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: fontSizes.body,
+            }}
           >
             {bodyText}
           </p>
         </div>
-      </div>
+      )}
     </div>
   );
 }
