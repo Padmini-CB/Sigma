@@ -94,7 +94,7 @@ const CTA_PRESETS = [
   'Explore the Bootcamp',
   'Join 44,000+ Learners',
   'Build Your Data Career',
-  'Watch Free Lessons First',
+  'Preview Sample Lessons',
   'Download Curriculum',
   'Talk to Our Team',
   'Claim Your Seat',
