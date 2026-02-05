@@ -154,7 +154,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
 
           {/* Template Preview */}
           <div
-            className="relative shadow-2xl overflow-hidden"
+            className="relative shadow-2xl"
             style={previewStyle}
           >
             {/* Template Content - Dynamic Layout Based on Type */}
@@ -202,7 +202,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           style={{
             width: template.dimensions.width,
             height: template.dimensions.height,
-            overflow: 'hidden',
+            overflow: 'visible',
           }}
         >
           <TemplateContent
