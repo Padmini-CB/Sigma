@@ -2,7 +2,7 @@
 
 import { EditorFields } from '@/app/editor/[id]/page';
 import templateDesignsData from '@/data/templateDesigns.json';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TemplateDesign {
   id: string;
@@ -68,14 +68,6 @@ const priceFieldConfig: FieldConfig = {
   label: 'Price (Optional)',
   placeholder: '₹12,000',
   type: 'text',
-};
-
-const originalPriceFieldConfig: FieldConfig = {
-  key: 'originalPrice',
-  label: 'Original Price (Optional)',
-  placeholder: '₹24,000',
-  type: 'text',
-  hint: 'Optional \u2014 shows crossed-out price for comparison',
 };
 
 const bottomFieldConfigs: FieldConfig[] = [
@@ -216,7 +208,7 @@ function SidebarContent({
   onClose,
   isMobile,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
-  const isPpc = templateCategory === 'PPC';
+  const [activeTab, setActiveTab] = useState<'edit' | 'assets'>('edit');
 
   return (
     <>
@@ -225,10 +217,10 @@ function SidebarContent({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-headline text-lg font-bold text-brand-navy">
-              Edit Content
+              {activeTab === 'edit' ? 'Edit Content' : 'Assets'}
             </h2>
             <p className="font-body text-sm text-gray-500 mt-1">
-              Changes update the preview in real-time
+              {activeTab === 'edit' ? 'Changes update the preview in real-time' : 'Drag elements to canvas (coming soon)'}
             </p>
           </div>
           {isMobile && onClose && (
@@ -243,7 +235,88 @@ function SidebarContent({
             </button>
           )}
         </div>
+
+        {/* Tab Bar */}
+        <div className="flex gap-1 mt-3 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setActiveTab('edit')}
+            className={`flex-1 px-3 py-1.5 rounded-md font-ui text-sm font-semibold transition-colors ${
+              activeTab === 'edit'
+                ? 'bg-white text-brand-navy shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => setActiveTab('assets')}
+            className={`flex-1 px-3 py-1.5 rounded-md font-ui text-sm font-semibold transition-colors ${
+              activeTab === 'assets'
+                ? 'bg-white text-brand-navy shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Assets
+          </button>
+        </div>
       </div>
+
+      {activeTab === 'assets' ? (
+        /* Assets Panel */
+        <div className="flex-1 overflow-y-auto p-4">
+          <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
+            Characters
+          </p>
+          <div className="space-y-2 mb-6">
+            {[
+              { name: 'Peter Pandey', color: 'border-orange-400 bg-orange-50', textColor: 'text-orange-700' },
+              { name: 'Tony Sharma', color: 'border-red-400 bg-red-50', textColor: 'text-red-700' },
+              { name: 'Bruce Ariely', color: 'border-purple-400 bg-purple-50', textColor: 'text-purple-700' },
+            ].map((char) => (
+              <button
+                key={char.name}
+                onClick={() => console.log(`Add ${char.name} to canvas`)}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 ${char.color} hover:shadow-md transition-all cursor-pointer`}
+              >
+                <div className={`w-10 h-10 rounded-lg border-2 ${char.color} flex items-center justify-center`}>
+                  <span className={`font-headline font-bold text-sm ${char.textColor}`}>
+                    {char.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <span className={`font-ui text-sm font-semibold ${char.textColor}`}>{char.name}</span>
+              </button>
+            ))}
+          </div>
+
+          <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
+            Brand Elements
+          </p>
+          <div className="space-y-2">
+            {[
+              { name: 'AtliQ Logo', color: 'border-blue-400 bg-blue-50', textColor: 'text-blue-700' },
+              { name: 'YouTube Badge (1M+ Subs)', color: 'border-red-400 bg-red-50', textColor: 'text-red-700' },
+            ].map((el) => (
+              <button
+                key={el.name}
+                onClick={() => console.log(`Add ${el.name} to canvas`)}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 ${el.color} hover:shadow-md transition-all cursor-pointer`}
+              >
+                <div className={`w-10 h-10 rounded-lg border-2 ${el.color} flex items-center justify-center`}>
+                  <span className={`font-ui font-bold text-xs ${el.textColor}`}>
+                    {el.name.split(' ')[0]}
+                  </span>
+                </div>
+                <span className={`font-ui text-sm font-semibold ${el.textColor}`}>{el.name}</span>
+              </button>
+            ))}
+          </div>
+
+          <p className="font-body text-xs text-gray-400 mt-6 text-center italic">
+            Drag &amp; drop coming in Sprint 4
+          </p>
+        </div>
+      ) : (
+      <>
 
       {/* Template Design Selector */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-brand-blue/5 to-brand-purple/5 flex-shrink-0">
@@ -297,15 +370,6 @@ function SidebarContent({
           isMobile={isMobile}
         />
 
-        {isPpc && (
-          <FieldRenderer
-            config={originalPriceFieldConfig}
-            fields={fields}
-            onFieldChange={onFieldChange}
-            isMobile={isMobile}
-          />
-        )}
-
         {bottomFieldConfigs.map((config) => (
           <FieldRenderer
             key={config.key}
@@ -341,6 +405,8 @@ function SidebarContent({
           </div>
         </div>
       </div>
+      </>
+      )}
     </>
   );
 }

@@ -16,8 +16,8 @@ const characters = [
     color: 'from-orange-500 to-red-500',
   },
   {
-    name: 'Bruce Hariyali',
-    initials: 'BH',
+    name: 'Bruce Ariely',
+    initials: 'BA',
     role: 'The Overthinker',
     subtitle: 'Analyzes until paralysis',
     color: 'from-brand-purple to-pink-500',
@@ -26,13 +26,13 @@ const characters = [
 
 export default function CharacterSection() {
   return (
-    <section className="py-20 sm:py-28 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-20 sm:py-28 bg-brand-navy">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-brand-navy mb-4">
+          <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
             The Characters That Bring Our Brand to Life
           </h2>
-          <p className="font-body text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="font-body text-lg text-gray-400 max-w-2xl mx-auto">
             The Codebasics Universe
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function CharacterSection() {
         </div>
 
         {/* Footer quote */}
-        <p className="font-body text-lg text-gray-600 text-center italic">
+        <p className="font-body text-lg text-gray-400 text-center italic">
           &ldquo;We mock the mistake, not the learner.&rdquo;
         </p>
       </div>

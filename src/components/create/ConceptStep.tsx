@@ -135,15 +135,20 @@ export default function ConceptStep({ canvas, bootcamp, intent, onBack }: Concep
   const concepts = conceptMappings[key] || conceptMappings['default'];
 
   const handleUseConcept = (concept: Concept) => {
-    // Navigate to editor with the selected template
-    router.push(`/editor/${concept.templateId}`);
+    // Navigate to editor with selected template and pass intent data as query params
+    const params = new URLSearchParams({
+      bootcamp,
+      intent,
+      headline: concept.title,
+    });
+    router.push(`/editor/${concept.templateId}?${params.toString()}`);
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
       <button
         onClick={onBack}
-        className="inline-flex items-center gap-2 font-ui text-sm text-gray-500 hover:text-brand-navy mb-8 transition-colors"
+        className="inline-flex items-center gap-2 font-ui text-sm text-gray-400 hover:text-white mb-8 transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -151,7 +156,7 @@ export default function ConceptStep({ canvas, bootcamp, intent, onBack }: Concep
         Back
       </button>
 
-      <h2 className="font-headline text-3xl sm:text-4xl font-bold text-brand-navy text-center mb-4">
+      <h2 className="font-headline text-3xl sm:text-4xl font-bold text-white text-center mb-4">
         Here are concepts that match your intent
       </h2>
 
@@ -160,11 +165,11 @@ export default function ConceptStep({ canvas, bootcamp, intent, onBack }: Concep
         <span className="inline-flex items-center px-3 py-1 bg-brand-blue/10 text-brand-blue rounded-full font-ui text-sm">
           {canvasNames[canvas] || canvas}
         </span>
-        <span className="text-gray-300">·</span>
+        <span className="text-gray-500">·</span>
         <span className="inline-flex items-center px-3 py-1 bg-brand-purple/10 text-brand-purple rounded-full font-ui text-sm">
           {bootcampNames[bootcamp] || bootcamp}
         </span>
-        <span className="text-gray-300">·</span>
+        <span className="text-gray-500">·</span>
         <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full font-ui text-sm">
           {intentNames[intent] || intent}
         </span>

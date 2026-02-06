@@ -44,13 +44,13 @@ export default function CreatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-brand-navy">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-brand-navy/90 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              <h1 className="font-headline text-2xl font-bold text-brand-navy">
+              <h1 className="font-headline text-2xl font-bold text-white">
                 SIGMA
               </h1>
             </Link>
@@ -126,15 +126,15 @@ export default function CreatePage() {
       </main>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-100 py-3 px-6">
+      <footer className="fixed bottom-0 left-0 right-0 bg-brand-navy/90 backdrop-blur-md border-t border-white/10 py-3 px-6">
         <div className="container mx-auto flex items-center justify-between">
           <Link
             href="/"
-            className="font-ui text-sm text-gray-500 hover:text-brand-navy transition-colors"
+            className="font-ui text-sm text-gray-400 hover:text-white transition-colors"
           >
             ← Back to Home
           </Link>
-          <p className="font-ui text-xs text-gray-400 hidden sm:block">
+          <p className="font-ui text-xs text-gray-500 hidden sm:block">
             Need help? The intent you choose shapes your creative direction.
           </p>
         </div>

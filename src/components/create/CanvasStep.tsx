@@ -45,10 +45,10 @@ export default function CanvasStep({ onSelect }: CanvasStepProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <h2 className="font-headline text-3xl sm:text-4xl font-bold text-brand-navy text-center mb-4">
+      <h2 className="font-headline text-3xl sm:text-4xl font-bold text-white text-center mb-4">
         What are you making?
       </h2>
-      <p className="font-body text-gray-600 text-center mb-12">
+      <p className="font-body text-gray-400 text-center mb-12">
         Choose the format that fits your campaign
       </p>
 

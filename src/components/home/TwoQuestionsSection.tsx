@@ -23,20 +23,20 @@ const doActions = [
 
 export default function TwoQuestionsSection() {
   return (
-    <section id="concepts" className="py-20 sm:py-28 bg-white">
+    <section id="concepts" className="py-20 sm:py-28 bg-brand-navy">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-brand-navy mb-4">
+          <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
             The Two Questions That Matter
           </h2>
-          <p className="font-body text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="font-body text-lg text-gray-400 max-w-2xl mx-auto">
             Every effective creative answers these fundamental questions
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
           {/* FEEL Card */}
-          <div className="group relative bg-white rounded-2xl border-2 border-gray-100 p-8 hover:border-brand-purple/30 hover:shadow-xl transition-all duration-300">
+          <div className="flex-1 group relative bg-white rounded-2xl border-2 border-gray-100 p-8 hover:border-brand-purple/30 hover:shadow-xl transition-all duration-300">
             <div className="absolute top-0 left-8 -translate-y-1/2">
               <span className="inline-block px-4 py-1 bg-brand-purple text-white font-ui font-bold text-sm rounded-full">
                 FEEL
@@ -61,7 +61,7 @@ export default function TwoQuestionsSection() {
           </div>
 
           {/* DO Card */}
-          <div className="group relative bg-white rounded-2xl border-2 border-gray-100 p-8 hover:border-brand-blue/30 hover:shadow-xl transition-all duration-300">
+          <div className="flex-1 group relative bg-white rounded-2xl border-2 border-gray-100 p-8 hover:border-brand-blue/30 hover:shadow-xl transition-all duration-300">
             <div className="absolute top-0 left-8 -translate-y-1/2">
               <span className="inline-block px-4 py-1 bg-brand-blue text-white font-ui font-bold text-sm rounded-full">
                 DO
