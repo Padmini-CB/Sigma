@@ -16,8 +16,8 @@ const characters = [
     color: 'from-orange-500 to-red-500',
   },
   {
-    name: 'Bruce Ariely',
-    initials: 'BA',
+    name: 'Bruce Hariyali',
+    initials: 'BH',
     role: 'The Overthinker',
     subtitle: 'Analyzes until paralysis',
     color: 'from-brand-purple to-pink-500',

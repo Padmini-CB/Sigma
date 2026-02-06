@@ -13,6 +13,7 @@ interface Selections {
   canvas: string;
   bootcamp: string;
   intent: string;
+  customDimensions?: { width: number; height: number };
 }
 
 export default function CreatePage() {
@@ -23,8 +24,8 @@ export default function CreatePage() {
     intent: '',
   });
 
-  const handleCanvasSelect = (canvas: string) => {
-    setSelections((prev) => ({ ...prev, canvas }));
+  const handleCanvasSelect = (canvas: string, customDimensions?: { width: number; height: number }) => {
+    setSelections((prev) => ({ ...prev, canvas, customDimensions }));
     setStep(2);
   };
 

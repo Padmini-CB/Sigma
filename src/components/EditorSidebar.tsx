@@ -63,21 +63,20 @@ const topFieldConfigs: FieldConfig[] = [
   },
 ];
 
-const priceFieldConfigs: FieldConfig[] = [
-  {
-    key: 'price',
-    label: 'Price (Optional)',
-    placeholder: '₹12,000',
-    type: 'text',
-  },
-  {
-    key: 'originalPrice',
-    label: 'Original Price (Optional)',
-    placeholder: '₹24,000',
-    type: 'text',
-    hint: 'Optional \u2014 shows crossed-out price for comparison',
-  },
-];
+const priceFieldConfig: FieldConfig = {
+  key: 'price',
+  label: 'Price (Optional)',
+  placeholder: '₹12,000',
+  type: 'text',
+};
+
+const originalPriceFieldConfig: FieldConfig = {
+  key: 'originalPrice',
+  label: 'Original Price (Optional)',
+  placeholder: '₹24,000',
+  type: 'text',
+  hint: 'Optional \u2014 shows crossed-out price for comparison',
+};
 
 const bottomFieldConfigs: FieldConfig[] = [
   {
@@ -291,15 +290,21 @@ function SidebarContent({
           isMobile={isMobile}
         />
 
-        {isPpc && priceFieldConfigs.map((config) => (
+        <FieldRenderer
+          config={priceFieldConfig}
+          fields={fields}
+          onFieldChange={onFieldChange}
+          isMobile={isMobile}
+        />
+
+        {isPpc && (
           <FieldRenderer
-            key={config.key}
-            config={config}
+            config={originalPriceFieldConfig}
             fields={fields}
             onFieldChange={onFieldChange}
             isMobile={isMobile}
           />
-        ))}
+        )}
 
         {bottomFieldConfigs.map((config) => (
           <FieldRenderer

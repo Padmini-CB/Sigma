@@ -11,10 +11,14 @@ const feelIntents = [
 ];
 
 const doActions = [
-  { icon: '💬', label: 'Engage Here', subtitle: 'value in the post itself' },
-  { icon: '🔍', label: 'Explore Deep Value', subtitle: 'YouTube, blog, free resources' },
-  { icon: '📖', label: 'Learn More', subtitle: 'landing page, curriculum details' },
-  { icon: '✅', label: 'Enroll Now', subtitle: 'direct conversion' },
+  { icon: '💬', label: 'Engage Here', subtitle: 'Value in the post itself' },
+  { icon: '🔍', label: 'Explore Free Content', subtitle: 'YouTube, blog, resources' },
+  { icon: '📖', label: 'Learn More', subtitle: 'Landing page, curriculum' },
+  { icon: '✅', label: 'Enroll Now', subtitle: 'Direct conversion' },
+  { icon: '📥', label: 'Download Resources', subtitle: 'PDFs, brochures, cheatsheets' },
+  { icon: '🧭', label: 'Take Career Assessment', subtitle: 'Suitability test' },
+  { icon: '📐', label: 'Calculate Career Roadmap', subtitle: 'Career path calculator' },
+  { icon: '🎯', label: 'Join Live Event', subtitle: 'Webinar, workshop registration' },
 ];
 
 export default function TwoQuestionsSection() {
@@ -68,17 +72,17 @@ export default function TwoQuestionsSection() {
               What should they do next?
             </h3>
 
-            <ul className="space-y-4">
+            <ul className="grid grid-cols-2 gap-2">
               {doActions.map((action) => (
                 <li
                   key={action.label}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
+                  className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
                 >
-                  <span className="text-2xl">{action.icon}</span>
+                  <span className="text-lg flex-shrink-0 mt-0.5">{action.icon}</span>
                   <div>
-                    <span className="font-body text-gray-700">{action.label}</span>
+                    <span className="font-body text-sm text-gray-700 leading-tight block">{action.label}</span>
                     {action.subtitle && (
-                      <span className="font-body text-sm text-gray-400 ml-2">({action.subtitle})</span>
+                      <span className="font-body text-xs text-gray-400 leading-tight block">{action.subtitle}</span>
                     )}
                   </div>
                 </li>

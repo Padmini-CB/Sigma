@@ -356,8 +356,8 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
 
         {/* Bottom Bar - CTA & Price (flex-shrink: 0) */}
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3 }}>
-          {/* Price - Only show on PPC templates */}
-          {isPPC && price && (
+          {/* Price - show for all templates, strikethrough only for PPC */}
+          {price && (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: fontSizes.small }}>
               <span
                 className="font-headline font-bold"
@@ -365,7 +365,7 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
               >
                 {price}
               </span>
-              {originalPrice && (
+              {isPPC && originalPrice && (
                 <span
                   className="font-body"
                   style={{
@@ -498,8 +498,8 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
             {cta}
           </div>
 
-          {/* Price - Only show on PPC templates */}
-          {isPPC && price && (
+          {/* Price - show for all templates, strikethrough only for PPC */}
+          {price && (
             <div style={{ display: 'flex', alignItems: 'center', gap: fontSizes.small * 0.5 }}>
               <span
                 className="font-headline font-bold"
@@ -507,7 +507,7 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
               >
                 {price}
               </span>
-              {originalPrice && (
+              {isPPC && originalPrice && (
                 <span
                   className="font-body"
                   style={{
@@ -626,86 +626,61 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
         </div>
       </div>
 
-      {/* Right Content - Price & Features (only show price box on PPC) */}
-      {isPPC ? (
+      {/* Right Content - Price & Features */}
+      <div
+        style={{
+          width: '35%',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          textAlign: 'right',
+        }}
+      >
         <div
           style={{
-            width: '35%',
-            flexShrink: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'flex-end',
-            textAlign: 'right',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '12px',
+            padding: padding * 0.6,
           }}
         >
-          <div
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(8px)',
-              borderRadius: '12px',
-              padding: padding * 0.6,
-            }}
-          >
-            {/* Price */}
-            {price && (
-              <div style={{ marginBottom: fontSizes.small * 0.5 }}>
+          {/* Price - show for all templates, strikethrough only for PPC */}
+          {price && (
+            <div style={{ marginBottom: fontSizes.small * 0.5 }}>
+              <span
+                className="font-headline font-bold"
+                style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}
+              >
+                {price}
+              </span>
+              {isPPC && originalPrice && (
                 <span
-                  className="font-headline font-bold"
-                  style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}
+                  className="font-body"
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    fontSize: fontSizes.body,
+                    textDecoration: 'line-through',
+                  }}
                 >
-                  {price}
+                  {originalPrice}
                 </span>
-                {originalPrice && (
-                  <span
-                    className="font-body"
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      fontSize: fontSizes.body,
-                      textDecoration: 'line-through',
-                    }}
-                  >
-                    {originalPrice}
-                  </span>
-                )}
-              </div>
-            )}
-            {/* Features */}
-            <p
-              className="font-body"
-              style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: fontSizes.small,
-              }}
-            >
-              {bodyText}
-            </p>
-          </div>
-        </div>
-      ) : (
-        /* Non-PPC: Show body text without price box */
-        <div
-          style={{
-            width: '35%',
-            flexShrink: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'flex-end',
-            textAlign: 'right',
-          }}
-        >
+              )}
+            </div>
+          )}
+          {/* Features */}
           <p
             className="font-body"
             style={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: fontSizes.body,
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: fontSizes.small,
             }}
           >
             {bodyText}
           </p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
