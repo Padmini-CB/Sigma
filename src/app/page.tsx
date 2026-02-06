@@ -1,89 +1,30 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import TemplateCard from '@/components/TemplateCard';
-import FilterBar from '@/components/FilterBar';
-import templatesData from '@/data/templates.json';
+import HeroSection from '@/components/home/HeroSection';
+import WhySigmaSection from '@/components/home/WhySigmaSection';
+import TwoQuestionsSection from '@/components/home/TwoQuestionsSection';
+import CharacterSection from '@/components/home/CharacterSection';
 
-interface Template {
-  id: string;
-  name: string;
-  category: string;
-  platform: string;
-  dimensions: {
-    width: number;
-    height: number;
-  };
-  aspectRatio: string;
-  useCase: string;
-  description: string;
-  previewColors: string[];
-}
-
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-}
-
-export default function Dashboard() {
-  const router = useRouter();
-  const [activeFilter, setActiveFilter] = useState<string>('All');
-  const templates: Template[] = templatesData.templates;
-  const categories: Category[] = templatesData.categories;
-
-  // Filter templates based on active filter
-  const filteredTemplates = useMemo(() => {
-    if (activeFilter === 'All') {
-      return templates;
-    }
-    return templates.filter((template) => template.category === activeFilter);
-  }, [templates, activeFilter]);
-
-  // Group templates by category for the "All" view
-  const groupedTemplates = useMemo(() => {
-    if (activeFilter !== 'All') {
-      return null;
-    }
-    return categories.reduce((acc, category) => {
-      acc[category.id] = templates.filter((t) => t.category === category.id);
-      return acc;
-    }, {} as Record<string, Template[]>);
-  }, [templates, categories, activeFilter]);
-
-  const handleTemplateClick = (template: Template) => {
-    router.push(`/editor/${template.id}`);
-  };
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-brand-gray/30">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-gradient-dark border-b border-white/10">
-        <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="font-headline text-3xl sm:text-4xl font-bold text-white mb-1 sm:mb-2">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="font-headline text-2xl font-bold text-brand-navy">
                 SIGMA
               </h1>
-              <p className="font-body text-base sm:text-lg text-gray-400">
-                Strategic Image Generation for Marketing Assets
-              </p>
+              <span className="hidden sm:inline font-body text-sm text-gray-400">
+                by Codebasics
+              </span>
             </div>
-            <div className="flex items-center gap-3 sm:gap-4">
-              {/* Credibility Badge - Desktop */}
-              <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
-                <div className="w-2 h-2 rounded-full bg-brand-lime animate-pulse" />
-                <span className="font-ui text-sm text-white">
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="font-ui text-xs text-gray-600">
                   1.4M+ YouTube Subscribers
-                </span>
-              </div>
-              {/* Mobile version - more compact */}
-              <div className="flex md:hidden items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5">
-                <div className="w-2 h-2 rounded-full bg-brand-lime animate-pulse" />
-                <span className="font-ui text-xs text-white">
-                  1.4M+ Subscribers
                 </span>
               </div>
             </div>
@@ -91,116 +32,35 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Page Title */}
-        <div className="mb-6 sm:mb-8">
-          <h2 className="font-headline text-2xl sm:text-3xl font-bold text-brand-navy mb-2">
-            Template Library
-          </h2>
-          <p className="font-body text-sm sm:text-base text-gray-600 max-w-2xl">
-            Choose a template to start creating brand-compliant marketing assets.
-            All templates follow Codebasics visual identity guidelines.
-          </p>
-        </div>
-
-        {/* Filter Bar */}
-        <FilterBar
-          categories={categories}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          templateCount={filteredTemplates.length}
-        />
-
-        {/* Template Grid */}
-        {activeFilter === 'All' && groupedTemplates ? (
-          // Grouped view when showing all
-          <div className="space-y-10 sm:space-y-12">
-            {categories.map((category) => {
-              const categoryTemplates = groupedTemplates[category.id];
-              if (!categoryTemplates || categoryTemplates.length === 0) return null;
-
-              return (
-                <section key={category.id}>
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                    <h3 className="font-headline text-lg sm:text-xl font-bold text-brand-navy">
-                      {category.name}
-                    </h3>
-                    <span className="font-ui text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                      {categoryTemplates.length} templates
-                    </span>
-                  </div>
-                  <p className="font-body text-sm text-gray-500 mb-4 hidden sm:block">
-                    {category.description}
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                    {categoryTemplates.map((template) => (
-                      <TemplateCard
-                        key={template.id}
-                        template={template}
-                        onClick={() => handleTemplateClick(template)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
-          </div>
-        ) : (
-          // Flat grid when filtering by category
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {filteredTemplates.map((template) => (
-              <TemplateCard
-                key={template.id}
-                template={template}
-                onClick={() => handleTemplateClick(template)}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {filteredTemplates.length === 0 && (
-          <div className="text-center py-12 sm:py-16">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="font-headline text-lg font-semibold text-gray-700 mb-2">
-              No templates found
-            </h3>
-            <p className="font-body text-sm sm:text-base text-gray-500">
-              Try selecting a different category.
-            </p>
-            <button
-              onClick={() => setActiveFilter('All')}
-              className="mt-4 px-4 py-2 font-ui text-sm font-medium text-brand-blue hover:text-brand-purple transition-colors"
-            >
-              View all templates
-            </button>
-          </div>
-        )}
+      {/* Main content with padding for fixed header */}
+      <main className="pt-16">
+        <HeroSection />
+        <WhySigmaSection />
+        <TwoQuestionsSection />
+        <CharacterSection />
       </main>
 
       {/* Footer */}
-      <footer className="bg-brand-navy/5 border-t border-gray-200 mt-12 sm:mt-16">
-        <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="font-ui text-xs sm:text-sm text-gray-500 order-2 sm:order-1">
-              Codebasics Internal Tool
-            </p>
-            <div className="flex items-center gap-3 sm:gap-4 order-1 sm:order-2">
-              <span className="font-ui text-xs text-gray-400">
-                Brand Colors:
-              </span>
+      <footer className="bg-brand-navy py-12">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h2 className="font-headline text-xl font-bold text-white mb-1">SIGMA</h2>
+              <p className="font-body text-sm text-gray-400">
+                Strategic Image Generation for Marketing Assets
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="font-ui text-xs text-gray-500">Brand Colors:</span>
               <div className="flex items-center gap-1">
                 <div className="w-4 h-4 rounded bg-brand-blue" title="Blue" />
                 <div className="w-4 h-4 rounded bg-brand-purple" title="Purple" />
-                <div className="w-4 h-4 rounded bg-brand-navy" title="Navy" />
                 <div className="w-4 h-4 rounded bg-brand-lime" title="Lime" />
               </div>
             </div>
+            <p className="font-ui text-xs text-gray-500">
+              Codebasics Internal Tool
+            </p>
           </div>
         </div>
       </footer>
