@@ -35,7 +35,7 @@ export default function HeroSection() {
           </Link>
           <Link
             href="#concepts"
-            className="inline-flex items-center justify-center px-8 py-4 font-ui font-semibold text-lg text-brand-navy border-2 border-brand-navy rounded-lg hover:bg-brand-navy hover:text-white transition-all duration-200 min-w-[200px]"
+            className="inline-flex items-center justify-center px-8 py-4 font-ui font-semibold text-lg text-brand-blue border-2 border-brand-blue rounded-lg hover:bg-brand-blue/10 transition-all duration-200 min-w-[200px]"
           >
             Browse Concepts
           </Link>

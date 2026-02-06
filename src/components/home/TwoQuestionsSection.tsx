@@ -11,10 +11,10 @@ const feelIntents = [
 ];
 
 const doActions = [
-  { icon: '💬', label: 'Engage Here', subtitle: 'no click needed' },
-  { icon: '🔍', label: 'Explore Deep Value' },
-  { icon: '📖', label: 'Learn More' },
-  { icon: '✅', label: 'Enroll Now' },
+  { icon: '💬', label: 'Engage Here', subtitle: 'value in the post itself' },
+  { icon: '🔍', label: 'Explore Deep Value', subtitle: 'YouTube, blog, free resources' },
+  { icon: '📖', label: 'Learn More', subtitle: 'landing page, curriculum details' },
+  { icon: '✅', label: 'Enroll Now', subtitle: 'direct conversion' },
 ];
 
 export default function TwoQuestionsSection() {
