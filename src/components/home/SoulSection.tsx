@@ -7,17 +7,17 @@ export default function SoulSection() {
         <div className="max-w-3xl mx-auto text-center animate-fade-in">
           {/* Line 1 - Large, Navy */}
           <p className="font-body text-2xl sm:text-3xl md:text-4xl font-medium text-brand-navy leading-relaxed mb-8">
-            Not just a tool to make creatives — Sigma has depth, has perspective, gives your ideas wings.
+            Every satisfying creative satisfies an intent.
           </p>
 
           {/* Line 2 - Regular, Gray */}
           <p className="font-body text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-8 leading-relaxed">
-            When someone sees what you create here, it should resonate. Hit them at the right chord. Not just to convert — but to inspire with brand essence.
+            It&apos;s not about the size. It&apos;s about the purpose.
           </p>
 
           {/* Line 3 - Purple, Italic */}
           <p className="font-body text-xl sm:text-2xl text-brand-purple italic">
-            Let&apos;s start building...
+            Let&apos;s start building with a soul.
           </p>
         </div>
       </div>

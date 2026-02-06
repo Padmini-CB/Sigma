@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 interface CanvasOption {
   id: string;
   name: string;
@@ -13,13 +15,34 @@ const canvasOptions: CanvasOption[] = [
   { id: 'YouTube', name: 'YouTube Thumbnail', icon: '▶️', description: '1280×720' },
   { id: 'Email', name: 'Email Header', icon: '✉️', description: '600×200' },
   { id: 'Flyer', name: 'Flyer', icon: '📄', description: '1080×1350' },
+  { id: 'Custom', name: 'Custom Size', icon: '⚙️', description: 'Enter your own dimensions' },
 ];
 
 interface CanvasStepProps {
-  onSelect: (canvas: string) => void;
+  onSelect: (canvas: string, customDimensions?: { width: number; height: number }) => void;
 }
 
 export default function CanvasStep({ onSelect }: CanvasStepProps) {
+  const [showCustom, setShowCustom] = useState(false);
+  const [customWidth, setCustomWidth] = useState('');
+  const [customHeight, setCustomHeight] = useState('');
+
+  const handleSelect = (id: string) => {
+    if (id === 'Custom') {
+      setShowCustom(true);
+    } else {
+      onSelect(id);
+    }
+  };
+
+  const handleCustomContinue = () => {
+    const w = parseInt(customWidth, 10);
+    const h = parseInt(customHeight, 10);
+    if (w > 0 && h > 0) {
+      onSelect('Custom', { width: w, height: h });
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <h2 className="font-headline text-3xl sm:text-4xl font-bold text-brand-navy text-center mb-4">
@@ -33,8 +56,12 @@ export default function CanvasStep({ onSelect }: CanvasStepProps) {
         {canvasOptions.map((option) => (
           <button
             key={option.id}
-            onClick={() => onSelect(option.id)}
-            className="group relative bg-white rounded-2xl border-2 border-gray-100 p-6 text-left hover:border-brand-blue/50 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
+            onClick={() => handleSelect(option.id)}
+            className={`group relative bg-white rounded-2xl border-2 p-6 text-left hover:border-brand-blue/50 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 ${
+              showCustom && option.id === 'Custom'
+                ? 'border-brand-blue/50 shadow-lg'
+                : 'border-gray-100'
+            }`}
           >
             <span className="text-4xl mb-4 block">{option.icon}</span>
             <h3 className="font-headline text-xl font-bold text-brand-navy mb-2 group-hover:text-brand-blue transition-colors">
@@ -51,6 +78,53 @@ export default function CanvasStep({ onSelect }: CanvasStepProps) {
           </button>
         ))}
       </div>
+
+      {/* Custom Size Input */}
+      {showCustom && (
+        <div className="mt-8 max-w-md mx-auto bg-white rounded-2xl border-2 border-brand-blue/30 p-6 animate-fade-in">
+          <h3 className="font-headline text-lg font-bold text-brand-navy mb-4">
+            Enter Custom Dimensions
+          </h3>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex-1">
+              <label htmlFor="custom-width" className="block font-ui text-sm font-semibold text-gray-600 mb-1">
+                Width (px)
+              </label>
+              <input
+                id="custom-width"
+                type="number"
+                min="1"
+                value={customWidth}
+                onChange={(e) => setCustomWidth(e.target.value)}
+                placeholder="1080"
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors"
+              />
+            </div>
+            <span className="font-ui text-gray-400 mt-6">×</span>
+            <div className="flex-1">
+              <label htmlFor="custom-height" className="block font-ui text-sm font-semibold text-gray-600 mb-1">
+                Height (px)
+              </label>
+              <input
+                id="custom-height"
+                type="number"
+                min="1"
+                value={customHeight}
+                onChange={(e) => setCustomHeight(e.target.value)}
+                placeholder="1080"
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors"
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleCustomContinue}
+            disabled={!customWidth || !customHeight || parseInt(customWidth, 10) <= 0 || parseInt(customHeight, 10) <= 0}
+            className="w-full py-2.5 rounded-lg font-ui text-sm font-semibold bg-brand-blue text-white hover:bg-brand-blue/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Continue
+          </button>
+        </div>
+      )}
     </div>
   );
 }
