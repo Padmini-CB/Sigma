@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useMemo, useRef } from 'react';
 import templatesData from '@/data/templates.json';
 import EditorSidebar from '@/components/EditorSidebar';
@@ -38,7 +38,6 @@ export interface EditorFields {
   subheadline: string;
   cta: string;
   price: string;
-  originalPrice: string;
   courseName: string;
   credibility: string;
   bodyText: string;
@@ -49,7 +48,6 @@ const defaultFields: EditorFields = {
   subheadline: 'From Zero to Production-Ready Engineer',
   cta: 'Start Learning Today',
   price: '₹12,000',
-  originalPrice: '₹24,000',
   courseName: 'Data Engineering Bootcamp 1.0',
   credibility: '1.4M+ YouTube Subscribers',
   bodyText: '7 Business Projects • 2 Virtual Internships • Lifetime Access',
@@ -58,6 +56,7 @@ const defaultFields: EditorFields = {
 export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const templateId = params.id as string;
   const { showToast } = useToast();
 
@@ -65,7 +64,16 @@ export default function EditorPage() {
     return templatesData.templates.find((t) => t.id === templateId) as Template | undefined;
   }, [templateId]);
 
-  const [fields, setFields] = useState<EditorFields>(defaultFields);
+  // Pre-fill fields from query params if coming from intent flow
+  const initialFields = useMemo(() => {
+    const headline = searchParams.get('headline');
+    if (headline) {
+      return { ...defaultFields, headline };
+    }
+    return defaultFields;
+  }, [searchParams]);
+
+  const [fields, setFields] = useState<EditorFields>(initialFields);
   const [selectedDesignId, setSelectedDesignId] = useState<string | null>(null);
   const [customColors, setCustomColors] = useState<string[] | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

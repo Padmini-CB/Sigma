@@ -24,7 +24,7 @@ export default function BootcampStep({ onSelect, onBack }: BootcampStepProps) {
     <div className="w-full max-w-3xl mx-auto">
       <button
         onClick={onBack}
-        className="inline-flex items-center gap-2 font-ui text-sm text-gray-500 hover:text-brand-navy mb-8 transition-colors"
+        className="inline-flex items-center gap-2 font-ui text-sm text-gray-400 hover:text-white mb-8 transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -32,10 +32,10 @@ export default function BootcampStep({ onSelect, onBack }: BootcampStepProps) {
         Back
       </button>
 
-      <h2 className="font-headline text-3xl sm:text-4xl font-bold text-brand-navy text-center mb-4">
+      <h2 className="font-headline text-3xl sm:text-4xl font-bold text-white text-center mb-4">
         Which program is this for?
       </h2>
-      <p className="font-body text-gray-600 text-center mb-12">
+      <p className="font-body text-gray-400 text-center mb-12">
         Select the bootcamp or product you&apos;re promoting
       </p>
 

@@ -9,13 +9,13 @@ import ComingSoonSection from '@/components/home/ComingSoonSection';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-brand-navy">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-brand-navy/90 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="font-headline text-2xl font-bold text-brand-navy">
+              <h1 className="font-headline text-2xl font-bold text-white">
                 SIGMA
               </h1>
               <span className="hidden sm:inline font-body text-sm text-gray-400">
@@ -23,9 +23,9 @@ export default function Home() {
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5">
+              <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="font-ui text-xs text-gray-600">
+                <span className="font-ui text-xs text-gray-300">
                   1.4M+ YouTube Subscribers
                 </span>
               </div>

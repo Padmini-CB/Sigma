@@ -20,13 +20,13 @@ const comingSoonItems = [
 
 export default function ComingSoonSection() {
   return (
-    <section className="py-20 sm:py-28 bg-[#F8F9FA]">
+    <section className="py-20 sm:py-28 bg-brand-navy/80">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-brand-navy mb-4">
+          <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
             Coming Soon
           </h2>
-          <p className="font-body text-lg text-gray-600 max-w-xl mx-auto">
+          <p className="font-body text-lg text-gray-400 max-w-xl mx-auto">
             New tools and templates on the horizon
           </p>
         </div>

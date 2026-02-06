@@ -227,16 +227,13 @@ interface TemplateContentProps {
 }
 
 function TemplateContent({ fields, template, isVertical, isSquare, colors }: TemplateContentProps) {
-  const { headline, subheadline, cta, price, originalPrice, courseName, credibility, bodyText } = fields;
+  const { headline, subheadline, cta, price, courseName, credibility, bodyText } = fields;
 
   // Brand colors
   const BRAND_BLUE = '#3B82F6';
   const BRAND_PURPLE = '#6F53C1';
   const BRAND_NAVY = '#181830';
   const BRAND_LIME = '#D7EF3F';
-
-  // Check if this is a PPC template (only PPC shows price)
-  const isPPC = template.category === 'PPC';
 
   // Calculate responsive font sizes based on template dimensions
   // Reduced headline size to prevent overflow
@@ -356,28 +353,14 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
 
         {/* Bottom Bar - CTA & Price (flex-shrink: 0) */}
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3 }}>
-          {/* Price - show for all templates, strikethrough only for PPC */}
+          {/* Price */}
           {price && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: fontSizes.small }}>
-              <span
-                className="font-headline font-bold"
-                style={{ color: '#FFFFFF', fontSize: fontSizes.price }}
-              >
-                {price}
-              </span>
-              {isPPC && originalPrice && (
-                <span
-                  className="font-body"
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontSize: fontSizes.body,
-                    textDecoration: 'line-through',
-                  }}
-                >
-                  {originalPrice}
-                </span>
-              )}
-            </div>
+            <span
+              className="font-headline font-bold"
+              style={{ color: '#FFFFFF', fontSize: fontSizes.price, textAlign: 'center' }}
+            >
+              {price}
+            </span>
           )}
 
           {/* CTA Button */}
@@ -498,28 +481,14 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
             {cta}
           </div>
 
-          {/* Price - show for all templates, strikethrough only for PPC */}
+          {/* Price */}
           {price && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: fontSizes.small * 0.5 }}>
-              <span
-                className="font-headline font-bold"
-                style={{ color: '#FFFFFF', fontSize: fontSizes.price }}
-              >
-                {price}
-              </span>
-              {isPPC && originalPrice && (
-                <span
-                  className="font-body"
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontSize: fontSizes.body,
-                    textDecoration: 'line-through',
-                  }}
-                >
-                  {originalPrice}
-                </span>
-              )}
-            </div>
+            <span
+              className="font-headline font-bold"
+              style={{ color: '#FFFFFF', fontSize: fontSizes.price }}
+            >
+              {price}
+            </span>
           )}
         </div>
       </div>
@@ -646,7 +615,7 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
             padding: padding * 0.6,
           }}
         >
-          {/* Price - show for all templates, strikethrough only for PPC */}
+          {/* Price */}
           {price && (
             <div style={{ marginBottom: fontSizes.small * 0.5 }}>
               <span
@@ -655,18 +624,6 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors }: Tem
               >
                 {price}
               </span>
-              {isPPC && originalPrice && (
-                <span
-                  className="font-body"
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    fontSize: fontSizes.body,
-                    textDecoration: 'line-through',
-                  }}
-                >
-                  {originalPrice}
-                </span>
-              )}
             </div>
           )}
           {/* Features */}
