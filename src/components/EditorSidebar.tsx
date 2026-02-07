@@ -1,7 +1,9 @@
 'use client';
 
-import { EditorFields } from '@/app/editor/[id]/page';
+import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
+import { CHARACTERS, CharacterKey } from '@/data/characters';
 import templateDesignsData from '@/data/templateDesigns.json';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface TemplateDesign {
@@ -23,6 +25,8 @@ interface EditorSidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
   isMobile?: boolean;
+  selectedCharacter?: SelectedCharacter | null;
+  onCharacterSelect?: (character: SelectedCharacter | null) => void;
 }
 
 interface FieldConfig {
@@ -199,6 +203,12 @@ function CtaField({
   );
 }
 
+const CHARACTER_LIST: { key: CharacterKey; color: string; borderColor: string; textColor: string }[] = [
+  { key: 'peter', color: 'bg-orange-50', borderColor: 'border-orange-400', textColor: 'text-orange-700' },
+  { key: 'tony', color: 'bg-red-50', borderColor: 'border-red-400', textColor: 'text-red-700' },
+  { key: 'bruce', color: 'bg-purple-50', borderColor: 'border-purple-400', textColor: 'text-purple-700' },
+];
+
 function SidebarContent({
   fields,
   onFieldChange,
@@ -207,8 +217,11 @@ function SidebarContent({
   templateCategory,
   onClose,
   isMobile,
+  selectedCharacter,
+  onCharacterSelect,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets'>('edit');
+  const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
 
   return (
     <>
@@ -264,28 +277,165 @@ function SidebarContent({
       {activeTab === 'assets' ? (
         /* Assets Panel */
         <div className="flex-1 overflow-y-auto p-4">
+          {/* Active character indicator */}
+          {selectedCharacter && (
+            <div className="mb-4 p-3 bg-green-50 border-2 border-green-300 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg overflow-hidden bg-white">
+                    <Image
+                      src={selectedCharacter.image}
+                      alt={selectedCharacter.name}
+                      width={32}
+                      height={32}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div>
+                    <p className="font-ui text-xs font-semibold text-green-800">On Canvas</p>
+                    <p className="font-ui text-xs text-green-600">{selectedCharacter.name} ({selectedCharacter.position})</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => onCharacterSelect?.(null)}
+                  className="p-1 rounded hover:bg-green-100 text-green-600 transition-colors"
+                  title="Remove from canvas"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+
           <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
-            Characters
+            Characters — Click to add to canvas
           </p>
           <div className="space-y-2 mb-6">
-            {[
-              { name: 'Peter Pandey', color: 'border-orange-400 bg-orange-50', textColor: 'text-orange-700' },
-              { name: 'Tony Sharma', color: 'border-red-400 bg-red-50', textColor: 'text-red-700' },
-              { name: 'Bruce Haryali', color: 'border-purple-400 bg-purple-50', textColor: 'text-purple-700' },
-            ].map((char) => (
-              <button
-                key={char.name}
-                onClick={() => console.log(`Add ${char.name} to canvas`)}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 ${char.color} hover:shadow-md transition-all cursor-pointer`}
-              >
-                <div className={`w-10 h-10 rounded-lg border-2 ${char.color} flex items-center justify-center`}>
-                  <span className={`font-headline font-bold text-sm ${char.textColor}`}>
-                    {char.name.split(' ').map(n => n[0]).join('')}
-                  </span>
+            {CHARACTER_LIST.map((charConfig) => {
+              const char = CHARACTERS[charConfig.key];
+              const isExpanded = expandedCharacter === charConfig.key;
+              const isActive = selectedCharacter?.key === charConfig.key;
+              const defaultImage = char.images[char.defaultImage as keyof typeof char.images];
+
+              return (
+                <div key={charConfig.key} className="space-y-1">
+                  {/* Character header button */}
+                  <button
+                    onClick={() => {
+                      if (isActive) {
+                        // Remove from canvas if already active
+                        onCharacterSelect?.(null);
+                      } else {
+                        // Add default pose to canvas
+                        onCharacterSelect?.({
+                          key: charConfig.key,
+                          name: char.name,
+                          image: defaultImage,
+                          position: 'left',
+                        });
+                      }
+                      setExpandedCharacter(isExpanded ? null : charConfig.key);
+                    }}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer ${
+                      isActive
+                        ? 'border-green-500 bg-green-50 shadow-md ring-2 ring-green-200'
+                        : `${charConfig.borderColor} ${charConfig.color} hover:shadow-md`
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-white flex-shrink-0">
+                      <Image
+                        src={defaultImage}
+                        alt={char.name}
+                        width={40}
+                        height={40}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <span className={`font-ui text-sm font-semibold ${isActive ? 'text-green-700' : charConfig.textColor}`}>
+                        {char.name}
+                      </span>
+                      <p className="font-ui text-xs text-gray-400">{char.title}</p>
+                    </div>
+                    <svg
+                      className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Expanded pose grid */}
+                  {isExpanded && (
+                    <div className="pl-2 pr-1 pb-1">
+                      <p className="font-ui text-xs text-gray-400 mb-2 ml-1">Select pose:</p>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {Object.entries(char.images).map(([pose, src]) => {
+                          const isSelectedPose = isActive && selectedCharacter?.image === src;
+                          return (
+                            <button
+                              key={pose}
+                              onClick={() => {
+                                onCharacterSelect?.({
+                                  key: charConfig.key,
+                                  name: char.name,
+                                  image: src,
+                                  position: selectedCharacter?.position || 'left',
+                                });
+                              }}
+                              className={`relative rounded-lg overflow-hidden border-2 aspect-square transition-all ${
+                                isSelectedPose
+                                  ? 'border-green-500 ring-2 ring-green-200'
+                                  : 'border-gray-200 hover:border-gray-400'
+                              }`}
+                              title={pose}
+                            >
+                              <Image
+                                src={src}
+                                alt={`${char.name} - ${pose}`}
+                                width={80}
+                                height={80}
+                                className="object-cover w-full h-full"
+                              />
+                              <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-ui text-center py-0.5 capitalize">
+                                {pose.replace(/([A-Z])/g, ' $1').trim()}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {/* Position selector */}
+                      {isActive && (
+                        <div className="mt-2 ml-1">
+                          <p className="font-ui text-xs text-gray-400 mb-1">Position:</p>
+                          <div className="flex gap-1">
+                            {(['left', 'right', 'bottom'] as const).map((pos) => (
+                              <button
+                                key={pos}
+                                onClick={() => {
+                                  if (selectedCharacter) {
+                                    onCharacterSelect?.({ ...selectedCharacter, position: pos });
+                                  }
+                                }}
+                                className={`px-2.5 py-1 rounded text-xs font-ui font-medium transition-colors capitalize ${
+                                  selectedCharacter?.position === pos
+                                    ? 'bg-green-500 text-white'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                }`}
+                              >
+                                {pos}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <span className={`font-ui text-sm font-semibold ${char.textColor}`}>{char.name}</span>
-              </button>
-            ))}
+              );
+            })}
           </div>
 
           <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
@@ -419,7 +569,9 @@ export default function EditorSidebar({
   templateCategory,
   isOpen = true,
   onClose,
-  isMobile = false
+  isMobile = false,
+  selectedCharacter,
+  onCharacterSelect,
 }: EditorSidebarProps) {
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -459,6 +611,8 @@ export default function EditorSidebar({
             templateCategory={templateCategory}
             onClose={onClose}
             isMobile={true}
+            selectedCharacter={selectedCharacter}
+            onCharacterSelect={onCharacterSelect}
           />
         </aside>
       </>
@@ -475,6 +629,8 @@ export default function EditorSidebar({
         selectedDesignId={selectedDesignId}
         templateCategory={templateCategory}
         isMobile={false}
+        selectedCharacter={selectedCharacter}
+        onCharacterSelect={onCharacterSelect}
       />
     </aside>
   );
