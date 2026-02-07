@@ -1,44 +1,15 @@
 'use client';
 
-import { CharacterImage } from '@/components/elements/CharacterImage';
-import { CharacterKey } from '@/data/characters';
+import { CHARACTERS, CharacterKey, getCharacterImage } from '@/data/characters';
+import Image from 'next/image';
 
 const characters: {
   key: CharacterKey;
   pose: string;
-  name: string;
-  role: string;
-  subtitle: string;
-  color: string;
-  initials: string;
 }[] = [
-  {
-    key: 'peter',
-    pose: 'confused',
-    name: 'Peter Pandey',
-    initials: 'PP',
-    role: 'The Confused Beginner',
-    subtitle: 'Asks the questions we\'re all thinking',
-    color: 'from-brand-blue to-cyan-500',
-  },
-  {
-    key: 'tony',
-    pose: 'presenting',
-    name: 'Tony Sharma',
-    initials: 'TS',
-    role: 'The Shortcut Guy',
-    subtitle: 'Takes the easy path (don\'t be Tony)',
-    color: 'from-orange-500 to-red-500',
-  },
-  {
-    key: 'bruce',
-    pose: 'thinking',
-    name: 'Bruce Haryali',
-    initials: 'BH',
-    role: 'The Overthinker',
-    subtitle: 'Analyzes until paralysis',
-    color: 'from-brand-purple to-pink-500',
-  },
+  { key: 'peter', pose: 'confused' },
+  { key: 'tony', pose: 'presenting' },
+  { key: 'bruce', pose: 'thinking' },
 ];
 
 export default function CharacterSection() {
@@ -55,32 +26,38 @@ export default function CharacterSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
-          {characters.map((character) => (
-            <div
-              key={character.name}
-              className="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 hover:-translate-y-1"
-            >
-              {/* Character Image */}
-              <div className="w-[200px] h-[200px] mx-auto mb-6 group-hover:scale-105 transition-transform duration-300">
-                <CharacterImage
-                  character={character.key}
-                  pose={character.pose}
-                  width={200}
-                  height={200}
-                />
-              </div>
+          {characters.map((entry) => {
+            const char = CHARACTERS[entry.key];
+            const imageSrc = getCharacterImage(entry.key, entry.pose);
 
-              <h3 className="font-headline text-xl font-bold text-brand-navy text-center mb-1">
-                {character.name}
-              </h3>
-              <p className="font-ui font-semibold text-brand-purple text-center mb-2">
-                {character.role}
-              </p>
-              <p className="font-body text-sm text-gray-500 text-center">
-                {character.subtitle}
-              </p>
-            </div>
-          ))}
+            return (
+              <div
+                key={entry.key}
+                className="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 hover:-translate-y-1"
+              >
+                {/* Character Image */}
+                <div className="w-[200px] h-[200px] mx-auto mb-6 group-hover:scale-105 transition-transform duration-300">
+                  <Image
+                    src={imageSrc}
+                    alt={`${char.name} - ${char.title}`}
+                    width={200}
+                    height={200}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+
+                <h3 className="font-headline text-xl font-bold text-brand-navy text-center mb-1">
+                  {char.name}
+                </h3>
+                <p className="font-ui font-semibold text-brand-purple text-center mb-2">
+                  {char.title}
+                </p>
+                <p className="font-body text-sm text-gray-500 text-center">
+                  {char.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
 
         {/* Footer quote */}
