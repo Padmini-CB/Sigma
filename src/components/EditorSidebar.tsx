@@ -271,7 +271,7 @@ function SidebarContent({
             {[
               { name: 'Peter Pandey', color: 'border-orange-400 bg-orange-50', textColor: 'text-orange-700' },
               { name: 'Tony Sharma', color: 'border-red-400 bg-red-50', textColor: 'text-red-700' },
-              { name: 'Bruce Ariely', color: 'border-purple-400 bg-purple-50', textColor: 'text-purple-700' },
+              { name: 'Bruce Haryali', color: 'border-purple-400 bg-purple-50', textColor: 'text-purple-700' },
             ].map((char) => (
               <button
                 key={char.name}

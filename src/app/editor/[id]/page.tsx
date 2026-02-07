@@ -1,8 +1,9 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import templatesData from '@/data/templates.json';
+import templateDesignsData from '@/data/templateDesigns.json';
 import EditorSidebar from '@/components/EditorSidebar';
 import LivePreview, { LivePreviewHandle } from '@/components/LivePreview';
 import { useExportPng } from '@/hooks/useExportPng';
@@ -79,6 +80,20 @@ export default function EditorPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
+
+  // Auto-select design from query params (e.g., coming from concept flow)
+  useEffect(() => {
+    const designId = searchParams.get('designId');
+    if (designId && !selectedDesignId) {
+      const designs = templateDesignsData.designs as TemplateDesign[];
+      const design = designs.find(d => d.id === designId);
+      if (design) {
+        setSelectedDesignId(design.id);
+        setFields(design.fields);
+        setCustomColors(design.previewColors);
+      }
+    }
+  }, [searchParams, selectedDesignId]);
 
   const handleFieldChange = (field: keyof EditorFields, value: string) => {
     setFields((prev) => ({
@@ -247,6 +262,7 @@ export default function EditorPage() {
           template={template}
           fields={fields}
           customColors={customColors}
+          selectedDesignId={selectedDesignId}
         />
       </div>
 

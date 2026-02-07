@@ -145,6 +145,23 @@
       "previewColors": ["#D7EF3F", "#181830"]
     },
     {
+      "id": "tony-sharma-trap",
+      "name": "The Tony Sharma Trap",
+      "description": "Tony with certificate in hand. Character-driven creative with rich visuals.",
+      "category": "Recognition",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "Certificates don't write code.",
+        "subheadline": "You do.",
+        "cta": "Learn the Fundamentals",
+        "price": "₹12,900",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "1.4M+ YouTube Subscribers",
+        "bodyText": "Tony bought a certificate. You're building a career."
+      },
+      "previewColors": ["#181830", "#2D1B4E"]
+    },
+    {
       "id": "social-announcement",
       "name": "Social Announcement",
       "description": "New batch or course launch announcements",
@@ -193,6 +210,11 @@
       "id": "Announcement",
       "name": "News",
       "description": "New batches, updates, launches"
+    },
+    {
+      "id": "Recognition",
+      "name": "Spark Recognition",
+      "description": "Character-driven creatives that trigger self-awareness"
     }
   ]
 }
