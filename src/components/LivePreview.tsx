@@ -1,6 +1,6 @@
 'use client';
 
-import { EditorFields } from '@/app/editor/[id]/page';
+import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
 import { useState, useMemo, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import { TonySharmaTemplate } from '@/components/templates/TonySharmaTemplate';
 
@@ -24,13 +24,14 @@ interface LivePreviewProps {
   fields: EditorFields;
   customColors?: string[] | null;
   selectedDesignId?: string | null;
+  selectedCharacter?: SelectedCharacter | null;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -167,6 +168,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               isSquare={isSquare}
               colors={activeColors}
               selectedDesignId={selectedDesignId}
+              selectedCharacter={selectedCharacter}
             />
           </div>
         </div>
@@ -215,6 +217,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             isSquare={isSquare}
             colors={activeColors}
             selectedDesignId={selectedDesignId}
+            selectedCharacter={selectedCharacter}
           />
         </div>
       </div>
@@ -229,9 +232,49 @@ interface TemplateContentProps {
   isSquare: boolean;
   colors: string[];
   selectedDesignId?: string | null;
+  selectedCharacter?: SelectedCharacter | null;
 }
 
-function TemplateContent({ fields, template, isVertical, isSquare, colors, selectedDesignId }: TemplateContentProps) {
+function CharacterOverlay({ character, width, height }: { character: SelectedCharacter; width: number; height: number }) {
+  const charSize = Math.min(width, height) * 0.4;
+  const positionStyles: Record<string, React.CSSProperties> = {
+    left: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      width: charSize,
+      height: charSize,
+    },
+    right: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      width: charSize,
+      height: charSize,
+    },
+    bottom: {
+      position: 'absolute',
+      bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: charSize,
+      height: charSize,
+    },
+  };
+
+  return (
+    <div style={positionStyles[character.position]}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={character.image}
+        alt={character.name}
+        style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom' }}
+      />
+    </div>
+  );
+}
+
+function TemplateContent({ fields, template, isVertical, isSquare, colors, selectedDesignId, selectedCharacter }: TemplateContentProps) {
   const { headline, subheadline, cta, price, courseName, credibility, bodyText } = fields;
 
   // Render rich Tony Sharma template when that design is selected
@@ -300,8 +343,10 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           flexDirection: 'column',
           boxSizing: 'border-box',
           overflow: 'hidden',
+          position: 'relative',
         }}
       >
+        {selectedCharacter && <CharacterOverlay character={selectedCharacter} width={width} height={height} />}
         {/* Top Bar - Credibility & Course Name (flex-shrink: 0) */}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div
@@ -417,8 +462,10 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           flexDirection: 'column',
           boxSizing: 'border-box',
           overflow: 'hidden',
+          position: 'relative',
         }}
       >
+        {selectedCharacter && <CharacterOverlay character={selectedCharacter} width={width} height={height} />}
         {/* Top Bar - Credibility & Course Name (flex-shrink: 0) */}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div
@@ -528,8 +575,10 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
         flexDirection: 'row',
         boxSizing: 'border-box',
         overflow: 'hidden',
+        position: 'relative',
       }}
     >
+      {selectedCharacter && <CharacterOverlay character={selectedCharacter} width={width} height={height} />}
       {/* Left Content - Main area */}
       <div
         style={{

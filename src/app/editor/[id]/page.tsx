@@ -44,6 +44,13 @@ export interface EditorFields {
   bodyText: string;
 }
 
+export interface SelectedCharacter {
+  key: string;
+  name: string;
+  image: string;
+  position: 'left' | 'right' | 'bottom';
+}
+
 const defaultFields: EditorFields = {
   headline: 'Build Real-World Data Pipelines',
   subheadline: 'From Zero to Production-Ready Engineer',
@@ -77,6 +84,7 @@ export default function EditorPage() {
   const [fields, setFields] = useState<EditorFields>(initialFields);
   const [selectedDesignId, setSelectedDesignId] = useState<string | null>(null);
   const [customColors, setCustomColors] = useState<string[] | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<SelectedCharacter | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
@@ -111,10 +119,19 @@ export default function EditorPage() {
     setIsSidebarOpen(false);
   };
 
+  const handleCharacterSelect = (character: SelectedCharacter | null) => {
+    setSelectedCharacter(character);
+    if (character) {
+      showToast('success', 'Character Added', `${character.name} added to canvas`);
+    }
+    setIsSidebarOpen(false);
+  };
+
   const handleReset = () => {
     setFields(defaultFields);
     setSelectedDesignId(null);
     setCustomColors(null);
+    setSelectedCharacter(null);
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
@@ -242,6 +259,8 @@ export default function EditorPage() {
           onDesignSelect={handleDesignSelect}
           selectedDesignId={selectedDesignId}
           templateCategory={template.category}
+          selectedCharacter={selectedCharacter}
+          onCharacterSelect={handleCharacterSelect}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -254,6 +273,8 @@ export default function EditorPage() {
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           isMobile={true}
+          selectedCharacter={selectedCharacter}
+          onCharacterSelect={handleCharacterSelect}
         />
 
         {/* Right Panel - Live Preview */}
@@ -263,6 +284,7 @@ export default function EditorPage() {
           fields={fields}
           customColors={customColors}
           selectedDesignId={selectedDesignId}
+          selectedCharacter={selectedCharacter}
         />
       </div>
 
