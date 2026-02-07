@@ -1,4 +1,4 @@
-import { CHARACTERS, CharacterKey } from "@/data/characters";
+import { CHARACTERS, CharacterKey, getCharacterImage } from "@/data/characters";
 import Image from "next/image";
 
 interface CharacterImageProps {
@@ -11,8 +11,7 @@ interface CharacterImageProps {
 
 export function CharacterImage({ character, pose, className, width = 300, height = 300 }: CharacterImageProps) {
   const char = CHARACTERS[character];
-  const selectedPose = pose || char.defaultImage;
-  const imageSrc = char.images[selectedPose as keyof typeof char.images];
+  const imageSrc = getCharacterImage(character, pose);
 
   return (
     <Image

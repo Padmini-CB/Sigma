@@ -1,4 +1,4 @@
-import { CharacterImage } from "@/components/elements/CharacterImage";
+import { getCharacterImage } from "@/data/characters";
 import { YouTubeBadge } from "@/components/elements/YouTubeBadge";
 import { PriceTag } from "@/components/elements/PriceTag";
 
@@ -33,12 +33,11 @@ export function TonySharmaTemplate({
 
       {/* Character - Left Side */}
       <div className="absolute bottom-0 left-0 w-1/2">
-        <CharacterImage
-          character="tony"
-          pose="presenting"
-          width={400}
-          height={400}
-          className="opacity-90"
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={getCharacterImage("tony", "presenting")}
+          alt="Tony Sharma - Presenting"
+          className="w-full h-auto opacity-90 object-contain"
         />
       </div>
 

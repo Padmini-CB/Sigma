@@ -1,7 +1,7 @@
 'use client';
 
 import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
-import { CHARACTERS, CharacterKey } from '@/data/characters';
+import { CHARACTERS, CharacterKey, getCharacterImage } from '@/data/characters';
 import templateDesignsData from '@/data/templateDesigns.json';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -317,7 +317,7 @@ function SidebarContent({
               const char = CHARACTERS[charConfig.key];
               const isExpanded = expandedCharacter === charConfig.key;
               const isActive = selectedCharacter?.key === charConfig.key;
-              const defaultImage = char.images[char.defaultImage as keyof typeof char.images];
+              const defaultImageSrc = getCharacterImage(charConfig.key);
 
               return (
                 <div key={charConfig.key} className="space-y-1">
@@ -325,14 +325,12 @@ function SidebarContent({
                   <button
                     onClick={() => {
                       if (isActive) {
-                        // Remove from canvas if already active
                         onCharacterSelect?.(null);
                       } else {
-                        // Add default pose to canvas
                         onCharacterSelect?.({
                           key: charConfig.key,
                           name: char.name,
-                          image: defaultImage,
+                          image: defaultImageSrc,
                           position: 'left',
                         });
                       }
@@ -346,7 +344,7 @@ function SidebarContent({
                   >
                     <div className="w-10 h-10 rounded-lg overflow-hidden bg-white flex-shrink-0">
                       <Image
-                        src={defaultImage}
+                        src={defaultImageSrc}
                         alt={char.name}
                         width={40}
                         height={40}
@@ -359,6 +357,7 @@ function SidebarContent({
                       </span>
                       <p className="font-ui text-xs text-gray-400">{char.title}</p>
                     </div>
+                    <span className="font-ui text-[10px] text-gray-400">{Object.keys(char.poses).length} poses</span>
                     <svg
                       className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -372,8 +371,8 @@ function SidebarContent({
                     <div className="pl-2 pr-1 pb-1">
                       <p className="font-ui text-xs text-gray-400 mb-2 ml-1">Select pose:</p>
                       <div className="grid grid-cols-3 gap-1.5">
-                        {Object.entries(char.images).map(([pose, src]) => {
-                          const isSelectedPose = isActive && selectedCharacter?.image === src;
+                        {Object.entries(char.poses).map(([pose, poseInfo]) => {
+                          const isSelectedPose = isActive && selectedCharacter?.image === poseInfo.src;
                           return (
                             <button
                               key={pose}
@@ -381,7 +380,7 @@ function SidebarContent({
                                 onCharacterSelect?.({
                                   key: charConfig.key,
                                   name: char.name,
-                                  image: src,
+                                  image: poseInfo.src,
                                   position: selectedCharacter?.position || 'left',
                                 });
                               }}
@@ -390,17 +389,17 @@ function SidebarContent({
                                   ? 'border-green-500 ring-2 ring-green-200'
                                   : 'border-gray-200 hover:border-gray-400'
                               }`}
-                              title={pose}
+                              title={`${poseInfo.label} — ${poseInfo.useFor}`}
                             >
                               <Image
-                                src={src}
-                                alt={`${char.name} - ${pose}`}
+                                src={poseInfo.src}
+                                alt={`${char.name} - ${poseInfo.label}`}
                                 width={80}
                                 height={80}
                                 className="object-cover w-full h-full"
                               />
-                              <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-ui text-center py-0.5 capitalize">
-                                {pose.replace(/([A-Z])/g, ' $1').trim()}
+                              <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-ui text-center py-0.5">
+                                {poseInfo.label}
                               </span>
                             </button>
                           );
