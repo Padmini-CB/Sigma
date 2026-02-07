@@ -1,7 +1,20 @@
 'use client';
 
-const characters = [
+import { CharacterImage } from '@/components/elements/CharacterImage';
+import { CharacterKey } from '@/data/characters';
+
+const characters: {
+  key: CharacterKey;
+  pose: string;
+  name: string;
+  role: string;
+  subtitle: string;
+  color: string;
+  initials: string;
+}[] = [
   {
+    key: 'peter',
+    pose: 'confused',
     name: 'Peter Pandey',
     initials: 'PP',
     role: 'The Confused Beginner',
@@ -9,6 +22,8 @@ const characters = [
     color: 'from-brand-blue to-cyan-500',
   },
   {
+    key: 'tony',
+    pose: 'presenting',
     name: 'Tony Sharma',
     initials: 'TS',
     role: 'The Shortcut Guy',
@@ -16,8 +31,10 @@ const characters = [
     color: 'from-orange-500 to-red-500',
   },
   {
-    name: 'Bruce Ariely',
-    initials: 'BA',
+    key: 'bruce',
+    pose: 'thinking',
+    name: 'Bruce Haryali',
+    initials: 'BH',
     role: 'The Overthinker',
     subtitle: 'Analyzes until paralysis',
     color: 'from-brand-purple to-pink-500',
@@ -43,13 +60,14 @@ export default function CharacterSection() {
               key={character.name}
               className="group bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 hover:-translate-y-1"
             >
-              {/* Character placeholder */}
-              <div
-                className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${character.color} mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
-              >
-                <span className="font-headline font-bold text-white text-3xl">
-                  {character.initials}
-                </span>
+              {/* Character Image */}
+              <div className="w-[200px] h-[200px] mx-auto mb-6 group-hover:scale-105 transition-transform duration-300">
+                <CharacterImage
+                  character={character.key}
+                  pose={character.pose}
+                  width={200}
+                  height={200}
+                />
               </div>
 
               <h3 className="font-headline text-xl font-bold text-brand-navy text-center mb-1">

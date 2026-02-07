@@ -9,6 +9,7 @@ interface Concept {
   tag?: string;
   recommended?: boolean;
   templateId: string;
+  designId?: string;
 }
 
 // Concept mappings based on intent + canvas combinations
@@ -38,6 +39,7 @@ const conceptMappings: Record<string, Concept[]> = {
       description: 'Tony with certificate in hand. "Certificates don\'t write code. You do."',
       recommended: true,
       templateId: 'instagram-story',
+      designId: 'tony-sharma-trap',
     },
     {
       id: 'peter-confusion',
@@ -141,6 +143,9 @@ export default function ConceptStep({ canvas, bootcamp, intent, onBack }: Concep
       intent,
       headline: concept.title,
     });
+    if (concept.designId) {
+      params.set('designId', concept.designId);
+    }
     router.push(`/editor/${concept.templateId}?${params.toString()}`);
   };
 

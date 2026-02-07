@@ -2,6 +2,7 @@
 
 import { EditorFields } from '@/app/editor/[id]/page';
 import { useState, useMemo, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import { TonySharmaTemplate } from '@/components/templates/TonySharmaTemplate';
 
 interface Template {
   id: string;
@@ -22,13 +23,14 @@ interface LivePreviewProps {
   template: Template;
   fields: EditorFields;
   customColors?: string[] | null;
+  selectedDesignId?: string | null;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -164,6 +166,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               isVertical={isVertical}
               isSquare={isSquare}
               colors={activeColors}
+              selectedDesignId={selectedDesignId}
             />
           </div>
         </div>
@@ -211,6 +214,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             isVertical={isVertical}
             isSquare={isSquare}
             colors={activeColors}
+            selectedDesignId={selectedDesignId}
           />
         </div>
       </div>
@@ -224,10 +228,27 @@ interface TemplateContentProps {
   isVertical: boolean;
   isSquare: boolean;
   colors: string[];
+  selectedDesignId?: string | null;
 }
 
-function TemplateContent({ fields, template, isVertical, isSquare, colors }: TemplateContentProps) {
+function TemplateContent({ fields, template, isVertical, isSquare, colors, selectedDesignId }: TemplateContentProps) {
   const { headline, subheadline, cta, price, courseName, credibility, bodyText } = fields;
+
+  // Render rich Tony Sharma template when that design is selected
+  if (selectedDesignId === 'tony-sharma-trap') {
+    return (
+      <div style={{ width: template.dimensions.width, height: template.dimensions.height }}>
+        <TonySharmaTemplate
+          headline={headline}
+          subheadline={subheadline}
+          hook={bodyText}
+          cta={cta}
+          price={price}
+          bootcamp={courseName}
+        />
+      </div>
+    );
+  }
 
   // Brand colors
   const BRAND_BLUE = '#3B82F6';
