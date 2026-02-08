@@ -1,24 +1,24 @@
 'use client';
 
 const feelIntents = [
-  { icon: '🏛️', label: 'Build Trust' },
-  { icon: '🌟', label: 'Show What\'s Possible' },
-  { icon: '🛡️', label: 'Resolve a Fear' },
-  { icon: '💡', label: 'Open Their Eyes' },
-  { icon: '🪞', label: 'Spark Recognition' },
-  { icon: '🤝', label: 'Create Belonging' },
-  { icon: '🚀', label: 'Create Momentum' },
+  { icon: '🏛️', label: 'Trust', description: '"I can rely on these people"' },
+  { icon: '🌟', label: 'Possibility', description: '"Someone like me achieved this"' },
+  { icon: '🛡️', label: 'Relief', description: '"My fear has been addressed"' },
+  { icon: '💡', label: 'Clarity', description: '"Now I understand what I didn\'t know"' },
+  { icon: '🪞', label: 'Recognition', description: '"Wait, that\'s exactly me!"' },
+  { icon: '🤝', label: 'Belonging', description: '"I\'m part of something bigger"' },
+  { icon: '🚀', label: 'Momentum', description: '"I need to act now"' },
 ];
 
 const doActions = [
-  { icon: '💬', label: 'Engage Here', subtitle: 'Value in the post itself' },
-  { icon: '🔍', label: 'Explore Free Content', subtitle: 'YouTube, blog, resources' },
-  { icon: '📖', label: 'Learn More', subtitle: 'Landing page, curriculum' },
-  { icon: '✅', label: 'Enroll Now', subtitle: 'Direct conversion' },
-  { icon: '📥', label: 'Download Resources', subtitle: 'PDFs, brochures, cheatsheets' },
-  { icon: '🧭', label: 'Take Career Assessment', subtitle: 'Suitability test' },
-  { icon: '📐', label: 'Calculate Career Roadmap', subtitle: 'Career path calculator' },
-  { icon: '🎯', label: 'Join Live Event', subtitle: 'Webinar, workshop registration' },
+  { icon: '💬', label: 'Engage Here', description: 'Like, comment, save (no click needed)' },
+  { icon: '🔍', label: 'Explore Free Content', description: 'Visit YouTube, blog, resources' },
+  { icon: '📖', label: 'Learn More', description: 'Check the curriculum, landing page' },
+  { icon: '✅', label: 'Enroll Now', description: 'Direct purchase/registration' },
+  { icon: '📥', label: 'Download Resources', description: 'PDFs, cheatsheets, brochures' },
+  { icon: '🧭', label: 'Take Career Assessment', description: 'Suitability test' },
+  { icon: '📐', label: 'Calculate Career Roadmap', description: 'Career path tool' },
+  { icon: '🎯', label: 'Join Live Event', description: 'Webinar, workshop' },
 ];
 
 export default function TwoQuestionsSection() {
@@ -43,18 +43,24 @@ export default function TwoQuestionsSection() {
               </span>
             </div>
 
-            <h3 className="font-headline text-xl font-bold text-brand-navy mb-6 mt-2">
-              What should the learner feel?
+            <h3 className="font-headline text-xl font-bold text-brand-navy mb-2 mt-2">
+              What emotion should your creative evoke?
             </h3>
+            <p className="font-body text-sm text-gray-400 mb-6">
+              Every scroll-stopping creative triggers an emotional response. Choose the feeling you want to create.
+            </p>
 
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {feelIntents.map((intent) => (
                 <li
                   key={intent.label}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
+                  className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
                 >
-                  <span className="text-2xl">{intent.icon}</span>
-                  <span className="font-body text-gray-700">{intent.label}</span>
+                  <span className="text-2xl flex-shrink-0">{intent.icon}</span>
+                  <div>
+                    <span className="font-body font-semibold text-gray-800">{intent.label}</span>
+                    <span className="font-body text-gray-500"> — {intent.description}</span>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -68,11 +74,14 @@ export default function TwoQuestionsSection() {
               </span>
             </div>
 
-            <h3 className="font-headline text-xl font-bold text-brand-navy mb-6 mt-2">
-              What should they do next?
+            <h3 className="font-headline text-xl font-bold text-brand-navy mb-2 mt-2">
+              What action should they take?
             </h3>
+            <p className="font-body text-sm text-gray-400 mb-6">
+              This is your Call-to-Action (CTA) — the next step you want the learner to take after seeing your creative.
+            </p>
 
-            <ul className="grid grid-cols-2 gap-2">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {doActions.map((action) => (
                 <li
                   key={action.label}
@@ -80,10 +89,8 @@ export default function TwoQuestionsSection() {
                 >
                   <span className="text-lg flex-shrink-0 mt-0.5">{action.icon}</span>
                   <div>
-                    <span className="font-body text-sm text-gray-700 leading-tight block">{action.label}</span>
-                    {action.subtitle && (
-                      <span className="font-body text-xs text-gray-400 leading-tight block">{action.subtitle}</span>
-                    )}
+                    <span className="font-body text-sm font-semibold text-gray-700 leading-tight block">{action.label}</span>
+                    <span className="font-body text-xs text-gray-400 leading-tight block">{action.description}</span>
                   </div>
                 </li>
               ))}
