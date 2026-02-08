@@ -1,11 +1,11 @@
 'use client';
 
 import HeroSection from '@/components/home/HeroSection';
-import SoulSection from '@/components/home/SoulSection';
-import WhySigmaSection from '@/components/home/WhySigmaSection';
 import TwoQuestionsSection from '@/components/home/TwoQuestionsSection';
 import CharacterSection from '@/components/home/CharacterSection';
 import ComingSoonSection from '@/components/home/ComingSoonSection';
+import LandingPageBuilderSection from '@/components/home/LandingPageBuilderSection';
+import EthicalMarketingSection from '@/components/home/EthicalMarketingSection';
 
 export default function Home() {
   return (
@@ -37,11 +37,11 @@ export default function Home() {
       {/* Main content with padding for fixed header */}
       <main className="pt-16">
         <HeroSection />
-        <SoulSection />
-        <WhySigmaSection />
         <TwoQuestionsSection />
         <CharacterSection />
         <ComingSoonSection />
+        <LandingPageBuilderSection />
+        <EthicalMarketingSection />
       </main>
 
       {/* Footer */}

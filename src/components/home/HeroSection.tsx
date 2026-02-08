@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[70vh] flex items-center justify-center bg-brand-navy overflow-hidden">
+    <section className="relative min-h-[60vh] flex items-center justify-center bg-brand-navy overflow-hidden">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.05]"
@@ -14,19 +14,19 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative z-10 container mx-auto px-6 py-20 text-center">
-        <h1 className="font-headline text-5xl sm:text-6xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+      <div className="relative z-10 container mx-auto px-6 py-14 text-center">
+        <h1 className="font-headline text-5xl sm:text-6xl md:text-7xl font-extrabold text-white mb-4 leading-tight">
           Every great creative<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-purple">
             satisfies an intent.
           </span>
         </h1>
 
-        <p className="font-body text-xl sm:text-2xl text-gray-400 mb-12 max-w-2xl mx-auto">
+        <p className="font-body text-xl sm:text-2xl text-gray-400 mb-8 max-w-2xl mx-auto">
           Sigma doesn&apos;t ask what size. It asks what purpose.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <Link
             href="/create"
             className="inline-flex items-center justify-center px-8 py-4 font-ui font-semibold text-lg text-brand-navy bg-brand-lime rounded-lg hover:bg-brand-lime/90 transition-all duration-200 hover:scale-105 hover:shadow-lg min-w-[200px]"
@@ -40,6 +40,10 @@ export default function HeroSection() {
             Browse Concepts
           </Link>
         </div>
+
+        <p className="font-body text-xl sm:text-2xl text-brand-purple italic">
+          Let&apos;s start building with a soul.
+        </p>
       </div>
     </section>
   );
