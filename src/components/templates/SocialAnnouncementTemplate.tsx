@@ -35,7 +35,7 @@ export function SocialAnnouncementTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, #0f1535, ${BRAND.colors.bgCard})`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -57,17 +57,17 @@ export function SocialAnnouncementTemplate({
       />
 
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 28 * scale }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 16 * scale }}>
         {/* Big headline */}
         <h1
           style={{
-            fontSize: 52 * scale,
+            fontSize: 60 * scale,
             fontWeight: 800,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
@@ -82,7 +82,7 @@ export function SocialAnnouncementTemplate({
         {/* Subheadline */}
         <p
           style={{
-            fontSize: 17 * scale,
+            fontSize: 22 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -106,7 +106,7 @@ export function SocialAnnouncementTemplate({
         {/* Body text */}
         <p
           style={{
-            fontSize: 13 * scale,
+            fontSize: 16 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -122,7 +122,7 @@ export function SocialAnnouncementTemplate({
         {/* Credibility */}
         <div
           style={{
-            fontSize: 11 * scale,
+            fontSize: 14 * scale,
             color: BRAND.colors.accentGreen,
             fontFamily: BRAND.fonts.body,
             fontWeight: 600,
@@ -134,7 +134,7 @@ export function SocialAnnouncementTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

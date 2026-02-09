@@ -39,7 +39,7 @@ export function WeekJourneyTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -49,7 +49,7 @@ export function WeekJourneyTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 16 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -64,7 +64,7 @@ export function WeekJourneyTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

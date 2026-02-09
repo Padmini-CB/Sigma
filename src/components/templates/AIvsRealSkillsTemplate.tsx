@@ -45,7 +45,7 @@ export function AIvsRealSkillsTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -55,16 +55,16 @@ export function AIvsRealSkillsTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Headline */}
-      <div style={{ textAlign: 'center', marginBottom: 20 * scale, flexShrink: 0 }}>
+      <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1
           style={{
-            fontSize: 30 * scale,
+            fontSize: 42 * scale,
             fontWeight: 800,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
@@ -84,15 +84,15 @@ export function AIvsRealSkillsTemplate({
             backgroundColor: BRAND.colors.bgCard,
             border: `2px solid ${BRAND.colors.redWarning}`,
             borderRadius: 12,
-            padding: 20 * scale,
+            padding: 24 * scale,
             display: 'flex',
             flexDirection: 'column',
-            gap: 10,
+            gap: 12,
           }}
         >
           <div
             style={{
-              fontSize: 13 * scale,
+              fontSize: 16 * scale,
               fontWeight: 800,
               color: BRAND.colors.redWarning,
               fontFamily: BRAND.fonts.heading,
@@ -100,7 +100,7 @@ export function AIvsRealSkillsTemplate({
               letterSpacing: '0.05em',
               textAlign: 'center',
               paddingBottom: 10,
-              borderBottom: `1px solid rgba(239,68,68,0.3)`,
+              borderBottom: '1px solid rgba(239,68,68,0.3)',
             }}
           >
             AI-GENERATED SKILLS
@@ -112,13 +112,13 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 12 * scale,
+                fontSize: 15 * scale,
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
               }}
             >
-              <span style={{ color: BRAND.colors.redWarning, flexShrink: 0 }}>✗</span>
+              <span style={{ color: BRAND.colors.redWarning, flexShrink: 0 }}>&#10007;</span>
               <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>{skill}</span>
             </div>
           ))}
@@ -131,15 +131,15 @@ export function AIvsRealSkillsTemplate({
             backgroundColor: BRAND.colors.bgCard,
             border: `2px solid ${BRAND.colors.greenGrid}`,
             borderRadius: 12,
-            padding: 20 * scale,
+            padding: 24 * scale,
             display: 'flex',
             flexDirection: 'column',
-            gap: 10,
+            gap: 12,
           }}
         >
           <div
             style={{
-              fontSize: 13 * scale,
+              fontSize: 16 * scale,
               fontWeight: 800,
               color: BRAND.colors.greenGrid,
               fontFamily: BRAND.fonts.heading,
@@ -147,7 +147,7 @@ export function AIvsRealSkillsTemplate({
               letterSpacing: '0.05em',
               textAlign: 'center',
               paddingBottom: 10,
-              borderBottom: `1px solid rgba(34,197,94,0.3)`,
+              borderBottom: '1px solid rgba(34,197,94,0.3)',
             }}
           >
             SKILLS YOU&apos;LL ACTUALLY BUILD
@@ -159,13 +159,13 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 12 * scale,
+                fontSize: 15 * scale,
                 color: BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
               }}
             >
-              <span style={{ color: BRAND.colors.greenGrid, flexShrink: 0 }}>✓</span>
+              <span style={{ color: BRAND.colors.greenGrid, flexShrink: 0 }}>&#10003;</span>
               <span>{skill}</span>
             </div>
           ))}
@@ -178,7 +178,7 @@ export function AIvsRealSkillsTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

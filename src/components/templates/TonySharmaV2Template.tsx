@@ -29,7 +29,7 @@ export function TonySharmaV2Template({
   height = 1080,
 }: TonySharmaV2TemplateProps) {
   const scale = Math.min(width, height) / 1080;
-  const maxCharHeight = height * 0.30;
+  const maxCharHeight = height * 0.35;
 
   return (
     <div
@@ -37,7 +37,7 @@ export function TonySharmaV2Template({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark} 0%, #1a0e2e 100%)`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -47,18 +47,18 @@ export function TonySharmaV2Template({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale, zIndex: 3 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale, zIndex: 3 }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Main content area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20 * scale, zIndex: 2 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 * scale, zIndex: 2 }}>
         {/* Headline */}
         <div style={{ textAlign: 'right', paddingLeft: '35%' }}>
           <h1
             style={{
-              fontSize: 42 * scale,
+              fontSize: 56 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -70,7 +70,7 @@ export function TonySharmaV2Template({
           </h1>
           <h2
             style={{
-              fontSize: 42 * scale,
+              fontSize: 56 * scale,
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
@@ -87,7 +87,7 @@ export function TonySharmaV2Template({
         <div style={{ textAlign: 'right', paddingLeft: '35%' }}>
           <p
             style={{
-              fontSize: 16 * scale,
+              fontSize: 20 * scale,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               margin: 0,
@@ -102,7 +102,7 @@ export function TonySharmaV2Template({
           <div style={{ textAlign: 'right', paddingLeft: '35%' }}>
             <p
               style={{
-                fontSize: 12 * scale,
+                fontSize: 15 * scale,
                 color: 'rgba(199,244,100,0.6)',
                 fontFamily: BRAND.fonts.body,
                 fontStyle: 'italic',
@@ -120,14 +120,15 @@ export function TonySharmaV2Template({
         </div>
       </div>
 
-      {/* Tony Character - bottom left, capped at 30% height */}
+      {/* Tony Character - bottom left, above bottom bar */}
       <div
         style={{
           position: 'absolute',
-          bottom: 60 * scale,
+          bottom: 100 * scale,
           left: 20 * scale,
           height: maxCharHeight,
-          zIndex: 1,
+          zIndex: 2,
+          overflow: 'hidden',
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -144,7 +145,7 @@ export function TonySharmaV2Template({
       </div>
 
       {/* Bottom Bar - highest z-index */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale, zIndex: 4 }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale, zIndex: 50 }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

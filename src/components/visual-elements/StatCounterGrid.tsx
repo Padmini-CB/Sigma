@@ -12,30 +12,24 @@ interface StatCounterGridProps {
 
 export function StatCounterGrid({ stats, columns = 3 }: StatCounterGridProps) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: 8,
-      }}
-    >
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 8 }}>
       {stats.map((stat) => (
         <div
           key={stat.label}
           style={{
             backgroundColor: BRAND.colors.bgCard,
-            border: `1px solid ${BRAND.colors.borderCard}`,
+            border: `1px solid ${BRAND.colors.borderSubtle}`,
             borderRadius: 8,
-            padding: '10px 8px',
+            padding: '12px 10px',
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
-            gap: 2,
+            gap: 3,
           }}
         >
           <div
             style={{
-              fontSize: 22,
+              fontSize: 36,
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
@@ -46,7 +40,7 @@ export function StatCounterGrid({ stats, columns = 3 }: StatCounterGridProps) {
           </div>
           <div
             style={{
-              fontSize: 9,
+              fontSize: 12,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               lineHeight: 1.2,

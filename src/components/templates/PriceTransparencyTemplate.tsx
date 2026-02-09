@@ -64,7 +64,7 @@ export function PriceTransparencyTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
-        padding: 36 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -74,19 +74,19 @@ export function PriceTransparencyTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 16 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', gap: 20 * scale, overflow: 'hidden' }}>
-        {/* Left column: Price + Stats + Tech */}
-        <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 * scale, justifyContent: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', gap: 14 * scale, overflow: 'hidden' }}>
+        {/* Left column: Price + Stats + Tech (40%) */}
+        <div style={{ width: '40%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 10 * scale, justifyContent: 'center' }}>
           <div>
             <div
               style={{
-                fontSize: 48 * scale,
+                fontSize: 56 * scale,
                 fontWeight: 800,
                 color: BRAND.colors.accentGreen,
                 fontFamily: BRAND.fonts.heading,
@@ -97,7 +97,7 @@ export function PriceTransparencyTemplate({
             </div>
             <div
               style={{
-                fontSize: 14 * scale,
+                fontSize: 20 * scale,
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 marginTop: 6,
@@ -112,14 +112,14 @@ export function PriceTransparencyTemplate({
           <TechStackPills technologies={techStack} pillSize="sm" />
         </div>
 
-        {/* Right: Bar Chart Comparison */}
+        {/* Right: Bar Chart Comparison (60%) */}
         <div style={{ flex: 1 }}>
           <BarChartComparison leftCard={leftCard} rightCard={rightCard} />
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 14 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>
