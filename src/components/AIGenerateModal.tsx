@@ -8,6 +8,7 @@ export interface GeneratedCreative {
   bodyText: string;
   cta: string;
   jesterLine?: string;
+  isDemo?: boolean;
   character?: {
     name: string;
     pose: string;
@@ -28,52 +29,13 @@ interface AIGenerateModalProps {
 
 const API_KEY_STORAGE_KEY = 'sigma_anthropic_api_key';
 
-const SYSTEM_PROMPT = `You are a creative director for Codebasics, an ed-tech brand. You generate ad creatives that follow these brand guidelines:
-
-BRAND VOICE: Sage archetype — clear, trustworthy, practical. Add a touch of Jester personality for warmth.
-
-CHARACTERS AVAILABLE:
-- Tony Sharma (key: "tony") — "The Shortcut Guy" who takes the easy path. Poses: attitude, explaining, presenting, seeing, talking, talkingonphone, thinking
-- Peter Pandey (key: "peter") — "The Confused Beginner" who asks questions we all think. Poses: confused, frustrated, idea, victory, working
-- Bruce Haryali (key: "bruce") — "The Overthinker" who analyzes until paralysis. Poses: talkingonphone, thinking, working
-
-FOUNDERS AVAILABLE:
-- Dhaval Patel — Founder & CEO
-- Hemanand Vadivel — Co-Founder & CTO
-
-BANNED WORDS: Magic, Instant, Easy, Guaranteed, Ninja, Guru, Master (in 7 days), 100% Placement, Shortcut, Hack, Rockstar
-
-LOVED WORDS: Pipeline, Architecture, Project, Portfolio, Debug, Build, Real-World, Production, Scale, Competence, Skills, Practical, Enterprise-grade, Hands-on
-
-You must respond with ONLY valid JSON (no markdown, no code fences) in this exact format:
-{
-  "headline": "Short punchy headline (max 8 words)",
-  "subheadline": "Supporting line with specifics",
-  "bodyText": "Features or benefits (use bullet separator •)",
-  "cta": "Action-oriented CTA button text",
-  "jesterLine": "A witty one-liner that adds Sage+Jester personality",
-  "character": {
-    "name": "tony|peter|bruce (or omit if no character fits)",
-    "pose": "one of the available poses for that character",
-    "position": "left|right|bottom",
-    "size": 250
-  }
-}
-
-If a founder is more appropriate than a character, replace "character" with:
-"founder": {
-  "name": "Dhaval Patel|Hemanand Vadivel",
-  "position": "left|right"
-}
-
-Only include character OR founder, not both. Omit both if neither fits.`;
-
 export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModalProps) {
   const [prompt, setPrompt] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastWasDemo, setLastWasDemo] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Load API key from localStorage on mount
@@ -86,6 +48,10 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
   useEffect(() => {
     if (isOpen && textareaRef.current) {
       setTimeout(() => textareaRef.current?.focus(), 100);
+    }
+    // Reset demo indicator when modal opens
+    if (isOpen) {
+      setLastWasDemo(false);
     }
   }, [isOpen]);
 
@@ -100,51 +66,28 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
       setError('Please enter a prompt describing what you want to create.');
       return;
     }
-    if (!apiKey.trim()) {
-      setError('Please enter your Anthropic API key.');
-      return;
-    }
 
     setIsGenerating(true);
     setError(null);
+    setLastWasDemo(false);
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/generate-creative', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1024,
-          system: SYSTEM_PROMPT,
-          messages: [
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, apiKey }),
       });
 
       if (!response.ok) {
-        const errorBody = await response.text();
-        if (response.status === 401) {
-          throw new Error('Invalid API key. Please check your Anthropic API key.');
-        }
-        throw new Error(`API error (${response.status}): ${errorBody}`);
+        const errorBody = await response.json();
+        throw new Error(errorBody.error || `API error (${response.status})`);
       }
 
-      const data = await response.json();
-      const textContent = data.content?.find((c: { type: string }) => c.type === 'text');
-      if (!textContent?.text) {
-        throw new Error('No text response from API.');
-      }
+      const result: GeneratedCreative = await response.json();
 
-      const result: GeneratedCreative = JSON.parse(textContent.text);
+      if (result.isDemo) {
+        setLastWasDemo(true);
+      }
 
       onGenerate(result);
       onClose();
@@ -212,7 +155,7 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
                   type={showApiKey ? 'text' : 'password'}
                   value={apiKey}
                   onChange={(e) => handleApiKeyChange(e.target.value)}
-                  placeholder="sk-ant-..."
+                  placeholder="sk-ant-... (leave empty for demo mode)"
                   className="w-full px-3 py-2 pr-10 rounded-lg border border-gray-300 font-body text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors"
                 />
                 <button
@@ -234,7 +177,7 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
                 </button>
               </div>
               <p className="font-ui text-xs text-gray-400">
-                Your key is stored locally in your browser.
+                Leave empty for demo mode with pre-built creatives. Your key is stored locally.
               </p>
             </div>
 
@@ -266,6 +209,18 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
             {error && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-200">
                 <p className="font-ui text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
+            {/* Demo mode indicator */}
+            {lastWasDemo && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200">
+                <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                <p className="font-ui text-xs text-amber-700">
+                  Demo Mode — Add API key for live AI generation
+                </p>
               </div>
             )}
 
@@ -301,7 +256,7 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
             </button>
             <button
               onClick={handleGenerate}
-              disabled={isGenerating || !prompt.trim() || !apiKey.trim()}
+              disabled={isGenerating || !prompt.trim()}
               className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-ui text-sm font-semibold rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (
@@ -317,7 +272,7 @@ export function AIGenerateModal({ isOpen, onClose, onGenerate }: AIGenerateModal
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
-                  Generate
+                  {apiKey.trim() ? 'Generate' : 'Generate (Demo)'}
                 </>
               )}
             </button>
