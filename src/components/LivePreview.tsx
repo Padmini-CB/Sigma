@@ -25,13 +25,14 @@ interface LivePreviewProps {
   customColors?: string[] | null;
   selectedDesignId?: string | null;
   selectedCharacter?: SelectedCharacter | null;
+  jesterLine?: string | null;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -169,6 +170,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               colors={activeColors}
               selectedDesignId={selectedDesignId}
               selectedCharacter={selectedCharacter}
+              jesterLine={jesterLine}
             />
           </div>
         </div>
@@ -233,6 +235,7 @@ interface TemplateContentProps {
   colors: string[];
   selectedDesignId?: string | null;
   selectedCharacter?: SelectedCharacter | null;
+  jesterLine?: string | null;
 }
 
 function CharacterOverlay({ character, width, height }: { character: SelectedCharacter; width: number; height: number }) {
@@ -274,7 +277,7 @@ function CharacterOverlay({ character, width, height }: { character: SelectedCha
   );
 }
 
-function TemplateContent({ fields, template, isVertical, isSquare, colors, selectedDesignId, selectedCharacter }: TemplateContentProps) {
+function TemplateContent({ fields, template, isVertical, isSquare, colors, selectedDesignId, selectedCharacter, jesterLine }: TemplateContentProps) {
   const { headline, subheadline, cta, price, courseName, credibility, bodyText } = fields;
 
   // Render rich Tony Sharma template when that design is selected
@@ -397,6 +400,18 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           >
             {headline}
           </h1>
+          {jesterLine && (
+            <p
+              className="font-body"
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: fontSizes.small,
+                fontStyle: 'italic',
+              }}
+            >
+              ✨ {jesterLine}
+            </p>
+          )}
           <p
             className="font-body"
             style={{
@@ -513,6 +528,18 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           >
             {headline}
           </h1>
+          {jesterLine && (
+            <p
+              className="font-body"
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: fontSizes.small,
+                fontStyle: 'italic',
+              }}
+            >
+              ✨ {jesterLine}
+            </p>
+          )}
           <p
             className="font-body"
             style={{
@@ -637,6 +664,18 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           >
             {headline}
           </h1>
+          {jesterLine && (
+            <p
+              className="font-body"
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: fontSizes.small,
+                fontStyle: 'italic',
+              }}
+            >
+              ✨ {jesterLine}
+            </p>
+          )}
           <p
             className="font-body"
             style={{
