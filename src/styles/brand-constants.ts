@@ -1,0 +1,27 @@
+export const BRAND = {
+  colors: {
+    bgDark: '#0a0e1a',
+    bgCard: '#141830',
+    bgCardHover: '#1a2040',
+    accent: '#c7f464',
+    accentGreen: '#c7f464',
+    primaryBlue: '#4361ee',
+    textWhite: '#ffffff',
+    textMuted: '#8892a4',
+    textGrey: '#6b7280',
+    redWarning: '#ef4444',
+    redBar: '#dc2626',
+    blueBar: '#3b82f6',
+    greenGrid: '#22c55e',
+    greenGridLight: '#4ade80',
+    greenGridDark: '#166534',
+    borderSubtle: 'rgba(255,255,255,0.1)',
+    borderCard: 'rgba(255,255,255,0.15)',
+  },
+  fonts: {
+    heading: "'Saira Condensed', sans-serif",
+    body: "'Kanit', sans-serif",
+  },
+  trustSignals: "Lifetime Version Access \u2022 100% Refund Policy \u2022 Free Portfolio Website",
+  youtubeStats: { subscribers: "1.4M+", rating: "4.9" },
+} as const;

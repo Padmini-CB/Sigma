@@ -10,6 +10,7 @@ import { useExportPng } from '@/hooks/useExportPng';
 import { useToast } from '@/components/Toast';
 import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal';
 import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
+import { type BootcampKey } from '@/data/products';
 
 interface Template {
   id: string;
@@ -91,6 +92,7 @@ export default function EditorPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
   const [jesterLine, setJesterLine] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<BootcampKey | null>(null);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -137,6 +139,7 @@ export default function EditorPage() {
     setSelectedDesignId(null);
     setCustomColors(null);
     setSelectedCharacter(null);
+    setSelectedCourse(null);
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
@@ -331,6 +334,8 @@ export default function EditorPage() {
           templateCategory={template.category}
           selectedCharacter={selectedCharacter}
           onCharacterSelect={handleCharacterSelect}
+          selectedCourse={selectedCourse}
+          onCourseSelect={setSelectedCourse}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -345,6 +350,8 @@ export default function EditorPage() {
           isMobile={true}
           selectedCharacter={selectedCharacter}
           onCharacterSelect={handleCharacterSelect}
+          selectedCourse={selectedCourse}
+          onCourseSelect={setSelectedCourse}
         />
 
         {/* Right Panel - Live Preview */}
@@ -356,6 +363,7 @@ export default function EditorPage() {
           selectedDesignId={selectedDesignId}
           selectedCharacter={selectedCharacter}
           jesterLine={jesterLine}
+          selectedCourse={selectedCourse}
         />
       </div>
 

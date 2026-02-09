@@ -2,7 +2,17 @@
 
 import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
 import { useState, useMemo, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import { TonySharmaTemplate } from '@/components/templates/TonySharmaTemplate';
+import { ChatGPTResumeTemplate } from '@/components/templates/ChatGPTResumeTemplate';
+import { GitHubBeforeAfterTemplate } from '@/components/templates/GitHubBeforeAfterTemplate';
+import { PriceTransparencyTemplate } from '@/components/templates/PriceTransparencyTemplate';
+import { WeekJourneyTemplate } from '@/components/templates/WeekJourneyTemplate';
+import { TonySharmaV2Template } from '@/components/templates/TonySharmaV2Template';
+import { IndustryVeteransTemplate } from '@/components/templates/IndustryVeteransTemplate';
+import { CareerTransformationTemplate } from '@/components/templates/CareerTransformationTemplate';
+import { AIvsRealSkillsTemplate } from '@/components/templates/AIvsRealSkillsTemplate';
+import { WebinarTemplate } from '@/components/templates/WebinarTemplate';
+import { SocialAnnouncementTemplate } from '@/components/templates/SocialAnnouncementTemplate';
+import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 
 interface Template {
   id: string;
@@ -26,13 +36,14 @@ interface LivePreviewProps {
   selectedDesignId?: string | null;
   selectedCharacter?: SelectedCharacter | null;
   jesterLine?: string | null;
+  selectedCourse?: BootcampKey | null;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -43,16 +54,14 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   const [zoom, setZoom] = useState(100);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
 
-  // Use custom colors from design if provided, otherwise use template default colors
   const activeColors = customColors || template.previewColors;
 
-  // Track container size for responsive scaling
   useEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         setContainerSize({
-          width: Math.max(rect.width - 64, 200), // Account for padding
+          width: Math.max(rect.width - 64, 200),
           height: Math.max(rect.height - 64, 200),
         });
       }
@@ -63,16 +72,13 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  // Calculate the preview container sizing
   const previewStyle = useMemo(() => {
     const { width, height } = template.dimensions;
     const scale = zoom / 100;
 
-    // Use actual container size for responsive scaling
     const maxContainerWidth = containerSize.width;
     const maxContainerHeight = containerSize.height;
 
-    // Calculate scale to fit within container
     const scaleToFitWidth = maxContainerWidth / width;
     const scaleToFitHeight = maxContainerHeight / height;
     const baseScale = Math.min(scaleToFitWidth, scaleToFitHeight, 1);
@@ -86,10 +92,6 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       transformOrigin: 'center center',
     };
   }, [template.dimensions, zoom, containerSize]);
-
-  // Determine layout type based on aspect ratio
-  const isVertical = template.dimensions.height > template.dimensions.width;
-  const isSquare = template.dimensions.width === template.dimensions.height;
 
   return (
     <main className="flex-1 bg-gray-100 flex flex-col overflow-hidden">
@@ -141,7 +143,6 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center"
       >
         <div className="relative">
-          {/* Checkerboard Background (transparency indicator) */}
           <div
             className="absolute inset-0 opacity-10"
             style={{
@@ -156,21 +157,18 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             }}
           />
 
-          {/* Template Preview */}
           <div
             className="relative shadow-2xl"
             style={previewStyle}
           >
-            {/* Template Content - Dynamic Layout Based on Type */}
             <TemplateContent
               fields={fields}
               template={template}
-              isVertical={isVertical}
-              isSquare={isSquare}
               colors={activeColors}
               selectedDesignId={selectedDesignId}
               selectedCharacter={selectedCharacter}
               jesterLine={jesterLine}
+              selectedCourse={selectedCourse}
             />
           </div>
         </div>
@@ -194,7 +192,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         </div>
       </div>
 
-      {/* Hidden Export Container - Renders at full template dimensions */}
+      {/* Hidden Export Container */}
       <div
         style={{
           position: 'fixed',
@@ -215,11 +213,10 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           <TemplateContent
             fields={fields}
             template={template}
-            isVertical={isVertical}
-            isSquare={isSquare}
             colors={activeColors}
             selectedDesignId={selectedDesignId}
             selectedCharacter={selectedCharacter}
+            selectedCourse={selectedCourse}
           />
         </div>
       </div>
@@ -230,39 +227,24 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
 interface TemplateContentProps {
   fields: EditorFields;
   template: Template;
-  isVertical: boolean;
-  isSquare: boolean;
   colors: string[];
   selectedDesignId?: string | null;
   selectedCharacter?: SelectedCharacter | null;
   jesterLine?: string | null;
+  selectedCourse?: BootcampKey | null;
 }
 
-function CharacterOverlay({ character, width, height }: { character: SelectedCharacter; width: number; height: number }) {
+function getCourseData(courseKey?: BootcampKey | null) {
+  if (!courseKey) return null;
+  return ALL_BOOTCAMPS[courseKey] ?? null;
+}
+
+function CharacterOverlay({ character }: { character: SelectedCharacter }) {
   const charSize = character.size || 250;
   const positionStyles: Record<string, React.CSSProperties> = {
-    left: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      width: charSize,
-      height: charSize,
-    },
-    right: {
-      position: 'absolute',
-      bottom: 0,
-      right: 0,
-      width: charSize,
-      height: charSize,
-    },
-    bottom: {
-      position: 'absolute',
-      bottom: 0,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: charSize,
-      height: charSize,
-    },
+    left: { position: 'absolute', bottom: 0, left: 0, width: charSize, height: charSize, zIndex: 1 },
+    right: { position: 'absolute', bottom: 0, right: 0, width: charSize, height: charSize, zIndex: 1 },
+    bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: charSize, height: charSize, zIndex: 1 },
   };
 
   return (
@@ -277,71 +259,130 @@ function CharacterOverlay({ character, width, height }: { character: SelectedCha
   );
 }
 
-function TemplateContent({ fields, template, isVertical, isSquare, colors, selectedDesignId, selectedCharacter, jesterLine }: TemplateContentProps) {
-  const { headline, subheadline, cta, price, courseName, credibility, bodyText } = fields;
+function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse }: TemplateContentProps) {
+  const { headline, subheadline, cta, price, courseName, bodyText } = fields;
+  const { width, height } = template.dimensions;
+  const courseData = getCourseData(selectedCourse);
 
-  // Render rich Tony Sharma template when that design is selected
-  if (selectedDesignId === 'tony-sharma-trap') {
+  // Rich template routing
+  if (selectedDesignId === 'chatgpt-resume-trap') {
+    return <div style={{ width, height }}><ChatGPTResumeTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} /></div>;
+  }
+  if (selectedDesignId === 'github-before-after') {
+    return <div style={{ width, height }}><GitHubBeforeAfterTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} afterStat={courseData ? `${courseData.stats.projects} Production Projects` : undefined} width={width} height={height} /></div>;
+  }
+  if (selectedDesignId === 'price-transparency') {
+    const deData = courseData && 'priceComparison' in courseData ? courseData as typeof import('@/data/products/de-bootcamp').DE_BOOTCAMP : null;
     return (
-      <div style={{ width: template.dimensions.width, height: template.dimensions.height }}>
-        <TonySharmaTemplate
+      <div style={{ width, height }}>
+        <PriceTransparencyTemplate
           headline={headline}
-          subheadline={subheadline}
-          hook={bodyText}
+          price={price || courseData?.price}
           cta={cta}
-          price={price}
-          bootcamp={courseName}
+          courseName={courseName}
+          techStack={courseData?.techStack}
+          stats={courseData ? [
+            { number: courseData.stats.projects, label: 'Production Projects' },
+            { number: String((courseData.stats as Record<string, string>).internships || '2'), label: 'Virtual Internships' },
+            { number: String((courseData.stats as Record<string, string>).liveSessions || '24/year'), label: 'Live Sessions / Year' },
+            { number: courseData.stats.hours, label: 'Hours of Content' },
+            { number: String((courseData.stats as Record<string, string>).practiceEnvironments || '\u221E'), label: 'Practice Environments' },
+            { number: courseData.stats.communityMembers, label: 'Community Members' },
+          ] : undefined}
+          leftCard={deData ? { title: deData.priceComparison.competitors.label, items: deData.priceComparison.competitors.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
+          rightCard={deData ? { title: deData.priceComparison.codebasics.label, items: deData.priceComparison.codebasics.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
+          width={width}
+          height={height}
         />
       </div>
     );
   }
+  if (selectedDesignId === 'week-journey') {
+    return (
+      <div style={{ width, height }}>
+        <WeekJourneyTemplate
+          subheadline={subheadline}
+          cta={cta}
+          courseName={courseName}
+          totalWeeks={courseData?.weekJourney ? String(Math.max(...courseData.weekJourney.map((w: { weeks: string; title: string; desc: string }) => { const parts = w.weeks.split('-'); return parseInt(parts[parts.length - 1]); }))) : undefined}
+          weeks={courseData?.weekJourney.map((w: { weeks: string; title: string; desc: string }) => ({ weekLabel: w.weeks, title: w.title, desc: w.desc }))}
+          width={width}
+          height={height}
+        />
+      </div>
+    );
+  }
+  if (selectedDesignId === 'tony-sharma-trap') {
+    return <div style={{ width, height }}><TonySharmaV2Template headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} techStack={courseData?.techStack} jesterLine={jesterLine || undefined} width={width} height={height} /></div>;
+  }
+  if (selectedDesignId === 'industry-veterans') {
+    return <div style={{ width, height }}><IndustryVeteransTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} width={width} height={height} /></div>;
+  }
+  if (selectedDesignId === 'career-transformation') {
+    return (
+      <div style={{ width, height }}>
+        <CareerTransformationTemplate
+          headline={headline}
+          subheadline={subheadline}
+          cta={cta}
+          courseName={courseName}
+          techStack={courseData?.techStack}
+          stats={courseData ? [
+            { number: String((courseData.stats as Record<string, string>).placements || '300+'), label: 'Career Switches' },
+            { number: courseData.stats.communityMembers, label: 'Learners' },
+            { number: '4.9', label: 'Rating' },
+          ] : undefined}
+          width={width}
+          height={height}
+        />
+      </div>
+    );
+  }
+  if (selectedDesignId === 'ai-vs-real-skills') {
+    return <div style={{ width, height }}><AIvsRealSkillsTemplate headline={headline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} /></div>;
+  }
+  if (selectedDesignId === 'webinar-banner') {
+    return <div style={{ width, height }}><WebinarTemplate headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} width={width} height={height} /></div>;
+  }
+  if (selectedDesignId === 'social-announcement') {
+    return <div style={{ width, height }}><SocialAnnouncementTemplate headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} techStack={courseData?.techStack} credibility={fields.credibility} width={width} height={height} /></div>;
+  }
 
-  // Brand colors
+  // ============ Fallback: Generic template rendering ============
   const BRAND_BLUE = '#3B82F6';
   const BRAND_PURPLE = '#6F53C1';
   const BRAND_NAVY = '#181830';
   const BRAND_LIME = '#D7EF3F';
 
-  // Calculate responsive font sizes based on template dimensions
-  // Reduced headline size to prevent overflow
-  const { width, height } = template.dimensions;
   const baseFontSize = Math.min(width, height) / 25;
-
   const fontSizes = {
-    headline: isVertical ? baseFontSize * 1.6 : baseFontSize * 1.4,
+    headline: baseFontSize * 1.4,
     subheadline: baseFontSize * 0.9,
     body: baseFontSize * 0.75,
     cta: baseFontSize * 0.8,
     price: baseFontSize * 1.1,
     small: baseFontSize * 0.6,
   };
-
-  // Padding at ~5% of template width
   const padding = width * 0.05;
+  const isVertical = height > width;
+  const isSquare = width === height;
 
-  // Determine gradient based on template colors
   const getGradient = () => {
-    // Use brand-accurate gradients
     const color1 = colors[0] || BRAND_BLUE;
     const color2 = colors[1] || BRAND_PURPLE;
-
-    // If dark navy is first, use dark variant gradient
     if (color1 === BRAND_NAVY || color1 === '#181830') {
       return `linear-gradient(135deg, ${BRAND_NAVY}, ${BRAND_PURPLE})`;
     }
-    // Default to primary gradient (blue to purple)
-    return `linear-gradient(135deg, ${BRAND_BLUE}, ${BRAND_PURPLE})`;
+    return `linear-gradient(135deg, ${color1}, ${color2})`;
   };
 
   if (isVertical) {
-    // Vertical Layout (Stories format) - Flexbox with hard boundaries
     return (
       <div
         style={{
-          width: width,
-          height: height,
+          width, height,
           background: getGradient(),
-          padding: padding,
+          padding,
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
@@ -349,130 +390,34 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           position: 'relative',
         }}
       >
-        {selectedCharacter && <CharacterOverlay character={selectedCharacter} width={width} height={height} />}
-        {/* Top Bar - Credibility & Course Name (flex-shrink: 0) */}
+        {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-              borderRadius: '9999px',
-              padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`,
-              fontSize: fontSizes.small,
-            }}
-          >
-            <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{credibility}</span>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
+            <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
           </div>
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: fontSizes.small,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {courseName}
-          </p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
         </div>
-
-        {/* Main Content Section (flex: 1, overflow: hidden) */}
-        <div
-          style={{
-            flex: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            textAlign: 'center',
-            gap: padding * 0.5,
-            paddingTop: padding * 0.5,
-            paddingBottom: padding * 0.5,
-          }}
-        >
-          <h1
-            className="font-headline font-extrabold"
-            style={{
-              color: '#FFFFFF',
-              fontSize: fontSizes.headline,
-              lineHeight: 1.1,
-            }}
-          >
-            {headline}
-          </h1>
-          {jesterLine && (
-            <p
-              className="font-body"
-              style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: fontSizes.small,
-                fontStyle: 'italic',
-              }}
-            >
-              ✨ {jesterLine}
-            </p>
-          )}
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontSize: fontSizes.subheadline,
-            }}
-          >
-            {subheadline}
-          </p>
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: fontSizes.body,
-            }}
-          >
-            {bodyText}
-          </p>
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: padding * 0.5, paddingTop: padding * 0.5, paddingBottom: padding * 0.5 }}>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.body }}>{bodyText}</p>
         </div>
-
-        {/* Bottom Bar - CTA & Price (flex-shrink: 0) */}
-        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3 }}>
-          {/* Price */}
-          {price && (
-            <span
-              className="font-headline font-bold"
-              style={{ color: '#FFFFFF', fontSize: fontSizes.price, textAlign: 'center' }}
-            >
-              {price}
-            </span>
-          )}
-
-          {/* CTA Button */}
-          <div
-            className="font-ui font-semibold"
-            style={{
-              backgroundColor: BRAND_LIME,
-              color: BRAND_NAVY,
-              fontSize: fontSizes.cta,
-              padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`,
-              borderRadius: '8px',
-              textAlign: 'center',
-              width: '100%',
-            }}
-          >
-            {cta}
-          </div>
+        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3, zIndex: 2 }}>
+          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price, textAlign: 'center' }}>{price}</span>}
+          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`, borderRadius: '8px', textAlign: 'center', width: '100%' }}>{cta}</div>
         </div>
       </div>
     );
   }
 
   if (isSquare) {
-    // Square Layout (Feed posts) - Flexbox with hard boundaries
     return (
       <div
         style={{
-          width: width,
-          height: height,
+          width, height,
           background: getGradient(),
-          padding: padding,
+          padding,
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
@@ -480,124 +425,34 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
           position: 'relative',
         }}
       >
-        {selectedCharacter && <CharacterOverlay character={selectedCharacter} width={width} height={height} />}
-        {/* Top Bar - Credibility & Course Name (flex-shrink: 0) */}
+        {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-              borderRadius: '9999px',
-              padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`,
-              fontSize: fontSizes.small,
-            }}
-          >
-            <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{credibility}</span>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
+            <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
           </div>
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: fontSizes.small,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {courseName}
-          </p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
         </div>
-
-        {/* Main Content Section (flex: 1, overflow: hidden) */}
-        <div
-          style={{
-            flex: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: padding * 0.4,
-          }}
-        >
-          <h1
-            className="font-headline font-extrabold"
-            style={{
-              color: '#FFFFFF',
-              fontSize: fontSizes.headline,
-              lineHeight: 1.1,
-            }}
-          >
-            {headline}
-          </h1>
-          {jesterLine && (
-            <p
-              className="font-body"
-              style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: fontSizes.small,
-                fontStyle: 'italic',
-              }}
-            >
-              ✨ {jesterLine}
-            </p>
-          )}
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontSize: fontSizes.subheadline,
-            }}
-          >
-            {subheadline}
-          </p>
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: fontSizes.body,
-            }}
-          >
-            {bodyText}
-          </p>
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: padding * 0.4 }}>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.body }}>{bodyText}</p>
         </div>
-
-        {/* Bottom Bar - CTA & Price (flex-shrink: 0) */}
-        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* CTA Button */}
-          <div
-            className="font-ui font-semibold"
-            style={{
-              backgroundColor: BRAND_LIME,
-              color: BRAND_NAVY,
-              fontSize: fontSizes.cta,
-              padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`,
-              borderRadius: '8px',
-            }}
-          >
-            {cta}
-          </div>
-
-          {/* Price */}
-          {price && (
-            <span
-              className="font-headline font-bold"
-              style={{ color: '#FFFFFF', fontSize: fontSizes.price }}
-            >
-              {price}
-            </span>
-          )}
+        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 2 }}>
+          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`, borderRadius: '8px' }}>{cta}</div>
+          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price }}>{price}</span>}
         </div>
       </div>
     );
   }
 
-  // Landscape Layout (Display ads, LinkedIn, etc.) - Flexbox with hard boundaries
+  // Landscape
   return (
     <div
       style={{
-        width: width,
-        height: height,
+        width, height,
         background: getGradient(),
-        padding: padding,
+        padding,
         display: 'flex',
         flexDirection: 'row',
         boxSizing: 'border-box',
@@ -605,146 +460,23 @@ function TemplateContent({ fields, template, isVertical, isSquare, colors, selec
         position: 'relative',
       }}
     >
-      {selectedCharacter && <CharacterOverlay character={selectedCharacter} width={width} height={height} />}
-      {/* Left Content - Main area */}
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          paddingRight: padding * 0.5,
-          overflow: 'hidden',
-        }}
-      >
-        {/* Top - Credibility (flex-shrink: 0) */}
-        <div
-          style={{
-            flexShrink: 0,
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '9999px',
-            padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`,
-            fontSize: fontSizes.small,
-            alignSelf: 'flex-start',
-          }}
-        >
-          <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{credibility}</span>
+      {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: padding * 0.5, overflow: 'hidden' }}>
+        <div style={{ flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small, alignSelf: 'flex-start' }}>
+          <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
         </div>
-
-        {/* Middle - Main Content (flex: 1, overflow: hidden) */}
-        <div
-          style={{
-            flex: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: padding * 0.25,
-          }}
-        >
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: fontSizes.small,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {courseName}
-          </p>
-          <h1
-            className="font-headline font-extrabold"
-            style={{
-              color: '#FFFFFF',
-              fontSize: fontSizes.headline,
-              lineHeight: 1.1,
-            }}
-          >
-            {headline}
-          </h1>
-          {jesterLine && (
-            <p
-              className="font-body"
-              style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: fontSizes.small,
-                fontStyle: 'italic',
-              }}
-            >
-              ✨ {jesterLine}
-            </p>
-          )}
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontSize: fontSizes.subheadline,
-            }}
-          >
-            {subheadline}
-          </p>
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: padding * 0.25 }}>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
         </div>
-
-        {/* Bottom - CTA (flex-shrink: 0) */}
-        <div
-          className="font-ui font-semibold"
-          style={{
-            flexShrink: 0,
-            backgroundColor: BRAND_LIME,
-            color: BRAND_NAVY,
-            fontSize: fontSizes.cta,
-            padding: `${fontSizes.cta * 0.6}px ${fontSizes.cta * 1}px`,
-            borderRadius: '8px',
-            alignSelf: 'flex-start',
-          }}
-        >
-          {cta}
-        </div>
+        <div className="font-ui font-semibold" style={{ flexShrink: 0, backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.6}px ${fontSizes.cta * 1}px`, borderRadius: '8px', alignSelf: 'flex-start', zIndex: 2 }}>{cta}</div>
       </div>
-
-      {/* Right Content - Price & Features */}
-      <div
-        style={{
-          width: '35%',
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          textAlign: 'right',
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '12px',
-            padding: padding * 0.6,
-          }}
-        >
-          {/* Price */}
-          {price && (
-            <div style={{ marginBottom: fontSizes.small * 0.5 }}>
-              <span
-                className="font-headline font-bold"
-                style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}
-              >
-                {price}
-              </span>
-            </div>
-          )}
-          {/* Features */}
-          <p
-            className="font-body"
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: fontSizes.small,
-            }}
-          >
-            {bodyText}
-          </p>
+      <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', textAlign: 'right' }}>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: '12px', padding: padding * 0.6 }}>
+          {price && <div style={{ marginBottom: fontSizes.small * 0.5 }}><span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}>{price}</span></div>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.small }}>{bodyText}</p>
         </div>
       </div>
     </div>

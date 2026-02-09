@@ -1,0 +1,43 @@
+export const DA_BOOTCAMP = {
+  name: "Data Analytics Bootcamp 5.0",
+  shortName: "DA Bootcamp 5.0",
+  duration: "4 Months",
+  price: "₹8,400",
+  standardPrice: "₹12,000",
+  targetAudience: "Absolute beginners, Career gap returnees, Non-IT professionals",
+  prerequisites: "None. No coding background required.",
+  format: "Online + Live Doubt Support + Virtual Internship",
+  techStack: ["Excel", "Power BI", "SQL", "Python", "PowerPoint"],
+  keyConcepts: ["Data Cleaning", "ETL", "Dashboarding", "Storytelling", "DAX"],
+  projects: [
+    { name: "Sales Insights", desc: "Power BI dashboard for hardware sales" },
+    { name: "Finance Analytics", desc: "P&L statements, Gross Margin analysis" },
+    { name: "Supply Chain", desc: "Forecast accuracy and inventory management" },
+    { name: "Marketing", desc: "Ad performance and ROI analysis" },
+    { name: "HR Analytics", desc: "Employee presence and retention insights" },
+    { name: "Executive View", desc: "Top-level strategic dashboard" },
+  ],
+  stats: {
+    projects: "7+",
+    hours: "200+",
+    liveSessions: "24/year",
+    internships: "1",
+    communityMembers: "1.4M+",
+    placements: "300+",
+  },
+  weekJourney: [
+    { weeks: "1-4", title: "Excel & SQL Foundations", desc: "Master data manipulation and querying" },
+    { weeks: "5-8", title: "Power BI & DAX", desc: "Build dashboards that tell business stories" },
+    { weeks: "9-12", title: "Python & Analytics", desc: "Automate analysis with scripting" },
+    { weeks: "13-16", title: "Virtual Internship", desc: "Work on live projects with quality reviews" },
+  ],
+  differentiators: [
+    "Domain Knowledge First — we teach business, not just syntax",
+    "Virtual Internship with AtliQ Technologies included",
+    "Resume & LinkedIn optimization is part of the curriculum",
+  ],
+  successStories: [
+    { name: "Rakesh", from: "Mechanical Engineer", to: "Data Analyst", gap: "4 years" },
+    { name: "Yuvaraj", from: "Career Gap", to: "Data Analyst" },
+  ],
+};
