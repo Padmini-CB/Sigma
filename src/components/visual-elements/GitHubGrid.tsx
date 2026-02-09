@@ -9,17 +9,14 @@ interface GitHubGridProps {
 
 function generateGrid(variant: 'before' | 'after'): number[][] {
   const rows = 7;
-  const cols = 13;
+  const cols = 15;
   const grid: number[][] = [];
-
   for (let r = 0; r < rows; r++) {
     const row: number[] = [];
     for (let c = 0; c < cols; c++) {
       if (variant === 'before') {
-        // Sparse: mostly 0, few scattered 1s
         row.push(Math.random() < 0.08 ? (Math.random() < 0.5 ? 1 : 2) : 0);
       } else {
-        // Full: mostly 2-4, few 1s
         const val = Math.random();
         if (val < 0.05) row.push(0);
         else if (val < 0.15) row.push(1);
@@ -42,70 +39,23 @@ export function GitHubGrid({ variant, label, statNumber, statLabel }: GitHubGrid
   const borderColor = variant === 'before' ? BRAND.colors.redWarning : BRAND.colors.greenGrid;
 
   return (
-    <div
-      style={{
-        border: `2px solid ${borderColor}`,
-        borderRadius: 12,
-        padding: 16,
-        backgroundColor: BRAND.colors.bgCard,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-      }}
-    >
-      {/* Label */}
+    <div style={{ border: `2px solid ${borderColor}`, borderRadius: 12, padding: 18, backgroundColor: BRAND.colors.bgCard, display: 'flex', flexDirection: 'column', gap: 12 }}>
       {label && (
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 800,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase' as const,
-            color: borderColor,
-            fontFamily: BRAND.fonts.heading,
-          }}
-        >
-          {label}
-        </div>
+        <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: borderColor, fontFamily: BRAND.fonts.heading }}>{label}</div>
       )}
-
-      {/* Grid */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {grid.map((row, ri) => (
           <div key={ri} style={{ display: 'flex', gap: 3 }}>
             {row.map((val, ci) => (
-              <div
-                key={ci}
-                style={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: 2,
-                  backgroundColor: colors[Math.min(val, colors.length - 1)],
-                }}
-              />
+              <div key={ci} style={{ width: 14, height: 14, borderRadius: 2, backgroundColor: colors[Math.min(val, colors.length - 1)] }} />
             ))}
           </div>
         ))}
       </div>
-
-      {/* Stat */}
       {statNumber && (
         <div style={{ textAlign: 'center' }}>
-          <span
-            style={{
-              fontSize: 18,
-              fontWeight: 800,
-              color: borderColor,
-              fontFamily: BRAND.fonts.heading,
-            }}
-          >
-            {statNumber}
-          </span>
-          {statLabel && (
-            <span style={{ fontSize: 11, color: BRAND.colors.textMuted, marginLeft: 6, fontFamily: BRAND.fonts.body }}>
-              {statLabel}
-            </span>
-          )}
+          <span style={{ fontSize: 22, fontWeight: 800, color: borderColor, fontFamily: BRAND.fonts.heading }}>{statNumber}</span>
+          {statLabel && <span style={{ fontSize: 14, color: BRAND.colors.textMuted, marginLeft: 6, fontFamily: BRAND.fonts.body }}>{statLabel}</span>}
         </div>
       )}
     </div>

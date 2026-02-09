@@ -8,21 +8,13 @@ interface TechStackPillsProps {
 }
 
 export function TechStackPills({ technologies, variant = 'dark', columns, pillSize = 'md' }: TechStackPillsProps) {
-  const fontSize = pillSize === 'sm' ? 11 : pillSize === 'lg' ? 16 : 13;
-  const paddingY = pillSize === 'sm' ? 4 : pillSize === 'lg' ? 8 : 6;
-  const paddingX = pillSize === 'sm' ? 10 : pillSize === 'lg' ? 18 : 14;
+  const fontSize = pillSize === 'sm' ? 14 : pillSize === 'lg' ? 20 : 16;
+  const paddingY = pillSize === 'sm' ? 5 : pillSize === 'lg' ? 10 : 7;
+  const paddingX = pillSize === 'sm' ? 12 : pillSize === 'lg' ? 22 : 16;
 
   const gridStyle: React.CSSProperties = columns
-    ? {
-        display: 'grid',
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: 8,
-      }
-    : {
-        display: 'flex',
-        flexWrap: 'wrap' as const,
-        gap: 8,
-      };
+    ? { display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 8 }
+    : { display: 'flex', flexWrap: 'wrap' as const, gap: 8 };
 
   return (
     <div style={gridStyle}>
@@ -32,8 +24,8 @@ export function TechStackPills({ technologies, variant = 'dark', columns, pillSi
           style={{
             padding: `${paddingY}px ${paddingX}px`,
             borderRadius: 6,
-            border: `1px solid ${variant === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'}`,
-            backgroundColor: variant === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+            border: `1px solid ${variant === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'}`,
+            backgroundColor: variant === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
             fontSize,
             fontFamily: BRAND.fonts.body,
             color: variant === 'dark' ? BRAND.colors.textWhite : '#1a1a2e',

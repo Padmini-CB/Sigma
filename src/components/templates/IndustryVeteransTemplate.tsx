@@ -35,7 +35,7 @@ export function IndustryVeteransTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, #0d1225)`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -45,18 +45,18 @@ export function IndustryVeteransTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 24 * scale }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 14 * scale }}>
         {/* Headline */}
         <div style={{ textAlign: 'center' }}>
           <h1
             style={{
-              fontSize: 38 * scale,
+              fontSize: 56 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -68,7 +68,7 @@ export function IndustryVeteransTemplate({
           </h1>
           <p
             style={{
-              fontSize: 15 * scale,
+              fontSize: 22 * scale,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               marginTop: 8,
@@ -79,15 +79,15 @@ export function IndustryVeteransTemplate({
         </div>
 
         {/* Founders Display */}
-        <div style={{ display: 'flex', gap: 32 * scale, justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 40 * scale, justifyContent: 'center', alignItems: 'center' }}>
           {/* Dhaval */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
             <div
               style={{
-                width: 140 * scale,
-                height: 140 * scale,
+                width: 180 * scale,
+                height: 180 * scale,
                 borderRadius: '50%',
-                border: `3px solid ${BRAND.colors.primaryBlue}`,
+                border: '3px solid rgba(255,255,255,0.3)',
                 overflow: 'hidden',
                 backgroundColor: BRAND.colors.bgCard,
               }}
@@ -100,10 +100,10 @@ export function IndustryVeteransTemplate({
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 14 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                 Dhaval Patel
               </div>
-              <div style={{ fontSize: 10 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
+              <div style={{ fontSize: 14 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
                 Founder & CEO
               </div>
             </div>
@@ -113,10 +113,10 @@ export function IndustryVeteransTemplate({
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
             <div
               style={{
-                width: 140 * scale,
-                height: 140 * scale,
+                width: 180 * scale,
+                height: 180 * scale,
                 borderRadius: '50%',
-                border: `3px solid ${BRAND.colors.accentGreen}`,
+                border: '3px solid rgba(255,255,255,0.3)',
                 overflow: 'hidden',
                 backgroundColor: BRAND.colors.bgCard,
               }}
@@ -129,10 +129,10 @@ export function IndustryVeteransTemplate({
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 14 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                 Hemanand Vadivel
               </div>
-              <div style={{ fontSize: 10 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
+              <div style={{ fontSize: 14 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
                 Co-Founder & CTO
               </div>
             </div>
@@ -140,13 +140,13 @@ export function IndustryVeteransTemplate({
         </div>
 
         {/* Stats */}
-        <div style={{ width: '70%' }}>
+        <div style={{ width: '80%' }}>
           <StatCounterGrid stats={stats} columns={3} />
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

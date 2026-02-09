@@ -40,7 +40,7 @@ export function ChatGPTResumeTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -50,24 +50,24 @@ export function ChatGPTResumeTemplate({
       }}
     >
       {/* Top bar: Logo + YouTube */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Main content: Chat left, Headline right */}
-      <div style={{ flex: 1, display: 'flex', gap: 30 * scale, overflow: 'hidden' }}>
-        {/* Left - Chat Mockup (40%) */}
-        <div style={{ width: '40%', flexShrink: 0 }}>
+      <div style={{ flex: 1, display: 'flex', gap: 16 * scale, overflow: 'hidden' }}>
+        {/* Left - Chat Mockup (42%) */}
+        <div style={{ width: '42%', flexShrink: 0 }}>
           <ChatMockup messages={DEFAULT_MESSAGES} />
         </div>
 
-        {/* Right - Headline + Tech Stack (60%) */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 24 * scale }}>
+        {/* Right - Headline + Tech Stack (58%) */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 * scale }}>
           <div>
             <h1
               style={{
-                fontSize: 38 * scale,
+                fontSize: 48 * scale,
                 fontWeight: 800,
                 color: BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.heading,
@@ -79,7 +79,7 @@ export function ChatGPTResumeTemplate({
             </h1>
             <h2
               style={{
-                fontSize: 38 * scale,
+                fontSize: 48 * scale,
                 fontWeight: 800,
                 color: BRAND.colors.accentGreen,
                 fontFamily: BRAND.fonts.heading,
@@ -96,7 +96,7 @@ export function ChatGPTResumeTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

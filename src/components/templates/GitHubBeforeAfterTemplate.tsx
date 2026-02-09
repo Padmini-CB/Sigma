@@ -33,7 +33,7 @@ export function GitHubBeforeAfterTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -43,18 +43,18 @@ export function GitHubBeforeAfterTemplate({
       }}
     >
       {/* Top bar: Logo + YouTube */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Main content */}
-      <div style={{ flex: 1, display: 'flex', gap: 24 * scale, overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', gap: 14 * scale, overflow: 'hidden' }}>
         {/* Left text (30%) */}
         <div style={{ width: '30%', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h1
             style={{
-              fontSize: 36 * scale,
+              fontSize: 48 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -66,7 +66,7 @@ export function GitHubBeforeAfterTemplate({
           </h1>
           <h2
             style={{
-              fontSize: 36 * scale,
+              fontSize: 48 * scale,
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
@@ -80,7 +80,7 @@ export function GitHubBeforeAfterTemplate({
         </div>
 
         {/* Right grids (70%) */}
-        <div style={{ flex: 1, display: 'flex', gap: 16 * scale, alignItems: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', gap: 12 * scale, alignItems: 'center' }}>
           <div style={{ flex: 1 }}>
             <GitHubGrid variant="before" label="BEFORE" statNumber={beforeStat.split(' ')[0]} statLabel={beforeStat.split(' ').slice(1).join(' ')} />
           </div>
@@ -91,7 +91,7 @@ export function GitHubBeforeAfterTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

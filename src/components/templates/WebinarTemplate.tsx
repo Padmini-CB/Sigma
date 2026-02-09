@@ -37,7 +37,7 @@ export function WebinarTemplate({
         width,
         height,
         background: `linear-gradient(145deg, ${BRAND.colors.bgDark} 0%, #0d1a30 50%, #0a0e1a 100%)`,
-        padding: 40 * scale,
+        padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -53,8 +53,8 @@ export function WebinarTemplate({
           top: '20%',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: 500 * scale,
-          height: 500 * scale,
+          width: 600 * scale,
+          height: 600 * scale,
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(67,97,238,0.15) 0%, transparent 70%)',
           pointerEvents: 'none',
@@ -62,7 +62,7 @@ export function WebinarTemplate({
       />
 
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 20 * scale, zIndex: 1 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale, zIndex: 1 }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -75,10 +75,10 @@ export function WebinarTemplate({
             alignItems: 'center',
             gap: 6,
             backgroundColor: 'rgba(67,97,238,0.2)',
-            border: `1px solid rgba(67,97,238,0.4)`,
+            border: '1px solid rgba(67,97,238,0.4)',
             borderRadius: 20,
             padding: '4px 14px',
-            fontSize: 11 * scale,
+            fontSize: 13 * scale,
             fontWeight: 600,
             color: BRAND.colors.primaryBlue,
             fontFamily: BRAND.fonts.body,
@@ -92,11 +92,11 @@ export function WebinarTemplate({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 24 * scale, zIndex: 1 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 14 * scale, zIndex: 1 }}>
         {/* Headline */}
         <h1
           style={{
-            fontSize: 40 * scale,
+            fontSize: 52 * scale,
             fontWeight: 800,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
@@ -109,7 +109,7 @@ export function WebinarTemplate({
         </h1>
         <p
           style={{
-            fontSize: 15 * scale,
+            fontSize: 22 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -120,18 +120,18 @@ export function WebinarTemplate({
         </p>
 
         {/* Founders */}
-        <div style={{ display: 'flex', gap: 32 * scale, justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 40 * scale, justifyContent: 'center', alignItems: 'center' }}>
           {[
-            { name: 'Dhaval Patel', role: 'Founder & CEO', img: '/assets/founders/Dhaval.png', border: BRAND.colors.primaryBlue },
-            { name: 'Hemanand Vadivel', role: 'Co-Founder & CTO', img: '/assets/founders/Hemanand.png', border: BRAND.colors.accentGreen },
+            { name: 'Dhaval Patel', role: 'Founder & CEO', img: '/assets/founders/Dhaval.png' },
+            { name: 'Hemanand Vadivel', role: 'Co-Founder & CTO', img: '/assets/founders/Hemanand.png' },
           ].map((founder) => (
             <div key={founder.name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
               <div
                 style={{
-                  width: 110 * scale,
-                  height: 110 * scale,
+                  width: 160 * scale,
+                  height: 160 * scale,
                   borderRadius: '50%',
-                  border: `3px solid ${founder.border}`,
+                  border: '3px solid rgba(255,255,255,0.3)',
                   overflow: 'hidden',
                   backgroundColor: BRAND.colors.bgCard,
                 }}
@@ -144,10 +144,10 @@ export function WebinarTemplate({
                 />
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 12 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+                <div style={{ fontSize: 16 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                   {founder.name}
                 </div>
-                <div style={{ fontSize: 9 * scale, color: BRAND.colors.textMuted }}>
+                <div style={{ fontSize: 13 * scale, color: BRAND.colors.textMuted }}>
                   {founder.role}
                 </div>
               </div>
@@ -158,7 +158,7 @@ export function WebinarTemplate({
         {/* Event details */}
         <p
           style={{
-            fontSize: 12 * scale,
+            fontSize: 16 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -174,7 +174,7 @@ export function WebinarTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 16 * scale, zIndex: 1 }}>
+      <div style={{ flexShrink: 0, marginTop: 10 * scale, zIndex: 1 }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>
