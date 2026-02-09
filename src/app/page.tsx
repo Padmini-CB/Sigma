@@ -23,11 +23,9 @@ export default function Home() {
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="font-ui text-xs text-gray-300">
-                  1.4M+ YouTube Subscribers
-                </span>
+              <div className="hidden md:flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-2 border border-white/20">
+                <span className="text-[#D6EF3F]">&#10024;</span>
+                <span className="text-sm font-medium text-white">Intent-First Design</span>
               </div>
             </div>
           </div>

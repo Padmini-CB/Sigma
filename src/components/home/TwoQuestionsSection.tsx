@@ -34,9 +34,9 @@ export default function TwoQuestionsSection() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* FEEL Card */}
-          <div className="flex-1 group relative bg-white rounded-2xl border-2 border-gray-100 p-8 hover:border-brand-purple/30 hover:shadow-xl transition-all duration-300">
+          <div className="group relative bg-white rounded-2xl border-2 border-gray-100 p-8 flex flex-col hover:border-brand-purple/30 hover:shadow-xl transition-all duration-300">
             <div className="absolute top-0 left-8 -translate-y-1/2">
               <span className="inline-block px-4 py-1 bg-brand-purple text-white font-ui font-bold text-sm rounded-full">
                 FEEL
@@ -50,7 +50,7 @@ export default function TwoQuestionsSection() {
               Every scroll-stopping creative triggers an emotional response. Choose the feeling you want to create.
             </p>
 
-            <ul className="space-y-3">
+            <ul className="space-y-3 flex-1">
               {feelIntents.map((intent) => (
                 <li
                   key={intent.label}
@@ -67,7 +67,7 @@ export default function TwoQuestionsSection() {
           </div>
 
           {/* DO Card */}
-          <div className="flex-1 group relative bg-white rounded-2xl border-2 border-gray-100 p-8 hover:border-brand-blue/30 hover:shadow-xl transition-all duration-300">
+          <div className="group relative bg-white rounded-2xl border-2 border-gray-100 p-8 flex flex-col hover:border-brand-blue/30 hover:shadow-xl transition-all duration-300">
             <div className="absolute top-0 left-8 -translate-y-1/2">
               <span className="inline-block px-4 py-1 bg-brand-blue text-white font-ui font-bold text-sm rounded-full">
                 DO
@@ -81,20 +81,20 @@ export default function TwoQuestionsSection() {
               This is your Call-to-Action (CTA) — the next step you want the learner to take after seeing your creative.
             </p>
 
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-4 mt-auto">
               {doActions.map((action) => (
-                <li
+                <div
                   key={action.label}
-                  className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
+                  className="flex items-start gap-2"
                 >
                   <span className="text-lg flex-shrink-0 mt-0.5">{action.icon}</span>
                   <div>
-                    <span className="font-body text-sm font-semibold text-gray-700 leading-tight block">{action.label}</span>
-                    <span className="font-body text-xs text-gray-400 leading-tight block">{action.description}</span>
+                    <p className="font-body font-semibold text-gray-700 text-sm">{action.label}</p>
+                    <p className="font-body text-xs text-gray-400">{action.description}</p>
                   </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </div>

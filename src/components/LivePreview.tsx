@@ -236,7 +236,7 @@ interface TemplateContentProps {
 }
 
 function CharacterOverlay({ character, width, height }: { character: SelectedCharacter; width: number; height: number }) {
-  const charSize = Math.min(width, height) * 0.4;
+  const charSize = character.size || Math.min(width, height) * 0.4;
   const positionStyles: Record<string, React.CSSProperties> = {
     left: {
       position: 'absolute',
@@ -268,7 +268,7 @@ function CharacterOverlay({ character, width, height }: { character: SelectedCha
       <img
         src={character.image}
         alt={character.name}
-        style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom' }}
+        style={{ height: `${charSize}px`, objectFit: 'contain', objectPosition: 'bottom' }}
       />
     </div>
   );
