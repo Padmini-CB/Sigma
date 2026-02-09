@@ -3,6 +3,7 @@
 import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
 import { CHARACTERS, CharacterKey, getCharacterImage } from '@/data/characters';
 import templateDesignsData from '@/data/templateDesigns.json';
+import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -27,6 +28,8 @@ interface EditorSidebarProps {
   isMobile?: boolean;
   selectedCharacter?: SelectedCharacter | null;
   onCharacterSelect?: (character: SelectedCharacter | null) => void;
+  selectedCourse?: BootcampKey | null;
+  onCourseSelect?: (course: BootcampKey | null) => void;
 }
 
 interface FieldConfig {
@@ -219,6 +222,8 @@ function SidebarContent({
   isMobile,
   selectedCharacter,
   onCharacterSelect,
+  selectedCourse,
+  onCourseSelect,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
@@ -521,15 +526,21 @@ function SidebarContent({
             Brand Elements
           </p>
           <div className="space-y-2">
-            <button
-              onClick={() => console.log('Add YouTube Badge to canvas')}
-              className="w-full flex items-center gap-3 p-3 rounded-lg border-2 border-red-400 bg-red-50 hover:shadow-md transition-all cursor-pointer"
-            >
-              <div className="w-10 h-10 rounded-lg border-2 border-red-400 bg-red-50 flex items-center justify-center">
-                <span className="font-ui font-bold text-xs text-red-700">YT</span>
+            <div className="w-full p-3 rounded-lg border-2 border-red-400 bg-red-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+                    <rect width="20" height="14" rx="3" fill="white" />
+                    <path d="M8 10V4L13.5 7L8 10Z" fill="#dc2626" />
+                  </svg>
+                </div>
+                <div>
+                  <span className="font-ui text-sm font-semibold text-red-700">YouTube Badge</span>
+                  <p className="font-ui text-xs text-red-500">1.4M+ Subs &bull; 4.9 Rating</p>
+                </div>
               </div>
-              <span className="font-ui text-sm font-semibold text-red-700">YouTube Badge (1M+ Subs)</span>
-            </button>
+              <p className="font-ui text-xs text-red-400 mt-2">Included in all rich templates automatically</p>
+            </div>
           </div>
 
           <p className="font-body text-xs text-gray-400 mt-6 text-center italic">
@@ -562,6 +573,39 @@ function SidebarContent({
         {selectedDesignId && (
           <p className="font-ui text-xs text-brand-purple mt-2">
             {designs.find(d => d.id === selectedDesignId)?.description}
+          </p>
+        )}
+      </div>
+
+      {/* Course Selector */}
+      <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-blue-50 flex-shrink-0">
+        <label className="block font-ui text-sm font-semibold text-brand-navy mb-2">
+          Course / Bootcamp
+        </label>
+        <select
+          value={selectedCourse || ''}
+          onChange={(e) => {
+            const key = e.target.value as BootcampKey | '';
+            if (key && key in ALL_BOOTCAMPS) {
+              onCourseSelect?.(key as BootcampKey);
+              const course = ALL_BOOTCAMPS[key as BootcampKey];
+              // Auto-populate courseName and price from product data
+              onFieldChange('courseName', course.name);
+              onFieldChange('price', course.price);
+            } else {
+              onCourseSelect?.(null);
+            }
+          }}
+          className="w-full px-3 py-2.5 rounded-lg border border-gray-300 font-body text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-colors cursor-pointer"
+        >
+          <option value="">— Select a course —</option>
+          <option value="da">Data Analytics Bootcamp 5.0</option>
+          <option value="de">Data Engineering Bootcamp 1.0</option>
+          <option value="ds-genai">GenAI & Data Science Bootcamp 3.0</option>
+        </select>
+        {selectedCourse && (
+          <p className="font-ui text-xs text-green-700 mt-2">
+            Course data will auto-populate template visuals
           </p>
         )}
       </div>
@@ -643,6 +687,8 @@ export default function EditorSidebar({
   isMobile = false,
   selectedCharacter,
   onCharacterSelect,
+  selectedCourse,
+  onCourseSelect,
 }: EditorSidebarProps) {
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -684,6 +730,8 @@ export default function EditorSidebar({
             isMobile={true}
             selectedCharacter={selectedCharacter}
             onCharacterSelect={onCharacterSelect}
+            selectedCourse={selectedCourse}
+            onCourseSelect={onCourseSelect}
           />
         </aside>
       </>
@@ -702,6 +750,8 @@ export default function EditorSidebar({
         isMobile={false}
         selectedCharacter={selectedCharacter}
         onCharacterSelect={onCharacterSelect}
+        selectedCourse={selectedCourse}
+        onCourseSelect={onCourseSelect}
       />
     </aside>
   );
