@@ -8,6 +8,8 @@ import EditorSidebar from '@/components/EditorSidebar';
 import LivePreview, { LivePreviewHandle } from '@/components/LivePreview';
 import { useExportPng } from '@/hooks/useExportPng';
 import { useToast } from '@/components/Toast';
+import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal';
+import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
 
 interface Template {
   id: string;
@@ -87,6 +89,8 @@ export default function EditorPage() {
   const [customColors, setCustomColors] = useState<string[] | null>(null);
   const [selectedCharacter, setSelectedCharacter] = useState<SelectedCharacter | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [jesterLine, setJesterLine] = useState<string | null>(null);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -134,6 +138,56 @@ export default function EditorPage() {
     setCustomColors(null);
     setSelectedCharacter(null);
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
+  };
+
+  const handleAIGenerate = (result: GeneratedCreative) => {
+    // Update form fields with generated content
+    setFields((prev) => ({
+      ...prev,
+      headline: result.headline,
+      subheadline: result.subheadline,
+      bodyText: result.bodyText,
+      cta: result.cta,
+    }));
+
+    // Set jester line if provided
+    if (result.jesterLine) {
+      setJesterLine(result.jesterLine);
+    }
+
+    // Set character if provided
+    if (result.character?.name) {
+      const charKey = result.character.name.toLowerCase() as CharacterKey;
+      const char = CHARACTERS[charKey];
+      if (char) {
+        setSelectedCharacter({
+          key: charKey,
+          name: char.name,
+          image: getCharacterImage(charKey, result.character.pose),
+          position: result.character.position || 'left',
+          size: result.character.size || 250,
+        });
+      }
+    }
+
+    // Set founder if provided
+    if (result.founder?.name) {
+      const founderMap: Record<string, { key: string; image: string }> = {
+        'Dhaval Patel': { key: 'dhaval', image: '/assets/founders/Dhaval.png' },
+        'Hemanand Vadivel': { key: 'hemanand', image: '/assets/founders/Hemanand.png' },
+      };
+      const founder = founderMap[result.founder.name];
+      if (founder) {
+        setSelectedCharacter({
+          key: founder.key,
+          name: result.founder.name,
+          image: founder.image,
+          position: result.founder.position || 'left',
+        });
+      }
+    }
+
+    showToast('success', 'AI Generated', 'Creative content has been applied to the editor');
   };
 
   const handleExport = async () => {
@@ -230,6 +284,15 @@ export default function EditorPage() {
                 <span className="hidden md:inline">Reset</span>
               </button>
               <button
+                onClick={() => setShowAIModal(true)}
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-ui text-sm font-semibold rounded-lg hover:opacity-90 transition"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                <span className="hidden sm:inline">Generate with AI</span>
+              </button>
+              <button
                 onClick={handleExport}
                 disabled={isExporting}
                 className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-lime text-brand-navy hover:bg-brand-lime/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -286,6 +349,7 @@ export default function EditorPage() {
           customColors={customColors}
           selectedDesignId={selectedDesignId}
           selectedCharacter={selectedCharacter}
+          jesterLine={jesterLine}
         />
       </div>
 
@@ -321,6 +385,13 @@ export default function EditorPage() {
           </button>
         </div>
       </div>
+
+      {/* AI Generate Modal */}
+      <AIGenerateModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        onGenerate={handleAIGenerate}
+      />
     </div>
   );
 }
