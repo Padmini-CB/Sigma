@@ -430,16 +430,16 @@ function SidebarContent({
                           </div>
                         </div>
                       )}
-                      {/* Size Control */}
+                      {/* Size Slider */}
                       {isActive && selectedCharacter && (
-                        <div className="mt-4 px-3">
+                        <div className="mt-4">
                           <label className="text-xs text-gray-500 block mb-2">Size</label>
                           <input
                             type="range"
                             min="150"
-                            max="500"
-                            step="10"
-                            value={selectedCharacter.size || 300}
+                            max="450"
+                            step="25"
+                            value={selectedCharacter.size || 250}
                             onChange={(e) => onCharacterSelect?.({
                               ...selectedCharacter,
                               size: parseInt(e.target.value)
@@ -447,9 +447,9 @@ function SidebarContent({
                             className="w-full accent-blue-500"
                           />
                           <div className="flex justify-between text-xs text-gray-400 mt-1">
-                            <span>Small</span>
-                            <span>{selectedCharacter.size || 300}px</span>
-                            <span>Large</span>
+                            <span>S</span>
+                            <span>{selectedCharacter.size || 250}px</span>
+                            <span>L</span>
                           </div>
                         </div>
                       )}

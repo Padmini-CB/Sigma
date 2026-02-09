@@ -4,7 +4,7 @@ export default function LandingPageBuilderSection() {
   return (
     <section className="py-24 bg-gradient-to-br from-[#1e1e3f] to-[#2D1B4E]">
       <div className="max-w-4xl mx-auto text-center px-6">
-        <span className="text-[#D6EF3F] text-sm font-bold uppercase tracking-wider">Coming in 2026</span>
+        <span className="text-[#D6EF3F] text-sm font-bold uppercase tracking-wider">Coming in March 2026</span>
 
         <h2 className="text-5xl font-bold text-white mt-4 font-['Saira_Condensed']">
           Landing Page Builder
