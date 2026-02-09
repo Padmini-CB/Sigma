@@ -187,7 +187,13 @@ export default function EditorPage() {
       }
     }
 
-    showToast('success', 'AI Generated', 'Creative content has been applied to the editor');
+    showToast(
+      'success',
+      result.isDemo ? 'Demo Creative Applied' : 'AI Generated',
+      result.isDemo
+        ? 'Using pre-built creative. Add an API key for live generation.'
+        : 'Creative content has been applied to the editor'
+    );
   };
 
   const handleExport = async () => {
