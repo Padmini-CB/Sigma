@@ -236,7 +236,7 @@ interface TemplateContentProps {
 }
 
 function CharacterOverlay({ character, width, height }: { character: SelectedCharacter; width: number; height: number }) {
-  const charSize = character.size || Math.min(width, height) * 0.4;
+  const charSize = character.size || 250;
   const positionStyles: Record<string, React.CSSProperties> = {
     left: {
       position: 'absolute',
