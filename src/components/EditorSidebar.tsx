@@ -430,6 +430,29 @@ function SidebarContent({
                           </div>
                         </div>
                       )}
+                      {/* Size Control */}
+                      {isActive && selectedCharacter && (
+                        <div className="mt-4 px-3">
+                          <label className="text-xs text-gray-500 block mb-2">Size</label>
+                          <input
+                            type="range"
+                            min="150"
+                            max="500"
+                            step="10"
+                            value={selectedCharacter.size || 300}
+                            onChange={(e) => onCharacterSelect?.({
+                              ...selectedCharacter,
+                              size: parseInt(e.target.value)
+                            })}
+                            className="w-full accent-blue-500"
+                          />
+                          <div className="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>Small</span>
+                            <span>{selectedCharacter.size || 300}px</span>
+                            <span>Large</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -437,27 +460,76 @@ function SidebarContent({
             })}
           </div>
 
-          <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
+          {/* FOUNDERS SECTION */}
+          <div className="mt-6">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              Founders
+            </h3>
+            <div className="space-y-2">
+              <button
+                onClick={() => onCharacterSelect?.({
+                  key: 'dhaval',
+                  name: 'Dhaval Patel',
+                  image: '/assets/founders/Dhaval.png',
+                  position: 'left',
+                })}
+                className="w-full flex items-center gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/assets/founders/Dhaval.png" alt="Dhaval" className="w-10 h-10 rounded-full object-cover" />
+                <div className="text-left">
+                  <p className="font-semibold text-gray-800">Dhaval Patel</p>
+                  <p className="text-xs text-gray-500">Founder &amp; CEO</p>
+                </div>
+              </button>
+              <button
+                onClick={() => onCharacterSelect?.({
+                  key: 'hemanand',
+                  name: 'Hemanand Vadivel',
+                  image: '/assets/founders/Hemanand.png',
+                  position: 'left',
+                })}
+                className="w-full flex items-center gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/assets/founders/Hemanand.png" alt="Hemanand" className="w-10 h-10 rounded-full object-cover" />
+                <div className="text-left">
+                  <p className="font-semibold text-gray-800">Hemanand Vadivel</p>
+                  <p className="text-xs text-gray-500">Co-Founder &amp; CTO</p>
+                </div>
+              </button>
+              <button
+                onClick={() => onCharacterSelect?.({
+                  key: 'both',
+                  name: 'Both Founders',
+                  image: '/assets/founders/Both.png',
+                  position: 'left',
+                })}
+                className="w-full flex items-center gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-500 transition"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/assets/founders/Both.png" alt="Both Founders" className="w-10 h-10 rounded-full object-cover" />
+                <div className="text-left">
+                  <p className="font-semibold text-gray-800">Both Founders</p>
+                  <p className="text-xs text-gray-500">For webinars &amp; trust</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <p className="font-ui text-xs font-semibold text-gray-500 mb-3 mt-6 uppercase tracking-wide">
             Brand Elements
           </p>
           <div className="space-y-2">
-            {[
-              { name: 'AtliQ Logo', color: 'border-blue-400 bg-blue-50', textColor: 'text-blue-700' },
-              { name: 'YouTube Badge (1M+ Subs)', color: 'border-red-400 bg-red-50', textColor: 'text-red-700' },
-            ].map((el) => (
-              <button
-                key={el.name}
-                onClick={() => console.log(`Add ${el.name} to canvas`)}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 ${el.color} hover:shadow-md transition-all cursor-pointer`}
-              >
-                <div className={`w-10 h-10 rounded-lg border-2 ${el.color} flex items-center justify-center`}>
-                  <span className={`font-ui font-bold text-xs ${el.textColor}`}>
-                    {el.name.split(' ')[0]}
-                  </span>
-                </div>
-                <span className={`font-ui text-sm font-semibold ${el.textColor}`}>{el.name}</span>
-              </button>
-            ))}
+            <button
+              onClick={() => console.log('Add YouTube Badge to canvas')}
+              className="w-full flex items-center gap-3 p-3 rounded-lg border-2 border-red-400 bg-red-50 hover:shadow-md transition-all cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-lg border-2 border-red-400 bg-red-50 flex items-center justify-center">
+                <span className="font-ui font-bold text-xs text-red-700">YT</span>
+              </div>
+              <span className="font-ui text-sm font-semibold text-red-700">YouTube Badge (1M+ Subs)</span>
+            </button>
           </div>
 
           <p className="font-body text-xs text-gray-400 mt-6 text-center italic">

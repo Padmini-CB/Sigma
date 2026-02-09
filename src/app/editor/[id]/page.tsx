@@ -49,6 +49,7 @@ export interface SelectedCharacter {
   name: string;
   image: string;
   position: 'left' | 'right' | 'bottom';
+  size?: number;
 }
 
 const defaultFields: EditorFields = {

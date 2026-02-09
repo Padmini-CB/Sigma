@@ -1,5 +1,4 @@
 import { getCharacterImage } from "@/data/characters";
-import { YouTubeBadge } from "@/components/elements/YouTubeBadge";
 import { PriceTag } from "@/components/elements/PriceTag";
 
 interface TonySharmaTemplateProps {
@@ -21,9 +20,12 @@ export function TonySharmaTemplate({
 }: TonySharmaTemplateProps) {
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-[#181830] to-[#2D1B4E] overflow-hidden">
-      {/* YouTube Badge - Top Right */}
+      {/* Sigma Tagline Badge - Top Right */}
       <div className="absolute top-4 right-4">
-        <YouTubeBadge />
+        <div className="flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-2 border border-white/20">
+          <span className="text-[#D6EF3F]">&#10024;</span>
+          <span className="text-sm font-medium text-white">Intent-First Design</span>
+        </div>
       </div>
 
       {/* Bootcamp Name - Top Right below badge */}
