@@ -37,7 +37,7 @@ export function TonySharmaV2Template({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -47,7 +47,7 @@ export function TonySharmaV2Template({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale, zIndex: 3 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale, zIndex: 3 }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -103,7 +103,7 @@ export function TonySharmaV2Template({
             <p
               style={{
                 fontSize: 15 * scale,
-                color: 'rgba(199,244,100,0.6)',
+                color: 'rgba(255,255,255,0.45)',
                 fontFamily: BRAND.fonts.body,
                 fontStyle: 'italic',
                 margin: 0,
@@ -145,7 +145,7 @@ export function TonySharmaV2Template({
       </div>
 
       {/* Bottom Bar - highest z-index */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale, zIndex: 50 }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale, zIndex: 50 }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

@@ -33,7 +33,7 @@ export function GitHubBeforeAfterTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -43,7 +43,7 @@ export function GitHubBeforeAfterTemplate({
       }}
     >
       {/* Top bar: Logo + YouTube */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -91,7 +91,7 @@ export function GitHubBeforeAfterTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

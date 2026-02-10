@@ -51,12 +51,12 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
       </div>
       <div
         style={{
-          backgroundColor: BRAND.colors.accentGreen,
-          color: BRAND.colors.bgDark,
-          fontSize: 14,
+          background: 'linear-gradient(90deg, #2563eb, #3b82f6)',
+          color: '#ffffff',
+          fontSize: 16,
           fontWeight: 700,
           fontFamily: BRAND.fonts.body,
-          padding: '10px 20px',
+          padding: '10px 22px',
           borderRadius: 6,
           whiteSpace: 'nowrap',
           flexShrink: 0,

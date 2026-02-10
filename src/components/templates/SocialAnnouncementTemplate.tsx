@@ -35,7 +35,7 @@ export function SocialAnnouncementTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -52,12 +52,12 @@ export function SocialAnnouncementTemplate({
           left: 0,
           right: 0,
           height: 4,
-          background: `linear-gradient(90deg, ${BRAND.colors.primaryBlue}, ${BRAND.colors.accentGreen})`,
+          background: `linear-gradient(90deg, ${BRAND.colors.primaryBlue}, #4cc378)`,
         }}
       />
 
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -99,7 +99,7 @@ export function SocialAnnouncementTemplate({
             width: 60,
             height: 3,
             borderRadius: 2,
-            backgroundColor: BRAND.colors.accentGreen,
+            backgroundColor: '#4cc378',
           }}
         />
 
@@ -123,7 +123,7 @@ export function SocialAnnouncementTemplate({
         <div
           style={{
             fontSize: 14 * scale,
-            color: BRAND.colors.accentGreen,
+            color: '#4cc378',
             fontFamily: BRAND.fonts.body,
             fontWeight: 600,
             textAlign: 'center',
@@ -134,7 +134,7 @@ export function SocialAnnouncementTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

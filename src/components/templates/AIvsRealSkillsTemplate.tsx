@@ -45,7 +45,7 @@ export function AIvsRealSkillsTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -55,7 +55,7 @@ export function AIvsRealSkillsTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -64,8 +64,8 @@ export function AIvsRealSkillsTemplate({
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1
           style={{
-            fontSize: 42 * scale,
-            fontWeight: 800,
+            fontSize: 48 * scale,
+            fontWeight: 900,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
             lineHeight: 1.1,
@@ -92,7 +92,7 @@ export function AIvsRealSkillsTemplate({
         >
           <div
             style={{
-              fontSize: 16 * scale,
+              fontSize: 18 * scale,
               fontWeight: 800,
               color: BRAND.colors.redWarning,
               fontFamily: BRAND.fonts.heading,
@@ -112,7 +112,7 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 15 * scale,
+                fontSize: 16 * scale,
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
@@ -139,7 +139,7 @@ export function AIvsRealSkillsTemplate({
         >
           <div
             style={{
-              fontSize: 16 * scale,
+              fontSize: 18 * scale,
               fontWeight: 800,
               color: BRAND.colors.greenGrid,
               fontFamily: BRAND.fonts.heading,
@@ -159,7 +159,7 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 15 * scale,
+                fontSize: 16 * scale,
                 color: BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
@@ -178,7 +178,7 @@ export function AIvsRealSkillsTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>
