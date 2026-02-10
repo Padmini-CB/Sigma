@@ -9,6 +9,8 @@ import { useToast } from '@/components/Toast';
 const WIDTH = 1280;
 const HEIGHT = 720;
 
+type FontStyleId = 'bold-clean' | 'gradient-impact' | 'mixed-weight' | 'outlined';
+
 interface ThumbnailState {
   headline: string;
   accentWords: Set<number>;
@@ -16,7 +18,15 @@ interface ThumbnailState {
   backgroundPreset: number;
   techIcons: string[];
   layout: number;
+  fontStyle: FontStyleId;
 }
+
+const FONT_STYLE_PRESETS: { id: FontStyleId; name: string; description: string; bestFor: string }[] = [
+  { id: 'bold-clean', name: 'Bold Clean', description: 'Saira Condensed, weight 900, uppercase, solid colors', bestFor: 'Tutorials' },
+  { id: 'gradient-impact', name: 'Gradient Impact', description: 'Extra Condensed, weight 900, gradient fill', bestFor: 'Roadmaps' },
+  { id: 'mixed-weight', name: 'Mixed Weight', description: 'Thin + extra bold mix for visual hierarchy', bestFor: 'Debates' },
+  { id: 'outlined', name: 'Outlined', description: 'Colored outline with transparent or white fill', bestFor: 'Provocative' },
+];
 
 const PEOPLE = [
   { id: 'dhaval', label: 'Dhaval Patel', img: '/assets/founders/Dhaval.png' },
@@ -46,6 +56,7 @@ const PRESET_LAYOUTS = [
     person: 'dhaval',
     techIcons: ['Python', 'TensorFlow', 'AWS'],
     backgroundPreset: 0,
+    fontStyle: 'mixed-weight' as FontStyleId,
   },
   {
     name: 'SQL for Beginners',
@@ -54,6 +65,7 @@ const PRESET_LAYOUTS = [
     person: 'dhaval',
     techIcons: ['SQL', 'PostgreSQL', 'Excel'],
     backgroundPreset: 1,
+    fontStyle: 'bold-clean' as FontStyleId,
   },
   {
     name: 'Data Engineer Roadmap',
@@ -62,6 +74,7 @@ const PRESET_LAYOUTS = [
     person: 'hemanand',
     techIcons: ['Spark', 'Airflow', 'Kafka', 'AWS', 'Databricks'],
     backgroundPreset: 2,
+    fontStyle: 'gradient-impact' as FontStyleId,
   },
   {
     name: 'Power BI Full Course',
@@ -70,6 +83,7 @@ const PRESET_LAYOUTS = [
     person: 'dhaval',
     techIcons: ['Power BI', 'Excel', 'SQL'],
     backgroundPreset: 3,
+    fontStyle: 'bold-clean' as FontStyleId,
   },
   {
     name: 'Resume Tips',
@@ -78,6 +92,7 @@ const PRESET_LAYOUTS = [
     person: 'hemanand',
     techIcons: [],
     backgroundPreset: 4,
+    fontStyle: 'outlined' as FontStyleId,
   },
 ];
 
@@ -86,6 +101,114 @@ function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
   const words = state.headline.split(' ');
   const personData = PEOPLE.find(p => p.id === state.person);
   const hasPerson = state.person !== 'none' && personData?.img;
+  const baseFontSize = hasPerson ? 90 * scale : 110 * scale;
+
+  const renderHeadline = () => {
+    switch (state.fontStyle) {
+      case 'gradient-impact': {
+        return (
+          <h1 style={{
+            fontSize: baseFontSize,
+            fontWeight: 900,
+            fontFamily: "'Saira Extra Condensed', 'Saira Condensed', sans-serif",
+            textTransform: 'uppercase',
+            lineHeight: 1.0,
+            margin: 0,
+            background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #c7f464 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            {words.join(' ')}
+          </h1>
+        );
+      }
+
+      case 'mixed-weight': {
+        return (
+          <h1 style={{
+            fontSize: baseFontSize,
+            fontFamily: BRAND.fonts.heading,
+            textTransform: 'uppercase',
+            lineHeight: 1.0,
+            margin: 0,
+          }}>
+            {words.map((word, i) => {
+              const isAccent = state.accentWords.has(i);
+              return (
+                <span key={i}>
+                  <span style={{
+                    fontWeight: isAccent ? 900 : 300,
+                    color: isAccent ? '#c7f464' : 'rgba(255,255,255,0.85)',
+                  }}>
+                    {word}
+                  </span>
+                  {i < words.length - 1 ? ' ' : ''}
+                </span>
+              );
+            })}
+          </h1>
+        );
+      }
+
+      case 'outlined': {
+        return (
+          <h1 style={{
+            fontSize: baseFontSize,
+            fontWeight: 900,
+            fontFamily: BRAND.fonts.heading,
+            textTransform: 'uppercase',
+            lineHeight: 1.0,
+            margin: 0,
+            color: 'transparent',
+            WebkitTextStroke: `${2.5 * scale}px #c7f464`,
+          }}>
+            {words.map((word, i) => {
+              const isAccent = state.accentWords.has(i);
+              return (
+                <span key={i}>
+                  <span style={{
+                    ...(isAccent ? {
+                      color: '#ffffff',
+                      WebkitTextStroke: `${2.5 * scale}px #c7f464`,
+                    } : {}),
+                  }}>
+                    {word}
+                  </span>
+                  {i < words.length - 1 ? ' ' : ''}
+                </span>
+              );
+            })}
+          </h1>
+        );
+      }
+
+      case 'bold-clean':
+      default: {
+        return (
+          <h1 style={{
+            fontSize: baseFontSize,
+            fontWeight: 900,
+            fontFamily: BRAND.fonts.heading,
+            textTransform: 'uppercase',
+            lineHeight: 1.0,
+            margin: 0,
+          }}>
+            {words.map((word, i) => (
+              <span key={i}>
+                <span style={{
+                  color: state.accentWords.has(i) ? '#c7f464' : '#ffffff',
+                }}>
+                  {word}
+                </span>
+                {i < words.length - 1 ? ' ' : ''}
+              </span>
+            ))}
+          </h1>
+        );
+      }
+    }
+  };
 
   return (
     <div style={{
@@ -155,26 +278,8 @@ function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
         padding: `${28 * scale}px ${36 * scale}px`,
         gap: 16 * scale,
       }}>
-        {/* Headline */}
-        <h1 style={{
-          fontSize: hasPerson ? 60 * scale : 72 * scale,
-          fontWeight: 900,
-          fontFamily: BRAND.fonts.heading,
-          textTransform: 'uppercase',
-          lineHeight: 1.05,
-          margin: 0,
-        }}>
-          {words.map((word, i) => (
-            <span key={i}>
-              <span style={{
-                color: state.accentWords.has(i) ? '#c7f464' : '#ffffff',
-              }}>
-                {word}
-              </span>
-              {i < words.length - 1 ? ' ' : ''}
-            </span>
-          ))}
-        </h1>
+        {/* Headline — styled by font preset */}
+        {renderHeadline()}
 
         {/* Tech icons row */}
         {state.techIcons.length > 0 && (
@@ -189,7 +294,7 @@ function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
                 border: '1px solid rgba(255,255,255,0.15)',
                 borderRadius: 8,
                 padding: `${6 * scale}px ${16 * scale}px`,
-                fontSize: 18 * scale,
+                fontSize: 20 * scale,
                 fontWeight: 600,
                 color: '#ffffff',
                 fontFamily: BRAND.fonts.body,
@@ -219,6 +324,7 @@ export default function ThumbnailPage() {
     backgroundPreset: 0,
     techIcons: ['Python', 'TensorFlow', 'AWS'],
     layout: 0,
+    fontStyle: 'bold-clean',
   });
 
   const [description, setDescription] = useState('');
@@ -271,6 +377,7 @@ export default function ThumbnailPage() {
       backgroundPreset: preset.backgroundPreset,
       techIcons: [...preset.techIcons],
       layout: idx,
+      fontStyle: preset.fontStyle,
     });
     showToast('success', 'Preset Applied', `"${preset.name}" layout loaded`);
   };
@@ -396,6 +503,95 @@ export default function ThumbnailPage() {
                     }`}
                   >
                     {word}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <hr className="border-gray-200" />
+
+            {/* Font Style */}
+            <div>
+              <label className="block font-ui text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                Font Style
+              </label>
+              <div className="space-y-1.5">
+                {FONT_STYLE_PRESETS.map(preset => (
+                  <button
+                    key={preset.id}
+                    onClick={() => setState(prev => ({ ...prev, fontStyle: preset.id }))}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors border ${
+                      state.fontStyle === preset.id
+                        ? 'bg-brand-blue/10 text-brand-blue border-brand-blue/30'
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Mini visual preview */}
+                      <div
+                        className="w-14 h-9 rounded flex-shrink-0 flex items-center justify-center overflow-hidden"
+                        style={{ background: 'linear-gradient(135deg, #0c1630 0%, #1a1545 100%)' }}
+                      >
+                        {preset.id === 'bold-clean' && (
+                          <span style={{
+                            fontFamily: "'Saira Condensed', sans-serif",
+                            fontWeight: 900,
+                            fontSize: 11,
+                            color: '#ffffff',
+                            textTransform: 'uppercase',
+                            lineHeight: 1,
+                          }}>
+                            <span>AB</span>
+                            <span style={{ color: '#c7f464' }}>C</span>
+                          </span>
+                        )}
+                        {preset.id === 'gradient-impact' && (
+                          <span style={{
+                            fontFamily: "'Saira Condensed', sans-serif",
+                            fontWeight: 900,
+                            fontSize: 11,
+                            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6, #c7f464)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            textTransform: 'uppercase',
+                            lineHeight: 1,
+                          }}>
+                            ABC
+                          </span>
+                        )}
+                        {preset.id === 'mixed-weight' && (
+                          <span style={{
+                            fontFamily: "'Saira Condensed', sans-serif",
+                            fontSize: 11,
+                            textTransform: 'uppercase',
+                            lineHeight: 1,
+                          }}>
+                            <span style={{ fontWeight: 300, color: 'rgba(255,255,255,0.6)' }}>A</span>
+                            <span style={{ fontWeight: 900, color: '#c7f464' }}>B</span>
+                            <span style={{ fontWeight: 300, color: 'rgba(255,255,255,0.6)' }}>C</span>
+                          </span>
+                        )}
+                        {preset.id === 'outlined' && (
+                          <span style={{
+                            fontFamily: "'Saira Condensed', sans-serif",
+                            fontWeight: 900,
+                            fontSize: 11,
+                            color: 'transparent',
+                            WebkitTextStroke: '1px #c7f464',
+                            textTransform: 'uppercase',
+                            lineHeight: 1,
+                          }}>
+                            ABC
+                          </span>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-ui text-sm font-semibold leading-tight">{preset.name}</div>
+                        <div className="font-ui text-[10px] text-gray-400 leading-tight mt-0.5">
+                          Best for {preset.bestFor}
+                        </div>
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>
