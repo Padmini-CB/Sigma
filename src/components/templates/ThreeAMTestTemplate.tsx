@@ -69,7 +69,7 @@ export function ThreeAMTestTemplate({
           marginBottom: 8 * scale,
         }}>
           <span style={{
-            fontSize: 26 * scale, fontWeight: 700,
+            fontSize: 30 * scale, fontWeight: 700,
             color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading,
           }}>
             3:07 AM
@@ -101,13 +101,13 @@ export function ThreeAMTestTemplate({
           <span style={{ fontSize: 16 * scale, color: '#ef4444', flexShrink: 0, lineHeight: 1 }}>&#9888;</span>
           <div>
             <div style={{
-              fontSize: 14 * scale, fontWeight: 600, color: '#c47070',
+              fontSize: 16 * scale, fontWeight: 600, color: '#c47070',
               fontFamily: BRAND.fonts.body, lineHeight: 1.3,
             }}>
               AWS CloudWatch Alert
             </div>
             <div style={{
-              fontSize: 13 * scale, color: 'rgba(196,112,112,0.7)',
+              fontSize: 15 * scale, color: 'rgba(196,112,112,0.7)',
               fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.3,
             }}>
               Production Model Failed &mdash; Pipeline timeout at Stage 3
@@ -134,7 +134,7 @@ export function ThreeAMTestTemplate({
           }}>
             <span style={{ fontSize: 16 * scale, color: '#c47070' }}>&#10007;</span>
             <span style={{
-              fontSize: 18 * scale, fontWeight: 700, color: '#c47070',
+              fontSize: 22 * scale, fontWeight: 700, color: '#c47070',
               fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const, letterSpacing: '0.04em',
             }}>
               Tutorial Graduate
@@ -145,13 +145,13 @@ export function ThreeAMTestTemplate({
             {tutorialSteps.map((step, i) => (
               <div key={step} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 * scale }}>
                 <span style={{
-                  fontSize: 15 * scale, fontWeight: 700, color: '#c47070',
+                  fontSize: 17 * scale, fontWeight: 700, color: '#c47070',
                   fontFamily: BRAND.fonts.heading, flexShrink: 0, width: 22 * scale,
                 }}>
                   {i + 1}.
                 </span>
                 <span style={{
-                  fontSize: 15 * scale, color: BRAND.colors.textWhite,
+                  fontSize: 17 * scale, color: BRAND.colors.textWhite,
                   fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
                 }}>
                   {step}
@@ -165,7 +165,7 @@ export function ThreeAMTestTemplate({
             borderTop: '1px solid rgba(196,112,112,0.15)',
           }}>
             <span style={{
-              fontSize: 14 * scale, color: '#c47070',
+              fontSize: 16 * scale, color: '#c47070',
               fontFamily: BRAND.fonts.body, fontStyle: 'italic', fontWeight: 300,
             }}>
               Still debugging at sunrise
@@ -189,7 +189,7 @@ export function ThreeAMTestTemplate({
           }}>
             <span style={{ fontSize: 16 * scale, color: '#4cc378' }}>&#10003;</span>
             <span style={{
-              fontSize: 18 * scale, fontWeight: 700, color: '#4cc378',
+              fontSize: 22 * scale, fontWeight: 700, color: '#4cc378',
               fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const, letterSpacing: '0.04em',
             }}>
               Bootcamp Graduate
@@ -200,13 +200,13 @@ export function ThreeAMTestTemplate({
             {bootcampSteps.map((step, i) => (
               <div key={step} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 * scale }}>
                 <span style={{
-                  fontSize: 15 * scale, fontWeight: 700, color: '#4cc378',
+                  fontSize: 17 * scale, fontWeight: 700, color: '#4cc378',
                   fontFamily: BRAND.fonts.heading, flexShrink: 0, width: 22 * scale,
                 }}>
                   {i + 1}.
                 </span>
                 <span style={{
-                  fontSize: 15 * scale, color: BRAND.colors.textWhite,
+                  fontSize: 17 * scale, color: BRAND.colors.textWhite,
                   fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
                 }}>
                   {step}
@@ -220,7 +220,7 @@ export function ThreeAMTestTemplate({
             borderTop: '1px solid rgba(76,195,120,0.15)',
           }}>
             <span style={{
-              fontSize: 14 * scale, color: '#4cc378',
+              fontSize: 16 * scale, color: '#4cc378',
               fontFamily: BRAND.fonts.body, fontStyle: 'italic', fontWeight: 300,
             }}>
               Sleeping. Pipeline recovered.
@@ -240,7 +240,7 @@ export function ThreeAMTestTemplate({
             border: '1px solid rgba(76,195,120,0.2)',
             borderRadius: 6,
             padding: `${4 * scale}px ${12 * scale}px`,
-            fontSize: 13 * scale, fontWeight: 500,
+            fontSize: 15 * scale, fontWeight: 500,
             color: '#4cc378', fontFamily: BRAND.fonts.body,
           }}>
             {tech}
@@ -252,7 +252,7 @@ export function ThreeAMTestTemplate({
       <div style={{ textAlign: 'center', marginBottom: 8 * scale, flexShrink: 0 }}>
         {headline ? (
           <h1 style={{
-            fontSize: 38 * scale, fontWeight: 900,
+            fontSize: 46 * scale, fontWeight: 900,
             color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading,
             lineHeight: 1.1, textTransform: 'uppercase' as const, margin: 0,
           }}>
@@ -260,7 +260,7 @@ export function ThreeAMTestTemplate({
           </h1>
         ) : (
           <h1 style={{
-            fontSize: 38 * scale, fontWeight: 900,
+            fontSize: 46 * scale, fontWeight: 900,
             fontFamily: BRAND.fonts.heading, lineHeight: 1.15,
             textTransform: 'uppercase' as const, margin: 0,
           }}>

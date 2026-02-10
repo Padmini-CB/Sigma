@@ -108,7 +108,7 @@ export function YouTubeCommentWallTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 42 * scale, fontWeight: 900,
+          fontSize: 52 * scale, fontWeight: 900,
           fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
           textTransform: 'uppercase' as const, margin: 0,
         }}>
@@ -143,11 +143,11 @@ export function YouTubeCommentWallTemplate({
                 backgroundColor: comment.avatarBg,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
               }}>
-                <span style={{ fontSize: 12 * scale, fontWeight: 700, color: '#fff', fontFamily: BRAND.fonts.heading }}>
+                <span style={{ fontSize: 14 * scale, fontWeight: 700, color: '#fff', fontFamily: BRAND.fonts.heading }}>
                   {comment.initials}
                 </span>
               </div>
-              <span style={{ fontSize: 13 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: 15 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap' }}>
                 {comment.name}
               </span>
               <span style={{
@@ -160,7 +160,7 @@ export function YouTubeCommentWallTemplate({
 
             {/* Comment text */}
             <div style={{
-              fontSize: 13 * scale, color: 'rgba(255,255,255,0.8)',
+              fontSize: 15 * scale, color: 'rgba(255,255,255,0.8)',
               fontFamily: BRAND.fonts.body, fontWeight: 300,
               lineHeight: 1.45, flex: 1, overflow: 'hidden',
             }}>

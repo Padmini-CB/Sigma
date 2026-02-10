@@ -50,13 +50,13 @@ export function ToolCemeteryTemplate({
       {/* Headline: "Still learning with" + "DEAD TOOLS?" */}
       <div style={{ textAlign: 'center', marginBottom: 12 * scale, flexShrink: 0 }}>
         <div style={{
-          fontSize: 17 * scale, fontWeight: 300, fontStyle: 'italic',
+          fontSize: 19 * scale, fontWeight: 300, fontStyle: 'italic',
           color: 'rgba(255,255,255,0.55)', fontFamily: BRAND.fonts.body, marginBottom: 2 * scale,
         }}>
           Still learning with
         </div>
         <h1 style={{
-          fontSize: 58 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 66 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.05, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>DEAD </span>
@@ -76,7 +76,7 @@ export function ToolCemeteryTemplate({
               height: 180 * scale,
               backgroundColor: 'rgba(255,255,255,0.035)',
               border: '1px solid rgba(255,255,255,0.07)',
-              borderRadius: `${77 * scale}px ${77 * scale}px ${4 * scale}px ${4 * scale}px`,
+              borderRadius: '50% 50% 4px 4px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -87,14 +87,14 @@ export function ToolCemeteryTemplate({
             }}>
               {/* Cross/dagger at the top */}
               <div style={{
-                fontSize: 22 * scale, color: 'rgba(255,255,255,0.15)',
+                fontSize: 26 * scale, color: 'rgba(255,255,255,0.15)',
                 fontFamily: 'serif', lineHeight: 1,
               }}>
                 †
               </div>
               {/* Tool name */}
               <div style={{
-                fontSize: 14 * scale, fontWeight: 600, color: 'rgba(255,255,255,0.5)',
+                fontSize: 16 * scale, fontWeight: 600, color: 'rgba(255,255,255,0.5)',
                 fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
                 letterSpacing: '0.03em', lineHeight: 1.3,
               }}>
@@ -102,7 +102,7 @@ export function ToolCemeteryTemplate({
               </div>
               {/* RIP text in faint red */}
               <div style={{
-                fontSize: 12 * scale, fontWeight: 700, color: 'rgba(200,100,100,0.45)',
+                fontSize: 14 * scale, fontWeight: 700, color: 'rgba(200,100,100,0.45)',
                 fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
                 letterSpacing: '0.05em',
               }}>
@@ -130,7 +130,7 @@ export function ToolCemeteryTemplate({
           position: 'relative', margin: '0 auto',
           backgroundColor: BRAND.colors.bgDark,
           padding: `0 ${16 * scale}px`,
-          fontSize: 13 * scale, fontWeight: 700, color: '#4cc378',
+          fontSize: 15 * scale, fontWeight: 700, color: '#4cc378',
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
           letterSpacing: 4,
         }}>
@@ -149,7 +149,7 @@ export function ToolCemeteryTemplate({
             border: '1px solid rgba(76,195,120,0.2)',
             borderRadius: 6,
             padding: `${6 * scale}px ${14 * scale}px`,
-            fontSize: 15 * scale, fontWeight: 500,
+            fontSize: 16 * scale, fontWeight: 500,
             color: '#4cc378', fontFamily: BRAND.fonts.body,
           }}>
             {tech}

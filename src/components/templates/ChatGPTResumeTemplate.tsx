@@ -56,7 +56,7 @@ export function ChatGPTResumeTemplate({
       </div>
 
       {/* Main content: Chat left, Headline right */}
-      <div style={{ flex: 1, display: 'flex', gap: 16 * scale, overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', gap: 12 * scale, overflow: 'hidden' }}>
         {/* Left - Chat Mockup (42%) */}
         <div style={{ width: '42%', flexShrink: 0 }}>
           <ChatMockup messages={DEFAULT_MESSAGES} />
@@ -67,7 +67,7 @@ export function ChatGPTResumeTemplate({
           <div>
             <h1
               style={{
-                fontSize: 48 * scale,
+                fontSize: 58 * scale,
                 fontWeight: 800,
                 color: BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.heading,
@@ -79,7 +79,7 @@ export function ChatGPTResumeTemplate({
             </h1>
             <h2
               style={{
-                fontSize: 48 * scale,
+                fontSize: 58 * scale,
                 fontWeight: 800,
                 color: BRAND.colors.accentGreen,
                 fontFamily: BRAND.fonts.heading,

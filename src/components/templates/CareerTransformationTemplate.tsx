@@ -59,12 +59,12 @@ export function CareerTransformationTemplate({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 * scale }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10 * scale }}>
         {/* Headline */}
         <div style={{ textAlign: 'center' }}>
           <h1
             style={{
-              fontSize: 56 * scale,
+              fontSize: 62 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -76,7 +76,7 @@ export function CareerTransformationTemplate({
           </h1>
           <p
             style={{
-              fontSize: 22 * scale,
+              fontSize: 26 * scale,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               marginTop: 8,
@@ -99,13 +99,13 @@ export function CareerTransformationTemplate({
               minWidth: 240 * scale,
             }}
           >
-            <div style={{ fontSize: 13 * scale, fontWeight: 700, color: BRAND.colors.redWarning, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
+            <div style={{ fontSize: 15 * scale, fontWeight: 700, color: BRAND.colors.redWarning, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
               BEFORE
             </div>
-            <div style={{ fontSize: 24 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+            <div style={{ fontSize: 26 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
               {beforeRole}
             </div>
-            <div style={{ fontSize: 13 * scale, color: BRAND.colors.textMuted, marginTop: 4 }}>4 year career gap</div>
+            <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted, marginTop: 4 }}>4 year career gap</div>
           </div>
 
           {/* Arrow */}
@@ -126,13 +126,13 @@ export function CareerTransformationTemplate({
               minWidth: 240 * scale,
             }}
           >
-            <div style={{ fontSize: 13 * scale, fontWeight: 700, color: BRAND.colors.greenGrid, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
+            <div style={{ fontSize: 15 * scale, fontWeight: 700, color: BRAND.colors.greenGrid, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
               AFTER
             </div>
-            <div style={{ fontSize: 24 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+            <div style={{ fontSize: 26 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
               {afterRole}
             </div>
-            <div style={{ fontSize: 13 * scale, color: '#4cc378', marginTop: 4 }}>In 4 months</div>
+            <div style={{ fontSize: 15 * scale, color: '#4cc378', marginTop: 4 }}>In 4 months</div>
           </div>
         </div>
 

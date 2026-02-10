@@ -72,7 +72,7 @@ export function YouTubeThumbnailTemplate({
       }}>
         {/* Headline */}
         <h1 style={{
-          fontSize: 56 * scale, fontWeight: 900,
+          fontSize: 64 * scale, fontWeight: 900,
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase',
           lineHeight: 1.05, margin: 0,
         }}>
@@ -83,7 +83,7 @@ export function YouTubeThumbnailTemplate({
         {/* Subheadline */}
         {subheadline && (
           <p style={{
-            fontSize: 20 * scale, fontWeight: 300,
+            fontSize: 24 * scale, fontWeight: 300,
             color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body,
             margin: 0, lineHeight: 1.4,
           }}>
@@ -101,7 +101,7 @@ export function YouTubeThumbnailTemplate({
                 borderRadius: 16, padding: `${5 * scale}px ${14 * scale}px`,
               }}>
                 <span style={{
-                  color: BRAND.colors.textWhite, fontSize: 13 * scale,
+                  color: BRAND.colors.textWhite, fontSize: 15 * scale,
                   fontWeight: 600, fontFamily: BRAND.fonts.body,
                 }}>
                   {badge}

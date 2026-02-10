@@ -29,7 +29,7 @@ export function StatCounterGrid({ stats, columns = 3 }: StatCounterGridProps) {
         >
           <div
             style={{
-              fontSize: 36,
+              fontSize: 38,
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
@@ -40,7 +40,7 @@ export function StatCounterGrid({ stats, columns = 3 }: StatCounterGridProps) {
           </div>
           <div
             style={{
-              fontSize: 12,
+              fontSize: 14,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               lineHeight: 1.2,

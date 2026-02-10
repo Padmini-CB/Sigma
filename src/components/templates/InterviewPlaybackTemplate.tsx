@@ -25,7 +25,7 @@ export function InterviewPlaybackTemplate({
     border: '1px solid rgba(255,255,255,0.07)',
     borderRadius: 8 * scale,
     padding: `${10 * scale}px ${14 * scale}px`,
-    fontSize: 14 * scale,
+    fontSize: 16 * scale,
     color: BRAND.colors.textWhite,
     fontFamily: BRAND.fonts.body,
     fontWeight: 400,
@@ -33,7 +33,7 @@ export function InterviewPlaybackTemplate({
   };
 
   const questionStyle: React.CSSProperties = {
-    fontSize: 13 * scale,
+    fontSize: 15 * scale,
     color: 'rgba(255,255,255,0.55)',
     fontFamily: BRAND.fonts.body,
     fontWeight: 300,
@@ -78,13 +78,13 @@ export function InterviewPlaybackTemplate({
             boxShadow: '0 0 6px rgba(239,68,68,0.6)',
           }} />
           <span style={{
-            fontSize: 14 * scale, fontWeight: 600,
+            fontSize: 16 * scale, fontWeight: 600,
             color: '#ef4444', fontFamily: BRAND.fonts.body,
           }}>
             REC
           </span>
           <span style={{
-            fontSize: 14 * scale, fontWeight: 500,
+            fontSize: 16 * scale, fontWeight: 500,
             color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
           }}>
             Interview Recording
@@ -112,7 +112,7 @@ export function InterviewPlaybackTemplate({
           gap: 8 * scale,
         }}>
           <div style={{
-            fontSize: 18 * scale, fontWeight: 900, color: '#c47070',
+            fontSize: 22 * scale, fontWeight: 900, color: '#c47070',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.05em', paddingBottom: 6 * scale,
             borderBottom: '2px solid #c47070',
@@ -127,7 +127,7 @@ export function InterviewPlaybackTemplate({
           <div style={qaCardStyle}>&ldquo;I have a weather API tutorial from YouTube...&rdquo;</div>
 
           <div style={{
-            marginTop: 'auto', fontSize: 17 * scale, fontWeight: 700,
+            marginTop: 'auto', fontSize: 20 * scale, fontWeight: 700,
             color: '#c47070', fontFamily: BRAND.fonts.heading,
             textAlign: 'center', padding: `${6 * scale}px 0`,
           }}>
@@ -147,7 +147,7 @@ export function InterviewPlaybackTemplate({
           gap: 8 * scale,
         }}>
           <div style={{
-            fontSize: 18 * scale, fontWeight: 900, color: '#4cc378',
+            fontSize: 22 * scale, fontWeight: 900, color: '#4cc378',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.05em', paddingBottom: 6 * scale,
             borderBottom: '2px solid #4cc378',
@@ -162,7 +162,7 @@ export function InterviewPlaybackTemplate({
           <div style={qaCardStyle}>&ldquo;GitHub portfolio with all 7 projects, including a real-time Kafka pipeline...&rdquo;</div>
 
           <div style={{
-            marginTop: 'auto', fontSize: 17 * scale, fontWeight: 700,
+            marginTop: 'auto', fontSize: 20 * scale, fontWeight: 700,
             color: '#4cc378', fontFamily: BRAND.fonts.heading,
             textAlign: 'center', padding: `${6 * scale}px 0`,
           }}>
@@ -206,7 +206,7 @@ export function InterviewPlaybackTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginTop: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 42 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 52 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.1, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>WHICH CANDIDATE GETS</span>
