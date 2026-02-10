@@ -69,20 +69,20 @@ export function DailyBreakdownTemplate({
           {/* Big daily price */}
           <div>
             <div style={{
-              fontSize: 68 * scale, fontWeight: 900, color: '#c7f464',
+              fontSize: 72 * scale, fontWeight: 900, color: '#c7f464',
               fontFamily: BRAND.fonts.heading, lineHeight: 1,
               textTransform: 'uppercase' as const,
             }}>
               {dailyPrice}/DAY
             </div>
             <div style={{
-              fontSize: 22 * scale, fontWeight: 400, color: BRAND.colors.textWhite,
+              fontSize: 26 * scale, fontWeight: 400, color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.body, marginTop: 4 * scale,
             }}>
               That&apos;s all it takes.
             </div>
             <div style={{
-              fontSize: 15 * scale, fontWeight: 300, color: 'rgba(255,255,255,0.55)',
+              fontSize: 17 * scale, fontWeight: 300, color: 'rgba(255,255,255,0.55)',
               fontFamily: BRAND.fonts.body, marginTop: 2 * scale,
             }}>
               {price} &divide; 4 months = one career transformation
@@ -102,7 +102,7 @@ export function DailyBreakdownTemplate({
                 borderRadius: 4 * scale,
                 padding: `${5 * scale}px ${2 * scale}px`,
                 textAlign: 'center',
-                fontSize: 10 * scale, color: '#c7f464',
+                fontSize: 12 * scale, color: '#c7f464',
                 fontFamily: BRAND.fonts.body, fontWeight: 400, lineHeight: 1.2,
               }}>
                 {dailyPrice}
@@ -115,7 +115,7 @@ export function DailyBreakdownTemplate({
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10 * scale }}>
           {/* What it buys elsewhere — red label */}
           <div style={{
-            fontSize: 15 * scale, fontWeight: 700, color: '#c47070',
+            fontSize: 17 * scale, fontWeight: 700, color: '#c47070',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.04em',
           }}>
@@ -131,10 +131,10 @@ export function DailyBreakdownTemplate({
               display: 'flex', alignItems: 'center', gap: 10 * scale,
             }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 15 * scale, fontWeight: 400, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body }}>
+                <div style={{ fontSize: 17 * scale, fontWeight: 400, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body }}>
                   {item.label}
                 </div>
-                <div style={{ fontSize: 12 * scale, fontWeight: 300, color: '#c47070', fontFamily: BRAND.fonts.body }}>
+                <div style={{ fontSize: 14 * scale, fontWeight: 300, color: '#c47070', fontFamily: BRAND.fonts.body }}>
                   {item.gone}
                 </div>
               </div>
@@ -149,7 +149,7 @@ export function DailyBreakdownTemplate({
 
           {/* What it gets you — green label */}
           <div style={{
-            fontSize: 15 * scale, fontWeight: 700, color: '#4cc378',
+            fontSize: 17 * scale, fontWeight: 700, color: '#4cc378',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.04em',
           }}>
@@ -160,10 +160,10 @@ export function DailyBreakdownTemplate({
             {valueItems.map((item) => (
               <div key={item} style={{
                 display: 'flex', alignItems: 'center', gap: 8 * scale,
-                fontSize: 14 * scale, fontWeight: 400,
+                fontSize: 16 * scale, fontWeight: 400,
                 color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
               }}>
-                <span style={{ color: '#4cc378', flexShrink: 0, fontSize: 14 * scale }}>&#10003;</span>
+                <span style={{ color: '#4cc378', flexShrink: 0, fontSize: 16 * scale }}>&#10003;</span>
                 <span>{item}</span>
               </div>
             ))}
@@ -174,11 +174,22 @@ export function DailyBreakdownTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginTop: 8 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 30 * scale, fontWeight: 900, color: BRAND.colors.textWhite,
+          fontSize: 36 * scale, fontWeight: 900,
           fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
           margin: 0, textTransform: 'uppercase' as const,
         }}>
-          {headline}
+          {(() => {
+            const eqIdx = headline.indexOf('=');
+            if (eqIdx >= 0) {
+              return (
+                <>
+                  <span style={{ color: BRAND.colors.textWhite }}>{headline.slice(0, eqIdx + 1)}</span>
+                  <span style={{ color: '#c7f464' }}>{headline.slice(eqIdx + 1)}</span>
+                </>
+              );
+            }
+            return <span style={{ color: BRAND.colors.textWhite }}>{headline}</span>;
+          })()}
         </h1>
       </div>
 

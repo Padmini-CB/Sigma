@@ -62,7 +62,7 @@ export function LinkedInProofTemplate({
       {/* Headline at top */}
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 48 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 58 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.1, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>REAL PROJECTS VS</span>
@@ -81,7 +81,7 @@ export function LinkedInProofTemplate({
           {/* LinkedIn header bar */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6 * scale,
-            fontSize: 10 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body,
+            fontSize: 12 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body,
             marginBottom: 2 * scale,
           }}>
             <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
@@ -103,7 +103,7 @@ export function LinkedInProofTemplate({
               TL
             </div>
             <div>
-              <div style={{ fontSize: 16 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading, lineHeight: 1.2 }}>
+              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading, lineHeight: 1.2 }}>
                 Tutorial Learner
               </div>
               <div style={{ fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body, lineHeight: 1.2 }}>
@@ -114,7 +114,7 @@ export function LinkedInProofTemplate({
 
           {/* Post body */}
           <div style={{
-            fontSize: 14 * scale, color: 'rgba(255,255,255,0.55)', fontFamily: BRAND.fonts.body,
+            fontSize: 16 * scale, color: 'rgba(255,255,255,0.55)', fontFamily: BRAND.fonts.body,
             lineHeight: 1.5, fontWeight: 300, flex: 1,
           }}>
             Just completed a Python tutorial! Also worked on the Titanic dataset on Kaggle. Excited to start my data journey! #DataScience #Learning
@@ -122,7 +122,7 @@ export function LinkedInProofTemplate({
 
           {/* Engagement */}
           <div style={{
-            fontSize: 13 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body,
+            fontSize: 15 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body,
             borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 * scale,
             marginTop: 'auto',
           }}>
@@ -138,7 +138,7 @@ export function LinkedInProofTemplate({
           {/* LinkedIn header bar */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6 * scale,
-            fontSize: 10 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body,
+            fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body,
             marginBottom: 2 * scale,
           }}>
             <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
@@ -160,7 +160,7 @@ export function LinkedInProofTemplate({
               BL
             </div>
             <div>
-              <div style={{ fontSize: 16 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading, lineHeight: 1.2 }}>
+              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading, lineHeight: 1.2 }}>
                 Bootcamp Learner
               </div>
               <div style={{ fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body, lineHeight: 1.2 }}>
@@ -171,7 +171,7 @@ export function LinkedInProofTemplate({
 
           {/* Post body */}
           <div style={{
-            fontSize: 14 * scale, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
+            fontSize: 16 * scale, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
             lineHeight: 1.5, fontWeight: 400, flex: 1,
           }}>
             Built a supply chain forecast dashboard for AtliQ Hardware using Power BI. Reduced stockouts by 15%. Check out the full project on my GitHub portfolio!
@@ -179,7 +179,7 @@ export function LinkedInProofTemplate({
 
           {/* Engagement */}
           <div style={{
-            fontSize: 13 * scale, color: '#4cc378', fontFamily: BRAND.fonts.body,
+            fontSize: 15 * scale, color: '#4cc378', fontFamily: BRAND.fonts.body,
             borderTop: '1px solid rgba(76,195,120,0.15)', paddingTop: 8 * scale,
             marginTop: 'auto', fontWeight: 500,
           }}>
@@ -191,7 +191,7 @@ export function LinkedInProofTemplate({
       {/* Subheadline */}
       <div style={{ textAlign: 'center', marginTop: 10 * scale, flexShrink: 0 }}>
         <div style={{
-          fontSize: 17 * scale, fontWeight: 400, fontFamily: BRAND.fonts.body,
+          fontSize: 20 * scale, fontWeight: 400, fontFamily: BRAND.fonts.body,
           color: 'rgba(255,255,255,0.6)', lineHeight: 1.3,
         }}>
           {subheadline}
@@ -210,13 +210,13 @@ export function LinkedInProofTemplate({
             textAlign: 'center',
           }}>
             <div style={{
-              fontSize: 28 * scale, fontWeight: 900, color: '#c7f464',
+              fontSize: 34 * scale, fontWeight: 900, color: '#c7f464',
               fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
             }}>
               {stat.number}
             </div>
             <div style={{
-              fontSize: 12 * scale, color: 'rgba(255,255,255,0.55)',
+              fontSize: 14 * scale, color: 'rgba(255,255,255,0.55)',
               fontFamily: BRAND.fonts.body, fontWeight: 300, marginTop: 2,
             }}>
               {stat.label}

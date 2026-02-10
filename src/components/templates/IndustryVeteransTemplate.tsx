@@ -51,12 +51,12 @@ export function IndustryVeteransTemplate({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 14 * scale }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 10 * scale }}>
         {/* Headline */}
         <div style={{ textAlign: 'center' }}>
           <h1
             style={{
-              fontSize: 56 * scale,
+              fontSize: 62 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -68,7 +68,7 @@ export function IndustryVeteransTemplate({
           </h1>
           <p
             style={{
-              fontSize: 22 * scale,
+              fontSize: 26 * scale,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               marginTop: 8,
@@ -100,10 +100,10 @@ export function IndustryVeteransTemplate({
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 20 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+              <div style={{ fontSize: 22 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                 Dhaval Patel
               </div>
-              <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
+              <div style={{ fontSize: 16 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
                 Founder & CEO
               </div>
             </div>
@@ -129,10 +129,10 @@ export function IndustryVeteransTemplate({
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 20 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+              <div style={{ fontSize: 22 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                 Hemanand Vadivel
               </div>
-              <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
+              <div style={{ fontSize: 16 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
                 Co-Founder & CTO
               </div>
             </div>

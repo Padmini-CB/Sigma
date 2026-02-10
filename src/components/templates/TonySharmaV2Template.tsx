@@ -53,12 +53,12 @@ export function TonySharmaV2Template({
       </div>
 
       {/* Main content area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 12 * scale, zIndex: 2 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10 * scale, zIndex: 2 }}>
         {/* Headline */}
         <div style={{ textAlign: 'right', paddingLeft: '35%' }}>
           <h1
             style={{
-              fontSize: 56 * scale,
+              fontSize: 64 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -70,7 +70,7 @@ export function TonySharmaV2Template({
           </h1>
           <h2
             style={{
-              fontSize: 56 * scale,
+              fontSize: 64 * scale,
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
@@ -87,7 +87,7 @@ export function TonySharmaV2Template({
         <div style={{ textAlign: 'right', paddingLeft: '35%' }}>
           <p
             style={{
-              fontSize: 20 * scale,
+              fontSize: 24 * scale,
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               margin: 0,
@@ -102,7 +102,7 @@ export function TonySharmaV2Template({
           <div style={{ textAlign: 'right', paddingLeft: '35%' }}>
             <p
               style={{
-                fontSize: 15 * scale,
+                fontSize: 17 * scale,
                 color: 'rgba(255,255,255,0.45)',
                 fontFamily: BRAND.fonts.body,
                 fontStyle: 'italic',

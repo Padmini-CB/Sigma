@@ -63,11 +63,11 @@ export function SocialAnnouncementTemplate({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 16 * scale }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 12 * scale }}>
         {/* Big headline */}
         <h1
           style={{
-            fontSize: 60 * scale,
+            fontSize: 66 * scale,
             fontWeight: 800,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
@@ -82,7 +82,7 @@ export function SocialAnnouncementTemplate({
         {/* Subheadline */}
         <p
           style={{
-            fontSize: 22 * scale,
+            fontSize: 26 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -106,7 +106,7 @@ export function SocialAnnouncementTemplate({
         {/* Body text */}
         <p
           style={{
-            fontSize: 16 * scale,
+            fontSize: 18 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -122,7 +122,7 @@ export function SocialAnnouncementTemplate({
         {/* Credibility */}
         <div
           style={{
-            fontSize: 14 * scale,
+            fontSize: 16 * scale,
             color: '#4cc378',
             fontFamily: BRAND.fonts.body,
             fontWeight: 600,

@@ -108,7 +108,7 @@ export function MicroCourseTeaserTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 52 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 60 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
           textTransform: 'uppercase', lineHeight: 1.1, margin: 0,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>{firstPart}</span>
@@ -133,25 +133,25 @@ export function MicroCourseTeaserTemplate({
               {COURSE_ICONS[course.iconKey]?.(38 * scale)}
             </div>
             <div style={{
-              fontSize: 19 * scale, fontWeight: 700, color: BRAND.colors.textWhite,
+              fontSize: 22 * scale, fontWeight: 700, color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.body, lineHeight: 1.2,
             }}>
               {course.name}
             </div>
             <div style={{
-              fontSize: 14 * scale, fontWeight: 300, color: BRAND.colors.textMuted,
+              fontSize: 16 * scale, fontWeight: 300, color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body, lineHeight: 1.4,
             }}>
               {course.description}
             </div>
             <div style={{
-              fontSize: 12 * scale, fontWeight: 400, color: BRAND.colors.textMuted,
+              fontSize: 14 * scale, fontWeight: 400, color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body, marginTop: 'auto',
             }}>
               {course.stats}
             </div>
             <div style={{
-              fontSize: 22 * scale, fontWeight: 700, color: '#c7f464', fontFamily: BRAND.fonts.body,
+              fontSize: 26 * scale, fontWeight: 700, color: '#c7f464', fontFamily: BRAND.fonts.body,
             }}>
               {course.price}
             </div>
@@ -181,7 +181,7 @@ export function MicroCourseTeaserTemplate({
               borderRadius: 20, padding: `${5 * scale}px ${14 * scale}px`, whiteSpace: 'nowrap',
             }}>
               <span style={{
-                fontSize: 14 * scale, fontWeight: 600,
+                fontSize: 16 * scale, fontWeight: 600,
                 color: index === LEARNING_PATH_STEPS.length - 1 ? '#c7f464' : BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.body,
               }}>

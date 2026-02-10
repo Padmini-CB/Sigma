@@ -8,9 +8,9 @@ interface TechStackPillsProps {
 }
 
 export function TechStackPills({ technologies, variant = 'dark', columns, pillSize = 'md' }: TechStackPillsProps) {
-  const fontSize = pillSize === 'sm' ? 14 : pillSize === 'lg' ? 20 : 16;
-  const paddingY = pillSize === 'sm' ? 5 : pillSize === 'lg' ? 10 : 7;
-  const paddingX = pillSize === 'sm' ? 12 : pillSize === 'lg' ? 22 : 16;
+  const fontSize = pillSize === 'sm' ? 15 : pillSize === 'lg' ? 22 : 17;
+  const paddingY = pillSize === 'sm' ? 6 : pillSize === 'lg' ? 10 : 7;
+  const paddingX = pillSize === 'sm' ? 14 : pillSize === 'lg' ? 24 : 18;
 
   const gridStyle: React.CSSProperties = columns
     ? { display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 8 }

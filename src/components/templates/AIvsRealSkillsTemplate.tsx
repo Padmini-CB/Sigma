@@ -64,7 +64,7 @@ export function AIvsRealSkillsTemplate({
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1
           style={{
-            fontSize: 48 * scale,
+            fontSize: 58 * scale,
             fontWeight: 900,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
@@ -76,7 +76,7 @@ export function AIvsRealSkillsTemplate({
       </div>
 
       {/* Two Column Comparison */}
-      <div style={{ flex: 1, display: 'flex', gap: 16 * scale, overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', gap: 12 * scale, overflow: 'hidden' }}>
         {/* Left Column - AI Generated (Red) */}
         <div
           style={{
@@ -92,7 +92,7 @@ export function AIvsRealSkillsTemplate({
         >
           <div
             style={{
-              fontSize: 18 * scale,
+              fontSize: 20 * scale,
               fontWeight: 800,
               color: BRAND.colors.redWarning,
               fontFamily: BRAND.fonts.heading,
@@ -112,7 +112,7 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 16 * scale,
+                fontSize: 17 * scale,
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
@@ -139,7 +139,7 @@ export function AIvsRealSkillsTemplate({
         >
           <div
             style={{
-              fontSize: 18 * scale,
+              fontSize: 20 * scale,
               fontWeight: 800,
               color: BRAND.colors.greenGrid,
               fontFamily: BRAND.fonts.heading,
@@ -159,7 +159,7 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 16 * scale,
+                fontSize: 17 * scale,
                 color: BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,

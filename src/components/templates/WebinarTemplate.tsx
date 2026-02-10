@@ -78,7 +78,7 @@ export function WebinarTemplate({
             border: '1px solid rgba(67,97,238,0.4)',
             borderRadius: 20,
             padding: '4px 14px',
-            fontSize: 13 * scale,
+            fontSize: 14 * scale,
             fontWeight: 600,
             color: BRAND.colors.primaryBlue,
             fontFamily: BRAND.fonts.body,
@@ -92,11 +92,11 @@ export function WebinarTemplate({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 14 * scale, zIndex: 1 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 10 * scale, zIndex: 1 }}>
         {/* Headline */}
         <h1
           style={{
-            fontSize: 52 * scale,
+            fontSize: 60 * scale,
             fontWeight: 800,
             color: BRAND.colors.textWhite,
             fontFamily: BRAND.fonts.heading,
@@ -109,7 +109,7 @@ export function WebinarTemplate({
         </h1>
         <p
           style={{
-            fontSize: 22 * scale,
+            fontSize: 26 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
@@ -144,10 +144,10 @@ export function WebinarTemplate({
                 />
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 16 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+                <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                   {founder.name}
                 </div>
-                <div style={{ fontSize: 13 * scale, color: BRAND.colors.textMuted }}>
+                <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted }}>
                   {founder.role}
                 </div>
               </div>
@@ -158,7 +158,7 @@ export function WebinarTemplate({
         {/* Event details */}
         <p
           style={{
-            fontSize: 16 * scale,
+            fontSize: 18 * scale,
             color: BRAND.colors.textMuted,
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',

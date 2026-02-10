@@ -15,7 +15,7 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
         justifyContent: 'space-between',
         backgroundColor: 'rgba(0,0,0,0.5)',
         borderRadius: 10,
-        padding: '12px 20px',
+        padding: '14px 22px',
         gap: 14,
         position: 'relative',
         zIndex: 50,
@@ -23,7 +23,7 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
     >
       <div
         style={{
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: 700,
           color: BRAND.colors.textMuted,
           fontFamily: BRAND.fonts.heading,
@@ -37,7 +37,7 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
       </div>
       <div
         style={{
-          fontSize: 11,
+          fontSize: 13,
           color: 'rgba(255,255,255,0.45)',
           fontFamily: BRAND.fonts.body,
           textAlign: 'center',
@@ -53,10 +53,10 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
         style={{
           background: 'linear-gradient(90deg, #2563eb, #3b82f6)',
           color: '#ffffff',
-          fontSize: 16,
+          fontSize: 20,
           fontWeight: 700,
           fontFamily: BRAND.fonts.body,
-          padding: '10px 22px',
+          padding: '12px 28px',
           borderRadius: 6,
           whiteSpace: 'nowrap',
           flexShrink: 0,

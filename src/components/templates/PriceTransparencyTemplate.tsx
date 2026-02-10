@@ -80,13 +80,13 @@ export function PriceTransparencyTemplate({
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', gap: 14 * scale, overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', gap: 10 * scale, overflow: 'hidden' }}>
         {/* Left column: Price + Stats + Tech (40%) */}
-        <div style={{ width: '40%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 10 * scale, justifyContent: 'center' }}>
+        <div style={{ width: '40%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 * scale, justifyContent: 'center' }}>
           <div>
             <div
               style={{
-                fontSize: 56 * scale,
+                fontSize: 64 * scale,
                 fontWeight: 800,
                 color: BRAND.colors.accentGreen,
                 fontFamily: BRAND.fonts.heading,
@@ -97,7 +97,7 @@ export function PriceTransparencyTemplate({
             </div>
             <div
               style={{
-                fontSize: 22 * scale,
+                fontSize: 24 * scale,
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 marginTop: 6,

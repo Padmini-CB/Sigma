@@ -49,12 +49,12 @@ export function GitHubBeforeAfterTemplate({
       </div>
 
       {/* Main content */}
-      <div style={{ flex: 1, display: 'flex', gap: 14 * scale, overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', gap: 12 * scale, overflow: 'hidden' }}>
         {/* Left text (30%) */}
         <div style={{ width: '30%', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h1
             style={{
-              fontSize: 48 * scale,
+              fontSize: 58 * scale,
               fontWeight: 800,
               color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.heading,
@@ -66,7 +66,7 @@ export function GitHubBeforeAfterTemplate({
           </h1>
           <h2
             style={{
-              fontSize: 48 * scale,
+              fontSize: 58 * scale,
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
