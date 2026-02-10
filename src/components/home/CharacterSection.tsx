@@ -21,7 +21,7 @@ export default function CharacterSection() {
             The Characters That Bring Our Brand to Life
           </h2>
           <p className="font-body text-lg text-gray-400 max-w-2xl mx-auto">
-            The Padmini Universe
+            The Codebasics Universe
           </p>
         </div>
 
