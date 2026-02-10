@@ -37,7 +37,7 @@ export function WebinarTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -62,7 +62,7 @@ export function WebinarTemplate({
       />
 
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale, zIndex: 1 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale, zIndex: 1 }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -174,7 +174,7 @@ export function WebinarTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale, zIndex: 1 }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale, zIndex: 1 }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

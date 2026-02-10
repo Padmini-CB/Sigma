@@ -35,7 +35,7 @@ export function IndustryVeteransTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -45,7 +45,7 @@ export function IndustryVeteransTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -100,10 +100,10 @@ export function IndustryVeteransTemplate({
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+              <div style={{ fontSize: 20 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                 Dhaval Patel
               </div>
-              <div style={{ fontSize: 14 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
+              <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
                 Founder & CEO
               </div>
             </div>
@@ -129,10 +129,10 @@ export function IndustryVeteransTemplate({
               />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+              <div style={{ fontSize: 20 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                 Hemanand Vadivel
               </div>
-              <div style={{ fontSize: 14 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
+              <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted, fontFamily: BRAND.fonts.body }}>
                 Co-Founder & CTO
               </div>
             </div>
@@ -146,7 +146,7 @@ export function IndustryVeteransTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

@@ -43,7 +43,7 @@ export function CareerTransformationTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -53,7 +53,7 @@ export function CareerTransformationTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -102,7 +102,7 @@ export function CareerTransformationTemplate({
             <div style={{ fontSize: 13 * scale, fontWeight: 700, color: BRAND.colors.redWarning, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
               BEFORE
             </div>
-            <div style={{ fontSize: 22 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+            <div style={{ fontSize: 24 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
               {beforeRole}
             </div>
             <div style={{ fontSize: 13 * scale, color: BRAND.colors.textMuted, marginTop: 4 }}>4 year career gap</div>
@@ -111,7 +111,7 @@ export function CareerTransformationTemplate({
           {/* Arrow */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <svg width={80 * scale} height={32 * scale} viewBox="0 0 80 32" fill="none">
-              <path d="M0 16H70M70 16L58 6M70 16L58 26" stroke={BRAND.colors.accentGreen} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M0 16H70M70 16L58 6M70 16L58 26" stroke={'#4cc378'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
 
@@ -129,10 +129,10 @@ export function CareerTransformationTemplate({
             <div style={{ fontSize: 13 * scale, fontWeight: 700, color: BRAND.colors.greenGrid, letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
               AFTER
             </div>
-            <div style={{ fontSize: 22 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+            <div style={{ fontSize: 24 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
               {afterRole}
             </div>
-            <div style={{ fontSize: 13 * scale, color: BRAND.colors.accentGreen, marginTop: 4 }}>In 4 months</div>
+            <div style={{ fontSize: 13 * scale, color: '#4cc378', marginTop: 4 }}>In 4 months</div>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ export function CareerTransformationTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

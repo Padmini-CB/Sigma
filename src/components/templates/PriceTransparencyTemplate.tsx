@@ -64,7 +64,7 @@ export function PriceTransparencyTemplate({
         width,
         height,
         background: BRAND.background,
-        padding: 28 * scale,
+        padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
         fontFamily: BRAND.fonts.body,
@@ -74,7 +74,7 @@ export function PriceTransparencyTemplate({
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
@@ -97,7 +97,7 @@ export function PriceTransparencyTemplate({
             </div>
             <div
               style={{
-                fontSize: 20 * scale,
+                fontSize: 22 * scale,
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 marginTop: 6,
@@ -119,7 +119,7 @@ export function PriceTransparencyTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>

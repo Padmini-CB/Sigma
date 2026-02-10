@@ -44,44 +44,36 @@ export function CareerMapTemplate({
     </>
   );
 
-  const lineLeft = 50 * scale;
-  const dotSize = 12 * scale;
-  const cardLeft = lineLeft + 30 * scale;
+  const lineLeft = 44 * scale;
+  const dotSize = 14 * scale;
+  const cardLeft = lineLeft + 28 * scale;
 
   return (
-    <div
-      style={{
-        width,
-        height,
-        background: BRAND.background,
-        padding: 28 * scale,
-        display: 'flex',
-        flexDirection: 'column',
-        fontFamily: BRAND.fonts.body,
-        position: 'relative',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-      }}
-    >
+    <div style={{
+      width, height,
+      background: BRAND.background,
+      padding: 24 * scale,
+      display: 'flex',
+      flexDirection: 'column',
+      fontFamily: BRAND.fonts.body,
+      position: 'relative',
+      overflow: 'hidden',
+      boxSizing: 'border-box',
+    }}>
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 10 * scale }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <CodebasicsLogo />
         <YouTubeBadge />
       </div>
 
       {/* Headline */}
-      <div style={{ textAlign: 'center', marginBottom: 18 * scale, flexShrink: 0 }}>
-        <h1
-          style={{
-            fontSize: 38 * scale,
-            fontWeight: 900,
-            color: BRAND.colors.textWhite,
-            fontFamily: BRAND.fonts.heading,
-            lineHeight: 1.1,
-            textTransform: 'uppercase' as const,
-            margin: 0,
-          }}
-        >
+      <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
+        <h1 style={{
+          fontSize: 42 * scale, fontWeight: 900,
+          color: BRAND.colors.textWhite,
+          fontFamily: BRAND.fonts.heading,
+          lineHeight: 1.1, textTransform: 'uppercase' as const, margin: 0,
+        }}>
           {headlineNode}
         </h1>
       </div>
@@ -89,94 +81,59 @@ export function CareerMapTemplate({
       {/* Timeline section */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {/* Vertical gradient line */}
-        <div
-          style={{
-            position: 'absolute',
-            left: lineLeft,
-            top: 10 * scale,
-            bottom: 10 * scale,
-            width: 3 * scale,
-            background: 'linear-gradient(to bottom, #8892a4 0%, #4cc378 50%, #c7f464 100%)',
-            borderRadius: 2,
-          }}
-        />
+        <div style={{
+          position: 'absolute',
+          left: lineLeft,
+          top: 6 * scale,
+          bottom: 6 * scale,
+          width: 3 * scale,
+          background: 'linear-gradient(to bottom, #8892a4 0%, #4cc378 50%, #c7f464 100%)',
+          borderRadius: 2,
+        }} />
 
         {/* Milestones */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '100%',
-            position: 'relative',
-          }}
-        >
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          justifyContent: 'space-between', height: '100%', position: 'relative',
+        }}>
           {milestones.map((milestone, index) => {
             const isLast = index === milestones.length - 1;
             return (
-              <div
-                key={milestone.label}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  position: 'relative',
-                }}
-              >
+              <div key={milestone.label} style={{
+                display: 'flex', alignItems: 'center', position: 'relative',
+              }}>
                 {/* Dot on the line */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: lineLeft - (dotSize / 2) + (1.5 * scale),
-                    width: dotSize,
-                    height: dotSize,
-                    borderRadius: '50%',
-                    backgroundColor: milestone.color,
-                    boxShadow: isLast ? `0 0 12px ${milestone.color}` : 'none',
-                    flexShrink: 0,
-                    zIndex: 2,
-                  }}
-                />
+                <div style={{
+                  position: 'absolute',
+                  left: lineLeft - (dotSize / 2) + (1.5 * scale),
+                  width: dotSize, height: dotSize, borderRadius: '50%',
+                  backgroundColor: milestone.color,
+                  boxShadow: isLast ? `0 0 14px ${milestone.color}, 0 0 28px ${milestone.color}` : 'none',
+                  flexShrink: 0, zIndex: 2,
+                  border: isLast ? '2px solid rgba(255,255,255,0.3)' : 'none',
+                }} />
 
                 {/* Content card */}
-                <div
-                  style={{
-                    marginLeft: cardLeft,
-                    backgroundColor: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: 8,
-                    padding: 12 * scale,
-                    flex: 1,
-                    marginRight: 10 * scale,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 15 * scale,
-                      fontWeight: 700,
-                      color: milestone.color,
-                      fontFamily: BRAND.fonts.heading,
-                      textTransform: 'uppercase' as const,
-                      letterSpacing: '0.04em',
-                      marginBottom: 4 * scale,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6 * scale,
-                    }}
-                  >
+                <div style={{
+                  marginLeft: cardLeft,
+                  backgroundColor: isLast ? 'rgba(199,244,100,0.06)' : 'rgba(255,255,255,0.03)',
+                  border: isLast ? '1px solid rgba(199,244,100,0.15)' : '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 8, padding: `${10 * scale}px ${14 * scale}px`,
+                  flex: 1, marginRight: 8 * scale,
+                }}>
+                  <div style={{
+                    fontSize: 16 * scale, fontWeight: 700, color: milestone.color,
+                    fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
+                    letterSpacing: '0.04em', marginBottom: 3 * scale,
+                    display: 'flex', alignItems: 'center', gap: 6 * scale,
+                  }}>
                     {milestone.label}
-                    {isLast && (
-                      <span style={{ fontSize: 18 * scale }}>&#10003;</span>
-                    )}
+                    {isLast && <span style={{ fontSize: 18 * scale }}>&#10003;</span>}
                   </div>
-                  <div
-                    style={{
-                      fontSize: 13 * scale,
-                      color: 'rgba(255,255,255,0.6)',
-                      fontFamily: BRAND.fonts.body,
-                      fontWeight: 300,
-                      lineHeight: 1.4,
-                    }}
-                  >
+                  <div style={{
+                    fontSize: 14 * scale, color: 'rgba(255,255,255,0.6)',
+                    fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
+                  }}>
                     {milestone.desc}
                   </div>
                 </div>
@@ -187,7 +144,7 @@ export function CareerMapTemplate({
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ flexShrink: 0, marginTop: 10 * scale }}>
+      <div style={{ flexShrink: 0, marginTop: 8 * scale }}>
         <BottomBar courseName={courseName} cta={cta} />
       </div>
     </div>
