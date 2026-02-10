@@ -1,3 +1,4 @@
+import React from 'react';
 import { BRAND } from '@/styles/brand-constants';
 import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
@@ -11,9 +12,65 @@ interface MicroCourseTeaserTemplateProps {
   height?: number;
 }
 
+/* Inline SVG icon components for each micro course */
+function SqlIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      {/* Database cylinder */}
+      <ellipse cx="20" cy="10" rx="13" ry="5" fill="#3b82f6" opacity="0.25" />
+      <ellipse cx="20" cy="10" rx="13" ry="5" stroke="#3b82f6" strokeWidth="2" fill="none" />
+      <path d="M7 10v20c0 2.76 5.82 5 13 5s13-2.24 13-5V10" stroke="#3b82f6" strokeWidth="2" fill="none" />
+      <path d="M7 20c0 2.76 5.82 5 13 5s13-2.24 13-5" stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" fill="none" />
+    </svg>
+  );
+}
+
+function PythonIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      {/* Simplified Python two-snake logo */}
+      <path d="M20 4c-5 0-9 1.5-9 5v4h9v1.5H9.5C5.5 14.5 3 18 3 22.5s2 8 6.5 8H13v-4.5c0-3 2.5-5.5 5.5-5.5h9c2.5 0 4.5-2 4.5-4.5v-7C32 5.5 26 4 20 4zm-5 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" fill="#4cc378" />
+      <path d="M20 36c5 0 9-1.5 9-5v-4h-9v-1.5h10.5c4 0 6.5-3.5 6.5-8s-2-8-6.5-8H27v4.5c0 3-2.5 5.5-5.5 5.5h-9c-2.5 0-4.5 2-4.5 4.5v7c0 3.5 6 4.5 12 4.5zm5-3a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="#4cc378" opacity="0.65" />
+    </svg>
+  );
+}
+
+function ExcelIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      {/* Spreadsheet grid with X */}
+      <rect x="5" y="5" width="30" height="30" rx="3" stroke="#8B5CF6" strokeWidth="2" fill="#8B5CF6" fillOpacity="0.12" />
+      <line x1="5" y1="14" x2="35" y2="14" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.5" />
+      <line x1="5" y1="23" x2="35" y2="23" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.5" />
+      <line x1="17" y1="5" x2="17" y2="35" stroke="#8B5CF6" strokeWidth="1.5" opacity="0.5" />
+      {/* Bold X in the left cell */}
+      <path d="M8 18l6 8M14 18l-6 8" stroke="#8B5CF6" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PowerBIIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      {/* Bar chart */}
+      <rect x="6" y="22" width="6" height="14" rx="1.5" fill="#c7f464" opacity="0.45" />
+      <rect x="14" y="14" width="6" height="22" rx="1.5" fill="#c7f464" opacity="0.65" />
+      <rect x="22" y="8" width="6" height="28" rx="1.5" fill="#c7f464" opacity="0.85" />
+      <rect x="30" y="4" width="6" height="32" rx="1.5" fill="#c7f464" />
+    </svg>
+  );
+}
+
+const COURSE_ICONS: Record<string, (size: number) => React.ReactNode> = {
+  sql: (s) => <SqlIcon size={s} />,
+  python: (s) => <PythonIcon size={s} />,
+  excel: (s) => <ExcelIcon size={s} />,
+  powerbi: (s) => <PowerBIIcon size={s} />,
+};
+
 const COURSES = [
   {
-    emoji: '\u{1F4CA}',
+    iconKey: 'sql',
     name: 'SQL Fundamentals',
     description: 'Master queries with real business data',
     stats: '12 hrs \u2022 3 projects',
@@ -21,7 +78,7 @@ const COURSES = [
     progressColor: '#3b82f6',
   },
   {
-    emoji: '\u{1F40D}',
+    iconKey: 'python',
     name: 'Python for Data',
     description: 'From basics to automation scripts',
     stats: '18 hrs \u2022 4 projects',
@@ -29,7 +86,7 @@ const COURSES = [
     progressColor: '#4cc378',
   },
   {
-    emoji: '\u{1F4C8}',
+    iconKey: 'excel',
     name: 'Excel Mastery',
     description: 'Advanced formulas & pivot tables',
     stats: '10 hrs \u2022 2 projects',
@@ -37,7 +94,7 @@ const COURSES = [
     progressColor: '#8B5CF6',
   },
   {
-    emoji: '\u{1F4C9}',
+    iconKey: 'powerbi',
     name: 'Power BI',
     description: 'Build dashboards that tell stories',
     stats: '15 hrs \u2022 3 projects',
@@ -132,8 +189,10 @@ export function MicroCourseTeaserTemplate({
               gap: 6 * scale,
             }}
           >
-            {/* Emoji icon */}
-            <span style={{ fontSize: 32 * scale, lineHeight: 1.2 }}>{course.emoji}</span>
+            {/* Tool icon */}
+            <div style={{ width: 36 * scale, height: 36 * scale, flexShrink: 0 }}>
+              {COURSE_ICONS[course.iconKey]?.(36 * scale)}
+            </div>
 
             {/* Course name */}
             <div
