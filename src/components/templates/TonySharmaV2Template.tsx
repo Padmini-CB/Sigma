@@ -2,7 +2,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { TechStackPills } from '@/components/visual-elements/TechStackPills';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 import { getCharacterImage } from '@/data/characters';
 
 interface TonySharmaV2TemplateProps {
@@ -48,7 +48,7 @@ export function TonySharmaV2Template({
     >
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale, zIndex: 3 }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 

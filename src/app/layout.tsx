@@ -4,7 +4,7 @@ import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "SIGMA - Strategic Image Generation for Marketing Assets",
-  description: "Internal creative automation tool for Codebasics that generates brand-compliant marketing visuals",
+  description: "Internal creative automation tool for Padmini that generates brand-compliant marketing visuals",
 };
 
 export const viewport: Viewport = {

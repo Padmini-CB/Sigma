@@ -2,7 +2,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { StatCounterGrid } from '@/components/visual-elements/StatCounterGrid';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface WebinarTemplateProps {
   headline?: string;
@@ -20,7 +20,7 @@ export function WebinarTemplate({
   subheadline = 'Join Dhaval & Hemanand for bi-weekly mentorship',
   bodyText = 'Real business problems \u2022 Production-grade solutions \u2022 Q&A with experts',
   cta = 'REGISTER NOW',
-  courseName = 'Codebasics Live',
+  courseName = 'Padmini Live',
   stats = [
     { number: '17+', label: 'Years Experience' },
     { number: '1M+', label: 'Subscribers' },
@@ -63,7 +63,7 @@ export function WebinarTemplate({
 
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale, zIndex: 1 }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 

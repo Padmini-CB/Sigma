@@ -2,7 +2,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { GitHubGrid } from '@/components/visual-elements/GitHubGrid';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface GitHubBeforeAfterTemplateProps {
   headline?: string;
@@ -44,7 +44,7 @@ export function GitHubBeforeAfterTemplate({
     >
       {/* Top bar: Logo + YouTube */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 

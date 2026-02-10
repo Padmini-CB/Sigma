@@ -1,7 +1,7 @@
 import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface ToolCemeteryTemplateProps {
   headline?: string;
@@ -29,6 +29,32 @@ export function ToolCemeteryTemplate({
     { name: 'MANUAL ETL SCRIPTS', rip: 'RIP 2022' },
   ];
 
+  const months = [
+    {
+      label: 'MONTH 1',
+      items: ['• Python & SQL Foundations', '• Data Pipeline Basics', '• Git & Version Control'],
+    },
+    {
+      label: 'MONTH 2',
+      items: ['• Spark & Databricks', '• Cloud Infrastructure (AWS)', '• Medallion Architecture'],
+    },
+    {
+      label: 'MONTH 3',
+      items: ['• Airflow Orchestration', '• Kafka Streaming', '• Real-time Pipelines'],
+    },
+    {
+      label: 'MONTH 4',
+      items: ['• Production Deployment', '• Virtual Internship', '• Portfolio & Job Prep'],
+    },
+  ];
+
+  const stats = [
+    { number: '7+', label: 'Projects' },
+    { number: '290+', label: 'Hours' },
+    { number: '44K+', label: 'Learners' },
+    { number: '100%', label: 'Refund' },
+  ];
+
   return (
     <div style={{
       width, height,
@@ -43,20 +69,20 @@ export function ToolCemeteryTemplate({
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 
       {/* Headline: "Still learning with" + "DEAD TOOLS?" */}
-      <div style={{ textAlign: 'center', marginBottom: 12 * scale, flexShrink: 0 }}>
+      <div style={{ textAlign: 'center', marginBottom: 8 * scale, flexShrink: 0 }}>
         <div style={{
-          fontSize: 19 * scale, fontWeight: 300, fontStyle: 'italic',
+          fontSize: 17 * scale, fontWeight: 300, fontStyle: 'italic',
           color: 'rgba(255,255,255,0.55)', fontFamily: BRAND.fonts.body, marginBottom: 2 * scale,
         }}>
           Still learning with
         </div>
         <h1 style={{
-          fontSize: 66 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 58 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.05, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>DEAD </span>
@@ -64,8 +90,8 @@ export function ToolCemeteryTemplate({
         </h1>
       </div>
 
-      {/* 4 Tombstones in a row */}
-      <div style={{ display: 'flex', gap: 12 * scale, flexShrink: 0, marginBottom: 14 * scale }}>
+      {/* 4 Tombstones in a row - COMPACT */}
+      <div style={{ display: 'flex', gap: 12 * scale, flexShrink: 0, marginBottom: 8 * scale }}>
         {tombstones.map((tomb) => (
           <div key={tomb.name} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -73,7 +99,7 @@ export function ToolCemeteryTemplate({
             {/* Tombstone shape: rounded top */}
             <div style={{
               width: '100%',
-              height: 180 * scale,
+              height: 140 * scale,
               backgroundColor: 'rgba(255,255,255,0.035)',
               border: '1px solid rgba(255,255,255,0.07)',
               borderRadius: '50% 50% 4px 4px',
@@ -120,7 +146,7 @@ export function ToolCemeteryTemplate({
       </div>
 
       {/* "WHAT'S ALIVE" divider with fading green line */}
-      <div style={{ position: 'relative', marginBottom: 14 * scale, flexShrink: 0, height: 24 * scale, display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'relative', marginBottom: 8 * scale, marginTop: 8 * scale, flexShrink: 0, height: 20 * scale, display: 'flex', alignItems: 'center' }}>
         <div style={{
           position: 'absolute', left: 0, right: 0, top: '50%', height: 1,
           background: 'linear-gradient(90deg, transparent 0%, #4cc378 30%, #4cc378 70%, transparent 100%)',
@@ -138,27 +164,98 @@ export function ToolCemeteryTemplate({
         </div>
       </div>
 
-      {/* Modern tools - green badges from techStack */}
-      <div style={{
-        display: 'flex', flexWrap: 'wrap' as const, gap: 8 * scale,
-        justifyContent: 'center', flexShrink: 0, marginBottom: 'auto',
-      }}>
-        {techStack.map((tech) => (
-          <div key={tech} style={{
-            backgroundColor: 'rgba(76,195,120,0.07)',
-            border: '1px solid rgba(76,195,120,0.2)',
-            borderRadius: 6,
-            padding: `${6 * scale}px ${14 * scale}px`,
-            fontSize: 16 * scale, fontWeight: 500,
-            color: '#4cc378', fontFamily: BRAND.fonts.body,
-          }}>
-            {tech}
-          </div>
-        ))}
-      </div>
+      {/* Bottom section - WHAT YOU'LL ACTUALLY LEARN */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 * scale, minHeight: 0 }}>
 
-      {/* Spacer */}
-      <div style={{ flex: 1, minHeight: 6 * scale }} />
+        {/* Section title */}
+        <div style={{
+          fontSize: 20 * scale, fontWeight: 700, color: '#4cc378',
+          fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
+          letterSpacing: 2, textAlign: 'center', flexShrink: 0,
+        }}>
+          WHAT YOU&apos;LL ACTUALLY LEARN
+        </div>
+
+        {/* 2x2 grid of month blocks */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 8 * scale,
+          flexShrink: 0,
+        }}>
+          {months.map((month) => (
+            <div key={month.label} style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: 8 * scale,
+              padding: 10 * scale,
+            }}>
+              <div style={{
+                fontSize: 13 * scale, fontWeight: 700, color: '#c7f464',
+                fontFamily: BRAND.fonts.heading, marginBottom: 4 * scale,
+              }}>
+                {month.label}
+              </div>
+              {month.items.map((item) => (
+                <div key={item} style={{
+                  fontSize: 14 * scale, fontWeight: 300, color: '#ffffff',
+                  fontFamily: BRAND.fonts.body, lineHeight: 1.5,
+                }}>
+                  {item}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Stats strip */}
+        <div style={{
+          display: 'flex',
+          gap: 0,
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 8 * scale,
+          flexShrink: 0,
+        }}>
+          {stats.map((stat) => (
+            <div key={stat.label} style={{
+              flex: 1, textAlign: 'center', padding: `${8 * scale}px 0`,
+            }}>
+              <div style={{
+                fontSize: 28 * scale, fontWeight: 700, color: '#c7f464',
+                fontFamily: BRAND.fonts.heading, lineHeight: 1.2,
+              }}>
+                {stat.number}
+              </div>
+              <div style={{
+                fontSize: 12 * scale, fontWeight: 400, color: 'rgba(255,255,255,0.55)',
+                fontFamily: BRAND.fonts.body,
+              }}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tech stack pills */}
+        <div style={{
+          display: 'flex', flexWrap: 'wrap' as const, gap: 5 * scale,
+          justifyContent: 'center', flexShrink: 0,
+        }}>
+          {techStack.map((tech) => (
+            <div key={tech} style={{
+              backgroundColor: 'rgba(76,195,120,0.07)',
+              border: '1px solid rgba(76,195,120,0.2)',
+              borderRadius: 6,
+              padding: `${4 * scale}px ${10 * scale}px`,
+              fontSize: 13 * scale, fontWeight: 500,
+              color: '#4cc378', fontFamily: BRAND.fonts.body,
+            }}>
+              {tech}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Bottom Bar */}
       <div style={{ flexShrink: 0 }}>

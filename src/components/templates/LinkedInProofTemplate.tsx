@@ -1,7 +1,7 @@
 import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface LinkedInProofTemplateProps {
   headline?: string;
@@ -24,22 +24,74 @@ export function LinkedInProofTemplate({
 }: LinkedInProofTemplateProps) {
   const scale = Math.min(width, height) / 1080;
 
-  const postCardBase: React.CSSProperties = {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(255,255,255,0.07)',
-    borderRadius: 12 * scale,
-    padding: 18 * scale,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 10 * scale,
-  };
-
   const proofStats = [
     { number: '300+', label: 'Career Switches' },
     { number: '7+', label: 'Business Projects' },
     { number: '44K+', label: 'Learners' },
   ];
+
+  const linkedInCardBase: React.CSSProperties = {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: 10 * scale,
+    padding: 14 * scale,
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    overflow: 'hidden',
+  };
+
+  const linkedInWatermark: React.CSSProperties = {
+    position: 'absolute',
+    top: 10 * scale,
+    right: 12 * scale,
+    opacity: 0.15,
+    fontSize: 40 * scale,
+    fontWeight: 900,
+    color: '#0A66C2',
+    fontFamily: 'Georgia, serif',
+    fontStyle: 'italic',
+    lineHeight: 1,
+    pointerEvents: 'none',
+  };
+
+  const actionIconStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4 * scale,
+    fontSize: 11 * scale,
+    fontFamily: BRAND.fonts.body,
+    fontWeight: 500,
+  };
+
+  const actionRowStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-around',
+    paddingTop: 6 * scale,
+    borderTop: '1px solid rgba(255,255,255,0.06)',
+  };
+
+  /* Thumbs up SVG icon for like */
+  const ThumbIcon = ({ size, color }: { size: number; color: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M7 22V11L2 13V22H7ZM10 21H18.6L21.8 11.4C21.9 11.1 22 10.8 22 10.5C22 9.7 21.3 9 20.5 9H14L15.1 4.3L15.1 4C15.1 3.6 14.9 3.2 14.7 2.9L13.7 2L7.8 7.9C7.3 8.3 7 8.9 7 9.5V19.5C7 20.3 7.7 21 8.5 21H10Z" fill={color} />
+    </svg>
+  );
+
+  /* Comment SVG icon */
+  const CommentIcon = ({ size, color }: { size: number; color: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill={color} />
+    </svg>
+  );
+
+  /* Share SVG icon */
+  const ShareIcon = ({ size, color }: { size: number; color: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M21 12L14 5V9C7 10 4 15 3 20C5.5 16.5 9 14.9 14 14.9V19L21 12Z" fill={color} />
+    </svg>
+  );
 
   return (
     <div style={{
@@ -55,151 +107,210 @@ export function LinkedInProofTemplate({
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 
-      {/* Headline at top */}
-      <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
-        <h1 style={{
-          fontSize: 58 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
-          lineHeight: 1.1, margin: 0, textTransform: 'uppercase' as const,
-        }}>
-          <span style={{ color: BRAND.colors.textWhite }}>REAL PROJECTS VS</span>
-          <span style={{ color: '#c7f464' }}> TUTORIALS</span>
-        </h1>
-      </div>
+      {/* Headline */}
+      <h1 style={{
+        fontSize: 52 * scale,
+        fontWeight: 900,
+        fontFamily: BRAND.fonts.heading,
+        textAlign: 'center',
+        margin: 0,
+        flexShrink: 0,
+        lineHeight: 1.1,
+        marginBottom: 10 * scale,
+      }}>
+        <span style={{ color: BRAND.colors.textWhite }}>REAL PROJECTS VS</span>
+        <span style={{ color: '#c7f464' }}> TUTORIALS</span>
+      </h1>
 
-      {/* LinkedIn Posts Side by Side */}
-      <div style={{ flex: 1, display: 'flex', gap: 14 * scale, overflow: 'hidden' }}>
-        {/* LEFT POST - Tutorial Learner (dimmed, red tint) */}
+      {/* Two LinkedIn Post Cards Side by Side */}
+      <div style={{ flex: 1, display: 'flex', gap: 14 * scale, minHeight: 0, overflow: 'hidden' }}>
+
+        {/* ===== LEFT POST - Tutorial Learner (dimmed) ===== */}
         <div style={{
-          ...postCardBase,
+          ...linkedInCardBase,
           borderLeft: `3px solid #c47070`,
-          opacity: 0.65,
+          opacity: 0.55,
         }}>
-          {/* LinkedIn header bar */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6 * scale,
-            fontSize: 12 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body,
-            marginBottom: 2 * scale,
-          }}>
-            <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
-              <rect width="20" height="20" rx="3" fill="#0A66C2" opacity="0.5" />
-              <text x="4" y="15" fill="white" fontSize="13" fontWeight="700" fontFamily="sans-serif">in</text>
-            </svg>
-            LinkedIn Post
-          </div>
+          {/* LinkedIn watermark */}
+          <div style={linkedInWatermark}>in</div>
 
-          {/* Profile */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 * scale }}>
+          {/* Profile header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 * scale, marginBottom: 10 * scale }}>
             <div style={{
-              width: 44 * scale, height: 44 * scale, borderRadius: '50%',
+              width: 42 * scale, height: 42 * scale, borderRadius: '50%',
               backgroundColor: 'rgba(196,112,112,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 16 * scale, fontWeight: 700, color: '#c47070',
+              fontSize: 15 * scale, fontWeight: 700, color: '#c47070',
               fontFamily: BRAND.fonts.heading, flexShrink: 0,
             }}>
               TL
             </div>
-            <div>
-              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading, lineHeight: 1.2 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 16 * scale, fontWeight: 700, color: BRAND.colors.textWhite,
+                fontFamily: BRAND.fonts.heading, lineHeight: 1.2,
+              }}>
                 Tutorial Learner
               </div>
-              <div style={{ fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body, lineHeight: 1.2 }}>
-                Aspiring Data Analyst
+              <div style={{
+                fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)',
+                fontFamily: BRAND.fonts.body, lineHeight: 1.3,
+              }}>
+                Aspiring Data Analyst | Looking for opportunities
+              </div>
+              <div style={{
+                fontSize: 11 * scale, color: 'rgba(255,255,255,0.35)',
+                fontFamily: BRAND.fonts.body, lineHeight: 1.4,
+                display: 'flex', alignItems: 'center', gap: 4 * scale,
+              }}>
+                1d &bull;
+                <svg width={12 * scale} height={12 * scale} viewBox="0 0 16 16" fill="rgba(255,255,255,0.35)">
+                  <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.5 9.5h-5v-7h1.5v5.5h3.5v1.5z" />
+                </svg>
               </div>
             </div>
           </div>
 
           {/* Post body */}
           <div style={{
-            fontSize: 16 * scale, color: 'rgba(255,255,255,0.55)', fontFamily: BRAND.fonts.body,
-            lineHeight: 1.5, fontWeight: 300, flex: 1,
+            fontSize: 14 * scale, color: 'rgba(255,255,255,0.7)',
+            fontFamily: BRAND.fonts.body, lineHeight: 1.6, fontWeight: 400, flex: 1,
           }}>
-            Just completed a Python tutorial! Also worked on the Titanic dataset on Kaggle. Excited to start my data journey! #DataScience #Learning
+            Just completed a Python tutorial! {'\u{1F389}'} Also worked on the Titanic dataset on Kaggle. Excited to start my data journey!
+            {' '}
+            <span style={{ color: 'rgba(10,102,194,0.4)' }}>
+              #DataScience #Learning #Python #MachineLearning
+            </span>
           </div>
 
-          {/* Engagement */}
+          {/* Reaction bar */}
           <div style={{
-            fontSize: 15 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body,
-            borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 * scale,
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            fontSize: 12 * scale, color: 'rgba(255,255,255,0.4)', fontFamily: BRAND.fonts.body,
+            paddingTop: 6 * scale, paddingBottom: 4 * scale,
+            borderTop: '1px solid rgba(255,255,255,0.06)',
             marginTop: 'auto',
           }}>
-            2 reactions &bull; 0 comments
+            <span>{'\u{1F44D}'} 2</span>
+            <span>0 comments</span>
+          </div>
+
+          {/* Like / Comment / Share action row */}
+          <div style={actionRowStyle}>
+            <div style={{ ...actionIconStyle, color: 'rgba(255,255,255,0.4)' }}>
+              <ThumbIcon size={14 * scale} color="rgba(255,255,255,0.4)" />
+              Like
+            </div>
+            <div style={{ ...actionIconStyle, color: 'rgba(255,255,255,0.4)' }}>
+              <CommentIcon size={14 * scale} color="rgba(255,255,255,0.4)" />
+              Comment
+            </div>
+            <div style={{ ...actionIconStyle, color: 'rgba(255,255,255,0.4)' }}>
+              <ShareIcon size={14 * scale} color="rgba(255,255,255,0.4)" />
+              Share
+            </div>
           </div>
         </div>
 
-        {/* RIGHT POST - Bootcamp Learner (bright, green tint) */}
+        {/* ===== RIGHT POST - Bootcamp Learner (bright) ===== */}
         <div style={{
-          ...postCardBase,
+          ...linkedInCardBase,
           borderLeft: `3px solid #4cc378`,
         }}>
-          {/* LinkedIn header bar */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6 * scale,
-            fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body,
-            marginBottom: 2 * scale,
-          }}>
-            <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
-              <rect width="20" height="20" rx="3" fill="#0A66C2" />
-              <text x="4" y="15" fill="white" fontSize="13" fontWeight="700" fontFamily="sans-serif">in</text>
-            </svg>
-            LinkedIn Post
-          </div>
+          {/* LinkedIn watermark */}
+          <div style={linkedInWatermark}>in</div>
 
-          {/* Profile */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 * scale }}>
+          {/* Profile header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 * scale, marginBottom: 10 * scale }}>
             <div style={{
-              width: 44 * scale, height: 44 * scale, borderRadius: '50%',
+              width: 42 * scale, height: 42 * scale, borderRadius: '50%',
               backgroundColor: 'rgba(76,195,120,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 16 * scale, fontWeight: 700, color: '#4cc378',
+              fontSize: 15 * scale, fontWeight: 700, color: '#4cc378',
               fontFamily: BRAND.fonts.heading, flexShrink: 0,
             }}>
-              BL
+              SP
             </div>
-            <div>
-              <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading, lineHeight: 1.2 }}>
-                Bootcamp Learner
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 16 * scale, fontWeight: 700, color: BRAND.colors.textWhite,
+                fontFamily: BRAND.fonts.heading, lineHeight: 1.2,
+              }}>
+                Sneha Patel
               </div>
-              <div style={{ fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body, lineHeight: 1.2 }}>
-                Data Analyst at TCS
+              <div style={{
+                fontSize: 12 * scale, color: 'rgba(255,255,255,0.65)',
+                fontFamily: BRAND.fonts.body, lineHeight: 1.3,
+              }}>
+                Data Analyst @ TCS | Ex-codebasics Bootcamp Learner
+              </div>
+              <div style={{
+                fontSize: 11 * scale, color: 'rgba(255,255,255,0.45)',
+                fontFamily: BRAND.fonts.body, lineHeight: 1.4,
+                display: 'flex', alignItems: 'center', gap: 4 * scale,
+              }}>
+                3h &bull;
+                <svg width={12 * scale} height={12 * scale} viewBox="0 0 16 16" fill="rgba(255,255,255,0.45)">
+                  <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.5 9.5h-5v-7h1.5v5.5h3.5v1.5z" />
+                </svg>
               </div>
             </div>
           </div>
 
           {/* Post body */}
           <div style={{
-            fontSize: 16 * scale, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
-            lineHeight: 1.5, fontWeight: 400, flex: 1,
+            fontSize: 14 * scale, color: BRAND.colors.textWhite,
+            fontFamily: BRAND.fonts.body, lineHeight: 1.6, fontWeight: 400, flex: 1,
           }}>
-            Built a supply chain forecast dashboard for AtliQ Hardware using Power BI. Reduced stockouts by 15%. Check out the full project on my GitHub portfolio!
+            Thrilled to share that the supply chain dashboard I built for AtliQ Hardware during the codebasics virtual internship helped reduce stockouts by 15%!
+            {'\n\n'}
+            This was not a toy project -- it involved real-world data, stakeholder requirements, and production-grade Power BI architecture.
+            {'\n\n'}
+            The hands-on project experience from the bootcamp gave me the confidence to tackle enterprise-grade problems and build a portfolio that stands out.
+            {'\n\n'}
+            {'\u{1F449}'} Check out the full project on my GitHub portfolio.
+            {' '}
+            <span style={{ color: 'rgba(10,102,194,0.5)' }}>
+              #DataAnalytics #PowerBI #SupplyChain #codebasics #Portfolio
+            </span>
           </div>
 
-          {/* Engagement */}
+          {/* Reaction bar */}
           <div style={{
-            fontSize: 15 * scale, color: '#4cc378', fontFamily: BRAND.fonts.body,
-            borderTop: '1px solid rgba(76,195,120,0.15)', paddingTop: 8 * scale,
-            marginTop: 'auto', fontWeight: 500,
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            fontSize: 12 * scale, color: 'rgba(255,255,255,0.65)', fontFamily: BRAND.fonts.body,
+            paddingTop: 6 * scale, paddingBottom: 4 * scale,
+            borderTop: '1px solid rgba(76,195,120,0.15)',
+            marginTop: 'auto',
           }}>
-            147 reactions &bull; 23 comments
+            <span>{'\u{1F44D}'}{'\u{1F4A1}'}{'\u{1F389}'} 147</span>
+            <span>23 comments</span>
           </div>
-        </div>
-      </div>
 
-      {/* Subheadline */}
-      <div style={{ textAlign: 'center', marginTop: 10 * scale, flexShrink: 0 }}>
-        <div style={{
-          fontSize: 20 * scale, fontWeight: 400, fontFamily: BRAND.fonts.body,
-          color: 'rgba(255,255,255,0.6)', lineHeight: 1.3,
-        }}>
-          {subheadline}
+          {/* Like / Comment / Share action row */}
+          <div style={actionRowStyle}>
+            <div style={{ ...actionIconStyle, color: 'rgba(255,255,255,0.6)' }}>
+              <ThumbIcon size={14 * scale} color="rgba(255,255,255,0.6)" />
+              Like
+            </div>
+            <div style={{ ...actionIconStyle, color: 'rgba(255,255,255,0.6)' }}>
+              <CommentIcon size={14 * scale} color="rgba(255,255,255,0.6)" />
+              Comment
+            </div>
+            <div style={{ ...actionIconStyle, color: 'rgba(255,255,255,0.6)' }}>
+              <ShareIcon size={14 * scale} color="rgba(255,255,255,0.6)" />
+              Share
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Proof Stats Row */}
-      <div style={{ display: 'flex', gap: 10 * scale, marginTop: 8 * scale, flexShrink: 0 }}>
+      <div style={{ display: 'flex', gap: 10 * scale, marginTop: 10 * scale, flexShrink: 0 }}>
         {proofStats.map((stat) => (
           <div key={stat.label} style={{
             flex: 1,
@@ -216,7 +327,7 @@ export function LinkedInProofTemplate({
               {stat.number}
             </div>
             <div style={{
-              fontSize: 14 * scale, color: 'rgba(255,255,255,0.55)',
+              fontSize: 13 * scale, color: 'rgba(255,255,255,0.55)',
               fontFamily: BRAND.fonts.body, fontWeight: 300, marginTop: 2,
             }}>
               {stat.label}

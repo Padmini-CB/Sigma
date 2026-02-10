@@ -1,7 +1,7 @@
 import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface InterviewPlaybackTemplateProps {
   headline?: string;
@@ -23,24 +23,54 @@ export function InterviewPlaybackTemplate({
   const qaCardStyle: React.CSSProperties = {
     backgroundColor: 'rgba(255,255,255,0.03)',
     border: '1px solid rgba(255,255,255,0.07)',
-    borderRadius: 8 * scale,
-    padding: `${10 * scale}px ${14 * scale}px`,
-    fontSize: 16 * scale,
+    borderRadius: 6 * scale,
+    padding: `${8 * scale}px ${12 * scale}px`,
+    fontSize: 14 * scale,
     color: BRAND.colors.textWhite,
     fontFamily: BRAND.fonts.body,
     fontWeight: 400,
-    lineHeight: 1.4,
+    lineHeight: 1.35,
   };
 
   const questionStyle: React.CSSProperties = {
-    fontSize: 15 * scale,
+    fontSize: 13 * scale,
     color: 'rgba(255,255,255,0.55)',
     fontFamily: BRAND.fonts.body,
     fontWeight: 300,
     fontStyle: 'italic',
-    lineHeight: 1.4,
-    marginBottom: 4 * scale,
+    lineHeight: 1.35,
+    marginBottom: 3 * scale,
   };
+
+  const candidateAQA = [
+    {
+      q: 'Tell me about a project you\u2019ve built',
+      a: 'I did the Titanic survival prediction on Kaggle...',
+    },
+    {
+      q: 'How do you handle messy data?',
+      a: 'I usually clean it in Excel... delete the rows with missing values...',
+    },
+    {
+      q: 'Show me your GitHub portfolio',
+      a: 'I don\u2019t have a portfolio yet, but I plan to start one soon...',
+    },
+  ];
+
+  const candidateBQA = [
+    {
+      q: 'Tell me about a project you\u2019ve built',
+      a: 'Built a supply chain forecast dashboard for AtliQ Hardware using Power BI \u2014 reduced stockouts by 15%',
+    },
+    {
+      q: 'How do you handle messy data?',
+      a: 'I build data validation pipelines \u2014 null checks, type casting, dedup logic \u2014 all automated in Python',
+    },
+    {
+      q: 'Show me your GitHub portfolio',
+      a: 'Here\u2019s my portfolio with all 7 projects, including a real-time Kafka pipeline deployed on AWS',
+    },
+  ];
 
   return (
     <div style={{
@@ -56,7 +86,7 @@ export function InterviewPlaybackTemplate({
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 
@@ -106,30 +136,37 @@ export function InterviewPlaybackTemplate({
           backgroundColor: 'rgba(196,112,112,0.06)',
           borderLeft: '1px solid rgba(255,255,255,0.07)',
           borderBottom: '1px solid rgba(255,255,255,0.07)',
-          padding: `${14 * scale}px ${16 * scale}px`,
+          padding: `${12 * scale}px ${14 * scale}px`,
           display: 'flex',
           flexDirection: 'column',
-          gap: 8 * scale,
+          gap: 5 * scale,
         }}>
           <div style={{
             fontSize: 22 * scale, fontWeight: 900, color: '#c47070',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.05em', paddingBottom: 6 * scale,
-            borderBottom: '2px solid #c47070',
+            borderBottom: '2px solid #c47070', flexShrink: 0,
           }}>
             CANDIDATE A
           </div>
 
-          <div style={questionStyle}>&ldquo;Tell me about a project you&apos;ve built&rdquo;</div>
-          <div style={qaCardStyle}>&ldquo;I did the Titanic survival prediction on Kaggle...&rdquo;</div>
-
-          <div style={{ ...questionStyle, marginTop: 4 * scale }}>&ldquo;What&apos;s in your GitHub?&rdquo;</div>
-          <div style={qaCardStyle}>&ldquo;I have a weather API tutorial from YouTube...&rdquo;</div>
+          {/* Q&A pairs - expand to fill space */}
+          <div style={{
+            flex: 1, display: 'flex', flexDirection: 'column',
+            justifyContent: 'space-evenly', gap: 5 * scale,
+          }}>
+            {candidateAQA.map((item, i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={questionStyle}>&ldquo;{item.q}&rdquo;</div>
+                <div style={qaCardStyle}>&ldquo;{item.a}&rdquo;</div>
+              </div>
+            ))}
+          </div>
 
           <div style={{
-            marginTop: 'auto', fontSize: 20 * scale, fontWeight: 700,
+            flexShrink: 0, fontSize: 20 * scale, fontWeight: 700,
             color: '#c47070', fontFamily: BRAND.fonts.heading,
-            textAlign: 'center', padding: `${6 * scale}px 0`,
+            textAlign: 'center', padding: `${4 * scale}px 0`,
           }}>
             &#10060; No callback
           </div>
@@ -141,30 +178,37 @@ export function InterviewPlaybackTemplate({
           backgroundColor: 'rgba(76,195,120,0.06)',
           borderRight: '1px solid rgba(255,255,255,0.07)',
           borderBottom: '1px solid rgba(255,255,255,0.07)',
-          padding: `${14 * scale}px ${16 * scale}px`,
+          padding: `${12 * scale}px ${14 * scale}px`,
           display: 'flex',
           flexDirection: 'column',
-          gap: 8 * scale,
+          gap: 5 * scale,
         }}>
           <div style={{
             fontSize: 22 * scale, fontWeight: 900, color: '#4cc378',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.05em', paddingBottom: 6 * scale,
-            borderBottom: '2px solid #4cc378',
+            borderBottom: '2px solid #4cc378', flexShrink: 0,
           }}>
             CANDIDATE B
           </div>
 
-          <div style={questionStyle}>&ldquo;Tell me about a project you&apos;ve built&rdquo;</div>
-          <div style={qaCardStyle}>&ldquo;Built a supply chain forecast dashboard for AtliQ Hardware using Power BI...&rdquo;</div>
-
-          <div style={{ ...questionStyle, marginTop: 4 * scale }}>&ldquo;What&apos;s in your GitHub?&rdquo;</div>
-          <div style={qaCardStyle}>&ldquo;GitHub portfolio with all 7 projects, including a real-time Kafka pipeline...&rdquo;</div>
+          {/* Q&A pairs - expand to fill space */}
+          <div style={{
+            flex: 1, display: 'flex', flexDirection: 'column',
+            justifyContent: 'space-evenly', gap: 5 * scale,
+          }}>
+            {candidateBQA.map((item, i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={questionStyle}>&ldquo;{item.q}&rdquo;</div>
+                <div style={qaCardStyle}>&ldquo;{item.a}&rdquo;</div>
+              </div>
+            ))}
+          </div>
 
           <div style={{
-            marginTop: 'auto', fontSize: 20 * scale, fontWeight: 700,
+            flexShrink: 0, fontSize: 20 * scale, fontWeight: 700,
             color: '#4cc378', fontFamily: BRAND.fonts.heading,
-            textAlign: 'center', padding: `${6 * scale}px 0`,
+            textAlign: 'center', padding: `${4 * scale}px 0`,
           }}>
             &#9989; Hired
           </div>
@@ -206,7 +250,7 @@ export function InterviewPlaybackTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginTop: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 52 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 48 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.1, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>WHICH CANDIDATE GETS</span>

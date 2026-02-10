@@ -6,4 +6,4 @@ export { StatCounterGrid } from './StatCounterGrid';
 export { WeekJourneyGrid } from './WeekJourneyGrid';
 export { YouTubeBadge } from './YouTubeBadge';
 export { BottomBar } from './BottomBar';
-export { CodebasicsLogo } from './CodebasicsLogo';
+export { PadminiLogo } from './PadminiLogo';

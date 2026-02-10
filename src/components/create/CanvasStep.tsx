@@ -20,9 +20,10 @@ const canvasOptions: CanvasOption[] = [
 
 interface CanvasStepProps {
   onSelect: (canvas: string, customDimensions?: { width: number; height: number }) => void;
+  onBack?: () => void;
 }
 
-export default function CanvasStep({ onSelect }: CanvasStepProps) {
+export default function CanvasStep({ onSelect, onBack }: CanvasStepProps) {
   const [showCustom, setShowCustom] = useState(false);
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
@@ -45,6 +46,17 @@ export default function CanvasStep({ onSelect }: CanvasStepProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-2 font-ui text-sm text-gray-400 hover:text-white mb-8 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+      )}
       <h2 className="font-headline text-3xl sm:text-4xl font-bold text-white text-center mb-4">
         What are you making?
       </h2>

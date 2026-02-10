@@ -1,7 +1,7 @@
 import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface DailyBreakdownTemplateProps {
   headline?: string;
@@ -41,8 +41,25 @@ export function DailyBreakdownTemplate({
     'Lifetime Access',
   ];
 
-  const calendarRows = 4;
-  const calendarCols = 7;
+  // January 2026 calendar data
+  const monthName = 'JANUARY 2026';
+  const dayHeaders = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const startOffset = 3; // January 1, 2026 is a Thursday (index 3 in Mon-Sun)
+  const totalDays = 31;
+  const completedDays = 28;
+  const highlightDay = 28;
+  const totalCells = 35; // 5 rows x 7 cols
+
+  // Build array of cell values: null for empty, number for day
+  const calendarCells: (number | null)[] = [];
+  for (let i = 0; i < totalCells; i++) {
+    const dayNum = i - startOffset + 1;
+    if (dayNum < 1 || dayNum > totalDays) {
+      calendarCells.push(null);
+    } else {
+      calendarCells.push(dayNum);
+    }
+  }
 
   return (
     <div style={{
@@ -58,7 +75,7 @@ export function DailyBreakdownTemplate({
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 
@@ -89,25 +106,134 @@ export function DailyBreakdownTemplate({
             </div>
           </div>
 
-          {/* Calendar Grid */}
+          {/* Calendar Widget */}
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${calendarCols}, 1fr)`,
-            gap: 3 * scale,
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 10 * scale,
+            overflow: 'hidden',
           }}>
-            {Array.from({ length: calendarRows * calendarCols }).map((_, i) => (
-              <div key={i} style={{
-                backgroundColor: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: 4 * scale,
-                padding: `${5 * scale}px ${2 * scale}px`,
-                textAlign: 'center',
-                fontSize: 12 * scale, color: '#c7f464',
-                fontFamily: BRAND.fonts.body, fontWeight: 400, lineHeight: 1.2,
+            {/* Calendar header with month and arrows */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: `${8 * scale}px ${12 * scale}px`,
+              background: 'rgba(255,255,255,0.05)',
+            }}>
+              <span style={{
+                fontSize: 14 * scale,
+                color: 'rgba(255,255,255,0.4)',
+                fontFamily: BRAND.fonts.body,
+                cursor: 'pointer',
+                userSelect: 'none',
+                lineHeight: 1,
+                padding: `${2 * scale}px ${6 * scale}px`,
               }}>
-                {dailyPrice}
-              </div>
-            ))}
+                &lt;
+              </span>
+              <span style={{
+                fontSize: 15 * scale,
+                fontWeight: 700,
+                color: BRAND.colors.textWhite,
+                fontFamily: BRAND.fonts.heading,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase' as const,
+              }}>
+                {monthName}
+              </span>
+              <span style={{
+                fontSize: 14 * scale,
+                color: 'rgba(255,255,255,0.4)',
+                fontFamily: BRAND.fonts.body,
+                cursor: 'pointer',
+                userSelect: 'none',
+                lineHeight: 1,
+                padding: `${2 * scale}px ${6 * scale}px`,
+              }}>
+                &gt;
+              </span>
+            </div>
+
+            {/* Day-of-week headers */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(7, 1fr)',
+              padding: `${6 * scale}px ${8 * scale}px ${2 * scale}px`,
+            }}>
+              {dayHeaders.map((day) => (
+                <div key={day} style={{
+                  textAlign: 'center',
+                  fontSize: 12 * scale,
+                  fontWeight: 400,
+                  color: 'rgba(255,255,255,0.4)',
+                  fontFamily: BRAND.fonts.body,
+                  textTransform: 'uppercase' as const,
+                  lineHeight: 1,
+                }}>
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar day grid: 5 rows x 7 cols */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(7, 1fr)',
+              gap: 3 * scale,
+              padding: `${4 * scale}px ${8 * scale}px ${8 * scale}px`,
+            }}>
+              {calendarCells.map((dayNum, i) => {
+                if (dayNum === null) {
+                  return <div key={i} />;
+                }
+
+                const isCompleted = dayNum <= completedDays;
+                const isHighlighted = dayNum === highlightDay;
+
+                return (
+                  <div key={i} style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: `${3 * scale}px 0`,
+                    borderRadius: 6 * scale,
+                    border: isHighlighted
+                      ? `2px solid #c7f464`
+                      : '1px solid rgba(255,255,255,0.05)',
+                    background: isHighlighted
+                      ? 'rgba(199,244,100,0.08)'
+                      : 'transparent',
+                    minHeight: 32 * scale,
+                  }}>
+                    <span style={{
+                      fontSize: 11 * scale,
+                      fontWeight: isHighlighted ? 700 : 400,
+                      color: isHighlighted
+                        ? '#c7f464'
+                        : isCompleted
+                          ? 'rgba(255,255,255,0.7)'
+                          : 'rgba(255,255,255,0.35)',
+                      fontFamily: BRAND.fonts.body,
+                      lineHeight: 1,
+                    }}>
+                      {dayNum}
+                    </span>
+                    {isCompleted && (
+                      <span style={{
+                        fontSize: 14 * scale,
+                        color: '#4cc378',
+                        lineHeight: 1,
+                        marginTop: 1 * scale,
+                      }}>
+                        &#10003;
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
