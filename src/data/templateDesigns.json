@@ -169,6 +169,159 @@
         "bodyText": "10 Weeks • 7 Projects • 2 Virtual Internships • Discord Community"
       },
       "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "linkedin-proof",
+      "name": "LinkedIn Proof",
+      "description": "Two LinkedIn post mockups comparing tutorial learner vs bootcamp learner",
+      "category": "Social Proof",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "REAL PROJECTS VS TUTORIALS",
+        "subheadline": "REAL PROJECTS. REAL LINKEDIN CREDIBILITY.",
+        "cta": "JOIN PROGRAM",
+        "price": "₹12,900",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "300+ Real Job Success Stories • 7+ Business Projects • 44K+ Learners"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "daily-breakdown",
+      "name": "₹105/Day Breakdown",
+      "description": "Daily cost breakdown showing what ₹105/day gets you vs everyday items",
+      "category": "Conversion",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "₹105/DAY × 4 MONTHS = A CAREER YOU'RE PROUD OF.",
+        "subheadline": "That's all it takes.",
+        "cta": "START FOR ₹105/DAY",
+        "price": "₹12,000",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "7 Production Projects • Virtual Internship • Portfolio Website"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "interview-playback",
+      "name": "Interview Playback",
+      "description": "Video call recording comparing two interview candidates",
+      "category": "Awareness",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "WHICH CANDIDATE GETS THE CALLBACK?",
+        "subheadline": "Hint: It's not the one with only tutorials on their resume.",
+        "cta": "BUILD REAL PROJECTS",
+        "price": "₹12,000",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "7+ Business Projects • 300+ Real Job Success Stories • 44K+ Learners"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "tool-cemetery",
+      "name": "Tool Cemetery",
+      "description": "Dead tools vs modern alive tools from course tech stack",
+      "category": "Awareness",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "STILL LEARNING WITH DEAD TOOLS?",
+        "subheadline": "The industry moved on. Have you?",
+        "cta": "LEARN MODERN TOOLS",
+        "price": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "Python • SQL • Spark • Databricks • AWS • Snowflake • Airflow • Kafka"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "career-map",
+      "name": "Career Map",
+      "description": "Vertical journey timeline from zero to job-ready in 4 months",
+      "category": "Consideration",
+      "applicableTo": ["da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "YOUR JOURNEY FROM ZERO TO JOB-READY IN 4 MONTHS",
+        "subheadline": "A clear path. No confusion.",
+        "cta": "START YOUR JOURNEY",
+        "price": "₹8,400",
+        "courseName": "Data Analytics Bootcamp 5.0",
+        "credibility": "300+ Career Switches",
+        "bodyText": "Month-by-month roadmap from no coding background to interview-ready"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "three-am-test",
+      "name": "3 AM Test",
+      "description": "Production failure at 3 AM — tutorial grad vs bootcamp grad",
+      "category": "Awareness",
+      "applicableTo": ["de-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "WE DON'T JUST TEACH YOU TO BUILD MODELS. WE TEACH YOU TO FIX THEM.",
+        "subheadline": "The real test happens at 3 AM.",
+        "cta": "BUILD PRODUCTION SKILLS",
+        "price": "₹12,000",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "Production-grade projects • CloudWatch • Pipeline debugging"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "youtube-comment-wall",
+      "name": "YouTube Comment Wall",
+      "description": "Grid of real YouTube-style comments from learners",
+      "category": "Social Proof",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "1 MILLION+ SUBSCRIBERS CAN'T BE WRONG.",
+        "subheadline": "Real learners. Real results.",
+        "cta": "JOIN THE COMMUNITY",
+        "price": "",
+        "courseName": "Codebasics",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "Career switches • Real projects • Industry-ready skills"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "youtube-thumbnail",
+      "name": "YouTube Thumbnail",
+      "description": "1280x720 YouTube thumbnail with bold text and founder placeholder",
+      "category": "Engagement",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "WILL AI REPLACE SOFTWARE ENGINEERS?",
+        "subheadline": "The answer might surprise you.",
+        "cta": "",
+        "price": "",
+        "courseName": "Codebasics",
+        "credibility": "",
+        "bodyText": "2026 Update • Industry Analysis • Career Guide"
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "micro-course-teaser",
+      "name": "Micro Course Teaser",
+      "description": "4 micro course cards with prices, progress bars, and learning path",
+      "category": "Conversion",
+      "applicableTo": ["da-bootcamp"],
+      "fields": {
+        "headline": "START SMALL. BUILD BIG.",
+        "subheadline": "Begin with a micro course. Graduate to a full bootcamp.",
+        "cta": "EXPLORE COURSES",
+        "price": "₹499",
+        "courseName": "Codebasics Micro Courses",
+        "credibility": "44K+ Paid Learners",
+        "bodyText": "SQL • Python • Excel • Power BI — start from ₹499"
+      },
+      "previewColors": ["#0c1630", "#161245"]
     }
   ],
   "categories": [

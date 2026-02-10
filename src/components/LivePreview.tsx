@@ -12,6 +12,15 @@ import { CareerTransformationTemplate } from '@/components/templates/CareerTrans
 import { AIvsRealSkillsTemplate } from '@/components/templates/AIvsRealSkillsTemplate';
 import { WebinarTemplate } from '@/components/templates/WebinarTemplate';
 import { SocialAnnouncementTemplate } from '@/components/templates/SocialAnnouncementTemplate';
+import { LinkedInProofTemplate } from '@/components/templates/LinkedInProofTemplate';
+import { DailyBreakdownTemplate } from '@/components/templates/DailyBreakdownTemplate';
+import { InterviewPlaybackTemplate } from '@/components/templates/InterviewPlaybackTemplate';
+import { ToolCemeteryTemplate } from '@/components/templates/ToolCemeteryTemplate';
+import { CareerMapTemplate } from '@/components/templates/CareerMapTemplate';
+import { ThreeAMTestTemplate } from '@/components/templates/ThreeAMTestTemplate';
+import { YouTubeCommentWallTemplate } from '@/components/templates/YouTubeCommentWallTemplate';
+import { YouTubeThumbnailTemplate } from '@/components/templates/YouTubeThumbnailTemplate';
+import { MicroCourseTeaserTemplate } from '@/components/templates/MicroCourseTeaserTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 
 interface Template {
@@ -242,9 +251,9 @@ function getCourseData(courseKey?: BootcampKey | null) {
 function CharacterOverlay({ character }: { character: SelectedCharacter }) {
   const charSize = character.size || 250;
   const positionStyles: Record<string, React.CSSProperties> = {
-    left: { position: 'absolute', bottom: 0, left: 0, width: charSize, height: charSize, zIndex: 1 },
-    right: { position: 'absolute', bottom: 0, right: 0, width: charSize, height: charSize, zIndex: 1 },
-    bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: charSize, height: charSize, zIndex: 1 },
+    left: { position: 'absolute', bottom: 0, left: 0, width: charSize, height: charSize, zIndex: 50 },
+    right: { position: 'absolute', bottom: 0, right: 0, width: charSize, height: charSize, zIndex: 50 },
+    bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: charSize, height: charSize, zIndex: 50 },
   };
 
   return (
@@ -264,88 +273,103 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
   const { width, height } = template.dimensions;
   const courseData = getCourseData(selectedCourse);
 
-  // Rich template routing
+  // Rich template routing — collect JSX, then wrap with character overlay
+  let richContent: React.ReactNode = null;
+
   if (selectedDesignId === 'chatgpt-resume-trap') {
-    return <div style={{ width, height }}><ChatGPTResumeTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} /></div>;
-  }
-  if (selectedDesignId === 'github-before-after') {
-    return <div style={{ width, height }}><GitHubBeforeAfterTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} afterStat={courseData ? `${courseData.stats.projects} Production Projects` : undefined} width={width} height={height} /></div>;
-  }
-  if (selectedDesignId === 'price-transparency') {
+    richContent = <ChatGPTResumeTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} />;
+  } else if (selectedDesignId === 'github-before-after') {
+    richContent = <GitHubBeforeAfterTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} afterStat={courseData ? `${courseData.stats.projects} Production Projects` : undefined} width={width} height={height} />;
+  } else if (selectedDesignId === 'price-transparency') {
     const deData = courseData && 'priceComparison' in courseData ? courseData as typeof import('@/data/products/de-bootcamp').DE_BOOTCAMP : null;
+    richContent = (
+      <PriceTransparencyTemplate
+        headline={headline}
+        price={price || courseData?.price}
+        cta={cta}
+        courseName={courseName}
+        techStack={courseData?.techStack}
+        stats={courseData ? [
+          { number: courseData.stats.projects, label: 'Production Projects' },
+          { number: String((courseData.stats as Record<string, string>).internships || '2'), label: 'Virtual Internships' },
+          { number: String((courseData.stats as Record<string, string>).liveSessions || '24/year'), label: 'Live Sessions / Year' },
+          { number: courseData.stats.hours, label: 'Hours of Content' },
+          { number: String((courseData.stats as Record<string, string>).practiceEnvironments || '\u221E'), label: 'Practice Environments' },
+          { number: courseData.stats.communityMembers, label: 'Community Members' },
+        ] : undefined}
+        leftCard={deData ? { title: deData.priceComparison.competitors.label, items: deData.priceComparison.competitors.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
+        rightCard={deData ? { title: deData.priceComparison.codebasics.label, items: deData.priceComparison.codebasics.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
+        width={width}
+        height={height}
+      />
+    );
+  } else if (selectedDesignId === 'week-journey') {
+    richContent = (
+      <WeekJourneyTemplate
+        subheadline={subheadline}
+        cta={cta}
+        courseName={courseName}
+        totalWeeks={courseData?.weekJourney ? String(Math.max(...courseData.weekJourney.map((w: { weeks: string; title: string; desc: string }) => { const parts = w.weeks.split('-'); return parseInt(parts[parts.length - 1]); }))) : undefined}
+        weeks={courseData?.weekJourney.map((w: { weeks: string; title: string; desc: string }) => ({ weekLabel: w.weeks, title: w.title, desc: w.desc }))}
+        width={width}
+        height={height}
+      />
+    );
+  } else if (selectedDesignId === 'tony-sharma-trap') {
+    richContent = <TonySharmaV2Template headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} techStack={courseData?.techStack} jesterLine={jesterLine || undefined} width={width} height={height} />;
+  } else if (selectedDesignId === 'industry-veterans') {
+    richContent = <IndustryVeteransTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'career-transformation') {
+    richContent = (
+      <CareerTransformationTemplate
+        headline={headline}
+        subheadline={subheadline}
+        cta={cta}
+        courseName={courseName}
+        techStack={courseData?.techStack}
+        stats={courseData ? [
+          { number: String((courseData.stats as Record<string, string>).placements || '300+'), label: 'Career Switches' },
+          { number: courseData.stats.communityMembers, label: 'Learners' },
+          { number: '4.9', label: 'Rating' },
+        ] : undefined}
+        width={width}
+        height={height}
+      />
+    );
+  } else if (selectedDesignId === 'ai-vs-real-skills') {
+    richContent = <AIvsRealSkillsTemplate headline={headline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} />;
+  } else if (selectedDesignId === 'webinar-banner') {
+    richContent = <WebinarTemplate headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'social-announcement') {
+    richContent = <SocialAnnouncementTemplate headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} techStack={courseData?.techStack} credibility={fields.credibility} width={width} height={height} />;
+  } else if (selectedDesignId === 'linkedin-proof') {
+    richContent = <LinkedInProofTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} />;
+  } else if (selectedDesignId === 'daily-breakdown') {
+    richContent = <DailyBreakdownTemplate headline={headline} cta={cta} courseName={courseName} price={price || courseData?.price} width={width} height={height} />;
+  } else if (selectedDesignId === 'interview-playback') {
+    richContent = <InterviewPlaybackTemplate headline={headline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'tool-cemetery') {
+    richContent = <ToolCemeteryTemplate headline={headline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} />;
+  } else if (selectedDesignId === 'career-map') {
+    richContent = <CareerMapTemplate headline={headline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'three-am-test') {
+    richContent = <ThreeAMTestTemplate headline={headline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} />;
+  } else if (selectedDesignId === 'youtube-comment-wall') {
+    richContent = <YouTubeCommentWallTemplate headline={headline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'youtube-thumbnail') {
+    richContent = <YouTubeThumbnailTemplate headline={headline} subheadline={subheadline} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'micro-course-teaser') {
+    richContent = <MicroCourseTeaserTemplate headline={headline} cta={cta} courseName={courseName} width={width} height={height} />;
+  }
+
+  // If we matched a rich template, wrap with character overlay
+  if (richContent) {
     return (
-      <div style={{ width, height }}>
-        <PriceTransparencyTemplate
-          headline={headline}
-          price={price || courseData?.price}
-          cta={cta}
-          courseName={courseName}
-          techStack={courseData?.techStack}
-          stats={courseData ? [
-            { number: courseData.stats.projects, label: 'Production Projects' },
-            { number: String((courseData.stats as Record<string, string>).internships || '2'), label: 'Virtual Internships' },
-            { number: String((courseData.stats as Record<string, string>).liveSessions || '24/year'), label: 'Live Sessions / Year' },
-            { number: courseData.stats.hours, label: 'Hours of Content' },
-            { number: String((courseData.stats as Record<string, string>).practiceEnvironments || '\u221E'), label: 'Practice Environments' },
-            { number: courseData.stats.communityMembers, label: 'Community Members' },
-          ] : undefined}
-          leftCard={deData ? { title: deData.priceComparison.competitors.label, items: deData.priceComparison.competitors.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
-          rightCard={deData ? { title: deData.priceComparison.codebasics.label, items: deData.priceComparison.codebasics.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
-          width={width}
-          height={height}
-        />
+      <div style={{ width, height, position: 'relative', overflow: 'hidden' }}>
+        {richContent}
+        {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
       </div>
     );
-  }
-  if (selectedDesignId === 'week-journey') {
-    return (
-      <div style={{ width, height }}>
-        <WeekJourneyTemplate
-          subheadline={subheadline}
-          cta={cta}
-          courseName={courseName}
-          totalWeeks={courseData?.weekJourney ? String(Math.max(...courseData.weekJourney.map((w: { weeks: string; title: string; desc: string }) => { const parts = w.weeks.split('-'); return parseInt(parts[parts.length - 1]); }))) : undefined}
-          weeks={courseData?.weekJourney.map((w: { weeks: string; title: string; desc: string }) => ({ weekLabel: w.weeks, title: w.title, desc: w.desc }))}
-          width={width}
-          height={height}
-        />
-      </div>
-    );
-  }
-  if (selectedDesignId === 'tony-sharma-trap') {
-    return <div style={{ width, height }}><TonySharmaV2Template headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} techStack={courseData?.techStack} jesterLine={jesterLine || undefined} width={width} height={height} /></div>;
-  }
-  if (selectedDesignId === 'industry-veterans') {
-    return <div style={{ width, height }}><IndustryVeteransTemplate headline={headline} subheadline={subheadline} cta={cta} courseName={courseName} width={width} height={height} /></div>;
-  }
-  if (selectedDesignId === 'career-transformation') {
-    return (
-      <div style={{ width, height }}>
-        <CareerTransformationTemplate
-          headline={headline}
-          subheadline={subheadline}
-          cta={cta}
-          courseName={courseName}
-          techStack={courseData?.techStack}
-          stats={courseData ? [
-            { number: String((courseData.stats as Record<string, string>).placements || '300+'), label: 'Career Switches' },
-            { number: courseData.stats.communityMembers, label: 'Learners' },
-            { number: '4.9', label: 'Rating' },
-          ] : undefined}
-          width={width}
-          height={height}
-        />
-      </div>
-    );
-  }
-  if (selectedDesignId === 'ai-vs-real-skills') {
-    return <div style={{ width, height }}><AIvsRealSkillsTemplate headline={headline} cta={cta} courseName={courseName} techStack={courseData?.techStack} width={width} height={height} /></div>;
-  }
-  if (selectedDesignId === 'webinar-banner') {
-    return <div style={{ width, height }}><WebinarTemplate headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} width={width} height={height} /></div>;
-  }
-  if (selectedDesignId === 'social-announcement') {
-    return <div style={{ width, height }}><SocialAnnouncementTemplate headline={headline} subheadline={subheadline} bodyText={bodyText} cta={cta} courseName={courseName} techStack={courseData?.techStack} credibility={fields.credibility} width={width} height={height} /></div>;
   }
 
   // ============ Fallback: Generic template rendering ============
