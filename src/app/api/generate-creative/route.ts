@@ -44,7 +44,7 @@ const DEMO_RESPONSES: Record<string, object> = {
   dhaval: {
     headline: "Learn from Engineers Who Built at Scale.",
     subheadline: "Not from people who just read about it.",
-    bodyText: "Ex-NVIDIA • 10+ Years Experience • 1.4M+ YouTube Subscribers",
+    bodyText: "Ex-NVIDIA • 10+ Years Experience • 1 Million+ YouTube Subscribers",
     founder: {
       name: "Dhaval Patel",
       position: "left"

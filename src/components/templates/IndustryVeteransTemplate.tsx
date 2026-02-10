@@ -21,7 +21,7 @@ export function IndustryVeteransTemplate({
   courseName = 'Codebasics',
   stats = [
     { number: '17+', label: 'Years Experience' },
-    { number: '1.4M+', label: 'Subscribers' },
+    { number: '1M+', label: 'Subscribers' },
     { number: '44K+', label: 'Learners' },
   ],
   width = 1080,
@@ -34,7 +34,7 @@ export function IndustryVeteransTemplate({
       style={{
         width,
         height,
-        background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, #0d1225)`,
+        background: BRAND.background,
         padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',

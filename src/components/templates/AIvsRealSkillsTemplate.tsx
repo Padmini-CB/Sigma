@@ -44,7 +44,7 @@ export function AIvsRealSkillsTemplate({
       style={{
         width,
         height,
-        background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
+        background: BRAND.background,
         padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',

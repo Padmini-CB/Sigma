@@ -12,10 +12,10 @@
         "cta": "BUILD REAL PROJECTS",
         "price": "₹12,000",
         "courseName": "Data Engineering Bootcamp 1.0",
-        "credibility": "1.4M+ YouTube Subscribers",
+        "credibility": "1 Million+ YouTube Subscribers",
         "bodyText": "7 Business Projects • Virtual Internship • Portfolio Website"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     },
     {
       "id": "github-before-after",
@@ -29,10 +29,10 @@
         "cta": "BUILD YOUR PORTFOLIO",
         "price": "₹12,000",
         "courseName": "Data Engineering Bootcamp 1.0",
-        "credibility": "1.4M+ YouTube Subscribers",
+        "credibility": "1 Million+ YouTube Subscribers",
         "bodyText": "SQL • Python • Spark • Airflow • Snowflake • AWS • Azure • Kafka"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     },
     {
       "id": "price-transparency",
@@ -49,7 +49,7 @@
         "credibility": "44K+ Paid Learners",
         "bodyText": "7 Production Projects • 2 Virtual Internships • 24 Live Sessions Per Year"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     },
     {
       "id": "week-journey",
@@ -66,7 +66,7 @@
         "credibility": "4.9 Rating • 44K+ Learners",
         "bodyText": "Self-paced • Live Webinars • Mock Interviews • Resume Builder"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     },
     {
       "id": "tony-sharma-trap",
@@ -80,10 +80,10 @@
         "cta": "LEARN THE FUNDAMENTALS",
         "price": "₹12,900",
         "courseName": "Data Analytics Bootcamp 5.0",
-        "credibility": "1.4M+ YouTube Subscribers",
+        "credibility": "1 Million+ YouTube Subscribers",
         "bodyText": "Tony bought a certificate. You're building a career."
       },
-      "previewColors": ["#0a0e1a", "#1a0e2e"]
+      "previewColors": ["#0c1630", "#151040"]
     },
     {
       "id": "industry-veterans",
@@ -100,7 +100,7 @@
         "credibility": "17+ Years Industry Experience",
         "bodyText": "Bloomberg • NVIDIA • 17+ years building data systems at scale"
       },
-      "previewColors": ["#0a0e1a", "#0d1225"]
+      "previewColors": ["#0c1630", "#151040"]
     },
     {
       "id": "career-transformation",
@@ -117,7 +117,7 @@
         "credibility": "30-Day Full Refund Guarantee",
         "bodyText": "Career Guidance • LinkedIn Optimizer • Virtual Internship with AtliQ"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     },
     {
       "id": "ai-vs-real-skills",
@@ -131,10 +131,10 @@
         "cta": "BUILD REAL SKILLS",
         "price": "₹8,400",
         "courseName": "Data Analytics Bootcamp 5.0",
-        "credibility": "1.4M+ YouTube Subscribers",
+        "credibility": "1 Million+ YouTube Subscribers",
         "bodyText": "7 Business Projects • Virtual Internship • Portfolio Website"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     },
     {
       "id": "webinar-banner",
@@ -151,7 +151,7 @@
         "credibility": "17+ Years Industry Experience",
         "bodyText": "Real business problems • Production-grade solutions • Q&A with experts"
       },
-      "previewColors": ["#0a0e1a", "#0d1a30"]
+      "previewColors": ["#0c1630", "#151040"]
     },
     {
       "id": "social-announcement",
@@ -168,7 +168,7 @@
         "credibility": "Lifetime Access • Job Assistance",
         "bodyText": "10 Weeks • 7 Projects • 2 Virtual Internships • Discord Community"
       },
-      "previewColors": ["#0a0e1a", "#141830"]
+      "previewColors": ["#0c1630", "#161245"]
     }
   ],
   "categories": [

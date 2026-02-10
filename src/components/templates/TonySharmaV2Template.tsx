@@ -36,7 +36,7 @@ export function TonySharmaV2Template({
       style={{
         width,
         height,
-        background: `linear-gradient(145deg, ${BRAND.colors.bgDark} 0%, #1a0e2e 100%)`,
+        background: BRAND.background,
         padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',

@@ -19,7 +19,7 @@ export const DE_BOOTCAMP = {
     liveSessions: "24/year",
     internships: "2",
     practiceEnvironments: "∞",
-    communityMembers: "1.4M+",
+    communityMembers: "1M+",
   },
   weekJourney: [
     { weeks: "1-2", title: "SQL & Python", desc: "Foundations with real business datasets" },

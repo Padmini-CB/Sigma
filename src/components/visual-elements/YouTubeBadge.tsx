@@ -5,7 +5,7 @@ interface YouTubeBadgeProps {
   rating?: string;
 }
 
-export function YouTubeBadge({ subscribers = '1.4M+', rating = '4.9' }: YouTubeBadgeProps) {
+export function YouTubeBadge({ subscribers = '1 Million+', rating = '4.9' }: YouTubeBadgeProps) {
   return (
     <div
       style={{
