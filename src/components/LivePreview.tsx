@@ -298,7 +298,7 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           { number: courseData.stats.communityMembers, label: 'Community Members' },
         ] : undefined}
         leftCard={deData ? { title: deData.priceComparison.competitors.label, items: deData.priceComparison.competitors.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
-        rightCard={deData ? { title: deData.priceComparison.codebasics.label, items: deData.priceComparison.codebasics.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
+        rightCard={deData ? { title: deData.priceComparison.padmini.label, items: deData.priceComparison.padmini.breakdown.map(b => ({ label: b.item, percentage: b.pct })) } : undefined}
         width={width}
         height={height}
       />

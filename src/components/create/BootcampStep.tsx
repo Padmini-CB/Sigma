@@ -11,7 +11,7 @@ const bootcampOptions: BootcampOption[] = [
   { id: 'de-bootcamp', name: 'Data Engineering Bootcamp', details: 'AWS, Snowflake, Airflow · 100TB+ Data' },
   { id: 'ds-bootcamp', name: 'GenAI & Data Science 3.0', details: '₹15,000 · RAG, LangChain · Build in Public' },
   { id: 'bundle', name: 'Bundle (DA + AI Toolkit)', details: 'Best value combination' },
-  { id: 'general', name: 'Codebasics General', details: 'Brand-level creatives' },
+  { id: 'general', name: 'Padmini General', details: 'Brand-level creatives' },
 ];
 
 interface BootcampStepProps {

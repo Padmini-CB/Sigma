@@ -88,7 +88,7 @@ const conceptMappings: Record<string, Concept[]> = {
   'default': [
     {
       id: 'brand-awareness',
-      title: 'Codebasics Brand Awareness',
+      title: 'Padmini Brand Awareness',
       description: 'General brand creative showcasing our learning philosophy and community.',
       templateId: 'meta-feed-square',
     },
@@ -109,7 +109,7 @@ const bootcampNames: Record<string, string> = {
   'de-bootcamp': 'Data Engineering',
   'ds-bootcamp': 'GenAI & Data Science',
   'bundle': 'Bundle',
-  'general': 'Codebasics General',
+  'general': 'Padmini General',
 };
 
 const intentNames: Record<string, string> = {

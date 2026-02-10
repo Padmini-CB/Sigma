@@ -149,7 +149,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1024,
-          system: `You are Sigma, an AI creative assistant for Codebasics. Generate marketing creatives that are ethical and effective.
+          system: `You are Sigma, an AI creative assistant for Padmini. Generate marketing creatives that are ethical and effective.
 
 CHARACTERS: tony (shortcut guy), peter (confused beginner), bruce (overthinker)
 FOUNDERS: Dhaval Patel, Hemanand Vadivel

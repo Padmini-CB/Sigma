@@ -1,4 +1,4 @@
-export function CodebasicsLogo() {
+export function PadminiLogo() {
   return (
     <svg width={120} height={55} viewBox="0 0 175 80" xmlns="http://www.w3.org/2000/svg">
       <g>

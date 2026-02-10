@@ -2,7 +2,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { StatCounterGrid } from '@/components/visual-elements/StatCounterGrid';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface IndustryVeteransTemplateProps {
   headline?: string;
@@ -18,7 +18,7 @@ export function IndustryVeteransTemplate({
   headline = 'LEARN FROM INDUSTRY VETERANS',
   subheadline = 'Real-world experience. Not theoretical fluff.',
   cta = 'MEET YOUR MENTORS',
-  courseName = 'Codebasics',
+  courseName = 'Padmini',
   stats = [
     { number: '17+', label: 'Years Experience' },
     { number: '1M+', label: 'Subscribers' },
@@ -46,7 +46,7 @@ export function IndustryVeteransTemplate({
     >
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 

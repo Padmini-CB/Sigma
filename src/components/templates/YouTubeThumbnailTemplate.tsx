@@ -1,5 +1,5 @@
 import { BRAND } from '@/styles/brand-constants';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface YouTubeThumbnailTemplateProps {
   headline?: string;
@@ -116,7 +116,7 @@ export function YouTubeThumbnailTemplate({
       <div style={{
         position: 'absolute', bottom: 14 * scale, right: 18 * scale, opacity: 0.5,
       }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
       </div>
     </div>
   );

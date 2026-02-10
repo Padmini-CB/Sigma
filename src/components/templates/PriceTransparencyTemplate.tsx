@@ -4,7 +4,7 @@ import { StatCounterGrid } from '@/components/visual-elements/StatCounterGrid';
 import { TechStackPills } from '@/components/visual-elements/TechStackPills';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface PriceTransparencyTemplateProps {
   headline?: string;
@@ -44,7 +44,7 @@ export function PriceTransparencyTemplate({
     ],
   },
   rightCard = {
-    title: 'CODEBASICS (₹12K)',
+    title: 'PADMINI (₹12K)',
     items: [
       { label: 'Content & Platform', percentage: 50 },
       { label: 'Live Mentoring', percentage: 25 },
@@ -75,7 +75,7 @@ export function PriceTransparencyTemplate({
     >
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 

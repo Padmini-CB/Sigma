@@ -2,7 +2,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { WeekJourneyGrid } from '@/components/visual-elements/WeekJourneyGrid';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
+import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 
 interface WeekJourneyTemplateProps {
   headline?: string;
@@ -50,7 +50,7 @@ export function WeekJourneyTemplate({
     >
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <CodebasicsLogo />
+        <PadminiLogo />
         <YouTubeBadge />
       </div>
 

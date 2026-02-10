@@ -40,8 +40,8 @@ export const DE_BOOTCAMP = {
         { item: "Actual Teaching", pct: 5 },
       ]
     },
-    codebasics: {
-      label: "Codebasics (₹12K)",
+    padmini: {
+      label: "Padmini (₹12K)",
       breakdown: [
         { item: "Content & Platform", pct: 50 },
         { item: "Live Mentoring", pct: 25 },
