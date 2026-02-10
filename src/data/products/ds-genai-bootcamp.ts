@@ -17,7 +17,7 @@ export const DS_GENAI_BOOTCAMP = {
     projects: "4+",
     hours: "300+",
     internships: "2",
-    communityMembers: "1.4M+",
+    communityMembers: "1M+",
   },
   weekJourney: [
     { weeks: "1-4", title: "Python & Math Foundations", desc: "Linear algebra, calculus, probability" },

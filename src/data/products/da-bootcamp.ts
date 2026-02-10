@@ -22,7 +22,7 @@ export const DA_BOOTCAMP = {
     hours: "200+",
     liveSessions: "24/year",
     internships: "1",
-    communityMembers: "1.4M+",
+    communityMembers: "1M+",
     placements: "300+",
   },
   weekJourney: [

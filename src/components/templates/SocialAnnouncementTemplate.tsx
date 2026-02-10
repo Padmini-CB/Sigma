@@ -34,7 +34,7 @@ export function SocialAnnouncementTemplate({
       style={{
         width,
         height,
-        background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, #0f1535, ${BRAND.colors.bgCard})`,
+        background: BRAND.background,
         padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',

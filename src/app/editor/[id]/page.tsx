@@ -61,7 +61,7 @@ const defaultFields: EditorFields = {
   cta: 'Start Learning Today',
   price: '₹12,000',
   courseName: 'Data Engineering Bootcamp 1.0',
-  credibility: '1.4M+ YouTube Subscribers',
+  credibility: '1 Million+ YouTube Subscribers',
   bodyText: '7 Business Projects • 2 Virtual Internships • Lifetime Access',
 };
 

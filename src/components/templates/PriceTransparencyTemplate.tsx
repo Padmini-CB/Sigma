@@ -31,7 +31,7 @@ export function PriceTransparencyTemplate({
     { number: '24', label: 'Live Sessions / Year' },
     { number: '290+', label: 'Hours of Content' },
     { number: '∞', label: 'Practice Environments' },
-    { number: '1.4M+', label: 'Community Members' },
+    { number: '1M+', label: 'Community Members' },
   ],
   leftCard = {
     title: '₹2.5L BOOTCAMP',
@@ -63,7 +63,7 @@ export function PriceTransparencyTemplate({
       style={{
         width,
         height,
-        background: `linear-gradient(145deg, ${BRAND.colors.bgDark}, ${BRAND.colors.bgCard})`,
+        background: BRAND.background,
         padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',

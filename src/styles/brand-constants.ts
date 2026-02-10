@@ -1,7 +1,7 @@
 export const BRAND = {
   colors: {
-    bgDark: '#0a0e1a',
-    bgCard: '#141830',
+    bgDark: '#0c1630',
+    bgCard: '#161245',
     bgCardHover: '#1a2040',
     accent: '#c7f464',
     accentGreen: '#c7f464',
@@ -22,6 +22,7 @@ export const BRAND = {
     heading: "'Saira Condensed', sans-serif",
     body: "'Kanit', sans-serif",
   },
+  background: 'linear-gradient(170deg, #0c1630 0%, #151040 35%, #1a1545 55%, #12103a 80%, #0c1630 100%)',
   trustSignals: "Lifetime Version Access \u2022 100% Refund Policy \u2022 Free Portfolio Website",
-  youtubeStats: { subscribers: "1.4M+", rating: "4.9" },
+  youtubeStats: { subscribers: "1 Million+", rating: "4.9" },
 } as const;

@@ -81,9 +81,9 @@ const bottomFieldConfigs: FieldConfig[] = [
   {
     key: 'credibility',
     label: 'Trust Signal',
-    placeholder: '1.4M+ YouTube Subscribers',
+    placeholder: '1 Million+ YouTube Subscribers',
     type: 'text',
-    hint: '1.4M+ YouTube, 44K+ Learners, 4.9 Rating',
+    hint: '1 Million+ YouTube, 44K+ Learners, 4.9 Rating',
   },
 ];
 
@@ -536,7 +536,7 @@ function SidebarContent({
                 </div>
                 <div>
                   <span className="font-ui text-sm font-semibold text-red-700">YouTube Badge</span>
-                  <p className="font-ui text-xs text-red-500">1.4M+ Subs &bull; 4.9 Rating</p>
+                  <p className="font-ui text-xs text-red-500">1 Million+ Subs &bull; 4.9 Rating</p>
                 </div>
               </div>
               <p className="font-ui text-xs text-red-400 mt-2">Included in all rich templates automatically</p>

@@ -19,7 +19,7 @@ export function TonySharmaTemplate({
   bootcamp = "Data Analytics Bootcamp 5.0",
 }: TonySharmaTemplateProps) {
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-[#181830] to-[#2D1B4E] overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden" style={{ background: 'linear-gradient(170deg, #0c1630 0%, #151040 35%, #1a1545 55%, #12103a 80%, #0c1630 100%)' }}>
       {/* Sigma Tagline Badge - Top Right */}
       <div className="absolute top-4 right-4">
         <div className="flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-2 border border-white/20">

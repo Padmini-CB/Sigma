@@ -8,7 +8,7 @@
     "name": "Codebasics",
     "website": "https://codebasics.io",
     "description": "A new-age learning tech platform focused on getting people job-ready in the field of data analytics and data science",
-    "youtubeSubscribers": "1.4M+",
+    "youtubeSubscribers": "1 Million+",
     "trustpilotReviews": 75,
     "refundPolicy": "Full refund within 30 days",
     "instructors": [
@@ -17,7 +17,7 @@
         "title": "Founder & Lead Instructor",
         "experience": "17 years in Programming and Data Science",
         "companies": ["NVIDIA", "Bloomberg"],
-        "credentials": "AI entrepreneur, YouTuber with 1.4M+ subscribers",
+        "credentials": "AI entrepreneur, YouTuber with 1 Million+ subscribers",
         "skills": ["Python", "C++", "UNIX", "Machine Learning", "Deep Learning", "Time Series Forecasting"]
       },
       {
@@ -414,7 +414,7 @@
     }
   ],
   "credibilityIndicators": {
-    "youtubeSubscribers": "1.4M+",
+    "youtubeSubscribers": "1 Million+",
     "trustpilotReviews": "75+ reviews",
     "refundPolicy": "30-day full refund",
     "lifetimeAccess": true,

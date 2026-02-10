@@ -23,7 +23,7 @@ export function WebinarTemplate({
   courseName = 'Codebasics Live',
   stats = [
     { number: '17+', label: 'Years Experience' },
-    { number: '1.4M+', label: 'Subscribers' },
+    { number: '1M+', label: 'Subscribers' },
     { number: '24', label: 'Sessions / Year' },
   ],
   width = 1080,
@@ -36,7 +36,7 @@ export function WebinarTemplate({
       style={{
         width,
         height,
-        background: `linear-gradient(145deg, ${BRAND.colors.bgDark} 0%, #0d1a30 50%, #0a0e1a 100%)`,
+        background: BRAND.background,
         padding: 28 * scale,
         display: 'flex',
         flexDirection: 'column',
