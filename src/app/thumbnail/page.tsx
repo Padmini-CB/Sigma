@@ -14,7 +14,7 @@ type FontStyleId = 'bold-clean' | 'gradient-impact' | 'mixed-weight' | 'outlined
 interface ThumbnailState {
   headline: string;
   accentWords: Set<number>;
-  person: string;
+  expression: string;
   backgroundPreset: number;
   techIcons: string[];
   layout: number;
@@ -28,9 +28,11 @@ const FONT_STYLE_PRESETS: { id: FontStyleId; name: string; description: string; 
   { id: 'outlined', name: 'Outlined', description: 'Colored outline with transparent or white fill', bestFor: 'Provocative' },
 ];
 
-const PEOPLE = [
-  { id: 'dhaval', label: 'Dhaval Patel', img: '/assets/founders/Dhaval.png' },
-  { id: 'hemanand', label: 'Hemanand Vadivel', img: '/assets/founders/Hemanand.png' },
+const EXPRESSIONS = [
+  { id: 'thinking', label: 'Thinking', img: '/assets/founders/dhaval-thinking.png' },
+  { id: 'pointing', label: 'Pointing', img: '/assets/founders/dhaval-pointing.png' },
+  { id: 'displaying', label: 'Displaying', img: '/assets/founders/dhaval-displaying.png' },
+  { id: 'excited', label: 'Excited', img: '/assets/founders/dhaval-excited.png' },
   { id: 'none', label: 'No Person', img: '' },
 ];
 
@@ -53,7 +55,7 @@ const PRESET_LAYOUTS = [
     name: 'AI Will Replace You?',
     headline: 'WILL AI REPLACE SOFTWARE ENGINEERS?',
     accentWords: new Set([4]),
-    person: 'dhaval',
+    expression: 'thinking',
     techIcons: ['Python', 'TensorFlow', 'AWS'],
     backgroundPreset: 0,
     fontStyle: 'mixed-weight' as FontStyleId,
@@ -62,7 +64,7 @@ const PRESET_LAYOUTS = [
     name: 'SQL for Beginners',
     headline: 'LEARN SQL IN 4 HOURS',
     accentWords: new Set([1]),
-    person: 'dhaval',
+    expression: 'displaying',
     techIcons: ['SQL', 'PostgreSQL', 'Excel'],
     backgroundPreset: 1,
     fontStyle: 'bold-clean' as FontStyleId,
@@ -71,7 +73,7 @@ const PRESET_LAYOUTS = [
     name: 'Data Engineer Roadmap',
     headline: 'DATA ENGINEER ROADMAP 2026',
     accentWords: new Set([3]),
-    person: 'hemanand',
+    expression: 'pointing',
     techIcons: ['Spark', 'Airflow', 'Kafka', 'AWS', 'Databricks'],
     backgroundPreset: 2,
     fontStyle: 'gradient-impact' as FontStyleId,
@@ -80,7 +82,7 @@ const PRESET_LAYOUTS = [
     name: 'Power BI Full Course',
     headline: 'POWER BI FULL COURSE FOR BEGINNERS',
     accentWords: new Set([0, 1]),
-    person: 'dhaval',
+    expression: 'excited',
     techIcons: ['Power BI', 'Excel', 'SQL'],
     backgroundPreset: 3,
     fontStyle: 'bold-clean' as FontStyleId,
@@ -89,7 +91,7 @@ const PRESET_LAYOUTS = [
     name: 'Resume Tips',
     headline: 'YOUR RESUME IS GETTING REJECTED',
     accentWords: new Set([5]),
-    person: 'hemanand',
+    expression: 'thinking',
     techIcons: [],
     backgroundPreset: 4,
     fontStyle: 'outlined' as FontStyleId,
@@ -99,9 +101,9 @@ const PRESET_LAYOUTS = [
 function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
   const scale = HEIGHT / 720;
   const words = state.headline.split(' ');
-  const personData = PEOPLE.find(p => p.id === state.person);
-  const hasPerson = state.person !== 'none' && personData?.img;
-  const baseFontSize = hasPerson ? 90 * scale : 110 * scale;
+  const expressionData = EXPRESSIONS.find(e => e.id === state.expression);
+  const hasExpression = state.expression !== 'none' && expressionData?.img;
+  const baseFontSize = hasExpression ? 90 * scale : 110 * scale;
 
   const renderHeadline = () => {
     switch (state.fontStyle) {
@@ -225,7 +227,7 @@ function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
       <div style={{
         position: 'absolute',
         top: '-10%',
-        right: '-5%',
+        left: '-5%',
         width: 500 * scale,
         height: 500 * scale,
         borderRadius: '50%',
@@ -233,50 +235,15 @@ function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
         pointerEvents: 'none',
       }} />
 
-      {/* Person image — left side ~40% */}
-      {hasPerson && (
-        <div style={{
-          width: '40%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          flexShrink: 0,
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          {/* Gradient overlay at bottom */}
-          <div style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '30%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)',
-            zIndex: 1,
-          }} />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={personData!.img}
-            alt={personData!.label}
-            style={{
-              height: '95%',
-              objectFit: 'contain',
-              objectPosition: 'bottom',
-              position: 'relative',
-              zIndex: 2,
-            }}
-          />
-        </div>
-      )}
-
-      {/* Text content — right side */}
+      {/* LEFT 60% — Text content */}
       <div style={{
-        flex: 1,
+        width: hasExpression ? '60%' : '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         padding: `${28 * scale}px ${36 * scale}px`,
         gap: 16 * scale,
+        flexShrink: 0,
       }}>
         {/* Headline — styled by font preset */}
         {renderHeadline()}
@@ -305,6 +272,42 @@ function ThumbnailCanvas({ state }: { state: ThumbnailState }) {
           </div>
         )}
       </div>
+
+      {/* RIGHT 40% — Founder expression photo */}
+      {hasExpression && (
+        <div style={{
+          width: '40%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          flexShrink: 0,
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Gradient overlay at bottom for seamless blend */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '20%',
+            background: 'linear-gradient(to top, rgba(12,22,48,0.6), transparent)',
+            zIndex: 1,
+          }} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={expressionData!.img}
+            alt={`Dhaval - ${expressionData!.label}`}
+            style={{
+              height: '110%',
+              objectFit: 'cover',
+              objectPosition: 'top center',
+              position: 'relative',
+              zIndex: 2,
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -320,7 +323,7 @@ export default function ThumbnailPage() {
   const [state, setState] = useState<ThumbnailState>({
     headline: 'WILL AI REPLACE SOFTWARE ENGINEERS?',
     accentWords: new Set([4]),
-    person: 'dhaval',
+    expression: 'thinking',
     backgroundPreset: 0,
     techIcons: ['Python', 'TensorFlow', 'AWS'],
     layout: 0,
@@ -373,7 +376,7 @@ export default function ThumbnailPage() {
     setState({
       headline: preset.headline,
       accentWords: new Set(preset.accentWords),
-      person: preset.person,
+      expression: preset.expression,
       backgroundPreset: preset.backgroundPreset,
       techIcons: [...preset.techIcons],
       layout: idx,
@@ -599,35 +602,35 @@ export default function ThumbnailPage() {
 
             <hr className="border-gray-200" />
 
-            {/* Person */}
+            {/* Founder Expression */}
             <div>
               <label className="block font-ui text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">
-                Person
+                Dhaval Expression
               </label>
-              <div className="space-y-1.5">
-                {PEOPLE.map(p => (
+              <div className="grid grid-cols-2 gap-1.5">
+                {EXPRESSIONS.map(expr => (
                   <button
-                    key={p.id}
-                    onClick={() => setState(prev => ({ ...prev, person: p.id }))}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-ui transition-colors text-left ${
-                      state.person === p.id
+                    key={expr.id}
+                    onClick={() => setState(prev => ({ ...prev, expression: expr.id }))}
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg text-xs font-ui transition-colors ${
+                      state.expression === expr.id
                         ? 'bg-brand-blue/10 text-brand-blue border border-brand-blue/30'
                         : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-transparent'
                     }`}
                   >
-                    {p.img ? (
-                      <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                    {expr.img ? (
+                      <div className="w-12 h-12 rounded-lg bg-gray-900 overflow-hidden flex-shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={p.img} alt={p.label} className="w-full h-full object-cover" />
+                        <img src={expr.img} alt={expr.label} className="w-full h-full object-cover object-top" />
                       </div>
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                         </svg>
                       </div>
                     )}
-                    {p.label}
+                    <span className="font-semibold">{expr.label}</span>
                   </button>
                 ))}
               </div>
