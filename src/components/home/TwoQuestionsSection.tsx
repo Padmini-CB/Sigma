@@ -26,54 +26,54 @@ export default function TwoQuestionsSection() {
               Every scroll-stopping creative triggers an emotional response.
             </p>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🏛️</span>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-2">
+                <span className="text-xl">🏛️</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Trust</span>
-                  <span className="text-gray-500"> — &ldquo;I can rely on these people&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Trust</p>
+                  <p className="text-xs text-gray-500">&ldquo;I can rely on these people&rdquo;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🌟</span>
+              <div className="flex items-start gap-2">
+                <span className="text-xl">🌟</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Possibility</span>
-                  <span className="text-gray-500"> — &ldquo;Someone like me achieved this&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Possibility</p>
+                  <p className="text-xs text-gray-500">&ldquo;Someone like me achieved this&rdquo;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🛡️</span>
+              <div className="flex items-start gap-2">
+                <span className="text-xl">🛡️</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Relief</span>
-                  <span className="text-gray-500"> — &ldquo;My fear has been addressed&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Relief</p>
+                  <p className="text-xs text-gray-500">&ldquo;My fear has been addressed&rdquo;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">💡</span>
+              <div className="flex items-start gap-2">
+                <span className="text-xl">💡</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Clarity</span>
-                  <span className="text-gray-500"> — &ldquo;Now I understand&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Clarity</p>
+                  <p className="text-xs text-gray-500">&ldquo;Now I understand&rdquo;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🪞</span>
+              <div className="flex items-start gap-2">
+                <span className="text-xl">🪞</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Recognition</span>
-                  <span className="text-gray-500"> — &ldquo;Wait, that&apos;s me!&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Recognition</p>
+                  <p className="text-xs text-gray-500">&ldquo;Wait, that&apos;s me!&rdquo;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🤝</span>
+              <div className="flex items-start gap-2">
+                <span className="text-xl">🤝</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Belonging</span>
-                  <span className="text-gray-500"> — &ldquo;I&apos;m part of something&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Belonging</p>
+                  <p className="text-xs text-gray-500">&ldquo;I&apos;m part of something&rdquo;</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🚀</span>
+              <div className="flex items-start gap-2">
+                <span className="text-xl">🚀</span>
                 <div>
-                  <span className="font-semibold text-gray-800">Momentum</span>
-                  <span className="text-gray-500"> — &ldquo;I need to act now&rdquo;</span>
+                  <p className="font-semibold text-gray-800 text-sm">Momentum</p>
+                  <p className="text-xs text-gray-500">&ldquo;I need to act now&rdquo;</p>
                 </div>
               </div>
             </div>
