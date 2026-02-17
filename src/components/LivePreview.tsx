@@ -2,6 +2,7 @@
 
 import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
 import { useState, useMemo, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import DraggableCharacter from '@/components/DraggableCharacter';
 import { ChatGPTResumeTemplate } from '@/components/templates/ChatGPTResumeTemplate';
 import { GitHubBeforeAfterTemplate } from '@/components/templates/GitHubBeforeAfterTemplate';
 import { PriceTransparencyTemplate } from '@/components/templates/PriceTransparencyTemplate';
@@ -48,13 +49,15 @@ interface LivePreviewProps {
   jesterLine?: string | null;
   selectedCourse?: BootcampKey | null;
   fontSizes?: FontSizeConfig;
+  onCharacterUpdate?: (updates: Partial<SelectedCharacter>) => void;
+  onCharacterDelete?: () => void;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -108,26 +111,21 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  const previewStyle = useMemo(() => {
+  const finalScale = useMemo(() => {
     const { width, height } = template.dimensions;
     const scale = zoom / 100;
-
-    const maxContainerWidth = containerSize.width;
-    const maxContainerHeight = containerSize.height;
-
-    const scaleToFitWidth = maxContainerWidth / width;
-    const scaleToFitHeight = maxContainerHeight / height;
+    const scaleToFitWidth = containerSize.width / width;
+    const scaleToFitHeight = containerSize.height / height;
     const baseScale = Math.min(scaleToFitWidth, scaleToFitHeight, 1);
-
-    const finalScale = baseScale * scale;
-
-    return {
-      width: width,
-      height: height,
-      transform: `scale(${finalScale})`,
-      transformOrigin: 'center center',
-    };
+    return baseScale * scale;
   }, [template.dimensions, zoom, containerSize]);
+
+  const previewStyle = useMemo(() => ({
+    width: template.dimensions.width,
+    height: template.dimensions.height,
+    transform: `scale(${finalScale})`,
+    transformOrigin: 'center center',
+  }), [template.dimensions, finalScale]);
 
   return (
     <main className="flex-1 bg-gray-100 flex flex-col overflow-hidden">
@@ -205,6 +203,10 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               selectedCharacter={selectedCharacter}
               jesterLine={jesterLine}
               selectedCourse={selectedCourse}
+              isInteractive
+              canvasScale={finalScale}
+              onCharacterUpdate={onCharacterUpdate}
+              onCharacterDelete={onCharacterDelete}
             />
           </div>
         </div>
@@ -269,6 +271,10 @@ interface TemplateContentProps {
   selectedCharacter?: SelectedCharacter | null;
   jesterLine?: string | null;
   selectedCourse?: BootcampKey | null;
+  isInteractive?: boolean;
+  canvasScale?: number;
+  onCharacterUpdate?: (updates: Partial<SelectedCharacter>) => void;
+  onCharacterDelete?: () => void;
 }
 
 function getCourseData(courseKey?: BootcampKey | null) {
@@ -277,11 +283,33 @@ function getCourseData(courseKey?: BootcampKey | null) {
 }
 
 function CharacterOverlay({ character }: { character: SelectedCharacter }) {
+  // If explicit x/y/w/h are set (from drag/resize), use absolute placement
+  if (character.x !== undefined && character.y !== undefined && character.w !== undefined && character.h !== undefined) {
+    return (
+      <div style={{
+        position: 'absolute',
+        left: character.x,
+        top: character.y,
+        width: character.w,
+        height: character.h,
+        zIndex: character.zIndex ?? 50,
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={character.image}
+          alt={character.name}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom' }}
+        />
+      </div>
+    );
+  }
+
+  // Fallback: position-based placement
   const charSize = character.size || 250;
   const positionStyles: Record<string, React.CSSProperties> = {
-    left: { position: 'absolute', bottom: 0, left: 0, width: charSize, height: charSize, zIndex: 50 },
-    right: { position: 'absolute', bottom: 0, right: 0, width: charSize, height: charSize, zIndex: 50 },
-    bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: charSize, height: charSize, zIndex: 50 },
+    left: { position: 'absolute', bottom: 0, left: 0, width: charSize, height: charSize, zIndex: character.zIndex ?? 50 },
+    right: { position: 'absolute', bottom: 0, right: 0, width: charSize, height: charSize, zIndex: character.zIndex ?? 50 },
+    bottom: { position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: charSize, height: charSize, zIndex: character.zIndex ?? 50 },
   };
 
   return (
@@ -296,7 +324,7 @@ function CharacterOverlay({ character }: { character: SelectedCharacter }) {
   );
 }
 
-function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse }: TemplateContentProps) {
+function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, isInteractive, canvasScale, onCharacterUpdate, onCharacterDelete }: TemplateContentProps) {
   const { headline, subheadline, cta, price, courseName, bodyText } = fields;
   const { width, height } = template.dimensions;
   const courseData = getCourseData(selectedCourse);
@@ -395,7 +423,18 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
     return (
       <div style={{ width, height, position: 'relative', overflow: 'hidden' }}>
         {richContent}
-        {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
+        {selectedCharacter && isInteractive && canvasScale && onCharacterUpdate && onCharacterDelete ? (
+          <DraggableCharacter
+            character={selectedCharacter}
+            canvasWidth={width}
+            canvasHeight={height}
+            canvasScale={canvasScale}
+            onUpdate={onCharacterUpdate}
+            onDelete={onCharacterDelete}
+          />
+        ) : (
+          selectedCharacter && <CharacterOverlay character={selectedCharacter} />
+        )}
       </div>
     );
   }
@@ -442,7 +481,11 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           position: 'relative',
         }}
       >
-        {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
+        {selectedCharacter && isInteractive && canvasScale && onCharacterUpdate && onCharacterDelete ? (
+          <DraggableCharacter character={selectedCharacter} canvasWidth={width} canvasHeight={height} canvasScale={canvasScale} onUpdate={onCharacterUpdate} onDelete={onCharacterDelete} />
+        ) : selectedCharacter ? (
+          <CharacterOverlay character={selectedCharacter} />
+        ) : null}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
             <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
@@ -477,7 +520,11 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           position: 'relative',
         }}
       >
-        {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
+        {selectedCharacter && isInteractive && canvasScale && onCharacterUpdate && onCharacterDelete ? (
+          <DraggableCharacter character={selectedCharacter} canvasWidth={width} canvasHeight={height} canvasScale={canvasScale} onUpdate={onCharacterUpdate} onDelete={onCharacterDelete} />
+        ) : selectedCharacter ? (
+          <CharacterOverlay character={selectedCharacter} />
+        ) : null}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
             <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>

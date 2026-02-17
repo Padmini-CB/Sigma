@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import templatesData from '@/data/templates.json';
 import templateDesignsData from '@/data/templateDesigns.json';
 import EditorSidebar from '@/components/EditorSidebar';
@@ -54,6 +54,14 @@ export interface SelectedCharacter {
   image: string;
   position: 'left' | 'right' | 'bottom';
   size?: number;
+  // Interactive placement (set after drag/resize)
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
+  zIndex?: number;
+  expressionId?: string;
+  personId?: string;
 }
 
 const defaultFields: EditorFields = {
@@ -135,6 +143,14 @@ export default function EditorPage() {
     }
     setIsSidebarOpen(false);
   };
+
+  const handleCharacterUpdate = useCallback((updates: Partial<SelectedCharacter>) => {
+    setSelectedCharacter(prev => prev ? { ...prev, ...updates } : null);
+  }, []);
+
+  const handleCharacterDelete = useCallback(() => {
+    setSelectedCharacter(null);
+  }, []);
 
   const handleReset = () => {
     setFields(defaultFields);
@@ -372,6 +388,8 @@ export default function EditorPage() {
           jesterLine={jesterLine}
           selectedCourse={selectedCourse}
           fontSizes={fontSizes}
+          onCharacterUpdate={handleCharacterUpdate}
+          onCharacterDelete={handleCharacterDelete}
         />
       </div>
 
