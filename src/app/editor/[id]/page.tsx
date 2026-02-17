@@ -265,7 +265,7 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-gray/30 flex flex-col">
+    <div className="h-screen bg-brand-gray/30 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-gradient-dark border-b border-white/10 flex-shrink-0">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
