@@ -51,49 +51,129 @@ interface LivePreviewProps {
   fontSizes?: FontSizeConfig;
   onCharacterUpdate?: (updates: Partial<SelectedCharacter>) => void;
   onCharacterDelete?: () => void;
+  /** Override canvas dimensions (from size tab bar). Falls back to template.dimensions. */
+  overrideDimensions?: { width: number; height: number };
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
+  /** Render at arbitrary dimensions into a temporary DOM node and return PNG data URL */
+  renderAtSize: (width: number, height: number) => Promise<string>;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete }, ref) {
+/** Build sigma CSS vars for a given width/height pair */
+function buildSigmaVars(fontSizes: FontSizeConfig | undefined, width: number, height: number): Record<string, string> {
+  if (!fontSizes) return {};
+  const s = Math.min(width, height) / 1080;
+  return {
+    '--sigma-headline-size': `${fontSizes.headline * s}px`,
+    '--sigma-subheadline-size': `${fontSizes.subheadline * s}px`,
+    '--sigma-body-size': `${fontSizes.body * s}px`,
+    '--sigma-card-title-size': `${fontSizes.cardTitle * s}px`,
+    '--sigma-label-size': `${fontSizes.label * s}px`,
+    '--sigma-stat-number-size': `${fontSizes.statNumber * s}px`,
+    '--sigma-cta-size': `${fontSizes.cta * s}px`,
+    '--sigma-bottom-bar-size': `${fontSizes.bottomBar * s}px`,
+    '--sigma-headline-color': FONT_COLORS.headline,
+    '--sigma-headline-accent-color': FONT_COLORS.headlineAccent,
+    '--sigma-body-color': FONT_COLORS.body,
+    '--sigma-label-color': FONT_COLORS.label,
+    '--sigma-stat-color': FONT_COLORS.statNumber,
+    '--sigma-cta-color': FONT_COLORS.cta,
+    '--sigma-cta-bg': FONT_COLORS.ctaBackground,
+  };
+}
+
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Effective dimensions: size-tab override wins, falls back to template
+  const dims = overrideDimensions || template.dimensions;
+
   useImperativeHandle(ref, () => ({
     getExportElement: () => exportRef.current,
-  }));
+
+    renderAtSize: async (w: number, h: number): Promise<string> => {
+      // Create a temporary off-screen container, render template at w×h, capture PNG
+      const vars = buildSigmaVars(fontSizes, w, h);
+      const container = document.createElement('div');
+      Object.assign(container.style, {
+        position: 'fixed', left: '-99999px', top: '-99999px', pointerEvents: 'none',
+        width: `${w}px`, height: `${h}px`, overflow: 'visible',
+      });
+      Object.entries(vars).forEach(([k, v]) => container.style.setProperty(k, v));
+
+      // Clone the export ref's innerHTML (rendered template) but at new dimensions
+      // We need to use the actual export ref and temporarily resize it
+      if (!exportRef.current) throw new Error('Export element not available');
+
+      // Save original styles
+      const el = exportRef.current;
+      const origW = el.style.width;
+      const origH = el.style.height;
+      const origVars: [string, string][] = Object.keys(vars).map(k => [k, el.style.getPropertyValue(k)]);
+
+      try {
+        // Temporarily apply new dimensions + sigma vars
+        el.style.width = `${w}px`;
+        el.style.height = `${h}px`;
+        Object.entries(vars).forEach(([k, v]) => el.style.setProperty(k, v));
+
+        // Force the template content to re-render at new size by updating the
+        // inner wrapper dimensions. The wrapper is the first child.
+        const wrapper = el.firstElementChild as HTMLElement | null;
+        const origWrapW = wrapper?.style.width;
+        const origWrapH = wrapper?.style.height;
+        if (wrapper) {
+          wrapper.style.width = `${w}px`;
+          wrapper.style.height = `${h}px`;
+        }
+
+        // Wait for fonts and a tick for reflow
+        if (document.fonts?.ready) await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 150));
+
+        const htmlToImage = await import('html-to-image');
+        const dataUrl = await htmlToImage.toPng(el, {
+          quality: 1.0,
+          pixelRatio: 1, // actual pixel dimensions, no 2x for batch
+          width: w,
+          height: h,
+          style: { transform: 'none', overflow: 'visible' },
+          filter: (node: HTMLElement) => {
+            if (node.style) {
+              node.style.outline = 'none';
+              node.style.boxShadow = 'none';
+            }
+            return true;
+          },
+          cacheBust: true,
+        });
+        return dataUrl;
+      } finally {
+        // Restore original styles
+        el.style.width = origW;
+        el.style.height = origH;
+        origVars.forEach(([k, v]) => el.style.setProperty(k, v));
+        const wrapper = el.firstElementChild as HTMLElement | null;
+        if (wrapper) {
+          wrapper.style.width = `${dims.width}px`;
+          wrapper.style.height = `${dims.height}px`;
+        }
+      }
+    },
+  }), [fontSizes, dims]);
 
   const [zoom, setZoom] = useState(100);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
 
   const activeColors = customColors || template.previewColors;
 
-  // CSS custom properties for font sizes and brand colors on the canvas
-  // Sizes are pre-scaled to the canvas dimensions (base 1080) so templates
-  // can use var(--sigma-headline-size) directly without multiplying by scale.
-  const sigmaVars = useMemo(() => {
-    if (!fontSizes) return {};
-    const s = Math.min(template.dimensions.width, template.dimensions.height) / 1080;
-    return {
-      '--sigma-headline-size': `${fontSizes.headline * s}px`,
-      '--sigma-subheadline-size': `${fontSizes.subheadline * s}px`,
-      '--sigma-body-size': `${fontSizes.body * s}px`,
-      '--sigma-card-title-size': `${fontSizes.cardTitle * s}px`,
-      '--sigma-label-size': `${fontSizes.label * s}px`,
-      '--sigma-stat-number-size': `${fontSizes.statNumber * s}px`,
-      '--sigma-cta-size': `${fontSizes.cta * s}px`,
-      '--sigma-bottom-bar-size': `${fontSizes.bottomBar * s}px`,
-      '--sigma-headline-color': FONT_COLORS.headline,
-      '--sigma-headline-accent-color': FONT_COLORS.headlineAccent,
-      '--sigma-body-color': FONT_COLORS.body,
-      '--sigma-label-color': FONT_COLORS.label,
-      '--sigma-stat-color': FONT_COLORS.statNumber,
-      '--sigma-cta-color': FONT_COLORS.cta,
-      '--sigma-cta-bg': FONT_COLORS.ctaBackground,
-    };
-  }, [fontSizes, template.dimensions.width, template.dimensions.height]);
+  const sigmaVars = useMemo(
+    () => buildSigmaVars(fontSizes, dims.width, dims.height),
+    [fontSizes, dims.width, dims.height],
+  );
 
   useEffect(() => {
     const updateSize = () => {
@@ -112,20 +192,20 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   }, []);
 
   const finalScale = useMemo(() => {
-    const { width, height } = template.dimensions;
+    const { width, height } = dims;
     const scale = zoom / 100;
     const scaleToFitWidth = containerSize.width / width;
     const scaleToFitHeight = containerSize.height / height;
     const baseScale = Math.min(scaleToFitWidth, scaleToFitHeight, 1);
     return baseScale * scale;
-  }, [template.dimensions, zoom, containerSize]);
+  }, [dims, zoom, containerSize]);
 
   const previewStyle = useMemo(() => ({
-    width: template.dimensions.width,
-    height: template.dimensions.height,
+    width: dims.width,
+    height: dims.height,
     transform: `scale(${finalScale})`,
     transformOrigin: 'center center',
-  }), [template.dimensions, finalScale]);
+  }), [dims, finalScale]);
 
   return (
     <main className="flex-1 bg-gray-100 flex flex-col overflow-hidden">
@@ -134,7 +214,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         <div className="flex items-center gap-2 sm:gap-4">
           <h3 className="font-ui text-sm font-semibold text-gray-700">Preview</h3>
           <span className="font-ui text-xs text-gray-400 hidden sm:inline">
-            {template.dimensions.width} × {template.dimensions.height}px
+            {dims.width} × {dims.height}px
           </span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
@@ -197,7 +277,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           >
             <TemplateContent
               fields={fields}
-              template={template}
+              template={{ ...template, dimensions: dims }}
               colors={activeColors}
               selectedDesignId={selectedDesignId}
               selectedCharacter={selectedCharacter}
@@ -243,15 +323,15 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         <div
           ref={exportRef}
           style={{
-            width: template.dimensions.width,
-            height: template.dimensions.height,
+            width: dims.width,
+            height: dims.height,
             overflow: 'visible',
             ...sigmaVars,
           } as React.CSSProperties}
         >
           <TemplateContent
             fields={fields}
-            template={template}
+            template={{ ...template, dimensions: dims }}
             colors={activeColors}
             selectedDesignId={selectedDesignId}
             selectedCharacter={selectedCharacter}
@@ -559,7 +639,11 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
         position: 'relative',
       }}
     >
-      {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
+      {selectedCharacter && isInteractive && canvasScale && onCharacterUpdate && onCharacterDelete ? (
+          <DraggableCharacter character={selectedCharacter} canvasWidth={width} canvasHeight={height} canvasScale={canvasScale} onUpdate={onCharacterUpdate} onDelete={onCharacterDelete} />
+        ) : selectedCharacter ? (
+          <CharacterOverlay character={selectedCharacter} />
+        ) : null}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: padding * 0.5, overflow: 'hidden' }}>
         <div style={{ flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small, alignSelf: 'flex-start' }}>
           <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
