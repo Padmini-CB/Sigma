@@ -24,6 +24,7 @@ import { YouTubeThumbnailTemplate } from '@/components/templates/YouTubeThumbnai
 import { MicroCourseTeaserTemplate } from '@/components/templates/MicroCourseTeaserTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, FONT_COLORS } from '@/config/fontSizes';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface Template {
   id: string;
@@ -51,49 +52,130 @@ interface LivePreviewProps {
   fontSizes?: FontSizeConfig;
   onCharacterUpdate?: (updates: Partial<SelectedCharacter>) => void;
   onCharacterDelete?: () => void;
+  /** Override canvas dimensions (from size tab bar). Falls back to template.dimensions. */
+  overrideDimensions?: { width: number; height: number };
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
+  /** Render at arbitrary dimensions into a temporary DOM node and return PNG data URL */
+  renderAtSize: (width: number, height: number) => Promise<string>;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete }, ref) {
+/** Build sigma CSS vars for a given width/height pair */
+function buildSigmaVars(fontSizes: FontSizeConfig | undefined, width: number, height: number): Record<string, string> {
+  if (!fontSizes) return {};
+  const { fontScale } = getAdSizeConfig(width, height);
+  const s = (Math.min(width, height) / 1080) * fontScale;
+  return {
+    '--sigma-headline-size': `${fontSizes.headline * s}px`,
+    '--sigma-subheadline-size': `${fontSizes.subheadline * s}px`,
+    '--sigma-body-size': `${fontSizes.body * s}px`,
+    '--sigma-card-title-size': `${fontSizes.cardTitle * s}px`,
+    '--sigma-label-size': `${fontSizes.label * s}px`,
+    '--sigma-stat-number-size': `${fontSizes.statNumber * s}px`,
+    '--sigma-cta-size': `${fontSizes.cta * s}px`,
+    '--sigma-bottom-bar-size': `${fontSizes.bottomBar * s}px`,
+    '--sigma-headline-color': FONT_COLORS.headline,
+    '--sigma-headline-accent-color': FONT_COLORS.headlineAccent,
+    '--sigma-body-color': FONT_COLORS.body,
+    '--sigma-label-color': FONT_COLORS.label,
+    '--sigma-stat-color': FONT_COLORS.statNumber,
+    '--sigma-cta-color': FONT_COLORS.cta,
+    '--sigma-cta-bg': FONT_COLORS.ctaBackground,
+  };
+}
+
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Effective dimensions: size-tab override wins, falls back to template
+  const dims = overrideDimensions || template.dimensions;
+
   useImperativeHandle(ref, () => ({
     getExportElement: () => exportRef.current,
-  }));
+
+    renderAtSize: async (w: number, h: number): Promise<string> => {
+      // Create a temporary off-screen container, render template at w×h, capture PNG
+      const vars = buildSigmaVars(fontSizes, w, h);
+      const container = document.createElement('div');
+      Object.assign(container.style, {
+        position: 'fixed', left: '-99999px', top: '-99999px', pointerEvents: 'none',
+        width: `${w}px`, height: `${h}px`, overflow: 'visible',
+      });
+      Object.entries(vars).forEach(([k, v]) => container.style.setProperty(k, v));
+
+      // Clone the export ref's innerHTML (rendered template) but at new dimensions
+      // We need to use the actual export ref and temporarily resize it
+      if (!exportRef.current) throw new Error('Export element not available');
+
+      // Save original styles
+      const el = exportRef.current;
+      const origW = el.style.width;
+      const origH = el.style.height;
+      const origVars: [string, string][] = Object.keys(vars).map(k => [k, el.style.getPropertyValue(k)]);
+
+      try {
+        // Temporarily apply new dimensions + sigma vars
+        el.style.width = `${w}px`;
+        el.style.height = `${h}px`;
+        Object.entries(vars).forEach(([k, v]) => el.style.setProperty(k, v));
+
+        // Force the template content to re-render at new size by updating the
+        // inner wrapper dimensions. The wrapper is the first child.
+        const wrapper = el.firstElementChild as HTMLElement | null;
+        const origWrapW = wrapper?.style.width;
+        const origWrapH = wrapper?.style.height;
+        if (wrapper) {
+          wrapper.style.width = `${w}px`;
+          wrapper.style.height = `${h}px`;
+        }
+
+        // Wait for fonts and a tick for reflow
+        if (document.fonts?.ready) await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 150));
+
+        const htmlToImage = await import('html-to-image');
+        const dataUrl = await htmlToImage.toPng(el, {
+          quality: 1.0,
+          pixelRatio: 1, // actual pixel dimensions, no 2x for batch
+          width: w,
+          height: h,
+          style: { transform: 'none', overflow: 'visible' },
+          filter: (node: HTMLElement) => {
+            if (node.style) {
+              node.style.outline = 'none';
+              node.style.boxShadow = 'none';
+            }
+            return true;
+          },
+          cacheBust: true,
+        });
+        return dataUrl;
+      } finally {
+        // Restore original styles
+        el.style.width = origW;
+        el.style.height = origH;
+        origVars.forEach(([k, v]) => el.style.setProperty(k, v));
+        const wrapper = el.firstElementChild as HTMLElement | null;
+        if (wrapper) {
+          wrapper.style.width = `${dims.width}px`;
+          wrapper.style.height = `${dims.height}px`;
+        }
+      }
+    },
+  }), [fontSizes, dims]);
 
   const [zoom, setZoom] = useState(100);
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
 
   const activeColors = customColors || template.previewColors;
 
-  // CSS custom properties for font sizes and brand colors on the canvas
-  // Sizes are pre-scaled to the canvas dimensions (base 1080) so templates
-  // can use var(--sigma-headline-size) directly without multiplying by scale.
-  const sigmaVars = useMemo(() => {
-    if (!fontSizes) return {};
-    const s = Math.min(template.dimensions.width, template.dimensions.height) / 1080;
-    return {
-      '--sigma-headline-size': `${fontSizes.headline * s}px`,
-      '--sigma-subheadline-size': `${fontSizes.subheadline * s}px`,
-      '--sigma-body-size': `${fontSizes.body * s}px`,
-      '--sigma-card-title-size': `${fontSizes.cardTitle * s}px`,
-      '--sigma-label-size': `${fontSizes.label * s}px`,
-      '--sigma-stat-number-size': `${fontSizes.statNumber * s}px`,
-      '--sigma-cta-size': `${fontSizes.cta * s}px`,
-      '--sigma-bottom-bar-size': `${fontSizes.bottomBar * s}px`,
-      '--sigma-headline-color': FONT_COLORS.headline,
-      '--sigma-headline-accent-color': FONT_COLORS.headlineAccent,
-      '--sigma-body-color': FONT_COLORS.body,
-      '--sigma-label-color': FONT_COLORS.label,
-      '--sigma-stat-color': FONT_COLORS.statNumber,
-      '--sigma-cta-color': FONT_COLORS.cta,
-      '--sigma-cta-bg': FONT_COLORS.ctaBackground,
-    };
-  }, [fontSizes, template.dimensions.width, template.dimensions.height]);
+  const sigmaVars = useMemo(
+    () => buildSigmaVars(fontSizes, dims.width, dims.height),
+    [fontSizes, dims.width, dims.height],
+  );
 
   useEffect(() => {
     const updateSize = () => {
@@ -112,20 +194,20 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   }, []);
 
   const finalScale = useMemo(() => {
-    const { width, height } = template.dimensions;
+    const { width, height } = dims;
     const scale = zoom / 100;
     const scaleToFitWidth = containerSize.width / width;
     const scaleToFitHeight = containerSize.height / height;
     const baseScale = Math.min(scaleToFitWidth, scaleToFitHeight, 1);
     return baseScale * scale;
-  }, [template.dimensions, zoom, containerSize]);
+  }, [dims, zoom, containerSize]);
 
   const previewStyle = useMemo(() => ({
-    width: template.dimensions.width,
-    height: template.dimensions.height,
+    width: dims.width,
+    height: dims.height,
     transform: `scale(${finalScale})`,
     transformOrigin: 'center center',
-  }), [template.dimensions, finalScale]);
+  }), [dims, finalScale]);
 
   return (
     <main className="flex-1 bg-gray-100 flex flex-col overflow-hidden">
@@ -134,7 +216,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         <div className="flex items-center gap-2 sm:gap-4">
           <h3 className="font-ui text-sm font-semibold text-gray-700">Preview</h3>
           <span className="font-ui text-xs text-gray-400 hidden sm:inline">
-            {template.dimensions.width} × {template.dimensions.height}px
+            {dims.width} × {dims.height}px
           </span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
@@ -197,7 +279,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           >
             <TemplateContent
               fields={fields}
-              template={template}
+              template={{ ...template, dimensions: dims }}
               colors={activeColors}
               selectedDesignId={selectedDesignId}
               selectedCharacter={selectedCharacter}
@@ -243,15 +325,15 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         <div
           ref={exportRef}
           style={{
-            width: template.dimensions.width,
-            height: template.dimensions.height,
+            width: dims.width,
+            height: dims.height,
             overflow: 'visible',
             ...sigmaVars,
           } as React.CSSProperties}
         >
           <TemplateContent
             fields={fields}
-            template={template}
+            template={{ ...template, dimensions: dims }}
             colors={activeColors}
             selectedDesignId={selectedDesignId}
             selectedCharacter={selectedCharacter}
@@ -445,13 +527,11 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
   const BRAND_NAVY = '#181830';
   const BRAND_LIME = '#D7EF3F';
 
+  // Spacing-only sizes (used for padding/margins, NOT for fontSize).
+  // Actual font sizes come from CSS custom properties set by LivePreview.
   const baseFontSize = Math.min(width, height) / 25;
-  const fontSizes = {
-    headline: baseFontSize * 1.4,
-    subheadline: baseFontSize * 0.9,
-    body: baseFontSize * 0.75,
+  const spacingSizes = {
     cta: baseFontSize * 0.8,
-    price: baseFontSize * 1.1,
     small: baseFontSize * 0.6,
   };
   const padding = width * 0.05;
@@ -487,20 +567,20 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           <CharacterOverlay character={selectedCharacter} />
         ) : null}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${spacingSizes.small * 0.5}px ${spacingSizes.small * 1.2}px`, fontSize: 'var(--sigma-label-size)' }}>
             <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
           </div>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--sigma-label-size)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
         </div>
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: padding * 0.5, paddingTop: padding * 0.5, paddingBottom: padding * 0.5 }}>
-          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
-          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.body }}>{bodyText}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-headline-size)', lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'var(--sigma-label-size)', fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 'var(--sigma-subheadline-size)' }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--sigma-body-size)' }}>{bodyText}</p>
         </div>
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3, zIndex: 2 }}>
-          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price, textAlign: 'center' }}>{price}</span>}
-          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`, borderRadius: '8px', textAlign: 'center', width: '100%' }}>{cta}</div>
+          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-stat-number-size)', textAlign: 'center' }}>{price}</span>}
+          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: 'var(--sigma-cta-size)', padding: `${spacingSizes.cta * 0.7}px ${spacingSizes.cta * 1.2}px`, borderRadius: '8px', textAlign: 'center', width: '100%' }}>{cta}</div>
         </div>
       </div>
     );
@@ -526,20 +606,20 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           <CharacterOverlay character={selectedCharacter} />
         ) : null}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${spacingSizes.small * 0.5}px ${spacingSizes.small * 1.2}px`, fontSize: 'var(--sigma-label-size)' }}>
             <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
           </div>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--sigma-label-size)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
         </div>
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: padding * 0.4 }}>
-          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
-          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.body }}>{bodyText}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-headline-size)', lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'var(--sigma-label-size)', fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 'var(--sigma-subheadline-size)' }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--sigma-body-size)' }}>{bodyText}</p>
         </div>
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 2 }}>
-          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`, borderRadius: '8px' }}>{cta}</div>
-          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price }}>{price}</span>}
+          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: 'var(--sigma-cta-size)', padding: `${spacingSizes.cta * 0.7}px ${spacingSizes.cta * 1.2}px`, borderRadius: '8px' }}>{cta}</div>
+          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-stat-number-size)' }}>{price}</span>}
         </div>
       </div>
     );
@@ -559,23 +639,27 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
         position: 'relative',
       }}
     >
-      {selectedCharacter && <CharacterOverlay character={selectedCharacter} />}
+      {selectedCharacter && isInteractive && canvasScale && onCharacterUpdate && onCharacterDelete ? (
+          <DraggableCharacter character={selectedCharacter} canvasWidth={width} canvasHeight={height} canvasScale={canvasScale} onUpdate={onCharacterUpdate} onDelete={onCharacterDelete} />
+        ) : selectedCharacter ? (
+          <CharacterOverlay character={selectedCharacter} />
+        ) : null}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: padding * 0.5, overflow: 'hidden' }}>
-        <div style={{ flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small, alignSelf: 'flex-start' }}>
+        <div style={{ flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${spacingSizes.small * 0.5}px ${spacingSizes.small * 1.2}px`, fontSize: 'var(--sigma-label-size)', alignSelf: 'flex-start' }}>
           <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
         </div>
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: padding * 0.25 }}>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
-          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
-          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--sigma-label-size)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-headline-size)', lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'var(--sigma-label-size)', fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 'var(--sigma-subheadline-size)' }}>{subheadline}</p>
         </div>
-        <div className="font-ui font-semibold" style={{ flexShrink: 0, backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.6}px ${fontSizes.cta * 1}px`, borderRadius: '8px', alignSelf: 'flex-start', zIndex: 2 }}>{cta}</div>
+        <div className="font-ui font-semibold" style={{ flexShrink: 0, backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: 'var(--sigma-cta-size)', padding: `${spacingSizes.cta * 0.6}px ${spacingSizes.cta * 1}px`, borderRadius: '8px', alignSelf: 'flex-start', zIndex: 2 }}>{cta}</div>
       </div>
       <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', textAlign: 'right' }}>
         <div style={{ backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: '12px', padding: padding * 0.6 }}>
-          {price && <div style={{ marginBottom: fontSizes.small * 0.5 }}><span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}>{price}</span></div>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.small }}>{bodyText}</p>
+          {price && <div style={{ marginBottom: spacingSizes.small * 0.5 }}><span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-stat-number-size)', display: 'block' }}>{price}</span></div>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--sigma-label-size)' }}>{bodyText}</p>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface LinkedInProofTemplateProps {
   headline?: string;
@@ -22,6 +23,7 @@ export function LinkedInProofTemplate({
   width = 1080,
   height = 1080,
 }: LinkedInProofTemplateProps) {
+  const { layoutMode } = getAdSizeConfig(width, height);
   const scale = Math.min(width, height) / 1080;
 
   const proofStats = [
@@ -364,17 +366,229 @@ export function LinkedInProofTemplate({
     </div>
   );
 
+  /* ───── Wrapper base ───── */
+  const wrapperBase: React.CSSProperties = {
+    width,
+    height,
+    background: BRAND.background,
+    fontFamily: BRAND.fonts.body,
+    position: 'relative',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  };
+
+  const topBar = (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+      <PadminiLogo />
+      <YouTubeBadge />
+    </div>
+  );
+
+  const headlineElement = (
+    <h1 style={{
+      fontSize: 'var(--sigma-headline-size)',
+      fontWeight: 900,
+      fontFamily: BRAND.fonts.heading,
+      textAlign: 'center',
+      margin: 0,
+      flexShrink: 0,
+      lineHeight: 1.1,
+    }}>
+      <span style={{ color: BRAND.colors.textWhite }}>REAL PROJECTS VS</span>
+      <span style={{ color: 'var(--sigma-headline-accent-color)' }}> TUTORIALS</span>
+    </h1>
+  );
+
+  // ---- YouTube Thumb: headline only centered ----
+  if (layoutMode === 'youtube-thumb') {
+    return (
+      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
+        {topBar}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            {headlineElement}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Landscape: keep two columns but more compact ----
+  if (layoutMode === 'landscape') {
+    return (
+      <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 4 * scale }}>
+          {topBar}
+        </div>
+
+        {/* Headline */}
+        <div style={{ marginBottom: 6 * scale }}>
+          {headlineElement}
+        </div>
+
+        {/* Two LinkedIn Post Cards Side by Side - compact */}
+        <div style={{ flex: 1, display: 'flex', gap: 8 * scale, minHeight: 0, overflow: 'hidden' }}>
+          {/* LEFT POST - Tutorial Learner (weak) */}
+          <LinkedInPost
+            variant="weak"
+            initials="RM"
+            name="Rahul M."
+            title="Aspiring Data Analyst | Open to work"
+            connectionBadge="2nd"
+            timestamp="2d"
+            body={
+              <>
+                Just completed a Python tutorial! Also worked on the Titanic dataset on Kaggle. Excited to start my data journey!
+                {'\n\n'}
+                <span style={{ color: 'rgba(59,130,246,0.5)' }}>
+                  #DataScience #Python #Learning
+                </span>
+              </>
+            }
+            reactionEmojis={'\u{1F44D}'}
+            reactionCount="2"
+            commentCount="0 comments"
+          />
+
+          {/* RIGHT POST - Bootcamp Learner (strong) */}
+          <LinkedInPost
+            variant="strong"
+            initials="PS"
+            name="Priya S."
+            title="Data Analyst at TCS | Codebasics Graduate"
+            connectionBadge="Following"
+            timestamp="1d"
+            body={
+              <>
+                Thrilled to share my latest project — built a supply chain forecast dashboard for AtliQ Hardware using Power BI. Reduced stockouts by 15%!
+                {'\n\n'}
+                Check out the full project on my GitHub: github.com/priya/atliq-supply-chain {'\u{1F680}'}
+                {'\n\n'}
+                <span style={{ color: '#3b82f6' }}>
+                  #codebasics #DataAnalytics #PowerBI #SupplyChain
+                </span>
+              </>
+            }
+            linkPreview={<GitHubLinkPreview />}
+            reactionEmojis={'\u{1F44D}\u{2764}\u{FE0F}\u{1F389}'}
+            reactionCount="147"
+            commentCount="23 comments"
+            repostCount="8 reposts"
+          />
+        </div>
+
+        {/* Bottom Bar */}
+        <div style={{ flexShrink: 0, marginTop: 4 * scale }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Story: stack the two LinkedIn posts vertically ----
+  if (layoutMode === 'story') {
+    return (
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
+        {topBar}
+
+        {/* Headline */}
+        <div style={{ flexShrink: 0 }}>
+          {headlineElement}
+        </div>
+
+        {/* Two LinkedIn Post Cards Stacked Vertically */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 * scale, minHeight: 0, overflow: 'hidden' }}>
+          {/* TOP POST - Tutorial Learner (weak) */}
+          <LinkedInPost
+            variant="weak"
+            initials="RM"
+            name="Rahul M."
+            title="Aspiring Data Analyst | Open to work"
+            connectionBadge="2nd"
+            timestamp="2d"
+            body={
+              <>
+                Just completed a Python tutorial! Also worked on the Titanic dataset on Kaggle. Excited to start my data journey!
+                {'\n\n'}
+                <span style={{ color: 'rgba(59,130,246,0.5)' }}>
+                  #DataScience #Python #Learning
+                </span>
+              </>
+            }
+            reactionEmojis={'\u{1F44D}'}
+            reactionCount="2"
+            commentCount="0 comments"
+          />
+
+          {/* BOTTOM POST - Bootcamp Learner (strong) */}
+          <LinkedInPost
+            variant="strong"
+            initials="PS"
+            name="Priya S."
+            title="Data Analyst at TCS | Codebasics Graduate"
+            connectionBadge="Following"
+            timestamp="1d"
+            body={
+              <>
+                Thrilled to share my latest project — built a supply chain forecast dashboard for AtliQ Hardware using Power BI. Reduced stockouts by 15%!
+                {'\n\n'}
+                Check out the full project on my GitHub: github.com/priya/atliq-supply-chain {'\u{1F680}'}
+                {'\n\n'}
+                <span style={{ color: '#3b82f6' }}>
+                  #codebasics #DataAnalytics #PowerBI #SupplyChain
+                </span>
+              </>
+            }
+            linkPreview={<GitHubLinkPreview />}
+            reactionEmojis={'\u{1F44D}\u{2764}\u{FE0F}\u{1F389}'}
+            reactionCount="147"
+            commentCount="23 comments"
+            repostCount="8 reposts"
+          />
+        </div>
+
+        {/* Proof Stats Row */}
+        <div style={{ display: 'flex', gap: 10 * scale, flexShrink: 0 }}>
+          {proofStats.map((stat) => (
+            <div key={stat.label} style={{
+              flex: 1,
+              backgroundColor: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 8 * scale,
+              padding: `${8 * scale}px ${10 * scale}px`,
+              textAlign: 'center',
+            }}>
+              <div style={{
+                fontSize: 'var(--sigma-stat-number-size)', fontWeight: 900, color: 'var(--sigma-stat-color)',
+                fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
+              }}>
+                {stat.number}
+              </div>
+              <div style={{
+                fontSize: 'var(--sigma-label-size)', color: 'rgba(255,255,255,0.55)',
+                fontFamily: BRAND.fonts.body, fontWeight: 300, marginTop: 2,
+              }}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Bar */}
+        <div style={{ flexShrink: 0 }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Square / Portrait: Original layout ----
   return (
     <div style={{
-      width, height,
-      background: BRAND.background,
+      ...wrapperBase,
       padding: 24 * scale,
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: BRAND.fonts.body,
-      position: 'relative',
-      overflow: 'hidden',
-      boxSizing: 'border-box',
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>

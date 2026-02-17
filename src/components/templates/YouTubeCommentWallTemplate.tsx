@@ -1,7 +1,9 @@
+import React from 'react';
 import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface Comment {
   initials: string;
@@ -76,6 +78,7 @@ export function YouTubeCommentWallTemplate({
   width = 1080,
   height = 1080,
 }: YouTubeCommentWallTemplateProps) {
+  const { layoutMode } = getAdSizeConfig(width, height);
   const scale = Math.min(width, height) / 1080;
 
   const headlineNode = headline ? (
@@ -87,33 +90,177 @@ export function YouTubeCommentWallTemplate({
     </>
   );
 
+  const topBar = (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+      <PadminiLogo />
+      <YouTubeBadge />
+    </div>
+  );
+
+  const headlineBlock = (
+    <div style={{ textAlign: 'center', flexShrink: 0 }}>
+      <h1 style={{
+        fontSize: 'var(--sigma-headline-size)', fontWeight: 900,
+        fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
+        textTransform: 'uppercase' as const, margin: 0,
+      }}>
+        {headlineNode}
+      </h1>
+    </div>
+  );
+
+  const wrapperBase: React.CSSProperties = {
+    width,
+    height,
+    background: BRAND.background,
+    fontFamily: BRAND.fonts.body,
+    position: 'relative',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  };
+
+  const renderCommentCard = (comment: Comment) => (
+    <div key={comment.initials} style={{
+      backgroundColor: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: 8,
+      padding: `${10 * scale}px ${12 * scale}px`,
+      display: 'flex', flexDirection: 'column',
+      overflow: 'hidden',
+    }}>
+      {/* Avatar + name + timestamp */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 8 * scale,
+        marginBottom: 6 * scale, flexShrink: 0,
+      }}>
+        <div style={{
+          width: 30 * scale, height: 30 * scale, borderRadius: '50%',
+          backgroundColor: comment.avatarBg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <span style={{ fontSize: 14 * scale, fontWeight: 700, color: '#fff', fontFamily: BRAND.fonts.heading }}>
+            {comment.initials}
+          </span>
+        </div>
+        <span style={{ fontSize: 15 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap' }}>
+          {comment.name}
+        </span>
+        <span style={{
+          fontSize: 10 * scale, color: 'rgba(255,255,255,0.35)',
+          fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap', marginLeft: 'auto',
+        }}>
+          {comment.timestamp}
+        </span>
+      </div>
+
+      {/* Comment text */}
+      <div style={{
+        fontSize: 15 * scale, color: 'rgba(255,255,255,0.8)',
+        fontFamily: BRAND.fonts.body, fontWeight: 300,
+        lineHeight: 1.45, flex: 1, overflow: 'hidden',
+      }}>
+        {renderHighlightedText(comment.text, comment.highlight)}
+      </div>
+
+      {/* Thumbs up */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 4 * scale,
+        marginTop: 6 * scale, flexShrink: 0,
+      }}>
+        <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
+          <path d="M2 10h3v8H2a1 1 0 01-1-1v-6a1 1 0 011-1zm5-1V5a3 3 0 013-3l.5.5a1.5 1.5 0 01.44 1.06L10.5 7H16a2 2 0 012 2v.5l-1.5 6A2 2 0 0114.56 17H7V9z" fill="rgba(255,255,255,0.3)" />
+        </svg>
+        <span style={{ fontSize: 11 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body }}>
+          {comment.likes}
+        </span>
+      </div>
+    </div>
+  );
+
+  // ---- YouTube Thumb: Bold headline only, no comments, no bottom bar ----
+  if (layoutMode === 'youtube-thumb') {
+    return (
+      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
+        {topBar}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
+          <div style={{ textAlign: 'center' }}>
+            {headlineBlock}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Landscape: 3 columns x 2 rows, compact padding, less margin on bottom bar ----
+  if (layoutMode === 'landscape') {
+    return (
+      <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 4 * scale }}>
+          {topBar}
+        </div>
+        <div style={{ marginBottom: 6 * scale }}>
+          {headlineBlock}
+        </div>
+
+        {/* Comment grid: 3x2 */}
+        <div style={{
+          flex: 1, display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gridTemplateRows: '1fr 1fr',
+          gap: 8 * scale,
+          overflow: 'hidden',
+        }}>
+          {DEFAULT_COMMENTS.map(renderCommentCard)}
+        </div>
+
+        <div style={{ flexShrink: 0, marginTop: 4 * scale }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Story: 2x3 grid with generous spacing, stacked vertically ----
+  if (layoutMode === 'story') {
+    return (
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 14 * scale }}>
+        {topBar}
+        <div style={{ padding: `${8 * scale}px 0` }}>
+          {headlineBlock}
+        </div>
+
+        {/* Comment grid: 2x3 with more gap */}
+        <div style={{
+          flex: 1, display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: '1fr 1fr 1fr',
+          gap: 14 * scale,
+          overflow: 'hidden',
+        }}>
+          {DEFAULT_COMMENTS.map(renderCommentCard)}
+        </div>
+
+        <div style={{ flexShrink: 0 }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Square / Portrait (default): Original 2x3 layout ----
   return (
     <div style={{
-      width, height,
-      background: BRAND.background,
+      ...wrapperBase,
       padding: 24 * scale,
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: BRAND.fonts.body,
-      position: 'relative',
-      overflow: 'hidden',
-      boxSizing: 'border-box',
     }}>
-      {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <PadminiLogo />
-        <YouTubeBadge />
+      <div style={{ marginBottom: 6 * scale }}>
+        {topBar}
       </div>
 
-      {/* Headline */}
-      <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
-        <h1 style={{
-          fontSize: 'var(--sigma-headline-size)', fontWeight: 900,
-          fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
-          textTransform: 'uppercase' as const, margin: 0,
-        }}>
-          {headlineNode}
-        </h1>
+      <div style={{ marginBottom: 10 * scale }}>
+        {headlineBlock}
       </div>
 
       {/* Comment grid: 2x3 */}
@@ -124,63 +271,7 @@ export function YouTubeCommentWallTemplate({
         gap: 10 * scale,
         overflow: 'hidden',
       }}>
-        {DEFAULT_COMMENTS.map((comment) => (
-          <div key={comment.initials} style={{
-            backgroundColor: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 8,
-            padding: `${10 * scale}px ${12 * scale}px`,
-            display: 'flex', flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
-            {/* Avatar + name + timestamp */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 8 * scale,
-              marginBottom: 6 * scale, flexShrink: 0,
-            }}>
-              <div style={{
-                width: 30 * scale, height: 30 * scale, borderRadius: '50%',
-                backgroundColor: comment.avatarBg,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-              }}>
-                <span style={{ fontSize: 14 * scale, fontWeight: 700, color: '#fff', fontFamily: BRAND.fonts.heading }}>
-                  {comment.initials}
-                </span>
-              </div>
-              <span style={{ fontSize: 15 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap' }}>
-                {comment.name}
-              </span>
-              <span style={{
-                fontSize: 10 * scale, color: 'rgba(255,255,255,0.35)',
-                fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap', marginLeft: 'auto',
-              }}>
-                {comment.timestamp}
-              </span>
-            </div>
-
-            {/* Comment text */}
-            <div style={{
-              fontSize: 15 * scale, color: 'rgba(255,255,255,0.8)',
-              fontFamily: BRAND.fonts.body, fontWeight: 300,
-              lineHeight: 1.45, flex: 1, overflow: 'hidden',
-            }}>
-              {renderHighlightedText(comment.text, comment.highlight)}
-            </div>
-
-            {/* Thumbs up */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 4 * scale,
-              marginTop: 6 * scale, flexShrink: 0,
-            }}>
-              <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
-                <path d="M2 10h3v8H2a1 1 0 01-1-1v-6a1 1 0 011-1zm5-1V5a3 3 0 013-3l.5.5a1.5 1.5 0 01.44 1.06L10.5 7H16a2 2 0 012 2v.5l-1.5 6A2 2 0 0114.56 17H7V9z" fill="rgba(255,255,255,0.3)" />
-              </svg>
-              <span style={{ fontSize: 11 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body }}>
-                {comment.likes}
-              </span>
-            </div>
-          </div>
-        ))}
+        {DEFAULT_COMMENTS.map(renderCommentCard)}
       </div>
 
       {/* Bottom Bar */}

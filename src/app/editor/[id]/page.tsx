@@ -12,6 +12,8 @@ import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal
 import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
 import { type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET } from '@/config/fontSizes';
+import SizeTabBar from '@/components/SizeTabBar';
+import { AD_SIZES, DEFAULT_AD_SIZE, type AdSize } from '@/config/adSizes';
 
 interface Template {
   id: string;
@@ -103,6 +105,8 @@ export default function EditorPage() {
   const [jesterLine, setJesterLine] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<BootcampKey | null>(null);
   const [fontSizes, setFontSizes] = useState<FontSizeConfig>({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
+  const [activeSize, setActiveSize] = useState<AdSize>(DEFAULT_AD_SIZE);
+  const [isExportingAll, setIsExportingAll] = useState(false);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -225,13 +229,52 @@ export default function EditorPage() {
       const element = previewRef.current.getExportElement();
       await exportPng(element, {
         templateName: template.name,
-        width: template.dimensions.width,
-        height: template.dimensions.height,
+        width: activeSize.width,
+        height: activeSize.height,
       });
-      showToast('success', 'Export Complete', `${template.name} saved as PNG`);
+      showToast('success', 'Export Complete', `${template.name} (${activeSize.width}×${activeSize.height}) saved as PNG`);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       showToast('error', 'Export Failed', message);
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    if (!template || !previewRef.current || isExportingAll) return;
+
+    setIsExportingAll(true);
+    try {
+      const JSZip = (await import('jszip')).default;
+      const zip = new JSZip();
+
+      const sanitizedName = template.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+      for (const size of AD_SIZES) {
+        const dataUrl = await previewRef.current.renderAtSize(size.width, size.height);
+        // Convert data URL to binary
+        const base64 = dataUrl.split(',')[1];
+        zip.file(`${sanitizedName}-${size.width}x${size.height}.png`, base64, { base64: true });
+      }
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${sanitizedName}-all-sizes.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast('success', 'Download Complete', `${AD_SIZES.length} sizes exported as ZIP`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      showToast('error', 'Export Failed', message);
+    } finally {
+      setIsExportingAll(false);
     }
   };
 
@@ -265,7 +308,7 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-gray/30 flex flex-col">
+    <div className="h-screen bg-brand-gray/30 flex flex-col overflow-hidden">
       {/* Header */}
       <header className="bg-gradient-dark border-b border-white/10 flex-shrink-0">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
@@ -297,7 +340,7 @@ export default function EditorPage() {
                   {template.name}
                 </h1>
                 <p className="font-ui text-xs text-gray-400 truncate">
-                  {template.dimensions.width} × {template.dimensions.height} • {template.platform}
+                  {activeSize.width} × {activeSize.height} • {template.platform}
                 </p>
               </div>
             </div>
@@ -320,30 +363,23 @@ export default function EditorPage() {
                 </svg>
                 <span className="hidden sm:inline">Generate with AI</span>
               </button>
-              <button
-                onClick={handleExport}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-lime text-brand-navy hover:bg-brand-lime/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isExporting ? (
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                )}
-                <span className="hidden xs:inline">{isExporting ? 'Exporting...' : 'Export'}</span>
-              </button>
             </div>
           </div>
         </div>
       </header>
 
+      {/* Size Tab Bar — sits between header and canvas, does NOT scroll */}
+      <SizeTabBar
+        activeSize={activeSize}
+        onSizeChange={setActiveSize}
+        onDownload={handleExport}
+        onDownloadAll={handleDownloadAll}
+        isExporting={isExporting}
+        isExportingAll={isExportingAll}
+      />
+
       {/* Main Editor Area */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Desktop Sidebar */}
         <EditorSidebar
           fields={fields}
@@ -390,6 +426,7 @@ export default function EditorPage() {
           fontSizes={fontSizes}
           onCharacterUpdate={handleCharacterUpdate}
           onCharacterDelete={handleCharacterDelete}
+          overrideDimensions={{ width: activeSize.width, height: activeSize.height }}
         />
       </div>
 
