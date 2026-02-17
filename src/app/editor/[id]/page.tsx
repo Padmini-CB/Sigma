@@ -379,7 +379,7 @@ export default function EditorPage() {
       />
 
       {/* Main Editor Area */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Desktop Sidebar */}
         <EditorSidebar
           fields={fields}

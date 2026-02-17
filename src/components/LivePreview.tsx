@@ -527,13 +527,11 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
   const BRAND_NAVY = '#181830';
   const BRAND_LIME = '#D7EF3F';
 
+  // Spacing-only sizes (used for padding/margins, NOT for fontSize).
+  // Actual font sizes come from CSS custom properties set by LivePreview.
   const baseFontSize = Math.min(width, height) / 25;
-  const fontSizes = {
-    headline: baseFontSize * 1.4,
-    subheadline: baseFontSize * 0.9,
-    body: baseFontSize * 0.75,
+  const spacingSizes = {
     cta: baseFontSize * 0.8,
-    price: baseFontSize * 1.1,
     small: baseFontSize * 0.6,
   };
   const padding = width * 0.05;
@@ -569,20 +567,20 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           <CharacterOverlay character={selectedCharacter} />
         ) : null}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${spacingSizes.small * 0.5}px ${spacingSizes.small * 1.2}px`, fontSize: 'var(--sigma-label-size)' }}>
             <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
           </div>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--sigma-label-size)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
         </div>
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: padding * 0.5, paddingTop: padding * 0.5, paddingBottom: padding * 0.5 }}>
-          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
-          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.body }}>{bodyText}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-headline-size)', lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'var(--sigma-label-size)', fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 'var(--sigma-subheadline-size)' }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--sigma-body-size)' }}>{bodyText}</p>
         </div>
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: padding * 0.3, zIndex: 2 }}>
-          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price, textAlign: 'center' }}>{price}</span>}
-          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`, borderRadius: '8px', textAlign: 'center', width: '100%' }}>{cta}</div>
+          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-stat-number-size)', textAlign: 'center' }}>{price}</span>}
+          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: 'var(--sigma-cta-size)', padding: `${spacingSizes.cta * 0.7}px ${spacingSizes.cta * 1.2}px`, borderRadius: '8px', textAlign: 'center', width: '100%' }}>{cta}</div>
         </div>
       </div>
     );
@@ -608,20 +606,20 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           <CharacterOverlay character={selectedCharacter} />
         ) : null}
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small }}>
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${spacingSizes.small * 0.5}px ${spacingSizes.small * 1.2}px`, fontSize: 'var(--sigma-label-size)' }}>
             <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
           </div>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--sigma-label-size)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
         </div>
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: padding * 0.4 }}>
-          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
-          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.body }}>{bodyText}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-headline-size)', lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'var(--sigma-label-size)', fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 'var(--sigma-subheadline-size)' }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--sigma-body-size)' }}>{bodyText}</p>
         </div>
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 2 }}>
-          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.7}px ${fontSizes.cta * 1.2}px`, borderRadius: '8px' }}>{cta}</div>
-          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price }}>{price}</span>}
+          <div className="font-ui font-semibold" style={{ backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: 'var(--sigma-cta-size)', padding: `${spacingSizes.cta * 0.7}px ${spacingSizes.cta * 1.2}px`, borderRadius: '8px' }}>{cta}</div>
+          {price && <span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-stat-number-size)' }}>{price}</span>}
         </div>
       </div>
     );
@@ -647,21 +645,21 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
           <CharacterOverlay character={selectedCharacter} />
         ) : null}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: padding * 0.5, overflow: 'hidden' }}>
-        <div style={{ flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${fontSizes.small * 0.5}px ${fontSizes.small * 1.2}px`, fontSize: fontSizes.small, alignSelf: 'flex-start' }}>
+        <div style={{ flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', borderRadius: '9999px', padding: `${spacingSizes.small * 0.5}px ${spacingSizes.small * 1.2}px`, fontSize: 'var(--sigma-label-size)', alignSelf: 'flex-start' }}>
           <span className="font-ui font-semibold" style={{ color: '#FFFFFF' }}>{fields.credibility}</span>
         </div>
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: padding * 0.25 }}>
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: fontSizes.small, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
-          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: fontSizes.headline, lineHeight: 1.1 }}>{headline}</h1>
-          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: fontSizes.small, fontStyle: 'italic' }}>{jesterLine}</p>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: fontSizes.subheadline }}>{subheadline}</p>
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--sigma-label-size)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{courseName}</p>
+          <h1 className="font-headline font-extrabold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-headline-size)', lineHeight: 1.1 }}>{headline}</h1>
+          {jesterLine && <p className="font-body" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 'var(--sigma-label-size)', fontStyle: 'italic' }}>{jesterLine}</p>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 'var(--sigma-subheadline-size)' }}>{subheadline}</p>
         </div>
-        <div className="font-ui font-semibold" style={{ flexShrink: 0, backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: fontSizes.cta, padding: `${fontSizes.cta * 0.6}px ${fontSizes.cta * 1}px`, borderRadius: '8px', alignSelf: 'flex-start', zIndex: 2 }}>{cta}</div>
+        <div className="font-ui font-semibold" style={{ flexShrink: 0, backgroundColor: BRAND_LIME, color: BRAND_NAVY, fontSize: 'var(--sigma-cta-size)', padding: `${spacingSizes.cta * 0.6}px ${spacingSizes.cta * 1}px`, borderRadius: '8px', alignSelf: 'flex-start', zIndex: 2 }}>{cta}</div>
       </div>
       <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', textAlign: 'right' }}>
         <div style={{ backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', borderRadius: '12px', padding: padding * 0.6 }}>
-          {price && <div style={{ marginBottom: fontSizes.small * 0.5 }}><span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: fontSizes.price, display: 'block' }}>{price}</span></div>}
-          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: fontSizes.small }}>{bodyText}</p>
+          {price && <div style={{ marginBottom: spacingSizes.small * 0.5 }}><span className="font-headline font-bold" style={{ color: '#FFFFFF', fontSize: 'var(--sigma-stat-number-size)', display: 'block' }}>{price}</span></div>}
+          <p className="font-body" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--sigma-label-size)' }}>{bodyText}</p>
         </div>
       </div>
     </div>

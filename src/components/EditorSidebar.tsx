@@ -621,7 +621,7 @@ function SidebarContent({
       </div>
 
       {/* Form Fields */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-5">
+      <div className="flex-1 overflow-y-auto p-4 space-y-5 min-h-0">
         {topFieldConfigs.map((config) => (
           <FieldRenderer
             key={config.key}
@@ -848,7 +848,7 @@ export default function EditorSidebar({
 
   // Desktop sidebar mode
   return (
-    <aside className="w-80 xl:w-96 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden hidden lg:flex">
+    <aside className="w-80 xl:w-96 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden hidden lg:flex min-h-0">
       <SidebarContent
         fields={fields}
         onFieldChange={onFieldChange}

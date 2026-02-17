@@ -23,7 +23,7 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
     >
       <div
         style={{
-          fontSize: 15,
+          fontSize: 'var(--sigma-bottom-bar-size, 15px)',
           fontWeight: 700,
           color: BRAND.colors.textMuted,
           fontFamily: BRAND.fonts.heading,
@@ -37,7 +37,7 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
       </div>
       <div
         style={{
-          fontSize: 13,
+          fontSize: 'var(--sigma-label-size, 13px)',
           color: 'rgba(255,255,255,0.45)',
           fontFamily: BRAND.fonts.body,
           textAlign: 'center',
@@ -51,9 +51,9 @@ export function BottomBar({ courseName, cta, trustSignals = BRAND.trustSignals }
       </div>
       <div
         style={{
-          background: 'linear-gradient(90deg, #2563eb, #3b82f6)',
-          color: '#ffffff',
-          fontSize: 20,
+          background: 'var(--sigma-cta-bg, linear-gradient(90deg, #2563eb, #3b82f6))',
+          color: 'var(--sigma-cta-color, #ffffff)',
+          fontSize: 'var(--sigma-cta-size, 20px)',
           fontWeight: 700,
           fontFamily: BRAND.fonts.body,
           padding: '12px 28px',
