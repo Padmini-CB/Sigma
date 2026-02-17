@@ -3,6 +3,7 @@ import { WeekJourneyGrid } from '@/components/visual-elements/WeekJourneyGrid';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface WeekJourneyTemplateProps {
   headline?: string;
@@ -31,21 +32,115 @@ export function WeekJourneyTemplate({
   width = 1080,
   height = 1080,
 }: WeekJourneyTemplateProps) {
+  const { layoutMode } = getAdSizeConfig(width, height);
   const scale = Math.min(width, height) / 1080;
 
+  const headlineBlock = (
+    <div style={{ textAlign: 'center' }}>
+      <h1 style={{
+        fontSize: 'var(--sigma-headline-size)', fontWeight: 900, fontFamily: BRAND.fonts.heading,
+        lineHeight: 1.1, margin: 0, textTransform: 'uppercase' as const,
+        color: BRAND.colors.textWhite,
+      }}>
+        {totalWeeks} WEEKS
+      </h1>
+      <h2 style={{
+        fontSize: 'var(--sigma-headline-size)', fontWeight: 800,
+        color: 'var(--sigma-headline-accent-color)',
+        fontFamily: BRAND.fonts.heading,
+        lineHeight: 1.1, margin: 0, marginTop: 4 * scale,
+        textTransform: 'uppercase' as const,
+      }}>
+        {subheadline}
+      </h2>
+    </div>
+  );
+
+  const topBar = (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+      <PadminiLogo />
+      <YouTubeBadge />
+    </div>
+  );
+
+  const wrapperBase: React.CSSProperties = {
+    width,
+    height,
+    background: BRAND.background,
+    fontFamily: BRAND.fonts.body,
+    position: 'relative',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  };
+
+  // ---- YouTube Thumb: Headline/subheadline only, centered ----
+  if (layoutMode === 'youtube-thumb') {
+    return (
+      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
+        {topBar}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
+          {headlineBlock}
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Landscape: Reduced padding, compact grid ----
+  if (layoutMode === 'landscape') {
+    return (
+      <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 4 * scale }}>
+          {topBar}
+        </div>
+
+        {/* Journey Grid - compact */}
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <WeekJourneyGrid
+            weeks={weeks}
+            totalWeeks={totalWeeks}
+            subtitle={subheadline}
+          />
+        </div>
+
+        {/* Bottom Bar with less margin */}
+        <div style={{ flexShrink: 0, marginTop: 4 * scale }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Story: Increased spacing around grid ----
+  if (layoutMode === 'story') {
+    return (
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
+        {topBar}
+
+        {/* Journey Grid with generous spacing */}
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <WeekJourneyGrid
+            weeks={weeks}
+            totalWeeks={totalWeeks}
+            subtitle={subheadline}
+          />
+        </div>
+
+        {/* Bottom Bar */}
+        <div style={{ flexShrink: 0 }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Square / Portrait: Original layout ----
   return (
     <div
       style={{
-        width,
-        height,
-        background: BRAND.background,
+        ...wrapperBase,
         padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: BRAND.fonts.body,
-        position: 'relative',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
       }}
     >
       {/* Top bar */}

@@ -5,6 +5,7 @@ import { TechStackPills } from '@/components/visual-elements/TechStackPills';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface PriceTransparencyTemplateProps {
   headline?: string;
@@ -56,56 +57,142 @@ export function PriceTransparencyTemplate({
   width = 1080,
   height = 1080,
 }: PriceTransparencyTemplateProps) {
+  const { layoutMode } = getAdSizeConfig(width, height);
   const scale = Math.min(width, height) / 1080;
+
+  const priceBlock = (
+    <div>
+      <div
+        style={{
+          fontSize: 'var(--sigma-stat-number-size)',
+          fontWeight: 800,
+          color: 'var(--sigma-stat-color)',
+          fontFamily: BRAND.fonts.heading,
+          lineHeight: 1,
+        }}
+      >
+        {price}
+      </div>
+      <div
+        style={{
+          fontSize: 'var(--sigma-body-size)',
+          color: 'var(--sigma-body-color)',
+          fontFamily: BRAND.fonts.body,
+          marginTop: 6,
+        }}
+      >
+        {headline}
+      </div>
+    </div>
+  );
+
+  const topBar = (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+      <PadminiLogo />
+      <YouTubeBadge />
+    </div>
+  );
+
+  const wrapperBase: React.CSSProperties = {
+    width,
+    height,
+    background: BRAND.background,
+    fontFamily: BRAND.fonts.body,
+    position: 'relative',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  };
+
+  // ---- YouTube Thumb: Headline + price only, centered, no bottom bar ----
+  if (layoutMode === 'youtube-thumb') {
+    return (
+      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
+        {topBar}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
+          <div style={{ textAlign: 'center' }}>
+            {priceBlock}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Landscape: Two-column with adjusted ratios, reduced stats ----
+  if (layoutMode === 'landscape') {
+    return (
+      <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 4 * scale }}>
+          {topBar}
+        </div>
+        <div style={{ flex: 1, display: 'flex', gap: 10 * scale, overflow: 'hidden' }}>
+          {/* Left column: Price + Stats (35%) */}
+          <div style={{ width: '35%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 * scale, justifyContent: 'center' }}>
+            {priceBlock}
+            <StatCounterGrid stats={stats.slice(0, 4)} columns={2} />
+          </div>
+          {/* Right: Bar Chart Comparison (65%) */}
+          <div style={{ flex: 1 }}>
+            <BarChartComparison leftCard={leftCard} rightCard={rightCard} />
+          </div>
+        </div>
+        <div style={{ flexShrink: 0, marginTop: 4 * scale }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Story: Vertical stack — price, stats, tech, chart, bottom bar ----
+  if (layoutMode === 'story') {
+    return (
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
+        {topBar}
+        {/* Price + headline centered */}
+        <div style={{ flexShrink: 0, textAlign: 'center' }}>
+          {priceBlock}
+        </div>
+        {/* Stats full width */}
+        <div style={{ flexShrink: 0 }}>
+          <StatCounterGrid stats={stats} columns={3} />
+        </div>
+        {/* Tech stack pills */}
+        <div style={{ flexShrink: 0 }}>
+          <TechStackPills technologies={techStack} pillSize="sm" />
+        </div>
+        {/* Bar chart comparison full width */}
+        <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+          <BarChartComparison leftCard={leftCard} rightCard={rightCard} />
+        </div>
+        {/* Bottom bar */}
+        <div style={{ flexShrink: 0 }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Square / Portrait: Original two-column layout ----
+  const isPortrait = layoutMode === 'portrait';
 
   return (
     <div
       style={{
-        width,
-        height,
-        background: BRAND.background,
+        ...wrapperBase,
         padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: BRAND.fonts.body,
-        position: 'relative',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
       }}
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <PadminiLogo />
-        <YouTubeBadge />
+      <div style={{ marginBottom: 6 * scale }}>
+        {topBar}
       </div>
 
       {/* Main Content */}
       <div style={{ flex: 1, display: 'flex', gap: 10 * scale, overflow: 'hidden' }}>
         {/* Left column: Price + Stats + Tech (40%) */}
-        <div style={{ width: '40%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 * scale, justifyContent: 'center' }}>
-          <div>
-            <div
-              style={{
-                fontSize: 'var(--sigma-stat-number-size)',
-                fontWeight: 800,
-                color: 'var(--sigma-stat-color)',
-                fontFamily: BRAND.fonts.heading,
-                lineHeight: 1,
-              }}
-            >
-              {price}
-            </div>
-            <div
-              style={{
-                fontSize: 'var(--sigma-body-size)',
-                color: 'var(--sigma-body-color)',
-                fontFamily: BRAND.fonts.body,
-                marginTop: 6,
-              }}
-            >
-              {headline}
-            </div>
-          </div>
+        <div style={{ width: '40%', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: (isPortrait ? 12 : 8) * scale, justifyContent: 'center' }}>
+          {priceBlock}
 
           <StatCounterGrid stats={stats} columns={2} />
 

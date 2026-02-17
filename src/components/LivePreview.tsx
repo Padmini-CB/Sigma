@@ -24,6 +24,7 @@ import { YouTubeThumbnailTemplate } from '@/components/templates/YouTubeThumbnai
 import { MicroCourseTeaserTemplate } from '@/components/templates/MicroCourseTeaserTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, FONT_COLORS } from '@/config/fontSizes';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface Template {
   id: string;
@@ -64,7 +65,8 @@ export interface LivePreviewHandle {
 /** Build sigma CSS vars for a given width/height pair */
 function buildSigmaVars(fontSizes: FontSizeConfig | undefined, width: number, height: number): Record<string, string> {
   if (!fontSizes) return {};
-  const s = Math.min(width, height) / 1080;
+  const { fontScale } = getAdSizeConfig(width, height);
+  const s = (Math.min(width, height) / 1080) * fontScale;
   return {
     '--sigma-headline-size': `${fontSizes.headline * s}px`,
     '--sigma-subheadline-size': `${fontSizes.subheadline * s}px`,

@@ -3,6 +3,7 @@ import { BRAND } from '@/styles/brand-constants';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface MicroCourseTeaserTemplateProps {
   headline?: string;
@@ -78,42 +79,206 @@ export function MicroCourseTeaserTemplate({
   width = 1080,
   height = 1080,
 }: MicroCourseTeaserTemplateProps) {
+  const { layoutMode } = getAdSizeConfig(width, height);
   const scale = Math.min(width, height) / 1080;
 
   const headlineParts = headline.split('. ');
   const firstPart = headlineParts[0] + (headlineParts.length > 1 ? '.' : '');
   const secondPart = headlineParts.length > 1 ? ' ' + headlineParts.slice(1).join('. ') : '';
 
+  const topBar = (
+    <div style={{
+      display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0,
+    }}>
+      <PadminiLogo />
+      <YouTubeBadge />
+    </div>
+  );
+
+  const headlineBlock = (
+    <div style={{ textAlign: 'center', flexShrink: 0 }}>
+      <h1 style={{
+        fontSize: 'var(--sigma-headline-size)', fontWeight: 900, fontFamily: BRAND.fonts.heading,
+        textTransform: 'uppercase', lineHeight: 1.1, margin: 0,
+      }}>
+        <span style={{ color: 'var(--sigma-headline-color)' }}>{firstPart}</span>
+        <span style={{ color: 'var(--sigma-headline-accent-color)' }}>{secondPart}</span>
+      </h1>
+    </div>
+  );
+
+  const renderCourseCard = (course: typeof COURSES[number]) => (
+    <div key={course.name} style={{
+      backgroundColor: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: 12, padding: `${14 * scale}px ${16 * scale}px`,
+      display: 'flex', flexDirection: 'column', gap: 5 * scale,
+    }}>
+      <div style={{ width: 38 * scale, height: 38 * scale, flexShrink: 0 }}>
+        {COURSE_ICONS[course.iconKey]?.(38 * scale)}
+      </div>
+      <div style={{
+        fontSize: 'var(--sigma-card-title-size)', fontWeight: 700, color: BRAND.colors.textWhite,
+        fontFamily: BRAND.fonts.body, lineHeight: 1.2,
+      }}>
+        {course.name}
+      </div>
+      <div style={{
+        fontSize: 'var(--sigma-body-size)', fontWeight: 300, color: 'var(--sigma-body-color)',
+        fontFamily: BRAND.fonts.body, lineHeight: 1.4,
+      }}>
+        {course.description}
+      </div>
+      <div style={{
+        fontSize: 'var(--sigma-label-size)', fontWeight: 400, color: 'var(--sigma-body-color)',
+        fontFamily: BRAND.fonts.body, marginTop: 'auto',
+      }}>
+        {course.stats}
+      </div>
+      <div style={{
+        fontSize: 'var(--sigma-stat-number-size)', fontWeight: 700, color: 'var(--sigma-stat-color)', fontFamily: BRAND.fonts.body,
+      }}>
+        {course.price}
+      </div>
+      <div style={{
+        width: '100%', height: 4, backgroundColor: 'rgba(255,255,255,0.1)',
+        borderRadius: 2, overflow: 'hidden',
+      }}>
+        <div style={{
+          width: '65%', height: '100%',
+          backgroundColor: course.progressColor, borderRadius: 2,
+        }} />
+      </div>
+    </div>
+  );
+
+  const learningPath = (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'center',
+      gap: 0, padding: `${10 * scale}px 0`, flexShrink: 0,
+    }}>
+      {LEARNING_PATH_STEPS.map((step, index) => (
+        <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+          <div style={{
+            backgroundColor: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 20, padding: `${5 * scale}px ${14 * scale}px`, whiteSpace: 'nowrap',
+          }}>
+            <span style={{
+              fontSize: 'var(--sigma-label-size)', fontWeight: 600,
+              color: index === LEARNING_PATH_STEPS.length - 1 ? 'var(--sigma-stat-color)' : BRAND.colors.textWhite,
+              fontFamily: BRAND.fonts.body,
+            }}>
+              {step}
+            </span>
+          </div>
+          {index < LEARNING_PATH_STEPS.length - 1 && (
+            <svg width={28 * scale} height={14 * scale} viewBox="0 0 28 14" fill="none" style={{ flexShrink: 0 }}>
+              <line x1="0" y1="7" x2="20" y2="7" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
+              <path d="M17 3L24 7L17 11" stroke="rgba(255,255,255,0.2)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  const wrapperBase: React.CSSProperties = {
+    width,
+    height,
+    background: BRAND.background,
+    fontFamily: BRAND.fonts.body,
+    position: 'relative',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  };
+
+  // ---- YouTube Thumb: Centered headline only, no cards, no bottom bar ----
+  if (layoutMode === 'youtube-thumb') {
+    return (
+      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
+        {topBar}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
+          <div style={{ textAlign: 'center' }}>
+            {headlineBlock}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Landscape: 4x1 row of cards, compact padding ----
+  if (layoutMode === 'landscape') {
+    return (
+      <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 4 * scale }}>
+          {topBar}
+        </div>
+        <div style={{ marginBottom: 6 * scale }}>
+          {headlineBlock}
+        </div>
+
+        {/* Course Grid: 4x1 row */}
+        <div style={{
+          flex: 1, display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr 1fr',
+          gridTemplateRows: '1fr',
+          gap: 8 * scale, overflow: 'hidden',
+        }}>
+          {COURSES.map(renderCourseCard)}
+        </div>
+
+        {learningPath}
+
+        <div style={{ flexShrink: 0, marginTop: 4 * scale }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Story: 2x2 with more spacing, generous gaps ----
+  if (layoutMode === 'story') {
+    return (
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 14 * scale }}>
+        {topBar}
+        <div style={{ padding: `${8 * scale}px 0` }}>
+          {headlineBlock}
+        </div>
+
+        {/* Course Grid: 2x2 with generous spacing */}
+        <div style={{
+          flex: 1, display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gridTemplateRows: '1fr 1fr',
+          gap: 16 * scale, overflow: 'hidden',
+        }}>
+          {COURSES.map(renderCourseCard)}
+        </div>
+
+        {learningPath}
+
+        <div style={{ flexShrink: 0 }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Square / Portrait (default): Original 2x2 layout ----
   return (
     <div style={{
-      width, height,
-      background: BRAND.background,
+      ...wrapperBase,
       padding: 24 * scale,
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: BRAND.fonts.body,
-      position: 'relative',
-      overflow: 'hidden',
-      boxSizing: 'border-box',
     }}>
-      {/* Top bar */}
-      <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        flexShrink: 0, marginBottom: 6 * scale,
-      }}>
-        <PadminiLogo />
-        <YouTubeBadge />
+      <div style={{ marginBottom: 6 * scale }}>
+        {topBar}
       </div>
 
-      {/* Headline */}
-      <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
-        <h1 style={{
-          fontSize: 'var(--sigma-headline-size)', fontWeight: 900, fontFamily: BRAND.fonts.heading,
-          textTransform: 'uppercase', lineHeight: 1.1, margin: 0,
-        }}>
-          <span style={{ color: 'var(--sigma-headline-color)' }}>{firstPart}</span>
-          <span style={{ color: 'var(--sigma-headline-accent-color)' }}>{secondPart}</span>
-        </h1>
+      <div style={{ marginBottom: 10 * scale }}>
+        {headlineBlock}
       </div>
 
       {/* 2x2 Course Grid */}
@@ -122,81 +287,10 @@ export function MicroCourseTeaserTemplate({
         gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr',
         gap: 12 * scale, overflow: 'hidden',
       }}>
-        {COURSES.map((course) => (
-          <div key={course.name} style={{
-            backgroundColor: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 12, padding: `${14 * scale}px ${16 * scale}px`,
-            display: 'flex', flexDirection: 'column', gap: 5 * scale,
-          }}>
-            <div style={{ width: 38 * scale, height: 38 * scale, flexShrink: 0 }}>
-              {COURSE_ICONS[course.iconKey]?.(38 * scale)}
-            </div>
-            <div style={{
-              fontSize: 'var(--sigma-card-title-size)', fontWeight: 700, color: BRAND.colors.textWhite,
-              fontFamily: BRAND.fonts.body, lineHeight: 1.2,
-            }}>
-              {course.name}
-            </div>
-            <div style={{
-              fontSize: 'var(--sigma-body-size)', fontWeight: 300, color: 'var(--sigma-body-color)',
-              fontFamily: BRAND.fonts.body, lineHeight: 1.4,
-            }}>
-              {course.description}
-            </div>
-            <div style={{
-              fontSize: 'var(--sigma-label-size)', fontWeight: 400, color: 'var(--sigma-body-color)',
-              fontFamily: BRAND.fonts.body, marginTop: 'auto',
-            }}>
-              {course.stats}
-            </div>
-            <div style={{
-              fontSize: 'var(--sigma-stat-number-size)', fontWeight: 700, color: 'var(--sigma-stat-color)', fontFamily: BRAND.fonts.body,
-            }}>
-              {course.price}
-            </div>
-            <div style={{
-              width: '100%', height: 4, backgroundColor: 'rgba(255,255,255,0.1)',
-              borderRadius: 2, overflow: 'hidden',
-            }}>
-              <div style={{
-                width: '65%', height: '100%',
-                backgroundColor: course.progressColor, borderRadius: 2,
-              }} />
-            </div>
-          </div>
-        ))}
+        {COURSES.map(renderCourseCard)}
       </div>
 
-      {/* Learning path */}
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        gap: 0, padding: `${10 * scale}px 0`, flexShrink: 0,
-      }}>
-        {LEARNING_PATH_STEPS.map((step, index) => (
-          <div key={step} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-            <div style={{
-              backgroundColor: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 20, padding: `${5 * scale}px ${14 * scale}px`, whiteSpace: 'nowrap',
-            }}>
-              <span style={{
-                fontSize: 'var(--sigma-label-size)', fontWeight: 600,
-                color: index === LEARNING_PATH_STEPS.length - 1 ? 'var(--sigma-stat-color)' : BRAND.colors.textWhite,
-                fontFamily: BRAND.fonts.body,
-              }}>
-                {step}
-              </span>
-            </div>
-            {index < LEARNING_PATH_STEPS.length - 1 && (
-              <svg width={28 * scale} height={14 * scale} viewBox="0 0 28 14" fill="none" style={{ flexShrink: 0 }}>
-                <line x1="0" y1="7" x2="20" y2="7" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
-                <path d="M17 3L24 7L17 11" stroke="rgba(255,255,255,0.2)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </div>
-        ))}
-      </div>
+      {learningPath}
 
       {/* Bottom Bar */}
       <div style={{ flexShrink: 0 }}>

@@ -4,6 +4,7 @@ import { TechStackPills } from '@/components/visual-elements/TechStackPills';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 interface ChatGPTResumeTemplateProps {
   headline?: string;
@@ -32,27 +33,134 @@ export function ChatGPTResumeTemplate({
   width = 1080,
   height = 1080,
 }: ChatGPTResumeTemplateProps) {
+  const { layoutMode } = getAdSizeConfig(width, height);
   const scale = Math.min(width, height) / 1080;
+
+  const headlineBlock = (
+    <div>
+      <h1
+        style={{
+          fontSize: 'var(--sigma-headline-size)',
+          fontWeight: 800,
+          color: 'var(--sigma-headline-color)',
+          fontFamily: BRAND.fonts.heading,
+          lineHeight: 1.05,
+          margin: 0,
+        }}
+      >
+        {headline}
+      </h1>
+      <h2
+        style={{
+          fontSize: 'var(--sigma-headline-size)',
+          fontWeight: 800,
+          color: 'var(--sigma-headline-accent-color)',
+          fontFamily: BRAND.fonts.heading,
+          lineHeight: 1.05,
+          margin: 0,
+          marginTop: 4,
+        }}
+      >
+        {subheadline}
+      </h2>
+    </div>
+  );
+
+  const topBar = (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+      <PadminiLogo />
+      <YouTubeBadge />
+    </div>
+  );
+
+  const wrapperBase: React.CSSProperties = {
+    width,
+    height,
+    background: BRAND.background,
+    fontFamily: BRAND.fonts.body,
+    position: 'relative',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+  };
+
+  // ---- YouTube Thumb: Bold headline, no chat, no bottom bar ----
+  if (layoutMode === 'youtube-thumb') {
+    return (
+      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
+        {topBar}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
+          <div style={{ textAlign: 'center' }}>
+            {headlineBlock}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Landscape: Headline+pills left, chat right, compact bottom bar ----
+  if (layoutMode === 'landscape') {
+    return (
+      <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 4 * scale }}>
+          {topBar}
+        </div>
+        <div style={{ flex: 1, display: 'flex', gap: 16 * scale, overflow: 'hidden' }}>
+          {/* Left: headline + tech stack (55%) */}
+          <div style={{ width: '55%', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10 * scale }}>
+            {headlineBlock}
+            <TechStackPills technologies={techStack.slice(0, 4)} columns={2} pillSize="sm" />
+          </div>
+          {/* Right: compact chat (45%) */}
+          <div style={{ flex: 1 }}>
+            <ChatMockup messages={DEFAULT_MESSAGES.slice(0, 3)} />
+          </div>
+        </div>
+        <div style={{ flexShrink: 0, marginTop: 4 * scale }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Story: Vertical stack — headline, chat, pills, bottom bar ----
+  if (layoutMode === 'story') {
+    return (
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
+        {topBar}
+        {/* Headline centered */}
+        <div style={{ flexShrink: 0, textAlign: 'center', padding: `${12 * scale}px 0` }}>
+          {headlineBlock}
+        </div>
+        {/* Chat fills available space */}
+        <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+          <ChatMockup messages={DEFAULT_MESSAGES} />
+        </div>
+        {/* Tech stack pills */}
+        <div style={{ flexShrink: 0 }}>
+          <TechStackPills technologies={techStack} columns={4} />
+        </div>
+        {/* Bottom bar */}
+        <div style={{ flexShrink: 0 }}>
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Square / Portrait: Two-column — chat left (42%), headline+pills right (58%) ----
+  const isPortrait = layoutMode === 'portrait';
 
   return (
     <div
       style={{
-        width,
-        height,
-        background: BRAND.background,
+        ...wrapperBase,
         padding: 24 * scale,
         display: 'flex',
         flexDirection: 'column',
-        fontFamily: BRAND.fonts.body,
-        position: 'relative',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
       }}
     >
-      {/* Top bar: Logo + YouTube */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <PadminiLogo />
-        <YouTubeBadge />
+      <div style={{ marginBottom: 6 * scale }}>
+        {topBar}
       </div>
 
       {/* Main content: Chat left, Headline right */}
@@ -63,34 +171,8 @@ export function ChatGPTResumeTemplate({
         </div>
 
         {/* Right - Headline + Tech Stack (58%) */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 * scale }}>
-          <div>
-            <h1
-              style={{
-                fontSize: 'var(--sigma-headline-size)',
-                fontWeight: 800,
-                color: 'var(--sigma-headline-color)',
-                fontFamily: BRAND.fonts.heading,
-                lineHeight: 1.05,
-                margin: 0,
-              }}
-            >
-              {headline}
-            </h1>
-            <h2
-              style={{
-                fontSize: 'var(--sigma-headline-size)',
-                fontWeight: 800,
-                color: 'var(--sigma-headline-accent-color)',
-                fontFamily: BRAND.fonts.heading,
-                lineHeight: 1.05,
-                margin: 0,
-                marginTop: 4,
-              }}
-            >
-              {subheadline}
-            </h2>
-          </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: (isPortrait ? 18 : 14) * scale }}>
+          {headlineBlock}
           <TechStackPills technologies={techStack} columns={4} />
         </div>
       </div>

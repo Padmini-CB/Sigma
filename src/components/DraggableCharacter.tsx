@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { type SelectedCharacter } from '@/app/editor/[id]/page';
+import { getAdSizeConfig } from '@/config/adSizes';
 
 const ASSET_BASE = '/assets/founders';
 const MIN_SIZE = 100;
@@ -44,24 +45,63 @@ function getInitialBounds(
   ) {
     return { x: char.x, y: char.y, w: char.w, h: char.h };
   }
-  const s = char.size || 350;
+
+  const { layoutMode } = getAdSizeConfig(canvasWidth, canvasHeight);
+  const baseSize = char.size || 350;
+
+  // Adapt default size and position per layout mode
+  let s: number;
   let x: number;
   let y: number;
-  switch (char.position) {
-    case 'left':
-      x = 0;
-      y = canvasHeight - s;
-      break;
-    case 'bottom':
+
+  switch (layoutMode) {
+    case 'story':
+      // Story: bottom center, slightly larger for the tall canvas
+      s = baseSize * 1.15;
       x = (canvasWidth - s) / 2;
       y = canvasHeight - s;
       break;
-    case 'right':
-    default:
+    case 'landscape':
+      // Landscape: right-side placement, scale down for short canvas
+      s = Math.min(baseSize * 0.85, canvasHeight * 0.7);
       x = canvasWidth - s;
       y = canvasHeight - s;
       break;
+    case 'youtube-thumb':
+      // YouTube thumb: right edge, overlapping, prominent
+      s = Math.min(baseSize * 1.1, canvasHeight * 0.8);
+      x = canvasWidth - s * 0.85; // overlap right edge
+      y = canvasHeight - s;
+      break;
+    case 'portrait':
+      // Portrait: same position logic as square but slightly larger
+      s = baseSize * 1.05;
+      switch (char.position) {
+        case 'left':
+          x = 0; y = canvasHeight - s; break;
+        case 'bottom':
+          x = (canvasWidth - s) / 2; y = canvasHeight - s; break;
+        case 'right':
+        default:
+          x = canvasWidth - s; y = canvasHeight - s; break;
+      }
+      break;
+    case 'square':
+    default:
+      // Square: original position-based placement
+      s = baseSize;
+      switch (char.position) {
+        case 'left':
+          x = 0; y = canvasHeight - s; break;
+        case 'bottom':
+          x = (canvasWidth - s) / 2; y = canvasHeight - s; break;
+        case 'right':
+        default:
+          x = canvasWidth - s; y = canvasHeight - s; break;
+      }
+      break;
   }
+
   return { x, y, w: s, h: s };
 }
 
