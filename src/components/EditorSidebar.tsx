@@ -235,7 +235,7 @@ function SidebarContent({
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
-  const [isTypographyOpen, setIsTypographyOpen] = useState(false);
+  const [isTypographyOpen, setIsTypographyOpen] = useState(true);
   const [isPeopleOpen, setIsPeopleOpen] = useState(false);
 
   return (

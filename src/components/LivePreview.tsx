@@ -210,71 +210,63 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   }), [dims, finalScale]);
 
   return (
-    <main className="flex-1 bg-gray-100 flex flex-col overflow-hidden">
+    <main className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#1a1a2e' }}>
       {/* Preview Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between flex-shrink-0">
+      <div className="border-b border-white/10 px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#151528' }}>
         <div className="flex items-center gap-2 sm:gap-4">
-          <h3 className="font-ui text-sm font-semibold text-gray-700">Preview</h3>
-          <span className="font-ui text-xs text-gray-400 hidden sm:inline">
+          <h3 className="font-ui text-sm font-semibold text-white/70">Preview</h3>
+          <span className="font-ui text-xs text-white/40 hidden sm:inline">
             {dims.width} × {dims.height}px
           </span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="font-ui text-xs text-gray-500 hidden sm:inline">Zoom:</span>
+          <span className="font-ui text-xs text-white/50 hidden sm:inline">Zoom:</span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setZoom(Math.max(25, zoom - 25))}
-              className="w-7 h-7 rounded bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              className="w-7 h-7 rounded flex items-center justify-center transition-colors"
+              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
               title="Zoom out"
               aria-label="Zoom out"
             >
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
               </svg>
             </button>
-            <span className="font-ui text-sm text-gray-700 w-10 sm:w-12 text-center">{zoom}%</span>
+            <span className="font-ui text-sm text-white/80 w-10 sm:w-12 text-center">{zoom}%</span>
             <button
               onClick={() => setZoom(Math.min(150, zoom + 25))}
-              className="w-7 h-7 rounded bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              className="w-7 h-7 rounded flex items-center justify-center transition-colors"
+              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
               title="Zoom in"
               aria-label="Zoom in"
             >
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>
             </button>
           </div>
           <button
             onClick={() => setZoom(100)}
-            className="px-2 py-1 rounded text-xs font-ui text-gray-500 hover:bg-gray-100 transition-colors hidden sm:block"
+            className="px-2 py-1 rounded text-xs font-ui text-white/40 hover:text-white/60 transition-colors hidden sm:block"
+            style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
           >
             Reset
           </button>
         </div>
       </div>
 
-      {/* Preview Canvas Area */}
+      {/* Canvas Workspace — scrollable like Canva */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center"
+        className="flex-1 overflow-auto p-6 sm:p-10 flex items-center justify-center"
       >
-        <div className="relative">
+        <div
+          className="relative"
+          style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)' }}
+        >
           <div
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: `
-                linear-gradient(45deg, #ccc 25%, transparent 25%),
-                linear-gradient(-45deg, #ccc 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, #ccc 75%),
-                linear-gradient(-45deg, transparent 75%, #ccc 75%)
-              `,
-              backgroundSize: '20px 20px',
-              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-            }}
-          />
-
-          <div
-            className="relative shadow-2xl"
+            className="relative"
             style={{ ...previewStyle, ...sigmaVars } as React.CSSProperties}
           >
             <TemplateContent
@@ -295,18 +287,18 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       </div>
 
       {/* Preview Footer Info */}
-      <div className="bg-white border-t border-gray-200 px-4 sm:px-6 py-2 flex-shrink-0">
+      <div className="border-t border-white/10 px-4 sm:px-6 py-2 flex-shrink-0" style={{ backgroundColor: '#151528' }}>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
-            <span className="font-ui text-xs text-gray-500 truncate">
+            <span className="font-ui text-xs text-white/40 truncate">
               <span className="hidden sm:inline">Platform: </span>
-              <span className="font-semibold text-gray-700">{template.platform}</span>
+              <span className="font-semibold text-white/60">{template.platform}</span>
             </span>
-            <span className="font-ui text-xs text-gray-500 truncate hidden sm:inline">
-              Category: <span className="font-semibold text-gray-700">{template.category}</span>
+            <span className="font-ui text-xs text-white/40 truncate hidden sm:inline">
+              Category: <span className="font-semibold text-white/60">{template.category}</span>
             </span>
           </div>
-          <span className="font-ui text-xs text-gray-400 truncate hidden md:inline">
+          <span className="font-ui text-xs text-white/30 truncate hidden md:inline">
             {template.useCase}
           </span>
         </div>

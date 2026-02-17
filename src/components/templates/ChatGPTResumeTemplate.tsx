@@ -52,7 +52,7 @@ export function ChatGPTResumeTemplate({
       </h1>
       <h2
         style={{
-          fontSize: 'var(--sigma-headline-size)',
+          fontSize: 'var(--sigma-subheadline-size)',
           fontWeight: 800,
           color: 'var(--sigma-headline-accent-color)',
           fontFamily: BRAND.fonts.heading,
@@ -83,21 +83,18 @@ export function ChatGPTResumeTemplate({
     boxSizing: 'border-box',
   };
 
-  // ---- YouTube Thumb: Bold headline, no chat, no bottom bar ----
+  // ---- YouTube Thumb: Bold headline only, no logo, no bottom bar, no trust signals ----
   if (layoutMode === 'youtube-thumb') {
     return (
-      <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
-        {topBar}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
-          <div style={{ textAlign: 'center' }}>
-            {headlineBlock}
-          </div>
+      <div style={{ ...wrapperBase, padding: 32 * scale, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: '90%' }}>
+          {headlineBlock}
         </div>
       </div>
     );
   }
 
-  // ---- Landscape: Headline+pills left, chat right, compact bottom bar ----
+  // ---- Landscape: Headline+pills left (55%), chat right (45%), compact bottom bar ----
   if (layoutMode === 'landscape') {
     return (
       <div style={{ ...wrapperBase, padding: 18 * scale, display: 'flex', flexDirection: 'column' }}>
@@ -122,24 +119,63 @@ export function ChatGPTResumeTemplate({
     );
   }
 
-  // ---- Story: Vertical stack — headline, chat, pills, bottom bar ----
+  // ---- Story (1080×1920): Vertical — headline ~25%, chat ~45%, pills+CTA ~30% ----
   if (layoutMode === 'story') {
     return (
-      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
+      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column' }}>
         {topBar}
-        {/* Headline centered */}
-        <div style={{ flexShrink: 0, textAlign: 'center', padding: `${12 * scale}px 0` }}>
+
+        {/* Headline area (~25%) */}
+        <div style={{ flex: '0 0 auto', textAlign: 'center', padding: `${20 * scale}px 0 ${14 * scale}px` }}>
           {headlineBlock}
         </div>
-        {/* Chat fills available space */}
+
+        {/* Chat fills middle (~45%) */}
+        <div style={{ flex: 1, overflow: 'hidden', minHeight: 0, marginBottom: 14 * scale }}>
+          <ChatMockup messages={DEFAULT_MESSAGES} />
+        </div>
+
+        {/* Tech stack pills + bottom bar (~30%) */}
+        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 * scale }}>
+          <TechStackPills technologies={techStack} columns={4} />
+          <BottomBar courseName={courseName} cta={cta} />
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Portrait (1080×1350): Headline top, chat+pills fill the space, bottom bar ----
+  if (layoutMode === 'portrait') {
+    return (
+      <div
+        style={{
+          ...wrapperBase,
+          padding: 24 * scale,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10 * scale,
+        }}
+      >
+        <div style={{ marginBottom: 2 * scale }}>
+          {topBar}
+        </div>
+
+        {/* Headline */}
+        <div style={{ flexShrink: 0 }}>
+          {headlineBlock}
+        </div>
+
+        {/* Chat — fills most vertical space */}
         <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
           <ChatMockup messages={DEFAULT_MESSAGES} />
         </div>
-        {/* Tech stack pills */}
+
+        {/* Tech stack pills in 4-column grid */}
         <div style={{ flexShrink: 0 }}>
           <TechStackPills technologies={techStack} columns={4} />
         </div>
-        {/* Bottom bar */}
+
+        {/* Bottom Bar */}
         <div style={{ flexShrink: 0 }}>
           <BottomBar courseName={courseName} cta={cta} />
         </div>
@@ -147,9 +183,7 @@ export function ChatGPTResumeTemplate({
     );
   }
 
-  // ---- Square / Portrait: Two-column — chat left (42%), headline+pills right (58%) ----
-  const isPortrait = layoutMode === 'portrait';
-
+  // ---- Square (1080×1080): Two-column — chat left (42%), headline+pills right (58%) ----
   return (
     <div
       style={{
@@ -171,7 +205,7 @@ export function ChatGPTResumeTemplate({
         </div>
 
         {/* Right - Headline + Tech Stack (58%) */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: (isPortrait ? 18 : 14) * scale }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 * scale }}>
           {headlineBlock}
           <TechStackPills technologies={techStack} columns={4} />
         </div>

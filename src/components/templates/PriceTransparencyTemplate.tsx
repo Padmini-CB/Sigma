@@ -45,7 +45,7 @@ export function PriceTransparencyTemplate({
     ],
   },
   rightCard = {
-    title: 'PADMINI (₹12K)',
+    title: 'CODEBASICS (₹12K)',
     items: [
       { label: 'Content & Platform', percentage: 50 },
       { label: 'Live Mentoring', percentage: 25 },

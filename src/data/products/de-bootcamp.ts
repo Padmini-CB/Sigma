@@ -41,7 +41,7 @@ export const DE_BOOTCAMP = {
       ]
     },
     padmini: {
-      label: "Padmini (₹12K)",
+      label: "CODEBASICS (₹12K)",
       breakdown: [
         { item: "Content & Platform", pct: 50 },
         { item: "Live Mentoring", pct: 25 },

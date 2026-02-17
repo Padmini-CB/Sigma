@@ -8,7 +8,6 @@ interface TechStackPillsProps {
 }
 
 export function TechStackPills({ technologies, variant = 'dark', columns, pillSize = 'md' }: TechStackPillsProps) {
-  const fontSize = pillSize === 'sm' ? 15 : pillSize === 'lg' ? 22 : 17;
   const paddingY = pillSize === 'sm' ? 6 : pillSize === 'lg' ? 10 : 7;
   const paddingX = pillSize === 'sm' ? 14 : pillSize === 'lg' ? 24 : 18;
 
@@ -26,7 +25,7 @@ export function TechStackPills({ technologies, variant = 'dark', columns, pillSi
             borderRadius: 6,
             border: `1px solid ${variant === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)'}`,
             backgroundColor: variant === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-            fontSize,
+            fontSize: 'var(--sigma-label-size, 17px)',
             fontFamily: BRAND.fonts.body,
             color: variant === 'dark' ? BRAND.colors.textWhite : '#1a1a2e',
             textAlign: 'center',

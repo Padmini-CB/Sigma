@@ -36,9 +36,9 @@ export function ChatMockup({ messages }: ChatMockupProps) {
         }}
       >
         <div style={{ width: 28, height: 28, borderRadius: 6, background: 'linear-gradient(135deg, #10a37f, #1a7f5a)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>G</span>
+          <span style={{ color: '#fff', fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 700 }}>G</span>
         </div>
-        <span style={{ color: BRAND.colors.textMuted, fontSize: 14, fontWeight: 600, fontFamily: BRAND.fonts.body }}>ChatGPT</span>
+        <span style={{ color: BRAND.colors.textMuted, fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 600, fontFamily: BRAND.fonts.body }}>ChatGPT</span>
         <div style={{ marginLeft: 'auto', width: 8, height: 8, borderRadius: '50%', backgroundColor: '#10a37f' }} />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1, overflow: 'hidden' }}>
@@ -51,14 +51,14 @@ export function ChatMockup({ messages }: ChatMockupProps) {
                 borderRadius: msg.role === 'user' ? '10px 10px 2px 10px' : '10px 10px 10px 2px',
                 backgroundColor: msg.role === 'user' ? 'rgba(67,97,238,0.15)' : msg.isWarning ? 'rgba(239,68,68,0.12)' : 'rgba(255,255,255,0.04)',
                 border: msg.isWarning ? `2px solid ${BRAND.colors.redWarning}` : msg.role === 'user' ? '1px solid rgba(67,97,238,0.25)' : `1px solid ${BRAND.colors.borderSubtle}`,
-                fontSize: 13,
+                fontSize: 'var(--sigma-body-size, 13px)',
                 lineHeight: 1.4,
                 fontFamily: BRAND.fonts.body,
                 color: msg.isWarning ? '#fca5a5' : msg.role === 'user' ? '#c5d0f0' : BRAND.colors.textMuted,
               }}
             >
               {msg.role === 'ai' && (
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#ef4444', letterSpacing: '0.1em', marginBottom: 4, textTransform: 'uppercase' as const }}>CHATGPT</div>
+                <div style={{ fontSize: 'var(--sigma-label-size, 9px)', fontWeight: 700, color: '#ef4444', letterSpacing: '0.1em', marginBottom: 4, textTransform: 'uppercase' as const }}>CHATGPT</div>
               )}
               {msg.text}
             </div>
