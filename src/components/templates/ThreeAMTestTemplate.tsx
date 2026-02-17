@@ -361,7 +361,7 @@ export function ThreeAMTestTemplate({
       <div style={{ textAlign: 'center', marginBottom: 8 * scale, flexShrink: 0 }}>
         {headline ? (
           <h1 style={{
-            fontSize: 42 * scale, fontWeight: 900,
+            fontSize: 'var(--sigma-subheadline-size)', fontWeight: 900,
             color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading,
             lineHeight: 1.1, textTransform: 'uppercase' as const, margin: 0,
           }}>
@@ -369,13 +369,13 @@ export function ThreeAMTestTemplate({
           </h1>
         ) : (
           <h1 style={{
-            fontSize: 42 * scale, fontWeight: 900,
+            fontSize: 'var(--sigma-subheadline-size)', fontWeight: 900,
             fontFamily: BRAND.fonts.heading, lineHeight: 1.15,
             textTransform: 'uppercase' as const, margin: 0,
           }}>
             <span style={{ color: BRAND.colors.textWhite }}>WE DON&apos;T JUST TEACH YOU TO BUILD MODELS.</span>
             <br />
-            <span style={{ color: '#c7f464' }}>WE TEACH YOU TO FIX THEM.</span>
+            <span style={{ color: 'var(--sigma-headline-accent-color)' }}>WE TEACH YOU TO FIX THEM.</span>
           </h1>
         )}
       </div>

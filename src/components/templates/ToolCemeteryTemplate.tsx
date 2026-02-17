@@ -82,11 +82,11 @@ export function ToolCemeteryTemplate({
           Still learning with
         </div>
         <h1 style={{
-          fontSize: 58 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 'var(--sigma-headline-size)', fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.05, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>DEAD </span>
-          <span style={{ color: '#c7f464' }}>TOOLS?</span>
+          <span style={{ color: 'var(--sigma-headline-accent-color)' }}>TOOLS?</span>
         </h1>
       </div>
 
@@ -191,7 +191,7 @@ export function ToolCemeteryTemplate({
               padding: 10 * scale,
             }}>
               <div style={{
-                fontSize: 13 * scale, fontWeight: 700, color: '#c7f464',
+                fontSize: 'var(--sigma-label-size)', fontWeight: 700, color: 'var(--sigma-stat-color)',
                 fontFamily: BRAND.fonts.heading, marginBottom: 4 * scale,
               }}>
                 {month.label}
@@ -222,13 +222,13 @@ export function ToolCemeteryTemplate({
               flex: 1, textAlign: 'center', padding: `${8 * scale}px 0`,
             }}>
               <div style={{
-                fontSize: 28 * scale, fontWeight: 700, color: '#c7f464',
+                fontSize: 'var(--sigma-stat-number-size)', fontWeight: 700, color: 'var(--sigma-stat-color)',
                 fontFamily: BRAND.fonts.heading, lineHeight: 1.2,
               }}>
                 {stat.number}
               </div>
               <div style={{
-                fontSize: 12 * scale, fontWeight: 400, color: 'rgba(255,255,255,0.55)',
+                fontSize: 'var(--sigma-label-size)', fontWeight: 400, color: 'rgba(255,255,255,0.55)',
                 fontFamily: BRAND.fonts.body,
               }}>
                 {stat.label}

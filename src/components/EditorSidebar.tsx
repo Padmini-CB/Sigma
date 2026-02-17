@@ -4,6 +4,10 @@ import { EditorFields, SelectedCharacter } from '@/app/editor/[id]/page';
 import { CHARACTERS, CharacterKey, getCharacterImage } from '@/data/characters';
 import templateDesignsData from '@/data/templateDesigns.json';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
+import FontResizer from '@/components/FontResizer';
+import ExpressionLibrary from '@/components/ExpressionLibrary';
+import { type FounderPlacement } from '@/components/ExpressionLibrary';
+import { type FontSizeConfig } from '@/config/fontSizes';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -30,6 +34,8 @@ interface EditorSidebarProps {
   onCharacterSelect?: (character: SelectedCharacter | null) => void;
   selectedCourse?: BootcampKey | null;
   onCourseSelect?: (course: BootcampKey | null) => void;
+  fontSizes?: FontSizeConfig;
+  onFontSizesChange?: (sizes: FontSizeConfig) => void;
 }
 
 interface FieldConfig {
@@ -224,9 +230,13 @@ function SidebarContent({
   onCharacterSelect,
   selectedCourse,
   onCourseSelect,
+  fontSizes,
+  onFontSizesChange,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
+  const [isTypographyOpen, setIsTypographyOpen] = useState(false);
+  const [isPeopleOpen, setIsPeopleOpen] = useState(false);
 
   return (
     <>
@@ -644,6 +654,100 @@ function SidebarContent({
             isMobile={isMobile}
           />
         ))}
+
+        {/* Typography Section — collapsible */}
+        {fontSizes && onFontSizesChange && (
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              onClick={() => setIsTypographyOpen(!isTypographyOpen)}
+              className="w-full flex items-center justify-between pb-3"
+            >
+              <div className="flex items-center gap-2.5">
+                <span
+                  className="font-headline text-sm font-bold w-7 h-7 rounded flex items-center justify-center"
+                  style={{ color: '#3B82F6', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                >
+                  Aa
+                </span>
+                <span className="font-ui text-sm font-semibold text-brand-navy">
+                  Typography
+                </span>
+              </div>
+              <svg
+                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isTypographyOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {isTypographyOpen && (
+              <div className="rounded-xl p-4" style={{ backgroundColor: '#181830' }}>
+                <FontResizer fontSizes={fontSizes} onChange={onFontSizesChange} />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* People / Expressions Section — collapsible */}
+        <div className="pt-4 border-t border-gray-200">
+          <button
+            onClick={() => setIsPeopleOpen(!isPeopleOpen)}
+            className="w-full flex items-center justify-between pb-3"
+          >
+            <div className="flex items-center gap-2.5">
+              <span
+                className="font-headline text-sm font-bold w-7 h-7 rounded flex items-center justify-center"
+                style={{ color: '#3B82F6', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"
+                    fill="#3B82F6"
+                  />
+                </svg>
+              </span>
+              <span className="font-ui text-sm font-semibold text-brand-navy">
+                People
+              </span>
+            </div>
+            <svg
+              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isPeopleOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {isPeopleOpen && (
+            <div className="rounded-xl p-4" style={{ backgroundColor: '#181830' }}>
+              <ExpressionLibrary
+                onSelect={(placement: FounderPlacement | null) => {
+                  if (placement) {
+                    onCharacterSelect?.({
+                      key: placement.key,
+                      name: placement.name,
+                      image: placement.image,
+                      position: placement.position,
+                      size: placement.size,
+                    });
+                  } else {
+                    onCharacterSelect?.(null);
+                  }
+                }}
+                selected={selectedCharacter ? {
+                  key: selectedCharacter.key,
+                  name: selectedCharacter.name,
+                  image: selectedCharacter.image,
+                  position: selectedCharacter.position,
+                  size: selectedCharacter.size,
+                } : null}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Brand Colors Reference */}
@@ -689,6 +793,8 @@ export default function EditorSidebar({
   onCharacterSelect,
   selectedCourse,
   onCourseSelect,
+  fontSizes,
+  onFontSizesChange,
 }: EditorSidebarProps) {
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -732,6 +838,8 @@ export default function EditorSidebar({
             onCharacterSelect={onCharacterSelect}
             selectedCourse={selectedCourse}
             onCourseSelect={onCourseSelect}
+            fontSizes={fontSizes}
+            onFontSizesChange={onFontSizesChange}
           />
         </aside>
       </>
@@ -752,6 +860,8 @@ export default function EditorSidebar({
         onCharacterSelect={onCharacterSelect}
         selectedCourse={selectedCourse}
         onCourseSelect={onCourseSelect}
+        fontSizes={fontSizes}
+        onFontSizesChange={onFontSizesChange}
       />
     </aside>
   );

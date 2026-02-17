@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import templatesData from '@/data/templates.json';
 import templateDesignsData from '@/data/templateDesigns.json';
 import EditorSidebar from '@/components/EditorSidebar';
@@ -11,6 +11,7 @@ import { useToast } from '@/components/Toast';
 import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal';
 import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
 import { type BootcampKey } from '@/data/products';
+import { type FontSizeConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET } from '@/config/fontSizes';
 
 interface Template {
   id: string;
@@ -53,6 +54,14 @@ export interface SelectedCharacter {
   image: string;
   position: 'left' | 'right' | 'bottom';
   size?: number;
+  // Interactive placement (set after drag/resize)
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
+  zIndex?: number;
+  expressionId?: string;
+  personId?: string;
 }
 
 const defaultFields: EditorFields = {
@@ -93,6 +102,7 @@ export default function EditorPage() {
   const [showAIModal, setShowAIModal] = useState(false);
   const [jesterLine, setJesterLine] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<BootcampKey | null>(null);
+  const [fontSizes, setFontSizes] = useState<FontSizeConfig>({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -134,12 +144,21 @@ export default function EditorPage() {
     setIsSidebarOpen(false);
   };
 
+  const handleCharacterUpdate = useCallback((updates: Partial<SelectedCharacter>) => {
+    setSelectedCharacter(prev => prev ? { ...prev, ...updates } : null);
+  }, []);
+
+  const handleCharacterDelete = useCallback(() => {
+    setSelectedCharacter(null);
+  }, []);
+
   const handleReset = () => {
     setFields(defaultFields);
     setSelectedDesignId(null);
     setCustomColors(null);
     setSelectedCharacter(null);
     setSelectedCourse(null);
+    setFontSizes({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
@@ -336,6 +355,8 @@ export default function EditorPage() {
           onCharacterSelect={handleCharacterSelect}
           selectedCourse={selectedCourse}
           onCourseSelect={setSelectedCourse}
+          fontSizes={fontSizes}
+          onFontSizesChange={setFontSizes}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -352,6 +373,8 @@ export default function EditorPage() {
           onCharacterSelect={handleCharacterSelect}
           selectedCourse={selectedCourse}
           onCourseSelect={setSelectedCourse}
+          fontSizes={fontSizes}
+          onFontSizesChange={setFontSizes}
         />
 
         {/* Right Panel - Live Preview */}
@@ -364,6 +387,9 @@ export default function EditorPage() {
           selectedCharacter={selectedCharacter}
           jesterLine={jesterLine}
           selectedCourse={selectedCourse}
+          fontSizes={fontSizes}
+          onCharacterUpdate={handleCharacterUpdate}
+          onCharacterDelete={handleCharacterDelete}
         />
       </div>
 

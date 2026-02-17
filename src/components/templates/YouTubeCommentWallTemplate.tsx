@@ -83,7 +83,7 @@ export function YouTubeCommentWallTemplate({
   ) : (
     <>
       <span style={{ color: BRAND.colors.textWhite }}>1 MILLION+ SUBSCRIBERS </span>
-      <span style={{ color: '#c7f464' }}>CAN&apos;T BE WRONG.</span>
+      <span style={{ color: 'var(--sigma-headline-accent-color)' }}>CAN&apos;T BE WRONG.</span>
     </>
   );
 
@@ -108,7 +108,7 @@ export function YouTubeCommentWallTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 52 * scale, fontWeight: 900,
+          fontSize: 'var(--sigma-headline-size)', fontWeight: 900,
           fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
           textTransform: 'uppercase' as const, margin: 0,
         }}>

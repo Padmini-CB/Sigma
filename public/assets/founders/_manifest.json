@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "people": [
+    {
+      "id": "dhaval",
+      "name": "Dhaval Patel",
+      "role": "CEO & Co-founder",
+      "portrait": "Dhaval.png",
+      "expressions": [
+        { "id": "eurekamoment", "label": "Eureka Moment", "file": "dhaval-eurekamoment-new-nobg.png" },
+        { "id": "excited", "label": "Excited", "file": "dhaval-excited-new-nobg.png" },
+        { "id": "frustrated", "label": "Frustrated", "file": "dhaval-frustrated-new-nobg.png" },
+        { "id": "happy", "label": "Happy", "file": "dhaval-happy-new-nobg.png" },
+        { "id": "holding", "label": "Holding/Presenting", "file": "dhaval-holding-new-nobg.png" },
+        { "id": "holdingatool", "label": "Holding a Tool", "file": "dhaval-holdingatool-new-nobg.png" },
+        { "id": "money", "label": "Money", "file": "dhaval-money-new-nobg.png" },
+        { "id": "pointingdown", "label": "Pointing Down", "file": "dhaval-pointingdown-new-nobg.png" },
+        { "id": "pointingtoscreen", "label": "Pointing to Screen", "file": "dhaval-pointingtoscreen-new-nobg.png" },
+        { "id": "scratchinghead", "label": "Scratching Head", "file": "dhaval-scratchinghead-new-nobg.png" },
+        { "id": "showinghand", "label": "Showing Hand", "file": "dhaval-showinghand-new-nobg.png" },
+        { "id": "thinking", "label": "Thinking", "file": "dhaval-thinking-new-nobg.png" },
+        { "id": "thinkingdeep", "label": "Thinking Deep", "file": "dhaval-thinkingdeep-new-nobg.png" },
+        { "id": "thumbsup", "label": "Thumbs Up", "file": "dhaval-thumbsup-new-nobg.png" },
+        { "id": "working", "label": "Working", "file": "dhaval-working-new-nobg.png" }
+      ]
+    },
+    {
+      "id": "hemanand",
+      "name": "Hemanand Vadivel",
+      "role": "CTO & Co-founder",
+      "portrait": "Hemanand.png",
+      "expressions": []
+    },
+    {
+      "id": "both",
+      "name": "Both Founders",
+      "role": "Together",
+      "portrait": "Both.png",
+      "expressions": []
+    }
+  ],
+  "expressionTypes": [
+    "happy",
+    "excited",
+    "frustrated",
+    "eurekamoment",
+    "holding",
+    "holdingatool",
+    "money",
+    "pointingdown",
+    "pointingtoscreen",
+    "scratchinghead",
+    "showinghand",
+    "thinking",
+    "thinkingdeep",
+    "thumbsup",
+    "working"
+  ]
+}

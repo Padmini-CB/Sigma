@@ -250,11 +250,11 @@ export function InterviewPlaybackTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginTop: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 48 * scale, fontWeight: 900, fontFamily: BRAND.fonts.heading,
+          fontSize: 'var(--sigma-headline-size)', fontWeight: 900, fontFamily: BRAND.fonts.heading,
           lineHeight: 1.1, margin: 0, textTransform: 'uppercase' as const,
         }}>
           <span style={{ color: BRAND.colors.textWhite }}>WHICH CANDIDATE GETS</span>
-          <span style={{ color: '#c7f464' }}> THE CALLBACK?</span>
+          <span style={{ color: 'var(--sigma-headline-accent-color)' }}> THE CALLBACK?</span>
         </h1>
       </div>
 
