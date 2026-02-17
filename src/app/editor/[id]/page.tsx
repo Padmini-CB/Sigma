@@ -11,6 +11,7 @@ import { useToast } from '@/components/Toast';
 import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal';
 import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
 import { type BootcampKey } from '@/data/products';
+import { type FontSizeConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET } from '@/config/fontSizes';
 
 interface Template {
   id: string;
@@ -93,6 +94,7 @@ export default function EditorPage() {
   const [showAIModal, setShowAIModal] = useState(false);
   const [jesterLine, setJesterLine] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<BootcampKey | null>(null);
+  const [fontSizes, setFontSizes] = useState<FontSizeConfig>({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
 
@@ -140,6 +142,7 @@ export default function EditorPage() {
     setCustomColors(null);
     setSelectedCharacter(null);
     setSelectedCourse(null);
+    setFontSizes({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
@@ -336,6 +339,8 @@ export default function EditorPage() {
           onCharacterSelect={handleCharacterSelect}
           selectedCourse={selectedCourse}
           onCourseSelect={setSelectedCourse}
+          fontSizes={fontSizes}
+          onFontSizesChange={setFontSizes}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -352,6 +357,8 @@ export default function EditorPage() {
           onCharacterSelect={handleCharacterSelect}
           selectedCourse={selectedCourse}
           onCourseSelect={setSelectedCourse}
+          fontSizes={fontSizes}
+          onFontSizesChange={setFontSizes}
         />
 
         {/* Right Panel - Live Preview */}
@@ -364,6 +371,7 @@ export default function EditorPage() {
           selectedCharacter={selectedCharacter}
           jesterLine={jesterLine}
           selectedCourse={selectedCourse}
+          fontSizes={fontSizes}
         />
       </div>
 

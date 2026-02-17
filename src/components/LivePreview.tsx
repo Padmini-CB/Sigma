@@ -22,6 +22,7 @@ import { YouTubeCommentWallTemplate } from '@/components/templates/YouTubeCommen
 import { YouTubeThumbnailTemplate } from '@/components/templates/YouTubeThumbnailTemplate';
 import { MicroCourseTeaserTemplate } from '@/components/templates/MicroCourseTeaserTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
+import { type FontSizeConfig, FONT_COLORS } from '@/config/fontSizes';
 
 interface Template {
   id: string;
@@ -46,13 +47,14 @@ interface LivePreviewProps {
   selectedCharacter?: SelectedCharacter | null;
   jesterLine?: string | null;
   selectedCourse?: BootcampKey | null;
+  fontSizes?: FontSizeConfig;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +66,28 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
 
   const activeColors = customColors || template.previewColors;
+
+  // CSS custom properties for font sizes and brand colors on the canvas
+  const sigmaVars = useMemo(() => {
+    if (!fontSizes) return {};
+    return {
+      '--sigma-headline-size': `${fontSizes.headline}px`,
+      '--sigma-subheadline-size': `${fontSizes.subheadline}px`,
+      '--sigma-body-size': `${fontSizes.body}px`,
+      '--sigma-card-title-size': `${fontSizes.cardTitle}px`,
+      '--sigma-label-size': `${fontSizes.label}px`,
+      '--sigma-stat-number-size': `${fontSizes.statNumber}px`,
+      '--sigma-cta-size': `${fontSizes.cta}px`,
+      '--sigma-bottom-bar-size': `${fontSizes.bottomBar}px`,
+      '--sigma-headline-color': FONT_COLORS.headline,
+      '--sigma-headline-accent-color': FONT_COLORS.headlineAccent,
+      '--sigma-body-color': FONT_COLORS.body,
+      '--sigma-label-color': FONT_COLORS.label,
+      '--sigma-stat-color': FONT_COLORS.statNumber,
+      '--sigma-cta-color': FONT_COLORS.cta,
+      '--sigma-cta-bg': FONT_COLORS.ctaBackground,
+    };
+  }, [fontSizes]);
 
   useEffect(() => {
     const updateSize = () => {
@@ -168,7 +192,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
 
           <div
             className="relative shadow-2xl"
-            style={previewStyle}
+            style={{ ...previewStyle, ...sigmaVars } as React.CSSProperties}
           >
             <TemplateContent
               fields={fields}
@@ -217,7 +241,8 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             width: template.dimensions.width,
             height: template.dimensions.height,
             overflow: 'visible',
-          }}
+            ...sigmaVars,
+          } as React.CSSProperties}
         >
           <TemplateContent
             fields={fields}
