@@ -86,20 +86,20 @@ export function DailyBreakdownTemplate({
           {/* Big daily price */}
           <div>
             <div style={{
-              fontSize: 72 * scale, fontWeight: 900, color: '#c7f464',
+              fontSize: 'var(--sigma-headline-size)', fontWeight: 900, color: 'var(--sigma-stat-color)',
               fontFamily: BRAND.fonts.heading, lineHeight: 1,
               textTransform: 'uppercase' as const,
             }}>
               {dailyPrice}/DAY
             </div>
             <div style={{
-              fontSize: 26 * scale, fontWeight: 400, color: BRAND.colors.textWhite,
+              fontSize: 'var(--sigma-subheadline-size)', fontWeight: 400, color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.body, marginTop: 4 * scale,
             }}>
               That&apos;s all it takes.
             </div>
             <div style={{
-              fontSize: 17 * scale, fontWeight: 300, color: 'rgba(255,255,255,0.55)',
+              fontSize: 'var(--sigma-label-size)', fontWeight: 300, color: 'rgba(255,255,255,0.55)',
               fontFamily: BRAND.fonts.body, marginTop: 2 * scale,
             }}>
               {price} &divide; 4 months = one career transformation
@@ -200,7 +200,7 @@ export function DailyBreakdownTemplate({
                     padding: `${3 * scale}px 0`,
                     borderRadius: 6 * scale,
                     border: isHighlighted
-                      ? `2px solid #c7f464`
+                      ? `2px solid var(--sigma-stat-color)`
                       : '1px solid rgba(255,255,255,0.05)',
                     background: isHighlighted
                       ? 'rgba(199,244,100,0.08)'
@@ -211,7 +211,7 @@ export function DailyBreakdownTemplate({
                       fontSize: 11 * scale,
                       fontWeight: isHighlighted ? 700 : 400,
                       color: isHighlighted
-                        ? '#c7f464'
+                        ? 'var(--sigma-stat-color)'
                         : isCompleted
                           ? 'rgba(255,255,255,0.7)'
                           : 'rgba(255,255,255,0.35)',
@@ -300,7 +300,7 @@ export function DailyBreakdownTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginTop: 8 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 36 * scale, fontWeight: 900,
+          fontSize: 'var(--sigma-subheadline-size)', fontWeight: 900,
           fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
           margin: 0, textTransform: 'uppercase' as const,
         }}>
@@ -310,7 +310,7 @@ export function DailyBreakdownTemplate({
               return (
                 <>
                   <span style={{ color: BRAND.colors.textWhite }}>{headline.slice(0, eqIdx + 1)}</span>
-                  <span style={{ color: '#c7f464' }}>{headline.slice(eqIdx + 1)}</span>
+                  <span style={{ color: 'var(--sigma-headline-accent-color)' }}>{headline.slice(eqIdx + 1)}</span>
                 </>
               );
             }

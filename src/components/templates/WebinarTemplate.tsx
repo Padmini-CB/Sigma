@@ -78,7 +78,7 @@ export function WebinarTemplate({
             border: '1px solid rgba(67,97,238,0.4)',
             borderRadius: 20,
             padding: '4px 14px',
-            fontSize: 14 * scale,
+            fontSize: 'var(--sigma-label-size)',
             fontWeight: 600,
             color: BRAND.colors.primaryBlue,
             fontFamily: BRAND.fonts.body,
@@ -96,9 +96,9 @@ export function WebinarTemplate({
         {/* Headline */}
         <h1
           style={{
-            fontSize: 60 * scale,
+            fontSize: 'var(--sigma-headline-size)',
             fontWeight: 800,
-            color: BRAND.colors.textWhite,
+            color: 'var(--sigma-headline-color)',
             fontFamily: BRAND.fonts.heading,
             lineHeight: 1.05,
             textAlign: 'center',
@@ -109,8 +109,8 @@ export function WebinarTemplate({
         </h1>
         <p
           style={{
-            fontSize: 26 * scale,
-            color: BRAND.colors.textMuted,
+            fontSize: 'var(--sigma-subheadline-size)',
+            color: 'var(--sigma-body-color)',
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
             margin: 0,
@@ -144,10 +144,10 @@ export function WebinarTemplate({
                 />
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 18 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
+                <div style={{ fontSize: 'var(--sigma-card-title-size)', fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
                   {founder.name}
                 </div>
-                <div style={{ fontSize: 15 * scale, color: BRAND.colors.textMuted }}>
+                <div style={{ fontSize: 'var(--sigma-label-size)', color: 'var(--sigma-body-color)' }}>
                   {founder.role}
                 </div>
               </div>
@@ -158,8 +158,8 @@ export function WebinarTemplate({
         {/* Event details */}
         <p
           style={{
-            fontSize: 18 * scale,
-            color: BRAND.colors.textMuted,
+            fontSize: 'var(--sigma-body-size)',
+            color: 'var(--sigma-body-color)',
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
           }}

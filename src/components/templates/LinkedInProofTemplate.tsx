@@ -384,7 +384,7 @@ export function LinkedInProofTemplate({
 
       {/* Headline */}
       <h1 style={{
-        fontSize: 52 * scale,
+        fontSize: 'var(--sigma-headline-size)',
         fontWeight: 900,
         fontFamily: BRAND.fonts.heading,
         textAlign: 'center',
@@ -394,7 +394,7 @@ export function LinkedInProofTemplate({
         marginBottom: 10 * scale,
       }}>
         <span style={{ color: BRAND.colors.textWhite }}>REAL PROJECTS VS</span>
-        <span style={{ color: '#c7f464' }}> TUTORIALS</span>
+        <span style={{ color: 'var(--sigma-headline-accent-color)' }}> TUTORIALS</span>
       </h1>
 
       {/* ══════ Two LinkedIn Post Cards Side by Side ══════ */}
@@ -461,13 +461,13 @@ export function LinkedInProofTemplate({
             textAlign: 'center',
           }}>
             <div style={{
-              fontSize: 34 * scale, fontWeight: 900, color: '#c7f464',
+              fontSize: 'var(--sigma-stat-number-size)', fontWeight: 900, color: 'var(--sigma-stat-color)',
               fontFamily: BRAND.fonts.heading, lineHeight: 1.1,
             }}>
               {stat.number}
             </div>
             <div style={{
-              fontSize: 13 * scale, color: 'rgba(255,255,255,0.55)',
+              fontSize: 'var(--sigma-label-size)', color: 'rgba(255,255,255,0.55)',
               fontFamily: BRAND.fonts.body, fontWeight: 300, marginTop: 2,
             }}>
               {stat.label}

@@ -67,9 +67,9 @@ export function SocialAnnouncementTemplate({
         {/* Big headline */}
         <h1
           style={{
-            fontSize: 66 * scale,
+            fontSize: 'var(--sigma-headline-size)',
             fontWeight: 800,
-            color: BRAND.colors.textWhite,
+            color: 'var(--sigma-headline-color)',
             fontFamily: BRAND.fonts.heading,
             lineHeight: 1.0,
             textAlign: 'center',
@@ -82,8 +82,8 @@ export function SocialAnnouncementTemplate({
         {/* Subheadline */}
         <p
           style={{
-            fontSize: 26 * scale,
-            color: BRAND.colors.textMuted,
+            fontSize: 'var(--sigma-subheadline-size)',
+            color: 'var(--sigma-body-color)',
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
             margin: 0,
@@ -99,15 +99,15 @@ export function SocialAnnouncementTemplate({
             width: 60,
             height: 3,
             borderRadius: 2,
-            backgroundColor: '#4cc378',
+            backgroundColor: 'var(--sigma-stat-color)',
           }}
         />
 
         {/* Body text */}
         <p
           style={{
-            fontSize: 18 * scale,
-            color: BRAND.colors.textMuted,
+            fontSize: 'var(--sigma-body-size)',
+            color: 'var(--sigma-body-color)',
             fontFamily: BRAND.fonts.body,
             textAlign: 'center',
             margin: 0,
@@ -122,8 +122,8 @@ export function SocialAnnouncementTemplate({
         {/* Credibility */}
         <div
           style={{
-            fontSize: 16 * scale,
-            color: '#4cc378',
+            fontSize: 'var(--sigma-label-size)',
+            color: 'var(--sigma-stat-color)',
             fontFamily: BRAND.fonts.body,
             fontWeight: 600,
             textAlign: 'center',

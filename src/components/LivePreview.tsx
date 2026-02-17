@@ -68,17 +68,20 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   const activeColors = customColors || template.previewColors;
 
   // CSS custom properties for font sizes and brand colors on the canvas
+  // Sizes are pre-scaled to the canvas dimensions (base 1080) so templates
+  // can use var(--sigma-headline-size) directly without multiplying by scale.
   const sigmaVars = useMemo(() => {
     if (!fontSizes) return {};
+    const s = Math.min(template.dimensions.width, template.dimensions.height) / 1080;
     return {
-      '--sigma-headline-size': `${fontSizes.headline}px`,
-      '--sigma-subheadline-size': `${fontSizes.subheadline}px`,
-      '--sigma-body-size': `${fontSizes.body}px`,
-      '--sigma-card-title-size': `${fontSizes.cardTitle}px`,
-      '--sigma-label-size': `${fontSizes.label}px`,
-      '--sigma-stat-number-size': `${fontSizes.statNumber}px`,
-      '--sigma-cta-size': `${fontSizes.cta}px`,
-      '--sigma-bottom-bar-size': `${fontSizes.bottomBar}px`,
+      '--sigma-headline-size': `${fontSizes.headline * s}px`,
+      '--sigma-subheadline-size': `${fontSizes.subheadline * s}px`,
+      '--sigma-body-size': `${fontSizes.body * s}px`,
+      '--sigma-card-title-size': `${fontSizes.cardTitle * s}px`,
+      '--sigma-label-size': `${fontSizes.label * s}px`,
+      '--sigma-stat-number-size': `${fontSizes.statNumber * s}px`,
+      '--sigma-cta-size': `${fontSizes.cta * s}px`,
+      '--sigma-bottom-bar-size': `${fontSizes.bottomBar * s}px`,
       '--sigma-headline-color': FONT_COLORS.headline,
       '--sigma-headline-accent-color': FONT_COLORS.headlineAccent,
       '--sigma-body-color': FONT_COLORS.body,
@@ -87,7 +90,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       '--sigma-cta-color': FONT_COLORS.cta,
       '--sigma-cta-bg': FONT_COLORS.ctaBackground,
     };
-  }, [fontSizes]);
+  }, [fontSizes, template.dimensions.width, template.dimensions.height]);
 
   useEffect(() => {
     const updateSize = () => {

@@ -67,9 +67,9 @@ export function ChatGPTResumeTemplate({
           <div>
             <h1
               style={{
-                fontSize: 58 * scale,
+                fontSize: 'var(--sigma-headline-size)',
                 fontWeight: 800,
-                color: BRAND.colors.textWhite,
+                color: 'var(--sigma-headline-color)',
                 fontFamily: BRAND.fonts.heading,
                 lineHeight: 1.05,
                 margin: 0,
@@ -79,9 +79,9 @@ export function ChatGPTResumeTemplate({
             </h1>
             <h2
               style={{
-                fontSize: 58 * scale,
+                fontSize: 'var(--sigma-headline-size)',
                 fontWeight: 800,
-                color: BRAND.colors.accentGreen,
+                color: 'var(--sigma-headline-accent-color)',
                 fontFamily: BRAND.fonts.heading,
                 lineHeight: 1.05,
                 margin: 0,

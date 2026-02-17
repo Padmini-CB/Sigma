@@ -40,7 +40,7 @@ export function CareerMapTemplate({
   ) : (
     <>
       YOUR JOURNEY FROM ZERO TO JOB-READY IN{' '}
-      <span style={{ color: '#c7f464' }}>4 MONTHS</span>
+      <span style={{ color: 'var(--sigma-headline-accent-color)' }}>4 MONTHS</span>
     </>
   );
 
@@ -69,7 +69,7 @@ export function CareerMapTemplate({
       {/* Headline */}
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1 style={{
-          fontSize: 52 * scale, fontWeight: 900,
+          fontSize: 'var(--sigma-headline-size)', fontWeight: 900,
           color: BRAND.colors.textWhite,
           fontFamily: BRAND.fonts.heading,
           lineHeight: 1.1, textTransform: 'uppercase' as const, margin: 0,
@@ -122,7 +122,7 @@ export function CareerMapTemplate({
                   flex: 1, marginRight: 8 * scale,
                 }}>
                   <div style={{
-                    fontSize: 20 * scale, fontWeight: 700, color: milestone.color,
+                    fontSize: 'var(--sigma-card-title-size)', fontWeight: 700, color: milestone.color,
                     fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
                     letterSpacing: '0.04em', marginBottom: 3 * scale,
                     display: 'flex', alignItems: 'center', gap: 6 * scale,
@@ -131,7 +131,7 @@ export function CareerMapTemplate({
                     {isLast && <span style={{ fontSize: 18 * scale }}>&#10003;</span>}
                   </div>
                   <div style={{
-                    fontSize: 16 * scale, color: 'rgba(255,255,255,0.6)',
+                    fontSize: 'var(--sigma-body-size)', color: 'rgba(255,255,255,0.6)',
                     fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
                   }}>
                     {milestone.desc}

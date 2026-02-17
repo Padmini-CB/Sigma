@@ -64,9 +64,9 @@ export function AIvsRealSkillsTemplate({
       <div style={{ textAlign: 'center', marginBottom: 10 * scale, flexShrink: 0 }}>
         <h1
           style={{
-            fontSize: 58 * scale,
+            fontSize: 'var(--sigma-headline-size)',
             fontWeight: 900,
-            color: BRAND.colors.textWhite,
+            color: 'var(--sigma-headline-color)',
             fontFamily: BRAND.fonts.heading,
             lineHeight: 1.1,
           }}
@@ -92,7 +92,7 @@ export function AIvsRealSkillsTemplate({
         >
           <div
             style={{
-              fontSize: 20 * scale,
+              fontSize: 'var(--sigma-card-title-size)',
               fontWeight: 800,
               color: BRAND.colors.redWarning,
               fontFamily: BRAND.fonts.heading,
@@ -112,7 +112,7 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 17 * scale,
+                fontSize: 'var(--sigma-body-size)',
                 color: BRAND.colors.textMuted,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
@@ -139,7 +139,7 @@ export function AIvsRealSkillsTemplate({
         >
           <div
             style={{
-              fontSize: 20 * scale,
+              fontSize: 'var(--sigma-card-title-size)',
               fontWeight: 800,
               color: BRAND.colors.greenGrid,
               fontFamily: BRAND.fonts.heading,
@@ -159,7 +159,7 @@ export function AIvsRealSkillsTemplate({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: 8,
-                fontSize: 17 * scale,
+                fontSize: 'var(--sigma-body-size)',
                 color: BRAND.colors.textWhite,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,

@@ -86,9 +86,9 @@ export function PriceTransparencyTemplate({
           <div>
             <div
               style={{
-                fontSize: 64 * scale,
+                fontSize: 'var(--sigma-stat-number-size)',
                 fontWeight: 800,
-                color: BRAND.colors.accentGreen,
+                color: 'var(--sigma-stat-color)',
                 fontFamily: BRAND.fonts.heading,
                 lineHeight: 1,
               }}
@@ -97,8 +97,8 @@ export function PriceTransparencyTemplate({
             </div>
             <div
               style={{
-                fontSize: 24 * scale,
-                color: BRAND.colors.textMuted,
+                fontSize: 'var(--sigma-body-size)',
+                color: 'var(--sigma-body-color)',
                 fontFamily: BRAND.fonts.body,
                 marginTop: 6,
               }}
