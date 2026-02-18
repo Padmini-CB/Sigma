@@ -18,6 +18,8 @@ import {
 interface FontResizerProps {
   fontSizes: FontSizeConfig;
   onChange: (sizes: FontSizeConfig) => void;
+  /** Label showing which ad size is being edited, e.g. "Portrait (1080 × 1350)" */
+  activeSizeLabel?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -52,7 +54,7 @@ const PRESET_ORDER: PresetMode[] = ['desktop', 'balanced', 'mobile', 'bold'];
 // Component
 // ---------------------------------------------------------------------------
 
-export default function FontResizer({ fontSizes, onChange }: FontResizerProps) {
+export default function FontResizer({ fontSizes, onChange, activeSizeLabel }: FontResizerProps) {
   const [lastPreset, setLastPreset] = useState<PresetMode>(DEFAULT_PRESET);
 
   // Determine if current sizes exactly match any preset
@@ -93,6 +95,24 @@ export default function FontResizer({ fontSizes, onChange }: FontResizerProps) {
 
   return (
     <div className="space-y-6">
+      {/* ── CURRENT SIZE CONTEXT ── */}
+      {activeSizeLabel && (
+        <div
+          className="flex items-center gap-2 px-3 py-2 rounded-lg"
+          style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)' }}
+        >
+          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke={BRAND_COLORS.brandBlue} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <span
+            className="text-xs font-bold"
+            style={{ color: BRAND_COLORS.brandBlue, fontFamily: "'Saira Condensed', sans-serif", letterSpacing: '0.5px' }}
+          >
+            Editing: {activeSizeLabel}
+          </span>
+        </div>
+      )}
+
       {/* ── PRESET SECTION ── */}
       <div>
         <h3

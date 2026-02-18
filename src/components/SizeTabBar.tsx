@@ -9,6 +9,8 @@ interface SizeTabBarProps {
   onDownloadAll: () => void;
   isExporting: boolean;
   isExportingAll: boolean;
+  /** Set of size IDs that have been manually customized */
+  editedSizes?: Set<string>;
 }
 
 export default function SizeTabBar({
@@ -18,6 +20,7 @@ export default function SizeTabBar({
   onDownloadAll,
   isExporting,
   isExportingAll,
+  editedSizes,
 }: SizeTabBarProps) {
   const anyBusy = isExporting || isExportingAll;
 
@@ -33,6 +36,7 @@ export default function SizeTabBar({
       <div className="flex items-center gap-0 min-w-0 overflow-x-auto hide-scrollbar">
         {AD_SIZES.map(size => {
           const isActive = size.id === activeSize.id;
+          const isEdited = editedSizes?.has(size.id);
           return (
             <button
               key={size.id}
@@ -43,6 +47,13 @@ export default function SizeTabBar({
                 borderBottom: isActive ? '2px solid #3B82F6' : '2px solid transparent',
               }}
             >
+              {isEdited && (
+                <span
+                  className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: '#D7EF3F' }}
+                  title="Typography customized"
+                />
+              )}
               <span
                 className="font-headline"
                 style={{

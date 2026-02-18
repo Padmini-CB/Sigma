@@ -95,6 +95,46 @@ export const FONT_SIZE_PRESETS: Record<PresetMode, PresetMeta> = {
 export const DEFAULT_PRESET: PresetMode = "mobile";
 
 // ---------------------------------------------------------------------------
+// Per-Size Font Sizes — each ad size can have its own independent font config
+// ---------------------------------------------------------------------------
+
+/** Map from AdSize.id to its own FontSizeConfig */
+export type PerSizeFontConfig = Record<string, FontSizeConfig>;
+
+/** Scale multipliers applied to the "mobile" preset to create smart defaults per size */
+const PER_SIZE_SCALE: Record<string, { preset: PresetMode; scale: number }> = {
+  "meta-feed":    { preset: "mobile", scale: 1.0 },
+  "portrait":     { preset: "mobile", scale: 1.05 },
+  "story":        { preset: "mobile", scale: 1.15 },
+  "landscape":    { preset: "mobile", scale: 0.85 },
+  "youtube-thumb":{ preset: "bold",   scale: 1.0 },
+};
+
+function scaleSizes(base: FontSizeConfig, factor: number): FontSizeConfig {
+  return {
+    headline: Math.round(base.headline * factor),
+    subheadline: Math.round(base.subheadline * factor),
+    body: Math.round(base.body * factor),
+    cardTitle: Math.round(base.cardTitle * factor),
+    label: Math.round(base.label * factor),
+    statNumber: Math.round(base.statNumber * factor),
+    cta: Math.round(base.cta * factor),
+    bottomBar: Math.round(base.bottomBar * factor),
+  };
+}
+
+/** Build initial per-size font config with smart defaults for each ad size */
+export function buildDefaultPerSizeFonts(sizeIds: string[]): PerSizeFontConfig {
+  const result: PerSizeFontConfig = {};
+  for (const id of sizeIds) {
+    const entry = PER_SIZE_SCALE[id] ?? { preset: "mobile" as PresetMode, scale: 1.0 };
+    const base = FONT_SIZE_PRESETS[entry.preset].sizes;
+    result[id] = scaleSizes(base, entry.scale);
+  }
+  return result;
+}
+
+// ---------------------------------------------------------------------------
 // Font Family & Weight Config
 // ---------------------------------------------------------------------------
 

@@ -27,8 +27,8 @@ import { StatPunchTemplate } from '@/components/templates/StatPunchTemplate';
 import { BeforeAfterSplitTemplate } from '@/components/templates/BeforeAfterSplitTemplate';
 import { ToolShowcaseTemplate } from '@/components/templates/ToolShowcaseTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
-import { type FontSizeConfig, FONT_COLORS } from '@/config/fontSizes';
-import { getAdSizeConfig } from '@/config/adSizes';
+import { type FontSizeConfig, type PerSizeFontConfig, FONT_COLORS } from '@/config/fontSizes';
+import { getAdSizeConfig, AD_SIZES } from '@/config/adSizes';
 
 interface Template {
   id: string;
@@ -58,12 +58,16 @@ interface LivePreviewProps {
   onCharacterDelete?: () => void;
   /** Override canvas dimensions (from size tab bar). Falls back to template.dimensions. */
   overrideDimensions?: { width: number; height: number };
+  /** Per-size font configs for batch export. Key = AdSize.id */
+  perSizeFonts?: PerSizeFontConfig;
+  /** Per-size character placements for batch export. Key = AdSize.id */
+  perSizeCharacter?: Record<string, SelectedCharacter | null>;
 }
 
 export interface LivePreviewHandle {
   getExportElement: () => HTMLDivElement | null;
-  /** Render at arbitrary dimensions into a temporary DOM node and return PNG data URL */
-  renderAtSize: (width: number, height: number) => Promise<string>;
+  /** Render at arbitrary dimensions. Optionally pass per-size font config and character for batch export. */
+  renderAtSize: (width: number, height: number, sizeFonts?: FontSizeConfig, sizeCharacter?: SelectedCharacter | null) => Promise<string>;
 }
 
 /** Build sigma CSS vars for a given width/height pair */
@@ -90,7 +94,7 @@ function buildSigmaVars(fontSizes: FontSizeConfig | undefined, width: number, he
   };
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions, perSizeFonts, perSizeCharacter }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -100,9 +104,11 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   useImperativeHandle(ref, () => ({
     getExportElement: () => exportRef.current,
 
-    renderAtSize: async (w: number, h: number): Promise<string> => {
+    renderAtSize: async (w: number, h: number, sizeFonts?: FontSizeConfig, _sizeCharacter?: SelectedCharacter | null): Promise<string> => {
+      // Use per-size font config if provided, otherwise fall back to current fontSizes
+      const effectiveFonts = sizeFonts ?? fontSizes;
       // Create a temporary off-screen container, render template at w×h, capture PNG
-      const vars = buildSigmaVars(fontSizes, w, h);
+      const vars = buildSigmaVars(effectiveFonts, w, h);
       const container = document.createElement('div');
       Object.assign(container.style, {
         position: 'fixed', left: '-99999px', top: '-99999px', pointerEvents: 'none',

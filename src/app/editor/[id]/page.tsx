@@ -11,7 +11,7 @@ import { useToast } from '@/components/Toast';
 import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal';
 import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
 import { type BootcampKey } from '@/data/products';
-import { type FontSizeConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET } from '@/config/fontSizes';
+import { type FontSizeConfig, type PerSizeFontConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET, buildDefaultPerSizeFonts } from '@/config/fontSizes';
 import SizeTabBar from '@/components/SizeTabBar';
 import { AD_SIZES, DEFAULT_AD_SIZE, type AdSize } from '@/config/adSizes';
 
@@ -99,16 +99,49 @@ export default function EditorPage() {
   const [fields, setFields] = useState<EditorFields>(initialFields);
   const [selectedDesignId, setSelectedDesignId] = useState<string | null>(null);
   const [customColors, setCustomColors] = useState<string[] | null>(null);
-  const [selectedCharacter, setSelectedCharacter] = useState<SelectedCharacter | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
   const [jesterLine, setJesterLine] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<BootcampKey | null>(null);
-  const [fontSizes, setFontSizes] = useState<FontSizeConfig>({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
   const [activeSize, setActiveSize] = useState<AdSize>(DEFAULT_AD_SIZE);
   const [isExportingAll, setIsExportingAll] = useState(false);
   const previewRef = useRef<LivePreviewHandle>(null);
   const { exportPng, isExporting } = useExportPng();
+
+  // ── Per-size font state ──
+  const [perSizeFonts, setPerSizeFonts] = useState<PerSizeFontConfig>(() =>
+    buildDefaultPerSizeFonts(AD_SIZES.map(s => s.id)),
+  );
+  // Track which sizes have been manually edited (for badge indicators)
+  const [editedSizes, setEditedSizes] = useState<Set<string>>(new Set());
+
+  // Derived: current size's font config
+  const fontSizes = perSizeFonts[activeSize.id] ?? { ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes };
+  const setFontSizes = useCallback((sizes: FontSizeConfig) => {
+    setPerSizeFonts(prev => ({ ...prev, [activeSize.id]: sizes }));
+    setEditedSizes(prev => { const next = new Set(prev); next.add(activeSize.id); return next; });
+  }, [activeSize.id]);
+
+  // ── Per-size character placement ──
+  const [perSizeCharacter, setPerSizeCharacter] = useState<Record<string, SelectedCharacter | null>>({});
+
+  // Derived: current size's character
+  const selectedCharacter = perSizeCharacter[activeSize.id] ?? null;
+  const setSelectedCharacter = useCallback((char: SelectedCharacter | null) => {
+    setPerSizeCharacter(prev => ({ ...prev, [activeSize.id]: char }));
+  }, [activeSize.id]);
+
+  // Apply character to ALL sizes (convenience action)
+  const handleApplyCharacterToAll = useCallback(() => {
+    const current = perSizeCharacter[activeSize.id] ?? null;
+    setPerSizeCharacter(() => {
+      const next: Record<string, SelectedCharacter | null> = {};
+      for (const size of AD_SIZES) {
+        next[size.id] = current;
+      }
+      return next;
+    });
+  }, [activeSize.id, perSizeCharacter]);
 
   // Auto-select design from query params (e.g., coming from concept flow)
   useEffect(() => {
@@ -149,8 +182,12 @@ export default function EditorPage() {
   };
 
   const handleCharacterUpdate = useCallback((updates: Partial<SelectedCharacter>) => {
-    setSelectedCharacter(prev => prev ? { ...prev, ...updates } : null);
-  }, []);
+    setPerSizeCharacter(prev => {
+      const current = prev[activeSize.id] ?? null;
+      if (!current) return prev;
+      return { ...prev, [activeSize.id]: { ...current, ...updates } };
+    });
+  }, [activeSize.id]);
 
   const handleCharacterDelete = useCallback(() => {
     setSelectedCharacter(null);
@@ -160,9 +197,10 @@ export default function EditorPage() {
     setFields(defaultFields);
     setSelectedDesignId(null);
     setCustomColors(null);
-    setSelectedCharacter(null);
+    setPerSizeCharacter({});
     setSelectedCourse(null);
-    setFontSizes({ ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes });
+    setPerSizeFonts(buildDefaultPerSizeFonts(AD_SIZES.map(s => s.id)));
+    setEditedSizes(new Set());
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
@@ -253,7 +291,9 @@ export default function EditorPage() {
         .replace(/(^-|-$)/g, '');
 
       for (const size of AD_SIZES) {
-        const dataUrl = await previewRef.current.renderAtSize(size.width, size.height);
+        const sizeFonts = perSizeFonts[size.id] ?? fontSizes;
+        const sizeChar = perSizeCharacter[size.id] ?? null;
+        const dataUrl = await previewRef.current.renderAtSize(size.width, size.height, sizeFonts, sizeChar);
         // Convert data URL to binary
         const base64 = dataUrl.split(',')[1];
         zip.file(`${sanitizedName}-${size.width}x${size.height}.png`, base64, { base64: true });
@@ -376,6 +416,7 @@ export default function EditorPage() {
         onDownloadAll={handleDownloadAll}
         isExporting={isExporting}
         isExportingAll={isExportingAll}
+        editedSizes={editedSizes}
       />
 
       {/* Main Editor Area */}
@@ -393,6 +434,8 @@ export default function EditorPage() {
           onCourseSelect={setSelectedCourse}
           fontSizes={fontSizes}
           onFontSizesChange={setFontSizes}
+          activeSizeLabel={`${activeSize.label} (${activeSize.width} × ${activeSize.height})`}
+          onApplyCharacterToAll={handleApplyCharacterToAll}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -411,6 +454,8 @@ export default function EditorPage() {
           onCourseSelect={setSelectedCourse}
           fontSizes={fontSizes}
           onFontSizesChange={setFontSizes}
+          activeSizeLabel={`${activeSize.label} (${activeSize.width} × ${activeSize.height})`}
+          onApplyCharacterToAll={handleApplyCharacterToAll}
         />
 
         {/* Right Panel - Live Preview */}
@@ -427,6 +472,8 @@ export default function EditorPage() {
           onCharacterUpdate={handleCharacterUpdate}
           onCharacterDelete={handleCharacterDelete}
           overrideDimensions={{ width: activeSize.width, height: activeSize.height }}
+          perSizeFonts={perSizeFonts}
+          perSizeCharacter={perSizeCharacter}
         />
       </div>
 

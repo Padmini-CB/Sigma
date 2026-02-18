@@ -37,6 +37,10 @@ interface EditorSidebarProps {
   onCourseSelect?: (course: BootcampKey | null) => void;
   fontSizes?: FontSizeConfig;
   onFontSizesChange?: (sizes: FontSizeConfig) => void;
+  /** Label for which size is being edited, e.g. "Portrait (1080 × 1350)" */
+  activeSizeLabel?: string;
+  /** Copy current character placement to all sizes */
+  onApplyCharacterToAll?: () => void;
 }
 
 interface FieldConfig {
@@ -233,6 +237,8 @@ function SidebarContent({
   onCourseSelect,
   fontSizes,
   onFontSizesChange,
+  activeSizeLabel,
+  onApplyCharacterToAll,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets' | 'ai-assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
@@ -332,11 +338,19 @@ function SidebarContent({
                   </svg>
                 </button>
               </div>
+              {onApplyCharacterToAll && (
+                <button
+                  onClick={onApplyCharacterToAll}
+                  className="mt-2 w-full text-center px-2 py-1.5 rounded text-xs font-ui font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+                >
+                  Apply to all sizes
+                </button>
+              )}
             </div>
           )}
 
           <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
-            Characters — Click to add to canvas
+            Characters — Click to add to this size
           </p>
           <div className="space-y-2 mb-6">
             {CHARACTER_LIST.map((charConfig) => {
@@ -700,7 +714,7 @@ function SidebarContent({
             </button>
             {isTypographyOpen && (
               <div className="rounded-xl p-4" style={{ backgroundColor: '#181830' }}>
-                <FontResizer fontSizes={fontSizes} onChange={onFontSizesChange} />
+                <FontResizer fontSizes={fontSizes} onChange={onFontSizesChange} activeSizeLabel={activeSizeLabel} />
               </div>
             )}
           </div>
@@ -811,6 +825,8 @@ export default function EditorSidebar({
   onCourseSelect,
   fontSizes,
   onFontSizesChange,
+  activeSizeLabel,
+  onApplyCharacterToAll,
 }: EditorSidebarProps) {
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -856,6 +872,8 @@ export default function EditorSidebar({
             onCourseSelect={onCourseSelect}
             fontSizes={fontSizes}
             onFontSizesChange={onFontSizesChange}
+            activeSizeLabel={activeSizeLabel}
+            onApplyCharacterToAll={onApplyCharacterToAll}
           />
         </aside>
       </>
@@ -878,6 +896,8 @@ export default function EditorSidebar({
         onCourseSelect={onCourseSelect}
         fontSizes={fontSizes}
         onFontSizesChange={onFontSizesChange}
+        activeSizeLabel={activeSizeLabel}
+        onApplyCharacterToAll={onApplyCharacterToAll}
       />
     </aside>
   );

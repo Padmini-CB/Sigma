@@ -121,15 +121,20 @@ export default function AssetGenerator({
       try {
         const res = await fetch('/api/gemini', {
           method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt: style, type: 'background' }),
         });
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => null);
+          throw new Error(errData?.error ?? `HTTP ${res.status}`);
+        }
 
         const data: { image: string } = await res.json();
         bgCacheRef.current.set(style, data.image);
         setBgCacheVersion((v) => v + 1);
-      } catch {
+      } catch (err) {
+        console.error('[AssetGenerator] Background generation failed:', err);
         setBgError(style);
       } finally {
         setBgGenerating(null);
@@ -149,10 +154,14 @@ export default function AssetGenerator({
     try {
       const res = await fetch('/api/gemini', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: customPrompt.trim(), type: 'custom' }),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.error ?? `HTTP ${res.status}`);
+      }
 
       const data: { image: string } = await res.json();
       setCustomResult(data.image);
@@ -162,7 +171,8 @@ export default function AssetGenerator({
         const next = [data.image, ...prev];
         return next.slice(0, 5);
       });
-    } catch {
+    } catch (err) {
+      console.error('[AssetGenerator] Custom generation failed:', err);
       setCustomError(true);
     } finally {
       setCustomGenerating(false);

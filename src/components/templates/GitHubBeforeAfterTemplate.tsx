@@ -119,27 +119,39 @@ export function GitHubBeforeAfterTemplate({
     );
   }
 
-  // ---- Story: Vertical stack — headline centered on top, grids below (full width) ----
+  // ---- Story: Vertical stack — proportional sections (25% header, 50% content, 10% CTA, 15% spacing) ----
   if (layoutMode === 'story') {
     return (
-      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
-        {topBar}
-        {/* Headline centered */}
-        <div style={{ flexShrink: 0, textAlign: 'center', padding: `${12 * scale}px 0` }}>
-          {headlineBlock}
-        </div>
-        {/* Grids stacked vertically, full width */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 18 * scale, overflow: 'hidden' }}>
-          <div style={{ flex: 1 }}>
-            <GitHubGrid variant="before" label="BEFORE" statNumber={beforeStat.split(' ')[0]} statLabel={beforeStat.split(' ').slice(1).join(' ')} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <GitHubGrid variant="after" label="AFTER" statNumber={afterStat.split(' ')[0]} statLabel={afterStat.split(' ').slice(1).join(' ')} />
+      <div style={{ ...wrapperBase, padding: 32 * scale, display: 'flex', flexDirection: 'column' }}>
+        {/* Header section ~25% */}
+        <div style={{ flex: '0 0 20%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          {topBar}
+          <div style={{ textAlign: 'center', padding: `${16 * scale}px 0` }}>
+            {headlineBlock}
           </div>
         </div>
-        {/* Bottom bar */}
-        <div style={{ flexShrink: 0 }}>
-          <BottomBar courseName={courseName} cta={cta} />
+
+        {/* Spacing */}
+        <div style={{ flex: '0 0 3%' }} />
+
+        {/* Content section ~55% — grids stacked vertically, full width */}
+        <div style={{ flex: '0 0 55%', display: 'flex', flexDirection: 'column', gap: 16 * scale, minHeight: 0 }}>
+          <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
+            <GitHubGrid responsive variant="before" label="BEFORE" statNumber={beforeStat.split(' ')[0]} statLabel={beforeStat.split(' ').slice(1).join(' ')} />
+          </div>
+          <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
+            <GitHubGrid responsive variant="after" label="AFTER" statNumber={afterStat.split(' ')[0]} statLabel={afterStat.split(' ').slice(1).join(' ')} />
+          </div>
+        </div>
+
+        {/* Spacing */}
+        <div style={{ flex: '0 0 5%' }} />
+
+        {/* CTA / Bottom bar ~10% */}
+        <div style={{ flex: '0 0 10%', display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: '100%' }}>
+            <BottomBar courseName={courseName} cta={cta} />
+          </div>
         </div>
       </div>
     );
