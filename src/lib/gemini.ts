@@ -99,6 +99,14 @@ const BACKGROUND_PROMPTS: Record<string, string> = {
     'Low-poly geometric triangles and hexagons in #3B82F6 (blue) and #6F53C1 (purple) at varying opacity.',
     'Modern, tech-forward aesthetic. No text, no logos.',
   ].join(' '),
+
+  'code-rain': [
+    'Generate a 1080x1080 dark background image.',
+    'Base: #181830 dark navy.',
+    'Matrix-style falling code rain effect with columns of characters (0s, 1s, brackets, semicolons) in #3B82F6 (blue) at 30% opacity.',
+    'Some highlighted streams in #D7EF3F (lime yellow) at 15% opacity.',
+    'Digital, hacker aesthetic. No text, no logos.',
+  ].join(' '),
 };
 
 // ---------------------------------------------------------------------------

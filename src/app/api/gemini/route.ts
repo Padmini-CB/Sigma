@@ -10,7 +10,11 @@ export async function POST(request: Request) {
     }
 
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: 'GEMINI_API_KEY not configured' }, { status: 500 });
+      console.error('[Gemini API] GEMINI_API_KEY environment variable is not set. Add it to .env.local');
+      return NextResponse.json(
+        { error: 'GEMINI_API_KEY not configured. Add GEMINI_API_KEY=your-key to .env.local' },
+        { status: 500 },
+      );
     }
 
     let image: string;
@@ -61,6 +65,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ image });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Image generation failed';
+    console.error('[Gemini API] Generation error:', message);
     const status = message.includes('Rate limit') ? 429 : 500;
     return NextResponse.json({ error: message }, { status });
   }

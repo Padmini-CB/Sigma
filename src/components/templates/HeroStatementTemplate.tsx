@@ -132,26 +132,40 @@ export function HeroStatementTemplate({
     );
   }
 
-  // ---- Story: topBar at top, headline in upper portion (45%), photo area below (40%), BottomBar at bottom ----
+  // ---- Story: Proportional sections (25% header, 50% content, 10% CTA, 15% spacing) ----
   if (layoutMode === 'story') {
     return (
-      <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
-        {topBar}
-        {/* Headline upper portion 45% */}
+      <div style={{ ...wrapperBase, padding: 32 * scale, display: 'flex', flexDirection: 'column' }}>
+        {/* Header section ~20% — logo + badge */}
+        <div style={{ flex: '0 0 8%' }}>
+          {topBar}
+        </div>
+
+        {/* Headline section ~25% */}
         <div style={{
-          flex: '0 0 45%',
+          flex: '0 0 25%',
           display: 'flex',
           alignItems: 'center',
         }}>
           {headlineBlock}
         </div>
-        {/* Photo area 40% */}
-        <div style={{ flex: '0 0 40%' }}>
+
+        {/* Spacing */}
+        <div style={{ flex: '0 0 4%' }} />
+
+        {/* Photo area ~48% */}
+        <div style={{ flex: '0 0 48%' }}>
           {photoPlaceholder}
         </div>
-        {/* Bottom bar */}
-        <div style={{ flexShrink: 0 }}>
-          <BottomBar courseName={courseName} cta={cta} />
+
+        {/* Spacing */}
+        <div style={{ flex: '0 0 3%' }} />
+
+        {/* Bottom bar ~10% */}
+        <div style={{ flex: '0 0 10%', display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: '100%' }}>
+            <BottomBar courseName={courseName} cta={cta} />
+          </div>
         </div>
       </div>
     );
