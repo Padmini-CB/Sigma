@@ -91,7 +91,7 @@ export function MicroCourseTeaserTemplate({
       display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0,
     }}>
       <PadminiLogo />
-      <YouTubeBadge />
+      <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );
 

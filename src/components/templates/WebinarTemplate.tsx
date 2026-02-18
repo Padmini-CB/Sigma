@@ -65,7 +65,7 @@ export function WebinarTemplate({
   const topBar = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, zIndex: 1 }}>
       <PadminiLogo />
-      <YouTubeBadge />
+      <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );
 

@@ -59,7 +59,7 @@ export function AIvsRealSkillsTemplate({
   const topBar = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
       <PadminiLogo />
-      <YouTubeBadge />
+      <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );
 

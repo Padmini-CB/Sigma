@@ -380,7 +380,7 @@ export function LinkedInProofTemplate({
   const topBar = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
       <PadminiLogo />
-      <YouTubeBadge />
+      <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );
 
@@ -593,7 +593,7 @@ export function LinkedInProofTemplate({
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
         <PadminiLogo />
-        <YouTubeBadge />
+        <YouTubeBadge layoutMode={layoutMode} />
       </div>
 
       {/* Headline */}
