@@ -157,6 +157,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             if (node.style) {
               node.style.outline = 'none';
               node.style.boxShadow = 'none';
+              node.style.overflow = 'visible';
             }
             return true;
           },
@@ -220,9 +221,9 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
   }), [dims, finalScale]);
 
   return (
-    <main className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#1a1a2e' }}>
+    <div className="flex-1 self-start" style={{ backgroundColor: '#1a1a2e', borderRadius: 12, overflow: 'hidden' }}>
       {/* Preview Toolbar */}
-      <div className="border-b border-white/10 px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: '#151528' }}>
+      <div className="border-b border-white/10 px-4 sm:px-6 py-2 sm:py-3 flex items-center justify-between" style={{ backgroundColor: '#151528' }}>
         <div className="flex items-center gap-2 sm:gap-4">
           <h3 className="font-ui text-sm font-semibold text-white/70">Preview</h3>
           <span className="font-ui text-xs text-white/40 hidden sm:inline">
@@ -266,10 +267,10 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
         </div>
       </div>
 
-      {/* Canvas Workspace — scrollable like Canva */}
+      {/* Canvas Workspace — centered, scrolls with page */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-auto p-6 sm:p-10 flex items-center justify-center"
+        className="p-6 sm:p-10 flex items-start justify-center"
       >
         <div
           className="relative"
@@ -297,7 +298,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
       </div>
 
       {/* Preview Footer Info */}
-      <div className="border-t border-white/10 px-4 sm:px-6 py-2 flex-shrink-0" style={{ backgroundColor: '#151528' }}>
+      <div className="border-t border-white/10 px-4 sm:px-6 py-2" style={{ backgroundColor: '#151528' }}>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
             <span className="font-ui text-xs text-white/40 truncate">
@@ -343,7 +344,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
           />
         </div>
       </div>
-    </main>
+    </div>
   );
 });
 

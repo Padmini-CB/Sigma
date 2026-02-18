@@ -37,12 +37,14 @@ export function useExportPng(): UseExportPngReturn {
       // Dynamic import to avoid SSR issues
       const htmlToImage = await import('html-to-image');
 
-      // Filter function to remove focus outlines and box shadows
+      // Filter function to clean up cloned nodes for export
       const filterNode = (node: HTMLElement): boolean => {
         if (node.style) {
           node.style.outline = 'none';
           node.style.outlineWidth = '0';
           node.style.boxShadow = 'none';
+          // Prevent overflow clipping from cutting off CTA/bottom bar
+          node.style.overflow = 'visible';
         }
         return true;
       };

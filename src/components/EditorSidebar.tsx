@@ -243,7 +243,7 @@ function SidebarContent({
   const [activeTab, setActiveTab] = useState<'edit' | 'assets' | 'ai-assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
   const [isTypographyOpen, setIsTypographyOpen] = useState(true);
-  const [isPeopleOpen, setIsPeopleOpen] = useState(false);
+  const [isPeopleOpen, setIsPeopleOpen] = useState(true);
 
   return (
     <>
@@ -308,7 +308,7 @@ function SidebarContent({
 
       {activeTab === 'assets' ? (
         /* Assets Panel */
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="p-4">
           {/* Active character indicator */}
           {selectedCharacter && (
             <div className="mb-4 p-3 bg-green-50 border-2 border-green-300 rounded-lg">
@@ -584,7 +584,7 @@ function SidebarContent({
         </div>
       ) : activeTab === 'ai-assets' ? (
         /* AI Assets Panel */
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div>
           <AssetGenerator />
         </div>
       ) : (
@@ -651,7 +651,7 @@ function SidebarContent({
       </div>
 
       {/* Form Fields */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-5 min-h-0">
+      <div className="p-4 space-y-5">
         {topFieldConfigs.map((config) => (
           <FieldRenderer
             key={config.key}
@@ -880,9 +880,9 @@ export default function EditorSidebar({
     );
   }
 
-  // Desktop sidebar mode
+  // Desktop sidebar mode — no overflow, all sections visible, scrolls with page
   return (
-    <aside className="w-80 xl:w-96 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-hidden hidden lg:flex min-h-0">
+    <aside className="w-[380px] bg-white border border-gray-200 rounded-xl flex-shrink-0 hidden lg:block self-start">
       <SidebarContent
         fields={fields}
         onFieldChange={onFieldChange}

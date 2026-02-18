@@ -348,79 +348,80 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="h-screen bg-brand-gray/30 flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="bg-gradient-dark border-b border-white/10 flex-shrink-0">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors lg:hidden"
-                aria-label="Open editor sidebar"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
+    <div className="min-h-screen bg-brand-gray/30 flex flex-col">
+      {/* ── Sticky Top Bar: Header + Size Tabs ── */}
+      <div className="sticky top-0 z-50">
+        <header className="bg-gradient-dark border-b border-white/10">
+          <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                {/* Mobile menu button */}
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors lg:hidden"
+                  aria-label="Open editor sidebar"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
 
-              <button
-                onClick={() => router.push('/')}
-                className="hidden sm:flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                <span className="font-ui text-sm">Back</span>
-              </button>
-              <div className="h-6 w-px bg-white/20 hidden sm:block" />
-              <div className="min-w-0">
-                <h1 className="font-headline text-lg sm:text-xl font-bold text-white truncate">
-                  {template.name}
-                </h1>
-                <p className="font-ui text-xs text-gray-400 truncate">
-                  {activeSize.width} × {activeSize.height} • {template.platform}
-                </p>
+                <button
+                  onClick={() => router.push('/')}
+                  className="hidden sm:flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span className="font-ui text-sm">Back</span>
+                </button>
+                <div className="h-6 w-px bg-white/20 hidden sm:block" />
+                <div className="min-w-0">
+                  <h1 className="font-headline text-lg sm:text-xl font-bold text-white truncate">
+                    {template.name}
+                  </h1>
+                  <p className="font-ui text-xs text-gray-400 truncate">
+                    {activeSize.width} × {activeSize.height} • {template.platform}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                <button
+                  onClick={handleReset}
+                  className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span className="hidden md:inline">Reset</span>
+                </button>
+                <button
+                  onClick={() => setShowAIModal(true)}
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-ui text-sm font-semibold rounded-lg hover:opacity-90 transition"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                  <span className="hidden sm:inline">Generate with AI</span>
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              <button
-                onClick={handleReset}
-                className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span className="hidden md:inline">Reset</span>
-              </button>
-              <button
-                onClick={() => setShowAIModal(true)}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-ui text-sm font-semibold rounded-lg hover:opacity-90 transition"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                <span className="hidden sm:inline">Generate with AI</span>
-              </button>
-            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Size Tab Bar — sits between header and canvas, does NOT scroll */}
-      <SizeTabBar
-        activeSize={activeSize}
-        onSizeChange={setActiveSize}
-        onDownload={handleExport}
-        onDownloadAll={handleDownloadAll}
-        isExporting={isExporting}
-        isExportingAll={isExportingAll}
-        editedSizes={editedSizes}
-      />
+        <SizeTabBar
+          activeSize={activeSize}
+          onSizeChange={setActiveSize}
+          onDownload={handleExport}
+          onDownloadAll={handleDownloadAll}
+          isExporting={isExporting}
+          isExportingAll={isExportingAll}
+          editedSizes={editedSizes}
+        />
+      </div>
 
-      {/* Main Editor Area */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
+      {/* ── Main Content: Sidebar + Canvas scroll together ── */}
+      <div className="flex-1 flex gap-6 p-6">
         {/* Desktop Sidebar */}
         <EditorSidebar
           fields={fields}
@@ -478,7 +479,7 @@ export default function EditorPage() {
       </div>
 
       {/* Mobile Bottom Bar */}
-      <div className="lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
+      <div className="lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between">
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-blue text-white"
