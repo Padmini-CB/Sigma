@@ -138,15 +138,15 @@ export function YouTubeCommentWallTemplate({
           backgroundColor: comment.avatarBg,
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <span style={{ fontSize: 14 * scale, fontWeight: 700, color: '#fff', fontFamily: BRAND.fonts.heading }}>
+          <span style={{ fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 700, color: '#fff', fontFamily: BRAND.fonts.heading }}>
             {comment.initials}
           </span>
         </div>
-        <span style={{ fontSize: 15 * scale, fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: 'var(--sigma-body-size, 15px)', fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap' }}>
           {comment.name}
         </span>
         <span style={{
-          fontSize: 10 * scale, color: 'rgba(255,255,255,0.35)',
+          fontSize: 'var(--sigma-label-size, 10px)', color: 'rgba(255,255,255,0.35)',
           fontFamily: BRAND.fonts.body, whiteSpace: 'nowrap', marginLeft: 'auto',
         }}>
           {comment.timestamp}
@@ -155,7 +155,7 @@ export function YouTubeCommentWallTemplate({
 
       {/* Comment text */}
       <div style={{
-        fontSize: 15 * scale, color: 'rgba(255,255,255,0.8)',
+        fontSize: 'var(--sigma-body-size, 15px)', color: 'rgba(255,255,255,0.8)',
         fontFamily: BRAND.fonts.body, fontWeight: 300,
         lineHeight: 1.45, flex: 1, overflow: 'hidden',
       }}>
@@ -170,7 +170,7 @@ export function YouTubeCommentWallTemplate({
         <svg width={14 * scale} height={14 * scale} viewBox="0 0 20 20" fill="none">
           <path d="M2 10h3v8H2a1 1 0 01-1-1v-6a1 1 0 011-1zm5-1V5a3 3 0 013-3l.5.5a1.5 1.5 0 01.44 1.06L10.5 7H16a2 2 0 012 2v.5l-1.5 6A2 2 0 0114.56 17H7V9z" fill="rgba(255,255,255,0.3)" />
         </svg>
-        <span style={{ fontSize: 11 * scale, color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body }}>
+        <span style={{ fontSize: 'var(--sigma-label-size, 11px)', color: 'rgba(255,255,255,0.35)', fontFamily: BRAND.fonts.body }}>
           {comment.likes}
         </span>
       </div>

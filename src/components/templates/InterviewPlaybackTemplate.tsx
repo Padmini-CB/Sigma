@@ -27,7 +27,7 @@ export function InterviewPlaybackTemplate({
     border: '1px solid rgba(255,255,255,0.07)',
     borderRadius: 6 * scale,
     padding: `${8 * scale}px ${12 * scale}px`,
-    fontSize: 14 * scale,
+    fontSize: 'var(--sigma-label-size, 14px)',
     color: BRAND.colors.textWhite,
     fontFamily: BRAND.fonts.body,
     fontWeight: 400,
@@ -35,7 +35,7 @@ export function InterviewPlaybackTemplate({
   };
 
   const questionStyle: React.CSSProperties = {
-    fontSize: 13 * scale,
+    fontSize: 'var(--sigma-label-size, 13px)',
     color: 'rgba(255,255,255,0.55)',
     fontFamily: BRAND.fonts.body,
     fontWeight: 300,
@@ -120,20 +120,20 @@ export function InterviewPlaybackTemplate({
           boxShadow: '0 0 6px rgba(239,68,68,0.6)',
         }} />
         <span style={{
-          fontSize: 16 * scale, fontWeight: 600,
+          fontSize: 'var(--sigma-body-size, 16px)', fontWeight: 600,
           color: '#ef4444', fontFamily: BRAND.fonts.body,
         }}>
           REC
         </span>
         <span style={{
-          fontSize: 16 * scale, fontWeight: 500,
+          fontSize: 'var(--sigma-body-size, 16px)', fontWeight: 500,
           color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
         }}>
           Interview Recording
         </span>
       </div>
       <span style={{
-        fontSize: 13 * scale, fontWeight: 300,
+        fontSize: 'var(--sigma-label-size, 13px)', fontWeight: 300,
         color: 'rgba(255,255,255,0.5)', fontFamily: BRAND.fonts.body,
       }}>
         Technical Round &mdash; Data Analyst Position
@@ -164,7 +164,7 @@ export function InterviewPlaybackTemplate({
         gap: 5 * scale,
       }}>
         <div style={{
-          fontSize: 22 * scale, fontWeight: 900, color,
+          fontSize: 'var(--sigma-card-title-size, 22px)', fontWeight: 900, color,
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
           letterSpacing: '0.05em', paddingBottom: 6 * scale,
           borderBottom: `2px solid ${color}`, flexShrink: 0,
@@ -183,7 +183,7 @@ export function InterviewPlaybackTemplate({
           ))}
         </div>
         <div style={{
-          flexShrink: 0, fontSize: 20 * scale, fontWeight: 700,
+          flexShrink: 0, fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700,
           color, fontFamily: BRAND.fonts.heading,
           textAlign: 'center', padding: `${4 * scale}px 0`,
         }}>
@@ -218,7 +218,7 @@ export function InterviewPlaybackTemplate({
         <div style={{ width: '72%', height: '100%', backgroundColor: BRAND.colors.primaryBlue, borderRadius: 2 * scale }} />
       </div>
       <span style={{
-        fontSize: 12 * scale, color: 'rgba(255,255,255,0.5)',
+        fontSize: 'var(--sigma-label-size, 12px)', color: 'rgba(255,255,255,0.5)',
         fontFamily: BRAND.fonts.body, fontWeight: 300, whiteSpace: 'nowrap', flexShrink: 0,
       }}>
         24:18 / 33:45
@@ -283,7 +283,7 @@ export function InterviewPlaybackTemplate({
           gap: 8 * scale,
         }}>
           <div style={{
-            fontSize: 22 * scale, fontWeight: 900, color: '#c47070',
+            fontSize: 'var(--sigma-card-title-size, 22px)', fontWeight: 900, color: '#c47070',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.05em', paddingBottom: 6 * scale,
             borderBottom: '2px solid #c47070', flexShrink: 0,
@@ -299,7 +299,7 @@ export function InterviewPlaybackTemplate({
             ))}
           </div>
           <div style={{
-            flexShrink: 0, fontSize: 20 * scale, fontWeight: 700,
+            flexShrink: 0, fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700,
             color: '#c47070', fontFamily: BRAND.fonts.heading,
             textAlign: 'center', padding: `${4 * scale}px 0`,
           }}>
@@ -319,7 +319,7 @@ export function InterviewPlaybackTemplate({
           gap: 8 * scale,
         }}>
           <div style={{
-            fontSize: 22 * scale, fontWeight: 900, color: '#4cc378',
+            fontSize: 'var(--sigma-card-title-size, 22px)', fontWeight: 900, color: '#4cc378',
             fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
             letterSpacing: '0.05em', paddingBottom: 6 * scale,
             borderBottom: '2px solid #4cc378', flexShrink: 0,
@@ -335,7 +335,7 @@ export function InterviewPlaybackTemplate({
             ))}
           </div>
           <div style={{
-            flexShrink: 0, fontSize: 20 * scale, fontWeight: 700,
+            flexShrink: 0, fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700,
             color: '#4cc378', fontFamily: BRAND.fonts.heading,
             textAlign: 'center', padding: `${4 * scale}px 0`,
           }}>

@@ -81,7 +81,7 @@ export function LinkedInProofTemplate({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4 * scale,
-    fontSize: 12 * scale,
+    fontSize: 'var(--sigma-label-size, 12px)',
     fontWeight: 600,
     fontFamily: BRAND.fonts.body,
     padding: `${6 * scale}px 0`,
@@ -170,7 +170,7 @@ export function LinkedInProofTemplate({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 16 * scale,
+              fontSize: 'var(--sigma-body-size, 16px)',
               fontWeight: 700,
               color: avatarColor,
               fontFamily: BRAND.fonts.heading,
@@ -183,7 +183,7 @@ export function LinkedInProofTemplate({
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4 * scale }}>
                 <span style={{
-                  fontSize: 14 * scale,
+                  fontSize: 'var(--sigma-label-size, 14px)',
                   fontWeight: 700,
                   color: BRAND.colors.textWhite,
                   fontFamily: BRAND.fonts.heading,
@@ -192,7 +192,7 @@ export function LinkedInProofTemplate({
                   {name}
                 </span>
                 <span style={{
-                  fontSize: 10 * scale,
+                  fontSize: 'var(--sigma-label-size, 10px)',
                   fontWeight: 500,
                   color: mutedText,
                   fontFamily: BRAND.fonts.body,
@@ -206,7 +206,7 @@ export function LinkedInProofTemplate({
                 </span>
               </div>
               <div style={{
-                fontSize: 11 * scale,
+                fontSize: 'var(--sigma-label-size, 11px)',
                 color: mutedText,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
@@ -218,7 +218,7 @@ export function LinkedInProofTemplate({
                 {title}
               </div>
               <div style={{
-                fontSize: 10 * scale,
+                fontSize: 'var(--sigma-label-size, 10px)',
                 color: mutedText,
                 fontFamily: BRAND.fonts.body,
                 lineHeight: 1.4,
@@ -234,7 +234,7 @@ export function LinkedInProofTemplate({
 
             {/* Three dots menu */}
             <span style={{
-              fontSize: 18 * scale,
+              fontSize: 'var(--sigma-body-size, 18px)',
               color: mutedText,
               lineHeight: 1,
               cursor: 'default',
@@ -247,7 +247,7 @@ export function LinkedInProofTemplate({
 
           {/* ── Post Body ── */}
           <div style={{
-            fontSize: 13 * scale,
+            fontSize: 'var(--sigma-label-size, 13px)',
             color: bodyColor,
             fontFamily: BRAND.fonts.body,
             lineHeight: 1.55,
@@ -270,7 +270,7 @@ export function LinkedInProofTemplate({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            fontSize: 11 * scale,
+            fontSize: 'var(--sigma-label-size, 11px)',
             color: mutedText,
             fontFamily: BRAND.fonts.body,
             padding: `${6 * scale}px 0`,
@@ -337,7 +337,7 @@ export function LinkedInProofTemplate({
       {/* Preview text */}
       <div style={{ padding: `${8 * scale}px ${10 * scale}px` }}>
         <div style={{
-          fontSize: 10 * scale,
+          fontSize: 'var(--sigma-label-size, 10px)',
           color: 'rgba(255,255,255,0.4)',
           fontFamily: BRAND.fonts.body,
           marginBottom: 2 * scale,
@@ -345,7 +345,7 @@ export function LinkedInProofTemplate({
           github.com
         </div>
         <div style={{
-          fontSize: 12 * scale,
+          fontSize: 'var(--sigma-label-size, 12px)',
           color: 'rgba(255,255,255,0.8)',
           fontFamily: BRAND.fonts.body,
           fontWeight: 600,
@@ -355,7 +355,7 @@ export function LinkedInProofTemplate({
           AtliQ Supply Chain Dashboard
         </div>
         <div style={{
-          fontSize: 10 * scale,
+          fontSize: 'var(--sigma-label-size, 10px)',
           color: 'rgba(255,255,255,0.4)',
           fontFamily: BRAND.fonts.body,
           lineHeight: 1.3,

@@ -147,7 +147,7 @@ export function DailyBreakdownTemplate({
         background: 'rgba(255,255,255,0.05)',
       }}>
         <span style={{
-          fontSize: 14 * scale,
+          fontSize: 'var(--sigma-label-size, 14px)',
           color: 'rgba(255,255,255,0.4)',
           fontFamily: BRAND.fonts.body,
           cursor: 'pointer',
@@ -158,7 +158,7 @@ export function DailyBreakdownTemplate({
           &lt;
         </span>
         <span style={{
-          fontSize: 15 * scale,
+          fontSize: 'var(--sigma-body-size, 15px)',
           fontWeight: 700,
           color: BRAND.colors.textWhite,
           fontFamily: BRAND.fonts.heading,
@@ -168,7 +168,7 @@ export function DailyBreakdownTemplate({
           {monthName}
         </span>
         <span style={{
-          fontSize: 14 * scale,
+          fontSize: 'var(--sigma-label-size, 14px)',
           color: 'rgba(255,255,255,0.4)',
           fontFamily: BRAND.fonts.body,
           cursor: 'pointer',
@@ -189,7 +189,7 @@ export function DailyBreakdownTemplate({
         {dayHeaders.map((day) => (
           <div key={day} style={{
             textAlign: 'center',
-            fontSize: 12 * scale,
+            fontSize: 'var(--sigma-label-size, 12px)',
             fontWeight: 400,
             color: 'rgba(255,255,255,0.4)',
             fontFamily: BRAND.fonts.body,
@@ -233,7 +233,7 @@ export function DailyBreakdownTemplate({
               minHeight: 32 * scale,
             }}>
               <span style={{
-                fontSize: 11 * scale,
+                fontSize: 'var(--sigma-label-size, 11px)',
                 fontWeight: isHighlighted ? 700 : 400,
                 color: isHighlighted
                   ? 'var(--sigma-stat-color)'
@@ -247,7 +247,7 @@ export function DailyBreakdownTemplate({
               </span>
               {isCompleted && (
                 <span style={{
-                  fontSize: 14 * scale,
+                  fontSize: 'var(--sigma-label-size, 14px)',
                   color: '#4cc378',
                   lineHeight: 1,
                   marginTop: 1 * scale,
@@ -267,7 +267,7 @@ export function DailyBreakdownTemplate({
     <>
       {/* What it buys elsewhere — red label */}
       <div style={{
-        fontSize: 17 * scale, fontWeight: 700, color: '#c47070',
+        fontSize: 'var(--sigma-card-title-size, 17px)', fontWeight: 700, color: '#c47070',
         fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
         letterSpacing: '0.04em',
       }}>
@@ -283,10 +283,10 @@ export function DailyBreakdownTemplate({
           display: 'flex', alignItems: 'center', gap: 10 * scale,
         }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 17 * scale, fontWeight: 400, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body }}>
+            <div style={{ fontSize: 'var(--sigma-body-size, 17px)', fontWeight: 400, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body }}>
               {item.label}
             </div>
-            <div style={{ fontSize: 14 * scale, fontWeight: 300, color: '#c47070', fontFamily: BRAND.fonts.body }}>
+            <div style={{ fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 300, color: '#c47070', fontFamily: BRAND.fonts.body }}>
               {item.gone}
             </div>
           </div>
@@ -301,7 +301,7 @@ export function DailyBreakdownTemplate({
 
       {/* What it gets you — green label */}
       <div style={{
-        fontSize: 17 * scale, fontWeight: 700, color: '#4cc378',
+        fontSize: 'var(--sigma-card-title-size, 17px)', fontWeight: 700, color: '#4cc378',
         fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
         letterSpacing: '0.04em',
       }}>
@@ -312,10 +312,10 @@ export function DailyBreakdownTemplate({
         {valueItems.map((item) => (
           <div key={item} style={{
             display: 'flex', alignItems: 'center', gap: 8 * scale,
-            fontSize: 16 * scale, fontWeight: 400,
+            fontSize: 'var(--sigma-body-size, 16px)', fontWeight: 400,
             color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body,
           }}>
-            <span style={{ color: '#4cc378', flexShrink: 0, fontSize: 16 * scale }}>&#10003;</span>
+            <span style={{ color: '#4cc378', flexShrink: 0, fontSize: 'var(--sigma-body-size, 16px)' }}>&#10003;</span>
             <span>{item}</span>
           </div>
         ))}

@@ -60,7 +60,7 @@ export function ToolCemeteryTemplate({
   const headlineBlock = (
     <div style={{ textAlign: 'center' }}>
       <div style={{
-        fontSize: 17 * scale, fontWeight: 300, fontStyle: 'italic',
+        fontSize: 'var(--sigma-body-size, 17px)', fontWeight: 300, fontStyle: 'italic',
         color: 'rgba(255,255,255,0.55)', fontFamily: BRAND.fonts.body, marginBottom: 2 * scale,
       }}>
         Still learning with
@@ -111,20 +111,20 @@ export function ToolCemeteryTemplate({
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: 26 * scale, color: 'rgba(255,255,255,0.15)',
+          fontSize: 'var(--sigma-subheadline-size, 26px)', color: 'rgba(255,255,255,0.15)',
           fontFamily: 'serif', lineHeight: 1,
         }}>
           &dagger;
         </div>
         <div style={{
-          fontSize: 16 * scale, fontWeight: 600, color: 'rgba(255,255,255,0.5)',
+          fontSize: 'var(--sigma-body-size, 16px)', fontWeight: 600, color: 'rgba(255,255,255,0.5)',
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
           letterSpacing: '0.03em', lineHeight: 1.3,
         }}>
           {tomb.name}
         </div>
         <div style={{
-          fontSize: 14 * scale, fontWeight: 700, color: 'rgba(200,100,100,0.45)',
+          fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 700, color: 'rgba(200,100,100,0.45)',
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
           letterSpacing: '0.05em',
         }}>
@@ -150,7 +150,7 @@ export function ToolCemeteryTemplate({
         position: 'relative', margin: '0 auto',
         backgroundColor: BRAND.colors.bgDark,
         padding: `0 ${16 * scale}px`,
-        fontSize: 15 * scale, fontWeight: 700, color: '#4cc378',
+        fontSize: 'var(--sigma-label-size, 15px)', fontWeight: 700, color: '#4cc378',
         fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
         letterSpacing: 4,
       }}>
@@ -161,7 +161,7 @@ export function ToolCemeteryTemplate({
 
   const sectionTitle = (
     <div style={{
-      fontSize: 20 * scale, fontWeight: 700, color: '#4cc378',
+      fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700, color: '#4cc378',
       fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
       letterSpacing: 2, textAlign: 'center', flexShrink: 0,
     }}>
@@ -191,7 +191,7 @@ export function ToolCemeteryTemplate({
           </div>
           {month.items.map((item) => (
             <div key={item} style={{
-              fontSize: 14 * scale, fontWeight: 300, color: '#ffffff',
+              fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 300, color: '#ffffff',
               fontFamily: BRAND.fonts.body, lineHeight: 1.5,
             }}>
               {item}
@@ -243,7 +243,7 @@ export function ToolCemeteryTemplate({
           border: '1px solid rgba(76,195,120,0.2)',
           borderRadius: 6,
           padding: `${4 * scale}px ${10 * scale}px`,
-          fontSize: 13 * scale, fontWeight: 500,
+          fontSize: 'var(--sigma-label-size, 13px)', fontWeight: 500,
           color: '#4cc378', fontFamily: BRAND.fonts.body,
         }}>
           {tech}
