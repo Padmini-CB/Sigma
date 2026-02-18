@@ -41,7 +41,7 @@ export function GitHubGrid({ variant, label, statNumber, statLabel }: GitHubGrid
   return (
     <div style={{ border: `2px solid ${borderColor}`, borderRadius: 12, padding: 18, backgroundColor: BRAND.colors.bgCard, display: 'flex', flexDirection: 'column', gap: 12 }}>
       {label && (
-        <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: borderColor, fontFamily: BRAND.fonts.heading }}>{label}</div>
+        <div style={{ fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: borderColor, fontFamily: BRAND.fonts.heading }}>{label}</div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {grid.map((row, ri) => (
@@ -54,8 +54,8 @@ export function GitHubGrid({ variant, label, statNumber, statLabel }: GitHubGrid
       </div>
       {statNumber && (
         <div style={{ textAlign: 'center' }}>
-          <span style={{ fontSize: 22, fontWeight: 800, color: borderColor, fontFamily: BRAND.fonts.heading }}>{statNumber}</span>
-          {statLabel && <span style={{ fontSize: 14, color: BRAND.colors.textMuted, marginLeft: 6, fontFamily: BRAND.fonts.body }}>{statLabel}</span>}
+          <span style={{ fontSize: 'var(--sigma-card-title-size, 22px)', fontWeight: 800, color: borderColor, fontFamily: BRAND.fonts.heading }}>{statNumber}</span>
+          {statLabel && <span style={{ fontSize: 'var(--sigma-label-size, 14px)', color: BRAND.colors.textMuted, marginLeft: 6, fontFamily: BRAND.fonts.body }}>{statLabel}</span>}
         </div>
       )}
     </div>

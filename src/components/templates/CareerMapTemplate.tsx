@@ -156,7 +156,7 @@ export function CareerMapTemplate({
                       display: 'flex', alignItems: 'center', gap: 4 * scale,
                     }}>
                       {milestone.label}
-                      {isLast && <span style={{ fontSize: 14 * scale }}>&#10003;</span>}
+                      {isLast && <span style={{ fontSize: 'var(--sigma-label-size, 14px)' }}>&#10003;</span>}
                     </div>
                     <div style={{
                       fontSize: 'var(--sigma-label-size)', color: 'rgba(255,255,255,0.5)',
@@ -247,7 +247,7 @@ export function CareerMapTemplate({
                       display: 'flex', alignItems: 'center', gap: 8 * scale,
                     }}>
                       {milestone.label}
-                      {isLast && <span style={{ fontSize: 20 * scale }}>&#10003;</span>}
+                      {isLast && <span style={{ fontSize: 'var(--sigma-card-title-size, 20px)' }}>&#10003;</span>}
                     </div>
                     <div style={{
                       fontSize: 'var(--sigma-body-size)', color: 'rgba(255,255,255,0.6)',
@@ -343,7 +343,7 @@ export function CareerMapTemplate({
                     display: 'flex', alignItems: 'center', gap: 6 * scale,
                   }}>
                     {milestone.label}
-                    {isLast && <span style={{ fontSize: 18 * scale }}>&#10003;</span>}
+                    {isLast && <span style={{ fontSize: 'var(--sigma-body-size, 18px)' }}>&#10003;</span>}
                   </div>
                   <div style={{
                     fontSize: 'var(--sigma-body-size)', color: 'rgba(255,255,255,0.6)',

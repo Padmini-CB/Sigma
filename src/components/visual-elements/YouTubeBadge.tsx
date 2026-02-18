@@ -24,11 +24,11 @@ export function YouTubeBadge({ subscribers = '1 Million+', rating = '4.9' }: You
         <rect width="20" height="14" rx="3" fill="#FF0000" />
         <path d="M8 10V4L13.5 7L8 10Z" fill="white" />
       </svg>
-      <span style={{ fontSize: 13, fontWeight: 600, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body }}>
+      <span style={{ fontSize: 'var(--sigma-label-size, 13px)', fontWeight: 600, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.body }}>
         {subscribers} Subscribers
       </span>
       <div style={{ width: 1, height: 12, backgroundColor: 'rgba(255,255,255,0.3)' }} />
-      <span style={{ fontSize: 13, fontWeight: 600, color: BRAND.colors.accentGreen, fontFamily: BRAND.fonts.body }}>
+      <span style={{ fontSize: 'var(--sigma-label-size, 13px)', fontWeight: 600, color: BRAND.colors.accentGreen, fontFamily: BRAND.fonts.body }}>
         {rating} Rating
       </span>
     </div>

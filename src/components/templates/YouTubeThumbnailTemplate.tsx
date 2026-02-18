@@ -83,7 +83,7 @@ export function YouTubeThumbnailTemplate({
         display: 'flex', justifyContent: 'center', alignItems: 'center',
       }}>
         <span style={{
-          fontSize: 20 * scale, fontWeight: 700, color: 'rgba(255,255,255,0.2)',
+          fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700, color: 'rgba(255,255,255,0.2)',
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const,
           letterSpacing: '0.1em',
         }}>

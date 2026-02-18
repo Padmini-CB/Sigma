@@ -146,7 +146,7 @@ export function ThreeAMTestTemplate({
             borderRadius: 1,
           }} />
           <span style={{
-            fontSize: 10 * scale * phoneScale,
+            fontSize: 'var(--sigma-label-size, 10px)',
             color: 'rgba(255,255,255,0.4)',
             fontFamily: BRAND.fonts.body,
             marginLeft: 2 * scale * phoneScale,
@@ -164,7 +164,7 @@ export function ThreeAMTestTemplate({
         marginBottom: 2 * scale * phoneScale,
       }}>
         <span style={{
-          fontSize: 56 * scale * phoneScale,
+          fontSize: 'var(--sigma-headline-size, 56px)',
           fontWeight: 900,
           color: '#ffffff',
           fontFamily: BRAND.fonts.heading,
@@ -174,7 +174,7 @@ export function ThreeAMTestTemplate({
           3:07
         </span>
         <span style={{
-          fontSize: 24 * scale * phoneScale,
+          fontSize: 'var(--sigma-subheadline-size, 24px)',
           fontWeight: 700,
           color: '#ffffff',
           fontFamily: BRAND.fonts.heading,
@@ -191,7 +191,7 @@ export function ThreeAMTestTemplate({
         marginBottom: 10 * scale * phoneScale,
       }}>
         <span style={{
-          fontSize: 13 * scale * phoneScale,
+          fontSize: 'var(--sigma-label-size, 13px)',
           color: 'rgba(255,255,255,0.45)',
           fontFamily: BRAND.fonts.body,
           fontWeight: 300,
@@ -210,7 +210,7 @@ export function ThreeAMTestTemplate({
         alignItems: 'flex-start',
         gap: 8 * scale * phoneScale,
       }}>
-        <span style={{ fontSize: 18 * scale * phoneScale, flexShrink: 0, lineHeight: 1 }}>{'\u26A0\uFE0F'}</span>
+        <span style={{ fontSize: 'var(--sigma-body-size, 18px)', flexShrink: 0, lineHeight: 1 }}>{'\u26A0\uFE0F'}</span>
         <div style={{ flex: 1 }}>
           <div style={{
             display: 'flex',
@@ -219,13 +219,13 @@ export function ThreeAMTestTemplate({
             marginBottom: 2 * scale * phoneScale,
           }}>
             <span style={{
-              fontSize: 16 * scale * phoneScale, fontWeight: 600, color: '#c47070',
+              fontSize: 'var(--sigma-body-size, 16px)', fontWeight: 600, color: '#c47070',
               fontFamily: BRAND.fonts.body, lineHeight: 1.3,
             }}>
               AWS CloudWatch Alert
             </span>
             <span style={{
-              fontSize: 10 * scale * phoneScale,
+              fontSize: 'var(--sigma-label-size, 10px)',
               fontWeight: 700,
               color: '#ffffff',
               backgroundColor: '#ef4444',
@@ -239,7 +239,7 @@ export function ThreeAMTestTemplate({
             </span>
           </div>
           <div style={{
-            fontSize: 14 * scale * phoneScale, color: 'rgba(196,112,112,0.7)',
+            fontSize: 'var(--sigma-label-size, 14px)', color: 'rgba(196,112,112,0.7)',
             fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.3,
           }}>
             Production Model Failed &mdash; Pipeline timeout at Stage 3
@@ -271,9 +271,9 @@ export function ThreeAMTestTemplate({
         marginBottom: 12 * scale * cardScale, paddingBottom: 8 * scale * cardScale,
         borderBottom: `1px solid ${color === '#c47070' ? 'rgba(196,112,112,0.2)' : 'rgba(76,195,120,0.2)'}`,
       }}>
-        <span style={{ fontSize: 20 * scale * cardScale, lineHeight: 1 }}>{emoji}</span>
+        <span style={{ fontSize: 'var(--sigma-card-title-size, 20px)', lineHeight: 1 }}>{emoji}</span>
         <span style={{
-          fontSize: 20 * scale * cardScale, fontWeight: 700, color,
+          fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700, color,
           fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const, letterSpacing: '0.04em',
         }}>
           {title}
@@ -284,12 +284,12 @@ export function ThreeAMTestTemplate({
         {steps.map((step, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 * scale * cardScale }}>
             <span style={{
-              fontSize: 17 * scale * cardScale, flexShrink: 0, lineHeight: 1.3,
+              fontSize: 'var(--sigma-body-size, 17px)', flexShrink: 0, lineHeight: 1.3,
             }}>
               {step.emoji}
             </span>
             <span style={{
-              fontSize: 17 * scale * cardScale, color: BRAND.colors.textWhite,
+              fontSize: 'var(--sigma-body-size, 17px)', color: BRAND.colors.textWhite,
               fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
             }}>
               {step.text}
@@ -303,7 +303,7 @@ export function ThreeAMTestTemplate({
         borderTop: `1px solid ${color === '#c47070' ? 'rgba(196,112,112,0.15)' : 'rgba(76,195,120,0.15)'}`,
       }}>
         <span style={{
-          fontSize: 15 * scale * cardScale, color,
+          fontSize: 'var(--sigma-label-size, 15px)', color,
           fontFamily: BRAND.fonts.body, fontStyle: 'italic', fontWeight: 300,
         }}>
           {tagline}
@@ -388,7 +388,7 @@ export function ThreeAMTestTemplate({
               border: '1px solid rgba(76,195,120,0.2)',
               borderRadius: 6,
               padding: `${5 * scale}px ${14 * scale}px`,
-              fontSize: 14 * scale, fontWeight: 500,
+              fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 500,
               color: '#4cc378', fontFamily: BRAND.fonts.body,
             }}>
               {tech}
@@ -494,7 +494,7 @@ export function ThreeAMTestTemplate({
               borderRadius: 1,
             }} />
             <span style={{
-              fontSize: 10 * scale,
+              fontSize: 'var(--sigma-label-size, 10px)',
               color: 'rgba(255,255,255,0.4)',
               fontFamily: BRAND.fonts.body,
               marginLeft: 2 * scale,
@@ -512,7 +512,7 @@ export function ThreeAMTestTemplate({
           marginBottom: 2 * scale,
         }}>
           <span style={{
-            fontSize: 56 * scale,
+            fontSize: 'var(--sigma-headline-size, 56px)',
             fontWeight: 900,
             color: '#ffffff',
             fontFamily: BRAND.fonts.heading,
@@ -522,7 +522,7 @@ export function ThreeAMTestTemplate({
             3:07
           </span>
           <span style={{
-            fontSize: 24 * scale,
+            fontSize: 'var(--sigma-subheadline-size, 24px)',
             fontWeight: 700,
             color: '#ffffff',
             fontFamily: BRAND.fonts.heading,
@@ -539,7 +539,7 @@ export function ThreeAMTestTemplate({
           marginBottom: 10 * scale,
         }}>
           <span style={{
-            fontSize: 13 * scale,
+            fontSize: 'var(--sigma-label-size, 13px)',
             color: 'rgba(255,255,255,0.45)',
             fontFamily: BRAND.fonts.body,
             fontWeight: 300,
@@ -558,7 +558,7 @@ export function ThreeAMTestTemplate({
           alignItems: 'flex-start',
           gap: 8 * scale,
         }}>
-          <span style={{ fontSize: 18 * scale, flexShrink: 0, lineHeight: 1 }}>{'\u26A0\uFE0F'}</span>
+          <span style={{ fontSize: 'var(--sigma-body-size, 18px)', flexShrink: 0, lineHeight: 1 }}>{'\u26A0\uFE0F'}</span>
           <div style={{ flex: 1 }}>
             <div style={{
               display: 'flex',
@@ -567,13 +567,13 @@ export function ThreeAMTestTemplate({
               marginBottom: 2 * scale,
             }}>
               <span style={{
-                fontSize: 16 * scale, fontWeight: 600, color: '#c47070',
+                fontSize: 'var(--sigma-body-size, 16px)', fontWeight: 600, color: '#c47070',
                 fontFamily: BRAND.fonts.body, lineHeight: 1.3,
               }}>
                 AWS CloudWatch Alert
               </span>
               <span style={{
-                fontSize: 10 * scale,
+                fontSize: 'var(--sigma-label-size, 10px)',
                 fontWeight: 700,
                 color: '#ffffff',
                 backgroundColor: '#ef4444',
@@ -587,7 +587,7 @@ export function ThreeAMTestTemplate({
               </span>
             </div>
             <div style={{
-              fontSize: 14 * scale, color: 'rgba(196,112,112,0.7)',
+              fontSize: 'var(--sigma-label-size, 14px)', color: 'rgba(196,112,112,0.7)',
               fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.3,
             }}>
               Production Model Failed &mdash; Pipeline timeout at Stage 3
@@ -612,9 +612,9 @@ export function ThreeAMTestTemplate({
             marginBottom: 12 * scale, paddingBottom: 8 * scale,
             borderBottom: '1px solid rgba(196,112,112,0.2)',
           }}>
-            <span style={{ fontSize: 20 * scale, lineHeight: 1 }}>{'\u{1F630}'}</span>
+            <span style={{ fontSize: 'var(--sigma-card-title-size, 20px)', lineHeight: 1 }}>{'\u{1F630}'}</span>
             <span style={{
-              fontSize: 20 * scale, fontWeight: 700, color: '#c47070',
+              fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700, color: '#c47070',
               fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const, letterSpacing: '0.04em',
             }}>
               Tutorial Graduate
@@ -625,12 +625,12 @@ export function ThreeAMTestTemplate({
             {tutorialSteps.map((step, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 * scale }}>
                 <span style={{
-                  fontSize: 17 * scale, flexShrink: 0, lineHeight: 1.3,
+                  fontSize: 'var(--sigma-body-size, 17px)', flexShrink: 0, lineHeight: 1.3,
                 }}>
                   {step.emoji}
                 </span>
                 <span style={{
-                  fontSize: 17 * scale, color: BRAND.colors.textWhite,
+                  fontSize: 'var(--sigma-body-size, 17px)', color: BRAND.colors.textWhite,
                   fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
                 }}>
                   {step.text}
@@ -644,7 +644,7 @@ export function ThreeAMTestTemplate({
             borderTop: '1px solid rgba(196,112,112,0.15)',
           }}>
             <span style={{
-              fontSize: 15 * scale, color: '#c47070',
+              fontSize: 'var(--sigma-label-size, 15px)', color: '#c47070',
               fontFamily: BRAND.fonts.body, fontStyle: 'italic', fontWeight: 300,
             }}>
               Still debugging at sunrise
@@ -666,9 +666,9 @@ export function ThreeAMTestTemplate({
             marginBottom: 12 * scale, paddingBottom: 8 * scale,
             borderBottom: '1px solid rgba(76,195,120,0.2)',
           }}>
-            <span style={{ fontSize: 20 * scale, lineHeight: 1 }}>{'\u{1F60E}'}</span>
+            <span style={{ fontSize: 'var(--sigma-card-title-size, 20px)', lineHeight: 1 }}>{'\u{1F60E}'}</span>
             <span style={{
-              fontSize: 20 * scale, fontWeight: 700, color: '#4cc378',
+              fontSize: 'var(--sigma-card-title-size, 20px)', fontWeight: 700, color: '#4cc378',
               fontFamily: BRAND.fonts.heading, textTransform: 'uppercase' as const, letterSpacing: '0.04em',
             }}>
               Bootcamp Graduate
@@ -679,12 +679,12 @@ export function ThreeAMTestTemplate({
             {bootcampSteps.map((step, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 * scale }}>
                 <span style={{
-                  fontSize: 17 * scale, flexShrink: 0, lineHeight: 1.3,
+                  fontSize: 'var(--sigma-body-size, 17px)', flexShrink: 0, lineHeight: 1.3,
                 }}>
                   {step.emoji}
                 </span>
                 <span style={{
-                  fontSize: 17 * scale, color: BRAND.colors.textWhite,
+                  fontSize: 'var(--sigma-body-size, 17px)', color: BRAND.colors.textWhite,
                   fontFamily: BRAND.fonts.body, fontWeight: 300, lineHeight: 1.4,
                 }}>
                   {step.text}
@@ -698,7 +698,7 @@ export function ThreeAMTestTemplate({
             borderTop: '1px solid rgba(76,195,120,0.15)',
           }}>
             <span style={{
-              fontSize: 15 * scale, color: '#4cc378',
+              fontSize: 'var(--sigma-label-size, 15px)', color: '#4cc378',
               fontFamily: BRAND.fonts.body, fontStyle: 'italic', fontWeight: 300,
             }}>
               Sleeping. Pipeline recovered.
@@ -718,7 +718,7 @@ export function ThreeAMTestTemplate({
             border: '1px solid rgba(76,195,120,0.2)',
             borderRadius: 6,
             padding: `${4 * scale}px ${12 * scale}px`,
-            fontSize: 14 * scale, fontWeight: 500,
+            fontSize: 'var(--sigma-label-size, 14px)', fontWeight: 500,
             color: '#4cc378', fontFamily: BRAND.fonts.body,
           }}>
             {tech}

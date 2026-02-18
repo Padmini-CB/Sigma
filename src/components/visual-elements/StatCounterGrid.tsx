@@ -29,7 +29,7 @@ export function StatCounterGrid({ stats, columns = 3 }: StatCounterGridProps) {
         >
           <div
             style={{
-              fontSize: 38,
+              fontSize: 'var(--sigma-stat-number-size, 38px)',
               fontWeight: 800,
               color: BRAND.colors.accentGreen,
               fontFamily: BRAND.fonts.heading,
@@ -40,7 +40,7 @@ export function StatCounterGrid({ stats, columns = 3 }: StatCounterGridProps) {
           </div>
           <div
             style={{
-              fontSize: 14,
+              fontSize: 'var(--sigma-label-size, 14px)',
               color: BRAND.colors.textMuted,
               fontFamily: BRAND.fonts.body,
               lineHeight: 1.2,

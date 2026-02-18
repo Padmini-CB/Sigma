@@ -121,7 +121,7 @@ export function CareerTransformationTemplate({
       <div style={{ fontSize: 'var(--sigma-card-title-size)', fontWeight: 700, color: BRAND.colors.textWhite, fontFamily: BRAND.fonts.heading }}>
         {afterRole}
       </div>
-      <div style={{ fontSize: 15 * scale, color: '#4cc378', marginTop: 4 }}>In 4 months</div>
+      <div style={{ fontSize: 'var(--sigma-label-size, 15px)', color: '#4cc378', marginTop: 4 }}>In 4 months</div>
     </div>
   );
 
