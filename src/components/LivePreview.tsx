@@ -22,6 +22,10 @@ import { ThreeAMTestTemplate } from '@/components/templates/ThreeAMTestTemplate'
 import { YouTubeCommentWallTemplate } from '@/components/templates/YouTubeCommentWallTemplate';
 import { YouTubeThumbnailTemplate } from '@/components/templates/YouTubeThumbnailTemplate';
 import { MicroCourseTeaserTemplate } from '@/components/templates/MicroCourseTeaserTemplate';
+import { HeroStatementTemplate } from '@/components/templates/HeroStatementTemplate';
+import { StatPunchTemplate } from '@/components/templates/StatPunchTemplate';
+import { BeforeAfterSplitTemplate } from '@/components/templates/BeforeAfterSplitTemplate';
+import { ToolShowcaseTemplate } from '@/components/templates/ToolShowcaseTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, FONT_COLORS } from '@/config/fontSizes';
 import { getAdSizeConfig } from '@/config/adSizes';
@@ -490,6 +494,14 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
     richContent = <YouTubeThumbnailTemplate headline={headline} subheadline={subheadline} courseName={courseName} width={width} height={height} />;
   } else if (selectedDesignId === 'micro-course-teaser') {
     richContent = <MicroCourseTeaserTemplate headline={headline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'hero-statement') {
+    richContent = <HeroStatementTemplate headline={headline} accentWord={subheadline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'stat-punch') {
+    richContent = <StatPunchTemplate statNumber={headline} statLabel={subheadline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'before-after-split') {
+    richContent = <BeforeAfterSplitTemplate beforeLabel={headline} afterLabel={subheadline} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'tool-showcase') {
+    richContent = <ToolShowcaseTemplate headline={headline} accentWord={subheadline} techStack={courseData?.techStack} cta={cta} courseName={courseName} width={width} height={height} />;
   }
 
   // If we matched a rich template, wrap with character overlay

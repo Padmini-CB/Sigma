@@ -8,6 +8,7 @@ import FontResizer from '@/components/FontResizer';
 import ExpressionLibrary from '@/components/ExpressionLibrary';
 import { type FounderPlacement } from '@/components/ExpressionLibrary';
 import { type FontSizeConfig } from '@/config/fontSizes';
+import AssetGenerator from '@/components/AssetGenerator';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -233,7 +234,7 @@ function SidebarContent({
   fontSizes,
   onFontSizesChange,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
-  const [activeTab, setActiveTab] = useState<'edit' | 'assets'>('edit');
+  const [activeTab, setActiveTab] = useState<'edit' | 'assets' | 'ai-assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
   const [isTypographyOpen, setIsTypographyOpen] = useState(true);
   const [isPeopleOpen, setIsPeopleOpen] = useState(false);
@@ -245,10 +246,10 @@ function SidebarContent({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-headline text-lg font-bold text-brand-navy">
-              {activeTab === 'edit' ? 'Edit Content' : 'Assets'}
+              {activeTab === 'edit' ? 'Edit Content' : activeTab === 'ai-assets' ? 'AI Assets' : 'Assets'}
             </h2>
             <p className="font-body text-sm text-gray-500 mt-1">
-              {activeTab === 'edit' ? 'Changes update the preview in real-time' : 'Drag elements to canvas (coming soon)'}
+              {activeTab === 'edit' ? 'Changes update the preview in real-time' : activeTab === 'ai-assets' ? 'Icons, backgrounds & AI generation' : 'Drag elements to canvas (coming soon)'}
             </p>
           </div>
           {isMobile && onClose && (
@@ -285,6 +286,16 @@ function SidebarContent({
             }`}
           >
             Assets
+          </button>
+          <button
+            onClick={() => setActiveTab('ai-assets')}
+            className={`flex-1 px-3 py-1.5 rounded-md font-ui text-sm font-semibold transition-colors ${
+              activeTab === 'ai-assets'
+                ? 'bg-white text-brand-navy shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            AI Assets
           </button>
         </div>
       </div>
@@ -556,6 +567,11 @@ function SidebarContent({
           <p className="font-body text-xs text-gray-400 mt-6 text-center italic">
             Drag &amp; drop coming in Sprint 4
           </p>
+        </div>
+      ) : activeTab === 'ai-assets' ? (
+        /* AI Assets Panel */
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <AssetGenerator />
         </div>
       ) : (
       <>
