@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 import { generateImage, generateBackground } from '@/lib/gemini';
 
+function errorStatus(message: string): number {
+  if (message.includes('not configured') || message.includes('invalid')) return 401;
+  if (message.includes('Too many requests') || message.includes('Rate limit')) return 429;
+  if (message.includes('not available')) return 404;
+  return 500;
+}
+
 export async function POST(request: Request) {
   try {
     const { prompt, type } = await request.json();
@@ -12,10 +19,12 @@ export async function POST(request: Request) {
     if (!process.env.GEMINI_API_KEY) {
       console.error('[Gemini API] GEMINI_API_KEY environment variable is not set. Add it to .env.local');
       return NextResponse.json(
-        { error: 'GEMINI_API_KEY not configured. Add GEMINI_API_KEY=your-key to .env.local' },
-        { status: 500 },
+        { error: 'Gemini API key not configured' },
+        { status: 401 },
       );
     }
+
+    console.log(`[Gemini API] Request: type=${type}, prompt=${prompt.slice(0, 80)}...`);
 
     let image: string;
 
@@ -36,16 +45,21 @@ export async function POST(request: Request) {
         // If prompt matches a preset style name, use the preset
         try {
           image = await generateBackground(prompt);
-        } catch {
-          // Not a preset – use as custom background prompt
-          const bgPrompt = [
-            prompt,
-            'Image size: 1080x1080.',
-            'Dark navy #181830 base.',
-            'Brand accent colors: #3B82F6 (blue), #6F53C1 (purple).',
-            'No text, no logos.',
-          ].join(' ');
-          image = await generateImage(bgPrompt);
+        } catch (bgErr) {
+          const bgMsg = bgErr instanceof Error ? bgErr.message : '';
+          // Only fall back to custom prompt for unknown style errors
+          if (bgMsg.includes('Unknown background style')) {
+            const bgPrompt = [
+              prompt,
+              'Image size: 1080x1080.',
+              'Dark navy #181830 base.',
+              'Brand accent colors: #3B82F6 (blue), #6F53C1 (purple).',
+              'No text, no logos.',
+            ].join(' ');
+            image = await generateImage(bgPrompt);
+          } else {
+            throw bgErr;
+          }
         }
         break;
       }
@@ -62,11 +76,11 @@ export async function POST(request: Request) {
         );
     }
 
+    console.log(`[Gemini API] Success: type=${type}`);
     return NextResponse.json({ image });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Image generation failed';
     console.error('[Gemini API] Generation error:', message);
-    const status = message.includes('Rate limit') ? 429 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return NextResponse.json({ error: message }, { status: errorStatus(message) });
   }
 }
