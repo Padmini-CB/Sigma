@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <rect x="12" y="14" width="40" height="36" rx="4" stroke="white" stroke-width="2.5"/>
+  <line x1="12" y1="26" x2="52" y2="26" stroke="white" stroke-width="2"/>
+  <line x1="32" y1="26" x2="32" y2="50" stroke="white" stroke-width="2"/>
+  <text x="32" y="21" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="white">SQL</text>
+</svg>
