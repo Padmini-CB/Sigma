@@ -37,9 +37,8 @@ export async function generateImage(prompt: string): Promise<string> {
   try {
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseModalities: ['image', 'text'] as unknown as undefined,
-      } as Record<string, unknown>,
+      // @ts-expect-error -- responseModalities is supported by Gemini 2.0 but not yet in SDK types
+      generationConfig: { responseModalities: ['image', 'text'] },
     });
 
     const response = result.response;
