@@ -1,0 +1,24 @@
+{
+  "icons": [
+    { "id": "sql", "name": "SQL", "file": "sql.svg" },
+    { "id": "python", "name": "Python", "file": "python.svg" },
+    { "id": "spark", "name": "Spark", "file": "spark.svg" },
+    { "id": "databricks", "name": "Databricks", "file": "databricks.svg" },
+    { "id": "aws", "name": "AWS", "file": "aws.svg" },
+    { "id": "snowflake", "name": "Snowflake", "file": "snowflake.svg" },
+    { "id": "airflow", "name": "Airflow", "file": "airflow.svg" },
+    { "id": "kafka", "name": "Kafka", "file": "kafka.svg" },
+    { "id": "powerbi", "name": "Power BI", "file": "powerbi.svg" },
+    { "id": "excel", "name": "Excel", "file": "excel.svg" },
+    { "id": "tensorflow", "name": "TensorFlow", "file": "tensorflow.svg" },
+    { "id": "docker", "name": "Docker", "file": "docker.svg" },
+    { "id": "azure", "name": "Azure", "file": "azure.svg" },
+    { "id": "lambda", "name": "Lambda", "file": "lambda.svg" },
+    { "id": "postgresql", "name": "PostgreSQL", "file": "postgresql.svg" },
+    { "id": "mongodb", "name": "MongoDB", "file": "mongodb.svg" },
+    { "id": "tableau", "name": "Tableau", "file": "tableau.svg" },
+    { "id": "jupyter", "name": "Jupyter", "file": "jupyter.svg" },
+    { "id": "git", "name": "Git", "file": "git.svg" },
+    { "id": "linux", "name": "Linux", "file": "linux.svg" }
+  ]
+}

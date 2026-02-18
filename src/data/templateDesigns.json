@@ -322,6 +322,74 @@
         "bodyText": "SQL • Python • Excel • Power BI — start from ₹499"
       },
       "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "hero-statement",
+      "name": "Hero Statement",
+      "description": "Massive 3-5 word headline with lime accent word + founder photo space",
+      "category": "Bold Visual",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "STOP LEARNING DEAD TOOLS.",
+        "subheadline": "DEAD TOOLS.",
+        "cta": "BUILD REAL SKILLS",
+        "price": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": ""
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "stat-punch",
+      "name": "Stat Punch",
+      "description": "One massive stat number with supporting label for maximum impact",
+      "category": "Bold Visual",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "300+",
+        "subheadline": "REAL CAREER SWITCHES",
+        "cta": "BUILD REAL SKILLS",
+        "price": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": ""
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "before-after-split",
+      "name": "Before/After Split",
+      "description": "Vertical split comparing BEFORE vs AFTER with visual contrast",
+      "category": "Bold Visual",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "Tutorial Hell",
+        "subheadline": "Production Ready",
+        "cta": "BUILD REAL SKILLS",
+        "price": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": ""
+      },
+      "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "tool-showcase",
+      "name": "Tool Showcase",
+      "description": "Grid of tool icons from tech stack with bold headline and founder photo",
+      "category": "Bold Visual",
+      "applicableTo": ["de-bootcamp", "da-bootcamp", "ds-bootcamp"],
+      "fields": {
+        "headline": "MASTER THESE TOOLS",
+        "subheadline": "MASTER",
+        "cta": "BUILD REAL SKILLS",
+        "price": "",
+        "courseName": "Data Engineering Bootcamp 1.0",
+        "credibility": "1 Million+ YouTube Subscribers",
+        "bodyText": "SQL • Python • Spark • Databricks • AWS • Snowflake • Airflow • Kafka"
+      },
+      "previewColors": ["#0c1630", "#161245"]
     }
   ],
   "categories": [
@@ -359,6 +427,11 @@
       "id": "Recognition",
       "name": "Spark Recognition",
       "description": "Character-driven creatives that trigger self-awareness"
+    },
+    {
+      "id": "Bold Visual",
+      "name": "Bold Visual",
+      "description": "Maximum mobile impact — big visuals, minimal text"
     }
   ]
 }
