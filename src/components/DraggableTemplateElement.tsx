@@ -32,6 +32,8 @@ export const DEFAULT_ELEMENT_LAYOUT: ElementLayout = {
   offsetY: 0,
 };
 
+type HandleId = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
+
 interface DraggableTemplateElementProps {
   elementId: AIEngElementId;
   isInteractive: boolean;
@@ -51,7 +53,18 @@ interface DraggableTemplateElementProps {
   className?: string;
 }
 
-const MIN_SIZE = 40;
+const MIN_SIZE = 50;
+
+const HANDLE_CURSORS: Record<HandleId, string> = {
+  nw: 'nwse-resize',
+  se: 'nwse-resize',
+  ne: 'nesw-resize',
+  sw: 'nesw-resize',
+  n: 'ns-resize',
+  s: 'ns-resize',
+  e: 'ew-resize',
+  w: 'ew-resize',
+};
 
 export default function DraggableTemplateElement({
   elementId,
@@ -86,9 +99,12 @@ export default function DraggableTemplateElement({
     startClientY: 0,
     startWidth: 0,
     startHeight: 0,
+    startOffsetX: 0,
+    startOffsetY: 0,
     startFontSize: 0,
     startScale: 1,
-    corner: '',
+    handle: '' as HandleId | string,
+    aspectRatio: 1,
   });
 
   // Inverse scale for constant-size UI elements
@@ -149,20 +165,25 @@ export default function DraggableTemplateElement({
 
   // ── RESIZE ──
   const startResize = useCallback(
-    (corner: string) => (e: React.MouseEvent) => {
+    (handle: HandleId | string) => (e: React.MouseEvent) => {
       if (!isInteractive) return;
       e.preventDefault();
       e.stopPropagation();
       setIsResizing(true);
       onSelect(elementId);
+      const w = layout.width ?? defaultWidth ?? 200;
+      const h = layout.height ?? defaultHeight ?? 200;
       resizeRef.current = {
         startClientX: e.clientX,
         startClientY: e.clientY,
-        startWidth: layout.width ?? defaultWidth ?? 200,
-        startHeight: layout.height ?? defaultHeight ?? 200,
+        startWidth: w,
+        startHeight: h,
+        startOffsetX: layout.offsetX,
+        startOffsetY: layout.offsetY,
         startFontSize: layout.fontSize ?? defaultFontSize ?? 40,
         startScale: layout.scale ?? 1,
-        corner,
+        handle,
+        aspectRatio: w / Math.max(h, 1),
       };
     },
     [isInteractive, layout, defaultWidth, defaultHeight, defaultFontSize, elementId, onSelect],
@@ -173,22 +194,78 @@ export default function DraggableTemplateElement({
     const onMove = (e: MouseEvent) => {
       const dx = (e.clientX - resizeRef.current.startClientX) / canvasScale;
       const dy = (e.clientY - resizeRef.current.startClientY) / canvasScale;
-      const { corner, startWidth, startHeight, startFontSize, startScale } = resizeRef.current;
-
-      // Compute delta based on corner direction
-      let delta = dx;
-      if (corner === 'sw' || corner === 'nw') delta = -dx;
-      if (corner === 'ne' || corner === 'nw') delta = Math.abs(dx) > Math.abs(dy) ? (corner === 'nw' ? -dx : dx) : -dy;
+      const { handle, startWidth, startHeight, startOffsetX, startOffsetY, startFontSize, startScale, aspectRatio } = resizeRef.current;
 
       if (type === 'image') {
-        const ratio = startWidth / startHeight;
-        const newW = Math.max(MIN_SIZE, startWidth + delta);
-        const newH = newW / ratio;
-        onUpdate(elementId, { width: newW, height: newH });
+        let newW = startWidth;
+        let newH = startHeight;
+        let newOffX = startOffsetX;
+        let newOffY = startOffsetY;
+
+        switch (handle) {
+          // ── CORNERS: aspect-ratio locked ──
+          case 'se': {
+            // Anchor: top-left. Grow right+down.
+            const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy * aspectRatio;
+            newW = Math.max(MIN_SIZE, startWidth + delta);
+            newH = newW / aspectRatio;
+            break;
+          }
+          case 'ne': {
+            // Anchor: bottom-left. Grow right+up.
+            const delta = Math.abs(dx) > Math.abs(dy) ? dx : -dy * aspectRatio;
+            newW = Math.max(MIN_SIZE, startWidth + delta);
+            newH = newW / aspectRatio;
+            newOffY = startOffsetY - (newH - startHeight);
+            break;
+          }
+          case 'sw': {
+            // Anchor: top-right. Grow left+down.
+            const delta = Math.abs(dx) > Math.abs(dy) ? -dx : dy * aspectRatio;
+            newW = Math.max(MIN_SIZE, startWidth + delta);
+            newH = newW / aspectRatio;
+            newOffX = startOffsetX - (newW - startWidth);
+            break;
+          }
+          case 'nw': {
+            // Anchor: bottom-right. Grow left+up.
+            const delta = Math.abs(dx) > Math.abs(dy) ? -dx : -dy * aspectRatio;
+            newW = Math.max(MIN_SIZE, startWidth + delta);
+            newH = newW / aspectRatio;
+            newOffX = startOffsetX - (newW - startWidth);
+            newOffY = startOffsetY - (newH - startHeight);
+            break;
+          }
+          // ── EDGES: free stretch (one axis only) ──
+          case 'e': {
+            newW = Math.max(MIN_SIZE, startWidth + dx);
+            break;
+          }
+          case 'w': {
+            newW = Math.max(MIN_SIZE, startWidth - dx);
+            newOffX = startOffsetX - (newW - startWidth);
+            break;
+          }
+          case 's': {
+            newH = Math.max(MIN_SIZE, startHeight + dy);
+            break;
+          }
+          case 'n': {
+            newH = Math.max(MIN_SIZE, startHeight - dy);
+            newOffY = startOffsetY - (newH - startHeight);
+            break;
+          }
+        }
+        onUpdate(elementId, { width: newW, height: newH, offsetX: newOffX, offsetY: newOffY });
       } else if (type === 'text') {
+        // Text: corners adjust font size
+        let delta = dx;
+        if (handle === 'sw' || handle === 'nw' || handle === 'w') delta = -dx;
         const newSize = Math.max(10, Math.min(200, startFontSize + delta * 0.5));
         onUpdate(elementId, { fontSize: newSize });
       } else if (type === 'badge') {
+        let delta = dx;
+        if (handle === 'sw' || handle === 'nw' || handle === 'w') delta = -dx;
         const newScale = Math.max(0.3, Math.min(3, startScale + delta * 0.003));
         onUpdate(elementId, { scale: newScale });
       }
@@ -223,12 +300,24 @@ export default function DraggableTemplateElement({
   const handlePx = 10 * inv;
   const borderPx = 2 * inv;
 
-  const cornerCursor: Record<string, string> = {
-    nw: 'nwse-resize',
-    ne: 'nesw-resize',
-    sw: 'nesw-resize',
-    se: 'nwse-resize',
-  };
+  // For image type when selected, show 8 handles; for text/badge show 4 corners
+  const isImage = type === 'image';
+
+  // Corner handles (all types get these when selected)
+  const cornerHandles: { id: HandleId; isTop: boolean; isLeft: boolean }[] = [
+    { id: 'nw', isTop: true, isLeft: true },
+    { id: 'ne', isTop: true, isLeft: false },
+    { id: 'sw', isTop: false, isLeft: true },
+    { id: 'se', isTop: false, isLeft: false },
+  ];
+
+  // Edge/midpoint handles (only for image type)
+  const edgeHandles: { id: HandleId; top?: string; bottom?: string; left?: string; right?: string; transform: string }[] = [
+    { id: 'n', top: `${-handlePx / 2}px`, left: '50%', transform: 'translateX(-50%)' },
+    { id: 's', bottom: `${-handlePx / 2}px`, left: '50%', transform: 'translateX(-50%)' },
+    { id: 'e', top: '50%', right: `${-handlePx / 2}px`, transform: 'translateY(-50%)' },
+    { id: 'w', top: '50%', left: `${-handlePx / 2}px`, transform: 'translateY(-50%)' },
+  ];
 
   return (
     <div
@@ -255,7 +344,7 @@ export default function DraggableTemplateElement({
           style={{
             position: 'absolute',
             inset: -borderPx,
-            border: `${borderPx}px solid ${isSelected ? '#3B82F6' : 'rgba(59,130,246,0.4)'}`,
+            border: `${borderPx}px ${isSelected ? 'solid' : 'dashed'} ${isSelected ? '#3B82F6' : 'rgba(59,130,246,0.4)'}`,
             borderRadius: 4 * inv,
             pointerEvents: 'none',
             zIndex: 10,
@@ -263,35 +352,55 @@ export default function DraggableTemplateElement({
         />
       )}
 
-      {/* Corner resize handles */}
+      {/* Corner resize handles (all types) */}
       {isSelected &&
-        (['nw', 'ne', 'sw', 'se'] as const).map(corner => {
-          const isTop = corner[0] === 'n';
-          const isLeft = corner[1] === 'w';
-          return (
-            <div
-              key={corner}
-              onMouseDown={startResize(corner)}
-              style={{
-                position: 'absolute',
-                width: handlePx,
-                height: handlePx,
-                backgroundColor: '#3B82F6',
-                border: `${borderPx}px solid #ffffff`,
-                borderRadius: 2 * inv,
-                top: isTop ? -handlePx / 2 : undefined,
-                bottom: isTop ? undefined : -handlePx / 2,
-                left: isLeft ? -handlePx / 2 : undefined,
-                right: isLeft ? undefined : -handlePx / 2,
-                cursor: cornerCursor[corner],
-                zIndex: 11,
-              }}
-            />
-          );
-        })}
+        cornerHandles.map(({ id, isTop, isLeft }) => (
+          <div
+            key={id}
+            onMouseDown={startResize(id)}
+            style={{
+              position: 'absolute',
+              width: handlePx,
+              height: handlePx,
+              backgroundColor: '#ffffff',
+              border: `${borderPx}px solid #3B82F6`,
+              borderRadius: 2 * inv,
+              top: isTop ? -handlePx / 2 : undefined,
+              bottom: isTop ? undefined : -handlePx / 2,
+              left: isLeft ? -handlePx / 2 : undefined,
+              right: isLeft ? undefined : -handlePx / 2,
+              cursor: HANDLE_CURSORS[id],
+              zIndex: 11,
+            }}
+          />
+        ))}
 
-      {/* Reset button (only when element has been moved) */}
-      {isSelected && (layout.offsetX !== 0 || layout.offsetY !== 0) && (
+      {/* Edge/midpoint resize handles (image type only) */}
+      {isSelected && isImage &&
+        edgeHandles.map((h) => (
+          <div
+            key={h.id}
+            onMouseDown={startResize(h.id)}
+            style={{
+              position: 'absolute',
+              width: (h.id === 'n' || h.id === 's') ? handlePx * 1.6 : handlePx,
+              height: (h.id === 'e' || h.id === 'w') ? handlePx * 1.6 : handlePx,
+              backgroundColor: '#ffffff',
+              border: `${borderPx}px solid #3B82F6`,
+              borderRadius: 2 * inv,
+              top: h.top,
+              bottom: h.bottom,
+              left: h.left,
+              right: h.right,
+              transform: h.transform,
+              cursor: HANDLE_CURSORS[h.id],
+              zIndex: 11,
+            }}
+          />
+        ))}
+
+      {/* Reset button (only when element has been moved/resized) */}
+      {isSelected && (layout.offsetX !== 0 || layout.offsetY !== 0 || layout.width || layout.height || layout.fontSize || layout.scale) && (
         <button
           onClick={e => {
             e.stopPropagation();

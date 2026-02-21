@@ -335,19 +335,12 @@ export function AIEngineeringBootcampTemplate({
     </h2>
   );
 
-  // ── Hero image style — solid display, no blend mode ──
-  const heroImgStyle = (maskDir: 'right' | 'top'): React.CSSProperties => {
-    const mask = maskDir === 'top'
-      ? 'linear-gradient(to top, transparent 0%, black 15%)'
-      : 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.85) 30%, black 50%)';
-    return {
-      width: '100%',
-      height: '100%',
-      objectFit: 'contain' as const,
-      objectPosition: maskDir === 'top' ? 'bottom center' : 'bottom right',
-      maskImage: mask,
-      WebkitMaskImage: mask,
-    };
+  // ── Hero image style — solid display, transparent PNGs ──
+  const heroImgStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain' as const,
+    objectPosition: 'bottom center',
   };
 
   // ── Background layers (shared across all layouts) ──
@@ -408,7 +401,6 @@ export function AIEngineeringBootcampTemplate({
     uspStrip: React.CSSProperties;
   };
 
-  let heroMaskDir: 'right' | 'top' = 'right';
   let heroImgExtraStyle: React.CSSProperties = {};
 
   // Background glow params
@@ -430,7 +422,6 @@ export function AIEngineeringBootcampTemplate({
       heroImage: { position: 'absolute', left: Math.round((width - heroW) / 2), top: heroY, zIndex: 3 },
       uspStrip: { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10 },
     };
-    heroMaskDir = 'top';
     glowParams = { top: '30%', right: '10%', w: width * 0.7, h: width * 0.7 };
   } else if (isSquare) {
     // ── SQUARE ──
@@ -447,7 +438,6 @@ export function AIEngineeringBootcampTemplate({
       heroImage: { position: 'absolute', right: 0, bottom: uspStripH, zIndex: 3 },
       uspStrip: { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10 },
     };
-    heroMaskDir = 'right';
     glowParams = { top: '15%', right: '-5%', w: width * 0.65, h: width * 0.65 };
   } else {
     // ── WIDE / LANDSCAPE ──
@@ -464,7 +454,6 @@ export function AIEngineeringBootcampTemplate({
       heroImage: { position: 'absolute', right: 0, top: Math.round(-10 * scale), zIndex: 3 },
       uspStrip: { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10 },
     };
-    heroMaskDir = 'right';
     heroImgExtraStyle = { height: '110%', width: undefined };
     glowParams = { top: '-10%', right: '10%', w: width * 0.6, h: height * 1.2 };
   }
@@ -517,7 +506,7 @@ export function AIEngineeringBootcampTemplate({
             src={heroImage}
             alt="AI Engineering Bootcamp Heroes"
             style={{
-              ...heroImgStyle(heroMaskDir),
+              ...heroImgStyle,
               ...heroImgExtraStyle,
             }}
           />
