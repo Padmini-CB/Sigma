@@ -208,8 +208,9 @@ export default function DraggableTemplateElement({
       <div
         style={{
           ...style,
-          transform: `translate(${layout.offsetX}px, ${layout.offsetY}px)`,
-          position: 'relative',
+          transform: layout.offsetX || layout.offsetY
+            ? `translate(${layout.offsetX}px, ${layout.offsetY}px)`
+            : undefined,
         }}
         className={className}
       >
@@ -235,10 +236,9 @@ export default function DraggableTemplateElement({
       style={{
         ...style,
         transform: `translate(${layout.offsetX}px, ${layout.offsetY}px)`,
-        position: 'relative',
         cursor: isDragging ? 'grabbing' : 'grab',
         userSelect: 'none',
-        zIndex: isSelected ? 100 : undefined,
+        zIndex: isSelected ? 100 : (style?.zIndex as number | undefined),
       }}
       className={className}
       onMouseEnter={() => setIsHovered(true)}

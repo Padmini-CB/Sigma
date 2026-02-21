@@ -1,6 +1,5 @@
 import { BRAND } from '@/styles/brand-constants';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
-import { getAdSizeConfig } from '@/config/adSizes';
 import DraggableTemplateElement, {
   type AIEngElementId,
   type ElementLayout,
@@ -92,7 +91,7 @@ export function AIEngineeringBootcampTemplate({
     linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px)
   `;
 
-  // Hero image dimensions & positioning (responsive)
+  // Hero image dimensions (responsive)
   const defaultHeroWidth = isWide ? width * 0.62 : isSquare ? width * 0.55 : width * 0.5;
   const defaultHeroHeight = isTall ? height * 0.45 : isSquare ? height * 0.75 : height + Math.round(10 * scale) + Math.round(40 * scale);
 
@@ -168,7 +167,7 @@ export function AIEngineeringBootcampTemplate({
         </DraggableTemplateElement>
       );
     }
-    // Static: apply offsets
+    // Static: apply offsets via transform, preserve absolute positioning from extraStyle
     return (
       <div
         style={{
@@ -176,7 +175,6 @@ export function AIEngineeringBootcampTemplate({
           transform: layout.offsetX || layout.offsetY
             ? `translate(${layout.offsetX}px, ${layout.offsetY}px)`
             : undefined,
-          position: 'relative',
         }}
         className={extraClass}
       >
@@ -337,7 +335,7 @@ export function AIEngineeringBootcampTemplate({
     </h2>
   );
 
-  // ── Hero image with blend mode + mask ──
+  // ── Hero image style — solid display, no blend mode ──
   const heroImgStyle = (maskDir: 'right' | 'top'): React.CSSProperties => {
     const mask = maskDir === 'top'
       ? 'linear-gradient(to top, transparent 0%, black 15%)'
@@ -347,7 +345,6 @@ export function AIEngineeringBootcampTemplate({
       height: '100%',
       objectFit: 'contain' as const,
       objectPosition: maskDir === 'top' ? 'bottom center' : 'bottom right',
-      mixBlendMode: 'lighten' as const,
       maskImage: mask,
       WebkitMaskImage: mask,
     };
@@ -385,191 +382,95 @@ export function AIEngineeringBootcampTemplate({
   );
 
   // ══════════════════════════════════════════════════════
-  // TALL / PORTRAIT LAYOUT
+  // COMPUTE ABSOLUTE POSITIONS PER LAYOUT
+  // All 7 draggable elements use position: absolute
+  // so moving one has ZERO effect on others.
   // ══════════════════════════════════════════════════════
+
+  // USP strip height (consistent across layouts)
+  const uspPadV = Math.round(12 * scale);
+  const uspStripH = uspPadV * 2 + uspFontSize + Math.round(8 * scale);
+
+  // Headline block height estimate
+  const headlineBlockH = line1Size + line2Size + Math.round(8 * scale);
+  // Subtitle height estimate
+  const subtitleH = Math.round(line3Size * 1.3) + Math.round(6 * scale);
+  // Logo row height estimate
+  const logoRowH = Math.round(30 * scale);
+
+  let positions: {
+    logo: React.CSSProperties;
+    badge: React.CSSProperties;
+    headline: React.CSSProperties;
+    subtitle: React.CSSProperties;
+    targetAudience: React.CSSProperties;
+    heroImage: React.CSSProperties;
+    uspStrip: React.CSSProperties;
+  };
+
+  let heroMaskDir: 'right' | 'top' = 'right';
+  let heroImgExtraStyle: React.CSSProperties = {};
+
+  // Background glow params
+  let glowParams: { top: string; right: string; w: number; h: number };
+
   if (isTall) {
-    return (
-      <div
-        style={{
-          width,
-          height,
-          background,
-          fontFamily: BRAND.fonts.body,
-          position: 'relative',
-          overflow: 'hidden',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {bgLayers('30%', '10%', width * 0.7, width * 0.7)}
+    // ── TALL / PORTRAIT ──
+    const headlineY = pad + logoRowH + Math.round(20 * scale);
+    const subtitleY = headlineY + headlineBlockH + Math.round(4 * scale);
+    const targetY = subtitleY + subtitleH;
+    const heroY = height - uspStripH - heroH;
 
-        {/* Content */}
-        <div style={{ padding: pad, display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 3, flexShrink: 0 }}>
-          {/* Top bar: logo + badge */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-            {wrap('logo', 'badge', logoLayout, {}, logoContent)}
-            {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent)}
-          </div>
+    positions = {
+      logo: { position: 'absolute', left: pad, top: pad, zIndex: 5 },
+      badge: { position: 'absolute', right: pad, top: pad, zIndex: 5 },
+      headline: { position: 'absolute', left: pad, top: headlineY, zIndex: 5 },
+      subtitle: { position: 'absolute', left: pad, top: subtitleY, zIndex: 5 },
+      targetAudience: { position: 'absolute', left: pad, top: targetY, zIndex: 5 },
+      heroImage: { position: 'absolute', left: Math.round((width - heroW) / 2), top: heroY, zIndex: 3 },
+      uspStrip: { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10 },
+    };
+    heroMaskDir = 'top';
+    glowParams = { top: '30%', right: '10%', w: width * 0.7, h: width * 0.7 };
+  } else if (isSquare) {
+    // ── SQUARE ──
+    const headlineY = pad + logoRowH + Math.round(height * 0.22);
+    const subtitleY = headlineY + headlineBlockH + Math.round(4 * scale);
+    const targetY = subtitleY + subtitleH;
 
-          {/* Headline block */}
-          <div style={{ marginTop: Math.round(20 * scale), display: 'flex', flexDirection: 'column', gap: Math.round(2 * scale), zIndex: 5 }}>
-            {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent)}
-            {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent)}
-            {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent)}
-          </div>
-        </div>
+    positions = {
+      logo: { position: 'absolute', left: pad, top: pad, zIndex: 5 },
+      badge: { position: 'absolute', right: pad, top: pad, zIndex: 5 },
+      headline: { position: 'absolute', left: pad, top: headlineY, maxWidth: '55%', zIndex: 5 },
+      subtitle: { position: 'absolute', left: pad, top: subtitleY, maxWidth: '55%', zIndex: 5 },
+      targetAudience: { position: 'absolute', left: pad, top: targetY, maxWidth: '55%', zIndex: 5 },
+      heroImage: { position: 'absolute', right: 0, bottom: uspStripH, zIndex: 3 },
+      uspStrip: { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10 },
+    };
+    heroMaskDir = 'right';
+    glowParams = { top: '15%', right: '-5%', w: width * 0.65, h: width * 0.65 };
+  } else {
+    // ── WIDE / LANDSCAPE ──
+    const headlineY = Math.round((height - uspStripH - headlineBlockH - subtitleH - line4Size) / 2);
+    const subtitleY = headlineY + headlineBlockH + Math.round(4 * scale);
+    const targetY = subtitleY + subtitleH;
 
-        {/* Hero image in center area */}
-        {wrap('heroImage', 'image', heroLayout, { width: defaultHeroWidth, height: defaultHeroHeight },
-          <div
-            style={{
-              flex: 1,
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-              zIndex: 3,
-              minHeight: 0,
-              width: heroW,
-              height: heroH,
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroImage}
-              alt="AI Engineering Bootcamp Heroes"
-              style={heroImgStyle('top')}
-            />
-          </div>,
-          { flex: 1, zIndex: 3, minHeight: 0 },
-        )}
-
-        {/* USP strip */}
-        {wrap('uspStrip', 'text', uspLayout, { fontSize: fonts.usp },
-          <div
-            style={{
-              zIndex: 10,
-              background: 'rgba(12,16,36,0.85)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              padding: `${Math.round(12 * scale)}px ${pad}px`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: Math.round(8 * scale),
-            }}
-          >
-            {uspContent}
-          </div>,
-        )}
-      </div>
-    );
+    positions = {
+      logo: { position: 'absolute', left: pad, top: pad, zIndex: 5 },
+      badge: { position: 'absolute', right: pad, top: pad, zIndex: 5 },
+      headline: { position: 'absolute', left: pad, top: headlineY, maxWidth: isWide ? '48%' : '55%', zIndex: 5 },
+      subtitle: { position: 'absolute', left: pad, top: subtitleY, maxWidth: isWide ? '48%' : '55%', zIndex: 5 },
+      targetAudience: { position: 'absolute', left: pad, top: targetY, maxWidth: isWide ? '48%' : '55%', zIndex: 5 },
+      heroImage: { position: 'absolute', right: 0, top: Math.round(-10 * scale), zIndex: 3 },
+      uspStrip: { position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10 },
+    };
+    heroMaskDir = 'right';
+    heroImgExtraStyle = { height: '110%', width: undefined };
+    glowParams = { top: '-10%', right: '10%', w: width * 0.6, h: height * 1.2 };
   }
 
   // ══════════════════════════════════════════════════════
-  // SQUARE LAYOUT
-  // ══════════════════════════════════════════════════════
-  if (isSquare) {
-    return (
-      <div
-        style={{
-          width,
-          height,
-          background,
-          fontFamily: BRAND.fonts.body,
-          position: 'relative',
-          overflow: 'hidden',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {bgLayers('15%', '-5%', width * 0.65, width * 0.65)}
-
-        {/* Hero image - right side (absolutely positioned) */}
-        {wrap('heroImage', 'image', heroLayout, { width: defaultHeroWidth, height: defaultHeroHeight },
-          <div
-            style={{
-              width: heroW,
-              height: heroH,
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroImage}
-              alt="AI Engineering Bootcamp Heroes"
-              style={heroImgStyle('right')}
-            />
-          </div>,
-          {
-            position: 'absolute',
-            right: 0,
-            bottom: Math.round(40 * scale),
-            zIndex: 3,
-          },
-        )}
-
-        {/* Content */}
-        <div
-          style={{
-            padding: pad,
-            display: 'flex',
-            flexDirection: 'column',
-            flex: 1,
-            position: 'relative',
-            zIndex: 5,
-            justifyContent: 'space-between',
-          }}
-        >
-          {/* Top bar */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-            {wrap('logo', 'badge', logoLayout, {}, logoContent)}
-            {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent)}
-          </div>
-
-          {/* Headline block */}
-          <div style={{ maxWidth: '55%', display: 'flex', flexDirection: 'column', gap: Math.round(2 * scale), zIndex: 5 }}>
-            {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent)}
-            {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent)}
-            {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent)}
-          </div>
-
-          {/* Spacer above USP */}
-          <div />
-        </div>
-
-        {/* USP strip */}
-        {wrap('uspStrip', 'text', uspLayout, { fontSize: fonts.usp },
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 10,
-              background: 'rgba(12,16,36,0.85)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              padding: `${Math.round(12 * scale)}px ${pad}px`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: Math.round(8 * scale),
-            }}
-          >
-            {uspContent}
-          </div>,
-        )}
-      </div>
-    );
-  }
-
-  // ══════════════════════════════════════════════════════
-  // WIDE / LANDSCAPE LAYOUT (YouTube Thumb, Facebook, etc.)
+  // UNIFIED RENDER — all elements absolutely positioned
   // ══════════════════════════════════════════════════════
   return (
     <div
@@ -583,9 +484,24 @@ export function AIEngineeringBootcampTemplate({
         boxSizing: 'border-box',
       }}
     >
-      {bgLayers('-10%', '10%', width * 0.6, height * 1.2)}
+      {bgLayers(glowParams.top, glowParams.right, glowParams.w, glowParams.h)}
 
-      {/* Hero image — right side */}
+      {/* Logo — top-left */}
+      {wrap('logo', 'badge', logoLayout, {}, logoContent, positions.logo)}
+
+      {/* Badge — top-right */}
+      {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent, positions.badge)}
+
+      {/* Headline */}
+      {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent, positions.headline)}
+
+      {/* Subtitle */}
+      {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent, positions.subtitle)}
+
+      {/* Target Audience */}
+      {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent, positions.targetAudience)}
+
+      {/* Hero Image */}
       {wrap('heroImage', 'image', heroLayout, { width: defaultHeroWidth, height: defaultHeroHeight },
         <div
           style={{
@@ -601,70 +517,22 @@ export function AIEngineeringBootcampTemplate({
             src={heroImage}
             alt="AI Engineering Bootcamp Heroes"
             style={{
-              ...heroImgStyle('right'),
-              height: '110%',
-              width: undefined,
+              ...heroImgStyle(heroMaskDir),
+              ...heroImgExtraStyle,
             }}
           />
         </div>,
-        {
-          position: 'absolute',
-          right: 0,
-          top: Math.round(-10 * scale),
-          bottom: Math.round(40 * scale),
-          zIndex: 3,
-        },
+        positions.heroImage,
       )}
 
-      {/* Content Layer */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 5,
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: pad,
-          boxSizing: 'border-box',
-        }}
-      >
-        {/* Top bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-          {wrap('logo', 'badge', logoLayout, {}, logoContent)}
-          {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent)}
-        </div>
-
-        {/* Main headline — left side, vertically centered */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            maxWidth: isWide ? '48%' : '55%',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: Math.round(2 * scale), zIndex: 5 }}>
-            {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent)}
-            {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent)}
-            {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent)}
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom USP strip */}
+      {/* USP Strip — bottom */}
       {wrap('uspStrip', 'text', uspLayout, { fontSize: fonts.usp },
         <div
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 10,
             background: 'rgba(12,16,36,0.85)',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
-            padding: `${Math.round(12 * scale)}px ${pad}px`,
+            padding: `${uspPadV}px ${pad}px`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -673,6 +541,7 @@ export function AIEngineeringBootcampTemplate({
         >
           {uspContent}
         </div>,
+        positions.uspStrip,
       )}
     </div>
   );
