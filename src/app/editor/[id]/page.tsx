@@ -14,6 +14,7 @@ import { type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, type PerSizeFontConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET, buildDefaultPerSizeFonts } from '@/config/fontSizes';
 import SizeTabBar from '@/components/SizeTabBar';
 import { AD_SIZES, DEFAULT_AD_SIZE, type AdSize } from '@/config/adSizes';
+import { type AIEngElementId, type ElementLayout, type ElementOverrides, type PerSizeElementOverrides } from '@/components/DraggableTemplateElement';
 
 interface Template {
   id: string;
@@ -131,6 +132,30 @@ export default function EditorPage() {
     setPerSizeCharacter(prev => ({ ...prev, [activeSize.id]: char }));
   }, [activeSize.id]);
 
+  // ── Per-size element overrides (for draggable template elements) ──
+  const [perSizeElementOverrides, setPerSizeElementOverrides] = useState<PerSizeElementOverrides>({});
+  const [selectedElement, setSelectedElement] = useState<AIEngElementId | null>(null);
+
+  // Derived: current size's element overrides
+  const elementOverrides: ElementOverrides = perSizeElementOverrides[activeSize.id] ?? {};
+  const handleElementUpdate = useCallback((id: AIEngElementId, updates: Partial<ElementLayout>) => {
+    setPerSizeElementOverrides(prev => {
+      const current = prev[activeSize.id] ?? {};
+      const existing = current[id] ?? { offsetX: 0, offsetY: 0 };
+      return {
+        ...prev,
+        [activeSize.id]: {
+          ...current,
+          [id]: { ...existing, ...updates },
+        },
+      };
+    });
+  }, [activeSize.id]);
+
+  const handleElementSelect = useCallback((id: AIEngElementId | null) => {
+    setSelectedElement(id);
+  }, []);
+
   // Apply character to ALL sizes (convenience action)
   const handleApplyCharacterToAll = useCallback(() => {
     const current = perSizeCharacter[activeSize.id] ?? null;
@@ -201,6 +226,8 @@ export default function EditorPage() {
     setSelectedCourse(null);
     setPerSizeFonts(buildDefaultPerSizeFonts(AD_SIZES.map(s => s.id)));
     setEditedSizes(new Set());
+    setPerSizeElementOverrides({});
+    setSelectedElement(null);
     showToast('info', 'Reset Complete', 'Fields restored to defaults');
   };
 
@@ -436,6 +463,12 @@ export default function EditorPage() {
           onFontSizesChange={setFontSizes}
           activeSizeLabel={`${activeSize.label} (${activeSize.width} × ${activeSize.height})`}
           onApplyCharacterToAll={handleApplyCharacterToAll}
+          isAIEngTemplate={selectedDesignId === 'ai-engineering-bootcamp-thumbnail'}
+          selectedElement={selectedElement}
+          elementOverrides={elementOverrides}
+          onElementUpdate={handleElementUpdate}
+          canvasWidth={activeSize.width}
+          canvasHeight={activeSize.height}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -456,6 +489,12 @@ export default function EditorPage() {
           onFontSizesChange={setFontSizes}
           activeSizeLabel={`${activeSize.label} (${activeSize.width} × ${activeSize.height})`}
           onApplyCharacterToAll={handleApplyCharacterToAll}
+          isAIEngTemplate={selectedDesignId === 'ai-engineering-bootcamp-thumbnail'}
+          selectedElement={selectedElement}
+          elementOverrides={elementOverrides}
+          onElementUpdate={handleElementUpdate}
+          canvasWidth={activeSize.width}
+          canvasHeight={activeSize.height}
         />
 
         {/* Right Panel - Live Preview */}
@@ -474,6 +513,11 @@ export default function EditorPage() {
           overrideDimensions={{ width: activeSize.width, height: activeSize.height }}
           perSizeFonts={perSizeFonts}
           perSizeCharacter={perSizeCharacter}
+          elementOverrides={elementOverrides}
+          onElementUpdate={handleElementUpdate}
+          selectedElement={selectedElement}
+          onElementSelect={handleElementSelect}
+          perSizeElementOverrides={perSizeElementOverrides}
         />
       </div>
 

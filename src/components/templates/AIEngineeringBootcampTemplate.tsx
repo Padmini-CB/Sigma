@@ -1,6 +1,12 @@
 import { BRAND } from '@/styles/brand-constants';
 import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
 import { getAdSizeConfig } from '@/config/adSizes';
+import DraggableTemplateElement, {
+  type AIEngElementId,
+  type ElementLayout,
+  type ElementOverrides,
+  DEFAULT_ELEMENT_LAYOUT,
+} from '@/components/DraggableTemplateElement';
 
 interface AIEngineeringBootcampTemplateProps {
   /** Line 1 of headline */
@@ -27,6 +33,23 @@ interface AIEngineeringBootcampTemplateProps {
   width?: number;
   /** Canvas height */
   height?: number;
+  /** Interactive mode: enables dragging & resizing of elements */
+  isInteractive?: boolean;
+  /** Canvas scale factor for interactive mode (viewport scale) */
+  canvasScale?: number;
+  /** Per-element layout overrides */
+  elementOverrides?: ElementOverrides;
+  /** Callback when an element is moved/resized */
+  onElementUpdate?: (id: AIEngElementId, updates: Partial<ElementLayout>) => void;
+  /** Currently selected element */
+  selectedElement?: AIEngElementId | null;
+  /** Callback to select/deselect an element */
+  onElementSelect?: (id: AIEngElementId | null) => void;
+}
+
+/** Helper: get layout for an element, falling back to defaults */
+function getLayout(overrides: ElementOverrides | undefined, id: AIEngElementId): ElementLayout {
+  return overrides?.[id] ?? DEFAULT_ELEMENT_LAYOUT;
 }
 
 export function AIEngineeringBootcampTemplate({
@@ -42,9 +65,14 @@ export function AIEngineeringBootcampTemplate({
   heroImage = '/images/bootcamps/ai-engineering/heroes/superhero-trio.png',
   width = 1000,
   height = 563,
+  isInteractive = false,
+  canvasScale = 1,
+  elementOverrides,
+  onElementUpdate,
+  selectedElement,
+  onElementSelect,
 }: AIEngineeringBootcampTemplateProps) {
-  const { layoutMode } = getAdSizeConfig(width, height);
-  const scale = Math.min(width, height) / 563; // base scale from YouTube thumbnail height
+  const scale = Math.min(width, height) / 563;
   const isWide = width / height > 1.2;
   const isSquare = Math.abs(width / height - 1) < 0.15;
   const isTall = height / width > 1.1;
@@ -55,7 +83,7 @@ export function AIEngineeringBootcampTemplate({
   const NAVY = '#0c1630';
   const TEAL = '#20C997';
 
-  // Background gradient from the original HTML source
+  // Background gradient
   const background = 'linear-gradient(170deg, #0c1630 0%, #151040 35%, #1a1545 55%, #12103a 80%, #0c1630 100%)';
 
   // Grid texture overlay
@@ -65,8 +93,8 @@ export function AIEngineeringBootcampTemplate({
   `;
 
   // Hero image dimensions & positioning (responsive)
-  const heroWidth = isWide ? width * 0.62 : isSquare ? width * 0.55 : width * 0.5;
-  const heroRight = 0;
+  const defaultHeroWidth = isWide ? width * 0.62 : isSquare ? width * 0.55 : width * 0.5;
+  const defaultHeroHeight = isTall ? height * 0.45 : isSquare ? height * 0.75 : height + Math.round(10 * scale) + Math.round(40 * scale);
 
   // Font sizes scaled proportionally
   const fonts = {
@@ -84,32 +112,89 @@ export function AIEngineeringBootcampTemplate({
   // Padding
   const pad = Math.round(28 * scale);
 
-  // USP strip
-  const uspStrip = (
-    <div
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 10,
-        background: 'rgba(12,16,36,0.85)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        padding: `${Math.round(12 * scale)}px ${pad}px`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: Math.round(8 * scale),
-      }}
-    >
+  // Element layouts (with overrides applied)
+  const heroLayout = getLayout(elementOverrides, 'heroImage');
+  const headlineLayout = getLayout(elementOverrides, 'headline');
+  const subtitleLayout = getLayout(elementOverrides, 'subtitle');
+  const targetLayout = getLayout(elementOverrides, 'targetAudience');
+  const badgeLayout = getLayout(elementOverrides, 'badge');
+  const logoLayout = getLayout(elementOverrides, 'logo');
+  const uspLayout = getLayout(elementOverrides, 'uspStrip');
+
+  // Override sizes
+  const heroW = heroLayout.width ?? defaultHeroWidth;
+  const heroH = heroLayout.height ?? defaultHeroHeight;
+  const line1Size = headlineLayout.fontSize ?? fonts.line1;
+  const line2Size = headlineLayout.fontSize ?? fonts.line2;
+  const versionSize = headlineLayout.fontSize ? Math.round(headlineLayout.fontSize * 0.65) : fonts.version;
+  const line3Size = subtitleLayout.fontSize ?? fonts.line3;
+  const line4Size = targetLayout.fontSize ?? fonts.line4;
+  const uspFontSize = uspLayout.fontSize ?? fonts.usp;
+  const badgeScale = badgeLayout.scale ?? 1;
+  const logoScale = logoLayout.scale ?? 1;
+
+  // Noop handlers for non-interactive mode
+  const handleUpdate = onElementUpdate ?? (() => {});
+  const handleSelect = onElementSelect ?? (() => {});
+
+  // ── Helper: wrap element in DraggableTemplateElement when interactive ──
+  const wrap = (
+    id: AIEngElementId,
+    type: 'image' | 'text' | 'badge',
+    layout: ElementLayout,
+    defaults: { width?: number; height?: number; fontSize?: number },
+    children: React.ReactNode,
+    extraStyle?: React.CSSProperties,
+    extraClass?: string,
+  ) => {
+    if (isInteractive) {
+      return (
+        <DraggableTemplateElement
+          elementId={id}
+          isInteractive
+          canvasScale={canvasScale}
+          layout={layout}
+          type={type}
+          onUpdate={handleUpdate}
+          onSelect={handleSelect}
+          isSelected={selectedElement === id}
+          defaultWidth={defaults.width}
+          defaultHeight={defaults.height}
+          defaultFontSize={defaults.fontSize}
+          style={extraStyle}
+          className={extraClass}
+        >
+          {children}
+        </DraggableTemplateElement>
+      );
+    }
+    // Static: apply offsets
+    return (
+      <div
+        style={{
+          ...extraStyle,
+          transform: layout.offsetX || layout.offsetY
+            ? `translate(${layout.offsetX}px, ${layout.offsetY}px)`
+            : undefined,
+          position: 'relative',
+        }}
+        className={extraClass}
+      >
+        {children}
+      </div>
+    );
+  };
+
+  // ── USP strip content ──
+  const uspContent = (
+    <>
       {uspItems.map((item, i) => (
         <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: Math.round(6 * scale) }}>
           {i > 0 && (
             <span
               style={{
                 color: 'rgba(255,255,255,0.3)',
-                fontSize: fonts.usp,
+                fontSize: uspFontSize,
                 fontFamily: BRAND.fonts.body,
                 marginRight: Math.round(2 * scale),
               }}
@@ -117,11 +202,11 @@ export function AIEngineeringBootcampTemplate({
               ·
             </span>
           )}
-          <span style={{ color: TEAL, fontSize: fonts.checkmark, lineHeight: 1 }}>✔</span>
+          <span style={{ color: TEAL, fontSize: uspFontSize, lineHeight: 1 }}>✔</span>
           <span
             style={{
               color: '#ffffff',
-              fontSize: fonts.usp,
+              fontSize: uspFontSize,
               fontFamily: BRAND.fonts.body,
               fontWeight: 400,
               whiteSpace: 'nowrap',
@@ -131,74 +216,58 @@ export function AIEngineeringBootcampTemplate({
           </span>
         </span>
       ))}
+    </>
+  );
+
+  // ── Logo + PRESENTS content ──
+  const logoContent = (
+    <div style={{ display: 'flex', alignItems: 'center', gap: Math.round(10 * scale), transform: `scale(${logoScale})`, transformOrigin: 'left center' }}>
+      <PadminiLogo />
+      <span
+        style={{
+          fontFamily: BRAND.fonts.body,
+          fontWeight: 300,
+          fontSize: fonts.presents,
+          letterSpacing: 3.5,
+          color: 'rgba(255,255,255,0.5)',
+          textTransform: 'uppercase',
+        }}
+      >
+        {presentsText}
+      </span>
     </div>
   );
 
-  // Top bar with logo + PRESENTS + badge
-  const topBar = (
+  // ── Badge content ──
+  const badgeContent = showBadge ? (
     <div
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'relative',
-        zIndex: 5,
-        flexShrink: 0,
+        background: LIME,
+        color: NAVY,
+        fontFamily: BRAND.fonts.heading,
+        fontWeight: 800,
+        fontSize: fonts.badge,
+        textTransform: 'uppercase',
+        padding: `${Math.round(5 * scale)}px ${Math.round(16 * scale)}px`,
+        borderRadius: Math.round(4 * scale),
+        letterSpacing: 0.5,
+        transform: `scale(${badgeScale})`,
+        transformOrigin: 'right center',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: Math.round(10 * scale) }}>
-        <PadminiLogo />
-        <span
-          style={{
-            fontFamily: BRAND.fonts.body,
-            fontWeight: 300,
-            fontSize: fonts.presents,
-            letterSpacing: 3.5,
-            color: 'rgba(255,255,255,0.5)',
-            textTransform: 'uppercase',
-          }}
-        >
-          {presentsText}
-        </span>
-      </div>
-      {showBadge && (
-        <div
-          style={{
-            background: LIME,
-            color: NAVY,
-            fontFamily: BRAND.fonts.heading,
-            fontWeight: 800,
-            fontSize: fonts.badge,
-            textTransform: 'uppercase',
-            padding: `${Math.round(5 * scale)}px ${Math.round(16 * scale)}px`,
-            borderRadius: Math.round(4 * scale),
-            letterSpacing: 0.5,
-          }}
-        >
-          {badgeText}
-        </div>
-      )}
+      {badgeText}
     </div>
-  );
+  ) : null;
 
-  // Headline block
-  const headlineBlock = (
-    <div
-      style={{
-        position: 'relative',
-        zIndex: 5,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: Math.round(2 * scale),
-      }}
-    >
-      {/* Line 1: AI ENGINEERING */}
+  // ── Headline content (lines 1 + 2) ──
+  const headlineContent = (
+    <>
       <h1
         style={{
           margin: 0,
           fontFamily: BRAND.fonts.heading,
           fontWeight: 900,
-          fontSize: fonts.line1,
+          fontSize: line1Size,
           color: '#ffffff',
           lineHeight: 1.0,
           textTransform: 'uppercase',
@@ -206,14 +275,12 @@ export function AIEngineeringBootcampTemplate({
       >
         {headlineLine1}
       </h1>
-
-      {/* Line 2: BOOTCAMP + 1.0 */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: Math.round(8 * scale) }}>
         <span
           style={{
             fontFamily: BRAND.fonts.heading,
             fontWeight: 900,
-            fontSize: fonts.line2,
+            fontSize: line2Size,
             color: '#ffffff',
             lineHeight: 1.0,
             textTransform: 'uppercase',
@@ -225,7 +292,7 @@ export function AIEngineeringBootcampTemplate({
           style={{
             fontFamily: BRAND.fonts.heading,
             fontWeight: 900,
-            fontSize: fonts.version,
+            fontSize: versionSize,
             color: LIME,
             lineHeight: 1.0,
           }}
@@ -233,42 +300,93 @@ export function AIEngineeringBootcampTemplate({
           {versionBadge}
         </span>
       </div>
-
-      {/* Line 3: Built Exclusively for */}
-      <p
-        style={{
-          margin: 0,
-          marginTop: Math.round(6 * scale),
-          fontFamily: BRAND.fonts.body,
-          fontWeight: 300,
-          fontSize: fonts.line3,
-          color: 'rgba(255,255,255,0.6)',
-          lineHeight: 1.3,
-        }}
-      >
-        {headlineLine3}
-      </p>
-
-      {/* Line 4: SOFTWARE ENGINEERS */}
-      <h2
-        style={{
-          margin: 0,
-          fontFamily: BRAND.fonts.heading,
-          fontWeight: 900,
-          fontSize: fonts.line4,
-          color: BLUE,
-          lineHeight: 1.0,
-          textTransform: 'uppercase',
-        }}
-      >
-        {headlineLine4}
-      </h2>
-    </div>
+    </>
   );
 
-  // ---- Layout variations ----
+  // ── Subtitle content (line 3) ──
+  const subtitleContent = (
+    <p
+      style={{
+        margin: 0,
+        marginTop: Math.round(6 * scale),
+        fontFamily: BRAND.fonts.body,
+        fontWeight: 300,
+        fontSize: line3Size,
+        color: 'rgba(255,255,255,0.6)',
+        lineHeight: 1.3,
+      }}
+    >
+      {headlineLine3}
+    </p>
+  );
 
-  // Tall / Portrait layout: headline top, hero center, USP bottom
+  // ── Target audience content (line 4) ──
+  const targetContent = (
+    <h2
+      style={{
+        margin: 0,
+        fontFamily: BRAND.fonts.heading,
+        fontWeight: 900,
+        fontSize: line4Size,
+        color: BLUE,
+        lineHeight: 1.0,
+        textTransform: 'uppercase',
+      }}
+    >
+      {headlineLine4}
+    </h2>
+  );
+
+  // ── Hero image with blend mode + mask ──
+  const heroImgStyle = (maskDir: 'right' | 'top'): React.CSSProperties => {
+    const mask = maskDir === 'top'
+      ? 'linear-gradient(to top, transparent 0%, black 15%)'
+      : 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.85) 30%, black 50%)';
+    return {
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain' as const,
+      objectPosition: maskDir === 'top' ? 'bottom center' : 'bottom right',
+      mixBlendMode: 'lighten' as const,
+      maskImage: mask,
+      WebkitMaskImage: mask,
+    };
+  };
+
+  // ── Background layers (shared across all layouts) ──
+  const bgLayers = (glowTop: string, glowRight: string, glowW: number, glowH: number) => (
+    <>
+      {/* Grid texture */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: gridTexture,
+          backgroundSize: '40px 40px',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Ambient glow */}
+      <div
+        style={{
+          position: 'absolute',
+          top: glowTop,
+          right: glowRight,
+          width: glowW,
+          height: glowH,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(111,83,193,0.08) 40%, transparent 70%)',
+          zIndex: 2,
+          pointerEvents: 'none',
+        }}
+      />
+    </>
+  );
+
+  // ══════════════════════════════════════════════════════
+  // TALL / PORTRAIT LAYOUT
+  // ══════════════════════════════════════════════════════
   if (isTall) {
     return (
       <div
@@ -284,75 +402,74 @@ export function AIEngineeringBootcampTemplate({
           flexDirection: 'column',
         }}
       >
-        {/* Grid texture */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: gridTexture,
-            backgroundSize: '40px 40px',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Ambient glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '30%',
-            right: '10%',
-            width: width * 0.7,
-            height: width * 0.7,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(111,83,193,0.08) 40%, transparent 70%)',
-            zIndex: 2,
-            pointerEvents: 'none',
-          }}
-        />
+        {bgLayers('30%', '10%', width * 0.7, width * 0.7)}
 
         {/* Content */}
-        <div style={{ padding: pad, display: 'flex', flexDirection: 'column', flex: 1, position: 'relative', zIndex: 3 }}>
-          {topBar}
-          <div style={{ marginTop: Math.round(20 * scale) }}>
-            {headlineBlock}
+        <div style={{ padding: pad, display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 3, flexShrink: 0 }}>
+          {/* Top bar: logo + badge */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+            {wrap('logo', 'badge', logoLayout, {}, logoContent)}
+            {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent)}
+          </div>
+
+          {/* Headline block */}
+          <div style={{ marginTop: Math.round(20 * scale), display: 'flex', flexDirection: 'column', gap: Math.round(2 * scale), zIndex: 5 }}>
+            {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent)}
+            {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent)}
+            {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent)}
           </div>
         </div>
 
         {/* Hero image in center area */}
-        <div
-          style={{
-            flex: 1,
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-end',
-            zIndex: 3,
-            minHeight: 0,
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroImage}
-            alt="AI Engineering Bootcamp Heroes"
+        {wrap('heroImage', 'image', heroLayout, { width: defaultHeroWidth, height: defaultHeroHeight },
+          <div
             style={{
-              height: '100%',
-              maxWidth: '100%',
-              objectFit: 'contain',
-              objectPosition: 'bottom center',
-              maskImage: 'linear-gradient(to top, transparent 0%, black 15%)',
-              WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 15%)',
+              flex: 1,
+              position: 'relative',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              zIndex: 3,
+              minHeight: 0,
+              width: heroW,
+              height: heroH,
             }}
-          />
-        </div>
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt="AI Engineering Bootcamp Heroes"
+              style={heroImgStyle('top')}
+            />
+          </div>,
+          { flex: 1, zIndex: 3, minHeight: 0 },
+        )}
 
         {/* USP strip */}
-        {uspStrip}
+        {wrap('uspStrip', 'text', uspLayout, { fontSize: fonts.usp },
+          <div
+            style={{
+              zIndex: 10,
+              background: 'rgba(12,16,36,0.85)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              padding: `${Math.round(12 * scale)}px ${pad}px`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: Math.round(8 * scale),
+            }}
+          >
+            {uspContent}
+          </div>,
+        )}
       </div>
     );
   }
 
-  // Square layout: similar to wide but hero bottom-right, headline left
+  // ══════════════════════════════════════════════════════
+  // SQUARE LAYOUT
+  // ══════════════════════════════════════════════════════
   if (isSquare) {
     return (
       <div
@@ -368,60 +485,33 @@ export function AIEngineeringBootcampTemplate({
           flexDirection: 'column',
         }}
       >
-        {/* Grid texture */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: gridTexture,
-            backgroundSize: '40px 40px',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        />
+        {bgLayers('15%', '-5%', width * 0.65, width * 0.65)}
 
-        {/* Ambient glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '15%',
-            right: '-5%',
-            width: width * 0.65,
-            height: width * 0.65,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(111,83,193,0.08) 40%, transparent 70%)',
-            zIndex: 2,
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Hero image - right side */}
-        <div
-          style={{
-            position: 'absolute',
-            right: heroRight,
-            bottom: Math.round(40 * scale), // above USP strip
-            width: heroWidth,
-            height: height * 0.75,
-            zIndex: 3,
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroImage}
-            alt="AI Engineering Bootcamp Heroes"
+        {/* Hero image - right side (absolutely positioned) */}
+        {wrap('heroImage', 'image', heroLayout, { width: defaultHeroWidth, height: defaultHeroHeight },
+          <div
             style={{
-              height: '100%',
-              objectFit: 'contain',
-              objectPosition: 'bottom right',
-              maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.85) 30%, black 50%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.85) 30%, black 50%)',
+              width: heroW,
+              height: heroH,
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
             }}
-          />
-        </div>
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt="AI Engineering Bootcamp Heroes"
+              style={heroImgStyle('right')}
+            />
+          </div>,
+          {
+            position: 'absolute',
+            right: 0,
+            bottom: Math.round(40 * scale),
+            zIndex: 3,
+          },
+        )}
 
         {/* Content */}
         <div
@@ -435,21 +525,52 @@ export function AIEngineeringBootcampTemplate({
             justifyContent: 'space-between',
           }}
         >
-          {topBar}
-          <div style={{ maxWidth: '55%' }}>
-            {headlineBlock}
+          {/* Top bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+            {wrap('logo', 'badge', logoLayout, {}, logoContent)}
+            {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent)}
           </div>
+
+          {/* Headline block */}
+          <div style={{ maxWidth: '55%', display: 'flex', flexDirection: 'column', gap: Math.round(2 * scale), zIndex: 5 }}>
+            {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent)}
+            {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent)}
+            {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent)}
+          </div>
+
           {/* Spacer above USP */}
           <div />
         </div>
 
         {/* USP strip */}
-        {uspStrip}
+        {wrap('uspStrip', 'text', uspLayout, { fontSize: fonts.usp },
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              background: 'rgba(12,16,36,0.85)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              padding: `${Math.round(12 * scale)}px ${pad}px`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: Math.round(8 * scale),
+            }}
+          >
+            {uspContent}
+          </div>,
+        )}
       </div>
     );
   }
 
-  // ---- Default: Wide / Landscape layout (YouTube Thumb, Facebook, etc.) ----
+  // ══════════════════════════════════════════════════════
+  // WIDE / LANDSCAPE LAYOUT (YouTube Thumb, Facebook, etc.)
+  // ══════════════════════════════════════════════════════
   return (
     <div
       style={{
@@ -462,60 +583,38 @@ export function AIEngineeringBootcampTemplate({
         boxSizing: 'border-box',
       }}
     >
-      {/* Grid texture overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: gridTexture,
-          backgroundSize: '40px 40px',
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}
-      />
+      {bgLayers('-10%', '10%', width * 0.6, height * 1.2)}
 
-      {/* Ambient glow behind heroes */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '-10%',
-          right: '10%',
-          width: width * 0.6,
-          height: height * 1.2,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(111,83,193,0.08) 40%, transparent 70%)',
-          zIndex: 2,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Hero image — right side, slightly overflowing top */}
-      <div
-        style={{
-          position: 'absolute',
-          right: heroRight,
-          top: Math.round(-10 * scale),
-          bottom: Math.round(40 * scale), // leave room for USP strip
-          width: heroWidth,
-          zIndex: 3,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={heroImage}
-          alt="AI Engineering Bootcamp Heroes"
+      {/* Hero image — right side */}
+      {wrap('heroImage', 'image', heroLayout, { width: defaultHeroWidth, height: defaultHeroHeight },
+        <div
           style={{
-            height: '110%',
-            objectFit: 'contain',
-            objectPosition: 'bottom center',
-            maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.85) 30%, black 50%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.85) 30%, black 50%)',
+            width: heroW,
+            height: heroH,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
           }}
-        />
-      </div>
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={heroImage}
+            alt="AI Engineering Bootcamp Heroes"
+            style={{
+              ...heroImgStyle('right'),
+              height: '110%',
+              width: undefined,
+            }}
+          />
+        </div>,
+        {
+          position: 'absolute',
+          right: 0,
+          top: Math.round(-10 * scale),
+          bottom: Math.round(40 * scale),
+          zIndex: 3,
+        },
+      )}
 
       {/* Content Layer */}
       <div
@@ -531,7 +630,10 @@ export function AIEngineeringBootcampTemplate({
         }}
       >
         {/* Top bar */}
-        {topBar}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          {wrap('logo', 'badge', logoLayout, {}, logoContent)}
+          {badgeContent && wrap('badge', 'badge', badgeLayout, {}, badgeContent)}
+        </div>
 
         {/* Main headline — left side, vertically centered */}
         <div
@@ -542,12 +644,36 @@ export function AIEngineeringBootcampTemplate({
             maxWidth: isWide ? '48%' : '55%',
           }}
         >
-          {headlineBlock}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: Math.round(2 * scale), zIndex: 5 }}>
+            {wrap('headline', 'text', headlineLayout, { fontSize: fonts.line1 }, headlineContent)}
+            {wrap('subtitle', 'text', subtitleLayout, { fontSize: fonts.line3 }, subtitleContent)}
+            {wrap('targetAudience', 'text', targetLayout, { fontSize: fonts.line4 }, targetContent)}
+          </div>
         </div>
       </div>
 
       {/* Bottom USP strip */}
-      {uspStrip}
+      {wrap('uspStrip', 'text', uspLayout, { fontSize: fonts.usp },
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            background: 'rgba(12,16,36,0.85)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            padding: `${Math.round(12 * scale)}px ${pad}px`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: Math.round(8 * scale),
+          }}
+        >
+          {uspContent}
+        </div>,
+      )}
     </div>
   );
 }

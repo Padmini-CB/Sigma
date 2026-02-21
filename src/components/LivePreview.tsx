@@ -30,6 +30,7 @@ import { AIEngineeringBootcampTemplate } from '@/components/templates/AIEngineer
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, type PerSizeFontConfig, FONT_COLORS } from '@/config/fontSizes';
 import { getAdSizeConfig, AD_SIZES } from '@/config/adSizes';
+import { type AIEngElementId, type ElementLayout, type ElementOverrides, type PerSizeElementOverrides } from '@/components/DraggableTemplateElement';
 
 interface Template {
   id: string;
@@ -63,6 +64,16 @@ interface LivePreviewProps {
   perSizeFonts?: PerSizeFontConfig;
   /** Per-size character placements for batch export. Key = AdSize.id */
   perSizeCharacter?: Record<string, SelectedCharacter | null>;
+  /** Element position overrides for the current size */
+  elementOverrides?: ElementOverrides;
+  /** Callback when a template element is moved/resized */
+  onElementUpdate?: (id: AIEngElementId, updates: Partial<ElementLayout>) => void;
+  /** Currently selected template element */
+  selectedElement?: AIEngElementId | null;
+  /** Callback to select/deselect a template element */
+  onElementSelect?: (id: AIEngElementId | null) => void;
+  /** Per-size element overrides for batch export */
+  perSizeElementOverrides?: PerSizeElementOverrides;
 }
 
 export interface LivePreviewHandle {
@@ -95,7 +106,7 @@ function buildSigmaVars(fontSizes: FontSizeConfig | undefined, width: number, he
   };
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions, perSizeFonts, perSizeCharacter }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions, perSizeFonts, perSizeCharacter, elementOverrides, onElementUpdate, selectedElement, onElementSelect, perSizeElementOverrides }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -292,6 +303,10 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               canvasScale={finalScale}
               onCharacterUpdate={onCharacterUpdate}
               onCharacterDelete={onCharacterDelete}
+              elementOverrides={elementOverrides}
+              onElementUpdate={onElementUpdate}
+              selectedElement={selectedElement}
+              onElementSelect={onElementSelect}
             />
           </div>
         </div>
@@ -341,6 +356,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             selectedDesignId={selectedDesignId}
             selectedCharacter={selectedCharacter}
             selectedCourse={selectedCourse}
+            elementOverrides={elementOverrides}
           />
         </div>
       </div>
@@ -360,6 +376,10 @@ interface TemplateContentProps {
   canvasScale?: number;
   onCharacterUpdate?: (updates: Partial<SelectedCharacter>) => void;
   onCharacterDelete?: () => void;
+  elementOverrides?: ElementOverrides;
+  onElementUpdate?: (id: AIEngElementId, updates: Partial<ElementLayout>) => void;
+  selectedElement?: AIEngElementId | null;
+  onElementSelect?: (id: AIEngElementId | null) => void;
 }
 
 function getCourseData(courseKey?: BootcampKey | null) {
@@ -409,7 +429,7 @@ function CharacterOverlay({ character }: { character: SelectedCharacter }) {
   );
 }
 
-function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, isInteractive, canvasScale, onCharacterUpdate, onCharacterDelete }: TemplateContentProps) {
+function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, isInteractive, canvasScale, onCharacterUpdate, onCharacterDelete, elementOverrides, onElementUpdate, selectedElement, onElementSelect }: TemplateContentProps) {
   const { headline, subheadline, cta, price, courseName, bodyText } = fields;
   const { width, height } = template.dimensions;
   const courseData = getCourseData(selectedCourse);
@@ -517,6 +537,12 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
         uspItems={bodyText ? bodyText.split('·').map(s => s.trim()).filter(Boolean) : undefined}
         width={width}
         height={height}
+        isInteractive={isInteractive}
+        canvasScale={canvasScale}
+        elementOverrides={elementOverrides}
+        onElementUpdate={onElementUpdate}
+        selectedElement={selectedElement}
+        onElementSelect={onElementSelect}
       />
     );
   }
