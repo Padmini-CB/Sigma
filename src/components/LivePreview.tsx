@@ -74,6 +74,8 @@ interface LivePreviewProps {
   onElementSelect?: (id: AIEngElementId | null) => void;
   /** Per-size element overrides for batch export */
   perSizeElementOverrides?: PerSizeElementOverrides;
+  /** Hero image path for AI Engineering template */
+  heroImage?: string;
 }
 
 export interface LivePreviewHandle {
@@ -106,7 +108,7 @@ function buildSigmaVars(fontSizes: FontSizeConfig | undefined, width: number, he
   };
 }
 
-const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions, perSizeFonts, perSizeCharacter, elementOverrides, onElementUpdate, selectedElement, onElementSelect, perSizeElementOverrides }, ref) {
+const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function LivePreview({ template, fields, customColors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, fontSizes, onCharacterUpdate, onCharacterDelete, overrideDimensions, perSizeFonts, perSizeCharacter, elementOverrides, onElementUpdate, selectedElement, onElementSelect, perSizeElementOverrides, heroImage }, ref) {
   const exportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -307,6 +309,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
               onElementUpdate={onElementUpdate}
               selectedElement={selectedElement}
               onElementSelect={onElementSelect}
+              heroImage={heroImage}
             />
           </div>
         </div>
@@ -357,6 +360,7 @@ const LivePreview = forwardRef<LivePreviewHandle, LivePreviewProps>(function Liv
             selectedCharacter={selectedCharacter}
             selectedCourse={selectedCourse}
             elementOverrides={elementOverrides}
+            heroImage={heroImage}
           />
         </div>
       </div>
@@ -380,6 +384,7 @@ interface TemplateContentProps {
   onElementUpdate?: (id: AIEngElementId, updates: Partial<ElementLayout>) => void;
   selectedElement?: AIEngElementId | null;
   onElementSelect?: (id: AIEngElementId | null) => void;
+  heroImage?: string;
 }
 
 function getCourseData(courseKey?: BootcampKey | null) {
@@ -429,7 +434,7 @@ function CharacterOverlay({ character }: { character: SelectedCharacter }) {
   );
 }
 
-function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, isInteractive, canvasScale, onCharacterUpdate, onCharacterDelete, elementOverrides, onElementUpdate, selectedElement, onElementSelect }: TemplateContentProps) {
+function TemplateContent({ fields, template, colors, selectedDesignId, selectedCharacter, jesterLine, selectedCourse, isInteractive, canvasScale, onCharacterUpdate, onCharacterDelete, elementOverrides, onElementUpdate, selectedElement, onElementSelect, heroImage }: TemplateContentProps) {
   const { headline, subheadline, cta, price, courseName, bodyText } = fields;
   const { width, height } = template.dimensions;
   const courseData = getCourseData(selectedCourse);
@@ -535,6 +540,7 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
         headlineLine1={headline}
         headlineLine2={subheadline}
         uspItems={bodyText ? bodyText.split('·').map(s => s.trim()).filter(Boolean) : undefined}
+        heroImage={heroImage}
         width={width}
         height={height}
         isInteractive={isInteractive}

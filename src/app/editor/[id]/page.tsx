@@ -132,6 +132,9 @@ export default function EditorPage() {
     setPerSizeCharacter(prev => ({ ...prev, [activeSize.id]: char }));
   }, [activeSize.id]);
 
+  // ── Hero image for AI Engineering template ──
+  const [heroImage, setHeroImage] = useState<string>('/images/bootcamps/ai-engineering/heroes/superhero-trio.png');
+
   // ── Per-size element overrides (for draggable template elements) ──
   const [perSizeElementOverrides, setPerSizeElementOverrides] = useState<PerSizeElementOverrides>({});
   const [selectedElement, setSelectedElement] = useState<AIEngElementId | null>(null);
@@ -469,6 +472,8 @@ export default function EditorPage() {
           onElementUpdate={handleElementUpdate}
           canvasWidth={activeSize.width}
           canvasHeight={activeSize.height}
+          heroImage={heroImage}
+          onHeroImageChange={setHeroImage}
         />
 
         {/* Mobile Sidebar Drawer */}
@@ -495,6 +500,8 @@ export default function EditorPage() {
           onElementUpdate={handleElementUpdate}
           canvasWidth={activeSize.width}
           canvasHeight={activeSize.height}
+          heroImage={heroImage}
+          onHeroImageChange={setHeroImage}
         />
 
         {/* Right Panel - Live Preview */}
@@ -518,6 +525,7 @@ export default function EditorPage() {
           selectedElement={selectedElement}
           onElementSelect={handleElementSelect}
           perSizeElementOverrides={perSizeElementOverrides}
+          heroImage={heroImage}
         />
       </div>
 

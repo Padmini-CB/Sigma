@@ -53,6 +53,10 @@ interface EditorSidebarProps {
   /** Canvas dimensions for hero quick-position calculations */
   canvasWidth?: number;
   canvasHeight?: number;
+  /** Current hero image path (AI Engineering template) */
+  heroImage?: string;
+  /** Callback to change hero image */
+  onHeroImageChange?: (src: string) => void;
 }
 
 interface FieldConfig {
@@ -257,6 +261,8 @@ function SidebarContent({
   onElementUpdate,
   canvasWidth,
   canvasHeight,
+  heroImage,
+  onHeroImageChange,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets' | 'ai-assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
@@ -327,6 +333,59 @@ function SidebarContent({
       {activeTab === 'assets' ? (
         /* Assets Panel */
         <div className="flex-1 overflow-y-auto p-4">
+          {/* AI Engineering Bootcamp Heroes */}
+          {isAIEngTemplate && onHeroImageChange && (
+            <div className="mb-6">
+              <p className="font-ui text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wide">
+                AI Engineering Bootcamp Heroes
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {([
+                  { src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', label: 'Superhero Trio' },
+                  { src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', label: 'Dhaval Superhero' },
+                  { src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', label: 'Hemanand Superhero' },
+                  { src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', label: 'Siddhant Superhero' },
+                ] as const).map((hero) => {
+                  const isActive = heroImage === hero.src;
+                  return (
+                    <button
+                      key={hero.src}
+                      onClick={() => onHeroImageChange(hero.src)}
+                      className={`relative rounded-lg overflow-hidden border-2 aspect-square transition-all ${
+                        isActive
+                          ? 'border-blue-500 ring-2 ring-blue-200 shadow-md'
+                          : 'border-gray-200 hover:border-gray-400'
+                      }`}
+                      title={hero.label}
+                    >
+                      <div className="w-full h-full" style={{ backgroundColor: '#0c1630' }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={hero.src}
+                          alt={hero.label}
+                          className="object-contain w-full h-full"
+                        />
+                      </div>
+                      <span className="absolute bottom-0 inset-x-0 bg-black/70 text-white text-[10px] font-ui text-center py-1">
+                        {hero.label}
+                      </span>
+                      {isActive && (
+                        <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="font-ui text-xs text-gray-400 mt-2">
+                Click to replace the hero image in the template
+              </p>
+            </div>
+          )}
+
           {/* Active character indicator */}
           {selectedCharacter && (
             <div className="mb-4 p-3 bg-green-50 border-2 border-green-300 rounded-lg">
@@ -923,6 +982,8 @@ export default function EditorSidebar({
   onElementUpdate,
   canvasWidth,
   canvasHeight,
+  heroImage,
+  onHeroImageChange,
 }: EditorSidebarProps) {
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -976,6 +1037,8 @@ export default function EditorSidebar({
             onElementUpdate={onElementUpdate}
             canvasWidth={canvasWidth}
             canvasHeight={canvasHeight}
+            heroImage={heroImage}
+            onHeroImageChange={onHeroImageChange}
           />
         </aside>
       </>
@@ -1006,6 +1069,8 @@ export default function EditorSidebar({
         onElementUpdate={onElementUpdate}
         canvasWidth={canvasWidth}
         canvasHeight={canvasHeight}
+        heroImage={heroImage}
+        onHeroImageChange={onHeroImageChange}
       />
     </aside>
   );
