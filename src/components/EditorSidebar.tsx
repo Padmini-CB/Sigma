@@ -11,6 +11,7 @@ import { type FontSizeConfig } from '@/config/fontSizes';
 import AssetGenerator from '@/components/AssetGenerator';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { type AIEngElementId, type ElementLayout, type ElementOverrides } from '@/components/DraggableTemplateElement';
 
 interface TemplateDesign {
   id: string;
@@ -41,6 +42,17 @@ interface EditorSidebarProps {
   activeSizeLabel?: string;
   /** Copy current character placement to all sizes */
   onApplyCharacterToAll?: () => void;
+  /** Whether the AI Engineering template is active (for hero quick-position controls) */
+  isAIEngTemplate?: boolean;
+  /** Currently selected template element */
+  selectedElement?: AIEngElementId | null;
+  /** Element overrides for hero quick-position */
+  elementOverrides?: ElementOverrides;
+  /** Callback to update element positions */
+  onElementUpdate?: (id: AIEngElementId, updates: Partial<ElementLayout>) => void;
+  /** Canvas dimensions for hero quick-position calculations */
+  canvasWidth?: number;
+  canvasHeight?: number;
 }
 
 interface FieldConfig {
@@ -239,6 +251,12 @@ function SidebarContent({
   onFontSizesChange,
   activeSizeLabel,
   onApplyCharacterToAll,
+  isAIEngTemplate,
+  selectedElement,
+  elementOverrides,
+  onElementUpdate,
+  canvasWidth,
+  canvasHeight,
 }: Omit<EditorSidebarProps, 'isOpen'>) {
   const [activeTab, setActiveTab] = useState<'edit' | 'assets' | 'ai-assets'>('edit');
   const [expandedCharacter, setExpandedCharacter] = useState<CharacterKey | null>(null);
@@ -720,6 +738,78 @@ function SidebarContent({
           </div>
         )}
 
+        {/* Element Position Controls (AI Engineering template) */}
+        {isAIEngTemplate && onElementUpdate && (
+          <div className="pt-4 border-t border-gray-200">
+            <p className="font-ui text-sm font-semibold text-brand-navy mb-3">
+              Element Positioning
+            </p>
+            <p className="font-ui text-xs text-gray-400 mb-3">
+              Click any element on the canvas to select it, then drag to reposition. Use corner handles to resize.
+            </p>
+
+            {/* Hero Image Quick Position */}
+            <div className="mb-3">
+              <p className="font-ui text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
+                Hero Image Position
+              </p>
+              <div className="flex gap-1.5">
+                {(['Left', 'Center', 'Right'] as const).map((pos) => {
+                  const w = canvasWidth ?? 1080;
+                  const heroW = elementOverrides?.heroImage?.width ?? w * 0.55;
+                  let targetX: number;
+                  if (pos === 'Left') targetX = -(w - heroW);
+                  else if (pos === 'Center') targetX = -(w - heroW) / 2;
+                  else targetX = 0; // Right = default position
+
+                  const currentOffset = elementOverrides?.heroImage?.offsetX ?? 0;
+                  const isActive = Math.abs(currentOffset - targetX) < 5;
+
+                  return (
+                    <button
+                      key={pos}
+                      onClick={() => onElementUpdate('heroImage', { offsetX: targetX, offsetY: elementOverrides?.heroImage?.offsetY ?? 0 })}
+                      className={`flex-1 px-2 py-1.5 rounded text-xs font-ui font-medium transition-colors ${
+                        isActive
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {pos}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Selected element info */}
+            {selectedElement && (
+              <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200">
+                <p className="font-ui text-xs font-semibold text-blue-700 mb-1">
+                  Selected: {selectedElement === 'heroImage' ? 'Hero Image' :
+                    selectedElement === 'headline' ? 'Headline' :
+                    selectedElement === 'subtitle' ? 'Subtitle' :
+                    selectedElement === 'targetAudience' ? 'Target Audience' :
+                    selectedElement === 'badge' ? 'Badge' :
+                    selectedElement === 'logo' ? 'Logo' :
+                    selectedElement === 'uspStrip' ? 'USP Strip' : selectedElement}
+                </p>
+                <p className="font-ui text-xs text-blue-500">
+                  Drag to reposition. Use corner handles to resize.
+                </p>
+                {elementOverrides?.[selectedElement] && (
+                  <button
+                    onClick={() => onElementUpdate(selectedElement, { offsetX: 0, offsetY: 0, width: undefined, height: undefined, fontSize: undefined, scale: undefined })}
+                    className="mt-1.5 w-full text-center px-2 py-1 rounded text-xs font-ui font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                  >
+                    Reset to Default
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* People / Expressions Section — collapsible */}
         <div className="pt-4 border-t border-gray-200">
           <button
@@ -827,6 +917,12 @@ export default function EditorSidebar({
   onFontSizesChange,
   activeSizeLabel,
   onApplyCharacterToAll,
+  isAIEngTemplate,
+  selectedElement,
+  elementOverrides,
+  onElementUpdate,
+  canvasWidth,
+  canvasHeight,
 }: EditorSidebarProps) {
   // Prevent body scroll when mobile drawer is open
   useEffect(() => {
@@ -874,6 +970,12 @@ export default function EditorSidebar({
             onFontSizesChange={onFontSizesChange}
             activeSizeLabel={activeSizeLabel}
             onApplyCharacterToAll={onApplyCharacterToAll}
+            isAIEngTemplate={isAIEngTemplate}
+            selectedElement={selectedElement}
+            elementOverrides={elementOverrides}
+            onElementUpdate={onElementUpdate}
+            canvasWidth={canvasWidth}
+            canvasHeight={canvasHeight}
           />
         </aside>
       </>
@@ -898,6 +1000,12 @@ export default function EditorSidebar({
         onFontSizesChange={onFontSizesChange}
         activeSizeLabel={activeSizeLabel}
         onApplyCharacterToAll={onApplyCharacterToAll}
+        isAIEngTemplate={isAIEngTemplate}
+        selectedElement={selectedElement}
+        elementOverrides={elementOverrides}
+        onElementUpdate={onElementUpdate}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
       />
     </aside>
   );
