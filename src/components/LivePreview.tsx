@@ -26,6 +26,7 @@ import { HeroStatementTemplate } from '@/components/templates/HeroStatementTempl
 import { StatPunchTemplate } from '@/components/templates/StatPunchTemplate';
 import { BeforeAfterSplitTemplate } from '@/components/templates/BeforeAfterSplitTemplate';
 import { ToolShowcaseTemplate } from '@/components/templates/ToolShowcaseTemplate';
+import { AIEngineeringBootcampTemplate } from '@/components/templates/AIEngineeringBootcampTemplate';
 import { ALL_BOOTCAMPS, type BootcampKey } from '@/data/products';
 import { type FontSizeConfig, type PerSizeFontConfig, FONT_COLORS } from '@/config/fontSizes';
 import { getAdSizeConfig, AD_SIZES } from '@/config/adSizes';
@@ -508,6 +509,16 @@ function TemplateContent({ fields, template, colors, selectedDesignId, selectedC
     richContent = <BeforeAfterSplitTemplate beforeLabel={headline} afterLabel={subheadline} cta={cta} courseName={courseName} width={width} height={height} />;
   } else if (selectedDesignId === 'tool-showcase') {
     richContent = <ToolShowcaseTemplate headline={headline} accentWord={subheadline} techStack={courseData?.techStack} cta={cta} courseName={courseName} width={width} height={height} />;
+  } else if (selectedDesignId === 'ai-engineering-bootcamp-thumbnail') {
+    richContent = (
+      <AIEngineeringBootcampTemplate
+        headlineLine1={headline}
+        headlineLine2={subheadline}
+        uspItems={bodyText ? bodyText.split('·').map(s => s.trim()).filter(Boolean) : undefined}
+        width={width}
+        height={height}
+      />
+    );
   }
 
   // If we matched a rich template, wrap with character overlay

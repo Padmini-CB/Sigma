@@ -390,6 +390,23 @@
         "bodyText": "SQL • Python • Spark • Databricks • AWS • Snowflake • Airflow • Kafka"
       },
       "previewColors": ["#0c1630", "#161245"]
+    },
+    {
+      "id": "ai-engineering-bootcamp-thumbnail",
+      "name": "AI Engineering Bootcamp Thumbnail",
+      "description": "YouTube thumbnail with superhero trio, headline stack, and USP strip for AI Engineering Bootcamp 1.0",
+      "category": "Announcement",
+      "applicableTo": ["ai-engineering-bootcamp"],
+      "fields": {
+        "headline": "AI ENGINEERING",
+        "subheadline": "BOOTCAMP",
+        "cta": "",
+        "price": "",
+        "courseName": "AI Engineering Bootcamp 1.0",
+        "credibility": "1.4M+ YouTube Subscribers",
+        "bodyText": "75 Days Intensive · Live Sessions · 8+ Projects"
+      },
+      "previewColors": ["#0c1630", "#151040"]
     }
   ],
   "categories": [

@@ -108,6 +108,7 @@ const bootcampNames: Record<string, string> = {
   'da-bootcamp': 'Data Analytics',
   'de-bootcamp': 'Data Engineering',
   'ds-bootcamp': 'GenAI & Data Science',
+  'ai-engineering-bootcamp': 'AI Engineering',
   'bundle': 'Bundle',
   'general': 'Padmini General',
 };
