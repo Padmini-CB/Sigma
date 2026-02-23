@@ -290,6 +290,200 @@ export default function PropertiesPanel({ element, onUpdate }: PropertiesPanelPr
         </>
       )}
 
+      {/* Button-specific properties */}
+      {element.type === 'button' && element.buttonStyle && (
+        <>
+          <div style={sectionTitle}>Button</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>
+              <span style={labelStyle}>Font Family</span>
+              <select
+                value={element.buttonStyle.fontFamily}
+                onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, fontFamily: e.target.value } })}
+                style={{ ...inputStyle, cursor: 'pointer' }}
+              >
+                <option value="Poppins">Poppins</option>
+                <option value="Saira Condensed">Saira Condensed</option>
+                <option value="Kanit">Kanit</option>
+                <option value="Manrope">Manrope</option>
+              </select>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <div>
+                <span style={labelStyle}>Font Size</span>
+                <input
+                  type="number"
+                  min={8}
+                  max={300}
+                  value={element.buttonStyle.fontSize}
+                  onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, fontSize: Number(e.target.value) } })}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <span style={labelStyle}>Weight</span>
+                <select
+                  value={element.buttonStyle.fontWeight}
+                  onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, fontWeight: Number(e.target.value) } })}
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                >
+                  <option value={400}>Regular</option>
+                  <option value={500}>Medium</option>
+                  <option value={600}>SemiBold</option>
+                  <option value={700}>Bold</option>
+                  <option value={800}>ExtraBold</option>
+                  <option value={900}>Black</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <span style={labelStyle}>Text Color</span>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                <input
+                  type="color"
+                  value={element.buttonStyle.textColor.startsWith('rgba') ? '#ffffff' : element.buttonStyle.textColor}
+                  onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, textColor: e.target.value } })}
+                  style={{ width: 28, height: 28, border: 'none', borderRadius: 4, cursor: 'pointer', padding: 0, backgroundColor: 'transparent' }}
+                />
+                <input
+                  type="text"
+                  value={element.buttonStyle.textColor}
+                  onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, textColor: e.target.value } })}
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+              </div>
+            </div>
+            <div>
+              <span style={labelStyle}>Background</span>
+              <input
+                type="text"
+                value={element.buttonStyle.backgroundColor}
+                onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, backgroundColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <span style={labelStyle}>Border Radius</span>
+              <input
+                type="number"
+                min={0}
+                value={element.buttonStyle.borderRadius}
+                onChange={(e) => onUpdate({ buttonStyle: { ...element.buttonStyle!, borderRadius: Number(e.target.value) } })}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Badge-specific properties */}
+      {element.type === 'badge' && element.badgeStyle && (
+        <>
+          <div style={sectionTitle}>Badge</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <div>
+                <span style={labelStyle}>Font Size</span>
+                <input
+                  type="number"
+                  min={8}
+                  max={300}
+                  value={element.badgeStyle.fontSize}
+                  onChange={(e) => onUpdate({ badgeStyle: { ...element.badgeStyle!, fontSize: Number(e.target.value) } })}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <span style={labelStyle}>Weight</span>
+                <select
+                  value={element.badgeStyle.fontWeight}
+                  onChange={(e) => onUpdate({ badgeStyle: { ...element.badgeStyle!, fontWeight: Number(e.target.value) } })}
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                >
+                  <option value={400}>Regular</option>
+                  <option value={500}>Medium</option>
+                  <option value={600}>SemiBold</option>
+                  <option value={700}>Bold</option>
+                  <option value={800}>ExtraBold</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <span style={labelStyle}>Text Color</span>
+              <input
+                type="text"
+                value={element.badgeStyle.textColor}
+                onChange={(e) => onUpdate({ badgeStyle: { ...element.badgeStyle!, textColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <span style={labelStyle}>Background</span>
+              <input
+                type="text"
+                value={element.badgeStyle.backgroundColor}
+                onChange={(e) => onUpdate({ badgeStyle: { ...element.badgeStyle!, backgroundColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Strip-specific properties */}
+      {element.type === 'strip' && element.stripStyle && (
+        <>
+          <div style={sectionTitle}>Strip</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <div>
+                <span style={labelStyle}>Font Size</span>
+                <input
+                  type="number"
+                  min={8}
+                  max={300}
+                  value={element.stripStyle.fontSize}
+                  onChange={(e) => onUpdate({ stripStyle: { ...element.stripStyle!, fontSize: Number(e.target.value) } })}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <span style={labelStyle}>Weight</span>
+                <select
+                  value={element.stripStyle.fontWeight}
+                  onChange={(e) => onUpdate({ stripStyle: { ...element.stripStyle!, fontWeight: Number(e.target.value) } })}
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                >
+                  <option value={400}>Regular</option>
+                  <option value={500}>Medium</option>
+                  <option value={600}>SemiBold</option>
+                  <option value={700}>Bold</option>
+                  <option value={800}>ExtraBold</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <span style={labelStyle}>Text Color</span>
+              <input
+                type="text"
+                value={element.stripStyle.textColor}
+                onChange={(e) => onUpdate({ stripStyle: { ...element.stripStyle!, textColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <span style={labelStyle}>Background</span>
+              <input
+                type="text"
+                value={element.stripStyle.backgroundColor}
+                onChange={(e) => onUpdate({ stripStyle: { ...element.stripStyle!, backgroundColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Image-specific properties */}
       {element.type === 'image' && element.imageStyle && (
         <>

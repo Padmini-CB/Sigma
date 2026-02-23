@@ -192,30 +192,59 @@ function TemplateThumb({
         </>
       ) : (
         <>
-          {/* Fallback: accent color dot */}
+          {/* Text-based preview card */}
           <div
             style={{
-              width: 28,
-              height: 28,
-              borderRadius: '50%',
-              backgroundColor: template.thumbnailAccent,
-              opacity: 0.85,
-              marginBottom: 12,
-              boxShadow: `0 0 16px ${template.thumbnailAccent}44`,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: `linear-gradient(135deg, #0D1117 60%, ${template.thumbnailAccent})`,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 12,
+              boxSizing: 'border-box',
             }}
-          />
+          >
+            <span
+              style={{
+                color: '#ffffff',
+                fontSize: 13,
+                fontWeight: 800,
+                fontFamily: 'Poppins, sans-serif',
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                lineHeight: 1.2,
+                letterSpacing: -0.3,
+                maxWidth: '100%',
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
+              {template.thumbnailHeadline}
+            </span>
+          </div>
           <span
             style={{
-              fontSize: 11,
+              position: 'absolute',
+              bottom: 6,
+              left: 0,
+              right: 0,
+              fontSize: 10,
               fontWeight: 600,
-              color: 'rgba(255,255,255,0.75)',
+              color: 'rgba(255,255,255,0.5)',
               textAlign: 'center',
               lineHeight: 1.2,
-              padding: '0 6px',
-              maxWidth: '100%',
+              padding: '0 4px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
+              zIndex: 1,
             }}
           >
             {template.shortLabel}

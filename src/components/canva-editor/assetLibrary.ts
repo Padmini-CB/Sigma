@@ -17,30 +17,30 @@ export const ASSET_SECTIONS: AssetSection[] = [
         items: [
           {
             id: aid(), type: 'hero', label: 'Dhaval',
-            thumbnail: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
+              content: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png',
               glowColor: '#3b82f6',
               imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
             },
           },
           {
             id: aid(), type: 'hero', label: 'Hemanand',
-            thumbnail: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-hemanand.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png',
+              content: '/images/bootcamps/ai-engineering/heroes/superhero-hemanand.png',
               glowColor: '#D7EF3F',
               imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
             },
           },
           {
             id: aid(), type: 'hero', label: 'Siddhant',
-            thumbnail: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-siddhant.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png',
+              content: '/images/bootcamps/ai-engineering/heroes/superhero-siddhant.png',
               glowColor: '#20C997',
               imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
             },
