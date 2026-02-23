@@ -24,6 +24,7 @@ interface FreeFormCanvasProps {
   onSelectionChange: (ids: string[]) => void;
   onTextEditStart?: () => void;
   onTextEditEnd?: () => void;
+  onZoomChange?: (updater: number | ((prev: number) => number)) => void;
   canvasExportRef?: React.Ref<HTMLDivElement>;
 }
 
@@ -344,6 +345,108 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
   }
 }
 
+// ─── Editing styles for contentEditable overlay ──────────────────────────────
+
+const EDITABLE_TYPES = new Set(['text', 'button', 'badge', 'strip']);
+
+function getEditingStyles(el: CanvasElement): React.CSSProperties {
+  const base: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    outline: 'none',
+    border: '1px dashed #3B82F6',
+    margin: 0,
+    overflow: 'hidden',
+    cursor: 'text',
+    boxSizing: 'border-box' as const,
+    caretColor: '#3B82F6',
+  };
+
+  switch (el.type) {
+    case 'text': {
+      const ts = el.textStyle;
+      return {
+        ...base,
+        fontFamily: ts?.fontFamily || 'sans-serif',
+        fontSize: ts?.fontSize ?? 16,
+        fontWeight: ts?.fontWeight ?? 400,
+        fontStyle: ts?.fontStyle || 'normal',
+        color: ts?.color || '#ffffff',
+        textAlign: ts?.textAlign || 'left',
+        letterSpacing: ts?.letterSpacing ?? 0,
+        lineHeight: ts?.lineHeight ?? 1.2,
+        textTransform: ts?.textTransform || 'none',
+        transform: ts?.scaleX != null ? `scaleX(${ts.scaleX})` : undefined,
+        backgroundColor: 'rgba(59, 130, 246, 0.05)',
+        padding: 0,
+      };
+    }
+    case 'button': {
+      const bs = el.buttonStyle;
+      return {
+        ...base,
+        fontFamily: bs?.fontFamily || 'Kanit, sans-serif',
+        fontSize: bs?.fontSize ?? 16,
+        fontWeight: bs?.fontWeight ?? 600,
+        color: bs?.textColor || '#181830',
+        backgroundColor: bs?.backgroundColor || '#D7EF3F',
+        borderRadius: bs?.borderRadius ?? 8,
+        paddingLeft: bs?.paddingX ?? 24,
+        paddingRight: bs?.paddingX ?? 24,
+        paddingTop: bs?.paddingY ?? 12,
+        paddingBottom: bs?.paddingY ?? 12,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+      };
+    }
+    case 'badge': {
+      const bg = el.badgeStyle;
+      return {
+        ...base,
+        fontFamily: bg?.fontFamily || 'Kanit, sans-serif',
+        fontSize: bg?.fontSize ?? 14,
+        fontWeight: bg?.fontWeight ?? 500,
+        color: bg?.textColor || '#ffffff',
+        backgroundColor: bg?.backgroundColor || 'rgba(255,255,255,0.1)',
+        borderRadius: bg?.borderRadius ?? 20,
+        paddingLeft: bg?.paddingX ?? 16,
+        paddingRight: bg?.paddingX ?? 16,
+        paddingTop: bg?.paddingY ?? 6,
+        paddingBottom: bg?.paddingY ?? 6,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+      };
+    }
+    case 'strip': {
+      const ss = el.stripStyle;
+      return {
+        ...base,
+        fontFamily: ss?.fontFamily || 'Kanit, sans-serif',
+        fontSize: ss?.fontSize ?? 14,
+        fontWeight: ss?.fontWeight ?? 500,
+        color: ss?.textColor || '#ffffff',
+        backgroundColor: ss?.backgroundColor || '#6F53C1',
+        paddingLeft: ss?.paddingX ?? 16,
+        paddingRight: ss?.paddingX ?? 16,
+        paddingTop: ss?.paddingY ?? 8,
+        paddingBottom: ss?.paddingY ?? 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+      };
+    }
+    default:
+      return base;
+  }
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function FreeFormCanvas({
@@ -357,6 +460,7 @@ export default function FreeFormCanvas({
   onSelectionChange,
   onTextEditStart,
   onTextEditEnd,
+  onZoomChange,
   canvasExportRef,
 }: FreeFormCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -577,7 +681,7 @@ export default function FreeFormCanvas({
     (e: React.MouseEvent, elementId: string) => {
       e.stopPropagation();
       const el = elements.find((el) => el.id === elementId);
-      if (!el || el.locked || el.type !== 'text') return;
+      if (!el || el.locked || !EDITABLE_TYPES.has(el.type)) return;
 
       setEditingTextId(elementId);
       onSelectionChange([elementId]);
@@ -624,6 +728,68 @@ export default function FreeFormCanvas({
         startY: e.clientY,
         elementStartBounds: { x: el.x, y: el.y, width: el.width, height: el.height },
         lockAspectRatio: lockAspect,
+      };
+      setResizeState(newResizeState);
+      resizeStateRef.current = newResizeState;
+    },
+    [selectedIds, elements]
+  );
+
+  // ── Group bounding box for multi-select ────────────────────────────────────
+  const groupBBox = useMemo(() => {
+    if (selectedIds.length < 2) return null;
+    const selectedEls = elements.filter(el => selectedIds.includes(el.id));
+    if (selectedEls.length < 2) return null;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    selectedEls.forEach(el => {
+      minX = Math.min(minX, el.x);
+      minY = Math.min(minY, el.y);
+      maxX = Math.max(maxX, el.x + el.width);
+      maxY = Math.max(maxY, el.y + el.height);
+    });
+    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+  }, [elements, selectedIds]);
+
+  // ── Group resize mouse down ────────────────────────────────────────────────
+  const handleGroupResizeMouseDown = useCallback(
+    (e: React.MouseEvent, handle: ResizeHandle) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (selectedIds.length < 2) return;
+      const selectedEls = elements.filter(el => selectedIds.includes(el.id));
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      const allData: Record<string, { x: number; y: number; width: number; height: number; fontSize?: number }> = {};
+
+      selectedEls.forEach(el => {
+        minX = Math.min(minX, el.x);
+        minY = Math.min(minY, el.y);
+        maxX = Math.max(maxX, el.x + el.width);
+        maxY = Math.max(maxY, el.y + el.height);
+
+        let fontSize: number | undefined;
+        if (el.type === 'text') fontSize = el.textStyle?.fontSize;
+        else if (el.type === 'button') fontSize = el.buttonStyle?.fontSize;
+        else if (el.type === 'badge') fontSize = el.badgeStyle?.fontSize;
+        else if (el.type === 'strip') fontSize = el.stripStyle?.fontSize;
+
+        allData[el.id] = { x: el.x, y: el.y, width: el.width, height: el.height, fontSize };
+      });
+
+      const gBounds = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+      const isCorner = ['nw', 'ne', 'se', 'sw'].includes(handle);
+      const lockAspect = isCorner ? !e.shiftKey : false;
+
+      const newResizeState: ResizeState = {
+        isResizing: true,
+        handle,
+        startX: e.clientX,
+        startY: e.clientY,
+        elementStartBounds: gBounds,
+        lockAspectRatio: lockAspect,
+        isGroupResize: true,
+        groupStartBounds: gBounds,
+        allElementStartData: allData,
       };
       setResizeState(newResizeState);
       resizeStateRef.current = newResizeState;
@@ -837,19 +1003,60 @@ export default function FreeFormCanvas({
           newH = MIN_SIZE;
         }
 
-        const updatedElements = elements.map((el) => {
-          if (el.id === selectedIds[0]) {
-            return {
+        if (rs.isGroupResize && rs.allElementStartData && rs.groupStartBounds) {
+          // Group proportional resize
+          const gb = rs.groupStartBounds;
+          const scaleXFactor = newW / gb.width;
+          const scaleYFactor = newH / gb.height;
+
+          const updatedElements = elements.map((el) => {
+            const startData = rs.allElementStartData![el.id];
+            if (!startData) return el;
+
+            const relX = startData.x - gb.x;
+            const relY = startData.y - gb.y;
+
+            const result: CanvasElement = {
               ...el,
-              x: Math.round(newX),
-              y: Math.round(newY),
-              width: Math.round(newW),
-              height: Math.round(newH),
+              x: Math.round(newX + relX * scaleXFactor),
+              y: Math.round(newY + relY * scaleYFactor),
+              width: Math.max(MIN_SIZE, Math.round(startData.width * scaleXFactor)),
+              height: Math.max(MIN_SIZE, Math.round(startData.height * scaleYFactor)),
             };
-          }
-          return el;
-        });
-        onElementsUpdate(updatedElements);
+
+            // Scale font sizes proportionally
+            if (startData.fontSize) {
+              const scaledFontSize = Math.max(6, Math.round(startData.fontSize * Math.min(scaleXFactor, scaleYFactor)));
+              if (el.type === 'text' && el.textStyle) {
+                result.textStyle = { ...el.textStyle, fontSize: scaledFontSize };
+              } else if (el.type === 'button' && el.buttonStyle) {
+                result.buttonStyle = { ...el.buttonStyle, fontSize: scaledFontSize };
+              } else if (el.type === 'badge' && el.badgeStyle) {
+                result.badgeStyle = { ...el.badgeStyle, fontSize: scaledFontSize };
+              } else if (el.type === 'strip' && el.stripStyle) {
+                result.stripStyle = { ...el.stripStyle, fontSize: scaledFontSize };
+              }
+            }
+
+            return result;
+          });
+          onElementsUpdate(updatedElements);
+        } else {
+          // Single element resize
+          const updatedElements = elements.map((el) => {
+            if (el.id === selectedIds[0]) {
+              return {
+                ...el,
+                x: Math.round(newX),
+                y: Math.round(newY),
+                width: Math.round(newW),
+                height: Math.round(newH),
+              };
+            }
+            return el;
+          });
+          onElementsUpdate(updatedElements);
+        }
         return;
       }
 
@@ -985,6 +1192,27 @@ export default function FreeFormCanvas({
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isPanning]);
+
+  // ── Ctrl+Scroll wheel zoom ────────────────────────────────────────────────
+  useEffect(() => {
+    const workspace = workspaceRef.current;
+    if (!workspace || !onZoomChange) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const step = 5;
+        onZoomChange((prev: number) =>
+          e.deltaY < 0
+            ? Math.min(200, prev + step)
+            : Math.max(25, prev - step)
+        );
+      }
+    };
+
+    workspace.addEventListener('wheel', handleWheel, { passive: false });
+    return () => workspace.removeEventListener('wheel', handleWheel);
+  }, [onZoomChange]);
 
   // ── Drop handler for elements dragged from sidebar ──────────────────────
   const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
@@ -1127,31 +1355,7 @@ export default function FreeFormCanvas({
                   suppressContentEditableWarning
                   onMouseDown={(e) => e.stopPropagation()}
                   onBlur={confirmTextEdit}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    fontFamily: el.textStyle?.fontFamily || 'sans-serif',
-                    fontSize: el.textStyle?.fontSize ?? 16,
-                    fontWeight: el.textStyle?.fontWeight ?? 400,
-                    fontStyle: el.textStyle?.fontStyle || 'normal',
-                    color: el.textStyle?.color || '#ffffff',
-                    textAlign: el.textStyle?.textAlign || 'left',
-                    letterSpacing: el.textStyle?.letterSpacing ?? 0,
-                    lineHeight: el.textStyle?.lineHeight ?? 1.2,
-                    textTransform: el.textStyle?.textTransform || 'none',
-                    transform: el.textStyle?.scaleX != null ? `scaleX(${el.textStyle.scaleX})` : undefined,
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    outline: 'none',
-                    border: '1px dashed #3B82F6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                    margin: 0,
-                    padding: 0,
-                    overflow: 'hidden',
-                    cursor: 'text',
-                    boxSizing: 'border-box',
-                    caretColor: '#3B82F6',
-                  }}
+                  style={getEditingStyles(el)}
                 >
                   {el.content}
                 </div>
@@ -1203,6 +1407,44 @@ export default function FreeFormCanvas({
               zIndex: 99999,
             }}
           />
+        )}
+
+        {/* Group selection bounding box with resize handles */}
+        {groupBBox && !editingTextId && (
+          <div
+            style={{
+              position: 'absolute',
+              left: groupBBox.x,
+              top: groupBBox.y,
+              width: groupBBox.width,
+              height: groupBBox.height,
+              border: '1.5px dashed #3B82F6',
+              pointerEvents: 'none',
+              zIndex: 99997,
+            }}
+          >
+            {RESIZE_HANDLES.map((handle) => (
+              <div
+                key={`group-${handle}`}
+                onMouseDown={(e) => handleGroupResizeMouseDown(e, handle)}
+                style={{
+                  position: 'absolute',
+                  top: HANDLE_POSITIONS[handle].top,
+                  left: HANDLE_POSITIONS[handle].left,
+                  transform: HANDLE_POSITIONS[handle].transform,
+                  width: HANDLE_SIZE,
+                  height: HANDLE_SIZE,
+                  backgroundColor: '#ffffff',
+                  border: '1.5px solid #3B82F6',
+                  borderRadius: 1,
+                  cursor: HANDLE_CURSORS[handle],
+                  zIndex: 10000,
+                  boxSizing: 'border-box',
+                  pointerEvents: 'auto',
+                }}
+              />
+            ))}
+          </div>
         )}
 
         {/* Snap guides */}

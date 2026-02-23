@@ -104,20 +104,53 @@ export default function EditorPage() {
   const [isExporting, setIsExporting] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
+  // ── Auto-reflow elements to fit a new canvas size ──
+  const reflowElements = useCallback((srcElements: CanvasElement[], fromW: number, fromH: number, toW: number, toH: number): CanvasElement[] => {
+    if (fromW === toW && fromH === toH) return structuredClone(srcElements);
+    const scaleX = toW / fromW;
+    const scaleY = toH / fromH;
+    const fontScale = Math.min(scaleX, scaleY);
+
+    return srcElements.map(el => {
+      const result: CanvasElement = {
+        ...structuredClone(el),
+        x: Math.round(el.x * scaleX),
+        y: Math.round(el.y * scaleY),
+        width: Math.max(20, Math.round(el.width * scaleX)),
+        height: Math.max(20, Math.round(el.height * scaleY)),
+      };
+
+      // Scale font sizes proportionally
+      if (el.type === 'text' && result.textStyle) {
+        result.textStyle = { ...result.textStyle, fontSize: Math.max(6, Math.round(result.textStyle.fontSize * fontScale)) };
+      } else if (el.type === 'button' && result.buttonStyle) {
+        result.buttonStyle = { ...result.buttonStyle, fontSize: Math.max(6, Math.round(result.buttonStyle.fontSize * fontScale)) };
+      } else if (el.type === 'badge' && result.badgeStyle) {
+        result.badgeStyle = { ...result.badgeStyle, fontSize: Math.max(6, Math.round(result.badgeStyle.fontSize * fontScale)) };
+      } else if (el.type === 'strip' && result.stripStyle) {
+        result.stripStyle = { ...result.stripStyle, fontSize: Math.max(6, Math.round(result.stripStyle.fontSize * fontScale)) };
+      }
+
+      return result;
+    });
+  }, []);
+
   // ── Per-size elements helpers ──
   const handleSizeChange = useCallback((newSize: CanvasSize) => {
     // Save current size's elements
     setPerSizeElements(prev => ({ ...prev, [activeSize.id]: structuredClone(elements) }));
-    // Load new size's elements (or empty if never edited)
+    // Load new size's elements (or auto-reflow if never edited)
     const saved = perSizeElements[newSize.id];
     if (saved) {
       resetHistory(saved);
     } else {
-      resetHistory(elements); // Copy current elements as starting point
+      // Auto-reflow: scale all elements to fit the new canvas dimensions
+      const reflowed = reflowElements(elements, activeSize.width, activeSize.height, newSize.width, newSize.height);
+      resetHistory(reflowed);
     }
     setActiveSize(newSize);
     setSelectedIds([]);
-  }, [activeSize.id, elements, perSizeElements, resetHistory]);
+  }, [activeSize, elements, perSizeElements, resetHistory, reflowElements]);
 
   // ── Template loading ──
   const handleSelectTemplate = useCallback((tmpl: TemplateInfo) => {
@@ -573,6 +606,7 @@ export default function EditorPage() {
             onSelectionChange={setSelectedIds}
             onTextEditStart={() => setIsTextEditing(true)}
             onTextEditEnd={() => setIsTextEditing(false)}
+            onZoomChange={setZoom}
             canvasExportRef={canvasRef}
           />
 
