@@ -1,5 +1,5 @@
 import { BRAND } from '@/styles/brand-constants';
-import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
 import DraggableTemplateElement, {
   type AIEngElementId,
   type ElementLayout,
@@ -220,7 +220,7 @@ export function AIEngineeringBootcampTemplate({
   // ── Logo + PRESENTS content ──
   const logoContent = (
     <div style={{ display: 'flex', alignItems: 'center', gap: Math.round(10 * scale), transform: `scale(${logoScale})`, transformOrigin: 'left center' }}>
-      <PadminiLogo />
+      <CodebasicsLogo />
       <span
         style={{
           fontFamily: BRAND.fonts.body,

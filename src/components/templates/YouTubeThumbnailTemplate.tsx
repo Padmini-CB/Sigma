@@ -1,6 +1,6 @@
 import React from 'react';
 import { BRAND } from '@/styles/brand-constants';
-import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
 import { getAdSizeConfig } from '@/config/adSizes';
 
 interface YouTubeThumbnailTemplateProps {
@@ -97,7 +97,7 @@ export function YouTubeThumbnailTemplate({
     <div style={{
       position: 'absolute', bottom: 14 * scale, right: 18 * scale, opacity: 0.5,
     }}>
-      <PadminiLogo />
+      <CodebasicsLogo />
     </div>
   );
 
@@ -116,7 +116,7 @@ export function YouTubeThumbnailTemplate({
     return (
       <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-          <PadminiLogo />
+          <CodebasicsLogo />
         </div>
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `0 ${12 * scale}px` }}>
           <div style={{ textAlign: 'center' }}>
@@ -160,7 +160,7 @@ export function YouTubeThumbnailTemplate({
     return (
       <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column', gap: 18 * scale }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-          <PadminiLogo />
+          <CodebasicsLogo />
         </div>
 
         {/* Headline centered */}

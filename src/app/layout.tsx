@@ -4,7 +4,7 @@ import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "SIGMA - Strategic Image Generation for Marketing Assets",
-  description: "Internal creative automation tool for Padmini that generates brand-compliant marketing visuals",
+  description: "Internal creative automation tool for Codebasics that generates brand-compliant marketing visuals",
 };
 
 export const viewport: Viewport = {
@@ -26,7 +26,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Saira+Condensed:wght@400;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700;800;900&family=Saira+Condensed:wght@400;600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>

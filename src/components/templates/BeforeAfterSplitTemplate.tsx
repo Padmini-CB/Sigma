@@ -1,6 +1,6 @@
 import { BRAND } from '@/styles/brand-constants';
 import { getAdSizeConfig } from '@/config/adSizes';
-import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 
@@ -36,7 +36,7 @@ export function BeforeAfterSplitTemplate({
 
   const topBar = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-      <PadminiLogo />
+      <CodebasicsLogo />
       <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );
@@ -78,7 +78,7 @@ export function BeforeAfterSplitTemplate({
     return (
       <div style={{ ...wrapperBase, padding: 24 * scale, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-          <PadminiLogo />
+          <CodebasicsLogo />
         </div>
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32 * scale }}>
           {/* BEFORE side */}
@@ -163,7 +163,7 @@ export function BeforeAfterSplitTemplate({
       <div style={{ ...wrapperBase, padding: 28 * scale, display: 'flex', flexDirection: 'column' }}>
         {/* Logo + Badge - absolute positioned */}
         <div style={{ position: 'absolute', top: 28 * scale, left: 28 * scale, zIndex: 10 }}>
-          <PadminiLogo />
+          <CodebasicsLogo />
         </div>
         <div style={{ position: 'absolute', top: 28 * scale, right: 28 * scale, zIndex: 10 }}>
           <YouTubeBadge layoutMode={layoutMode} />
@@ -229,7 +229,7 @@ export function BeforeAfterSplitTemplate({
     <div style={wrapperBase}>
       {/* Logo — absolute top-left */}
       <div style={{ position: 'absolute', top: 24 * scale, left: 24 * scale, zIndex: 10 }}>
-        <PadminiLogo />
+        <CodebasicsLogo />
       </div>
       {/* YouTube Badge — absolute top-right */}
       <div style={{ position: 'absolute', top: 24 * scale, right: 24 * scale, zIndex: 10 }}>

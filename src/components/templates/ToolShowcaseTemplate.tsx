@@ -1,6 +1,6 @@
 import { BRAND } from '@/styles/brand-constants';
 import { getAdSizeConfig } from '@/config/adSizes';
-import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 
@@ -60,7 +60,7 @@ export function ToolShowcaseTemplate({
 
   const topBar = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-      <PadminiLogo />
+      <CodebasicsLogo />
       <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );

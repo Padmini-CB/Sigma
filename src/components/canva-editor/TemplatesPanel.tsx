@@ -111,16 +111,17 @@ function TemplateThumb({
   onClick: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
+  const hasThumbnail = !!template.thumbnailImage;
 
   const cardStyle: React.CSSProperties = {
-    width: 130,
-    height: 130,
+    width: '100%',
+    aspectRatio: '1',
     borderRadius: 8,
     backgroundColor: template.thumbnailBg || '#0D1117',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: hasThumbnail ? 'flex-end' : 'center',
     cursor: 'pointer',
     border: isActive
       ? '2px solid #3B82F6'
@@ -129,7 +130,7 @@ function TemplateThumb({
         : '2px solid rgba(255,255,255,0.08)',
     boxShadow: isActive ? '0 0 0 2px rgba(59,130,246,0.4)' : 'none',
     transition: 'transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
-    transform: hovered ? 'scale(1.05)' : 'scale(1)',
+    transform: hovered ? 'scale(1.04)' : 'scale(1)',
     position: 'relative',
     overflow: 'hidden',
   };
@@ -142,35 +143,85 @@ function TemplateThumb({
       onMouseLeave={() => setHovered(false)}
       title={template.label}
     >
-      {/* Accent color dot */}
-      <div
-        style={{
-          width: 28,
-          height: 28,
-          borderRadius: '50%',
-          backgroundColor: template.thumbnailAccent,
-          opacity: 0.85,
-          marginBottom: 12,
-          boxShadow: `0 0 16px ${template.thumbnailAccent}44`,
-        }}
-      />
-      {/* Short label */}
-      <span
-        style={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: 'rgba(255,255,255,0.75)',
-          textAlign: 'center',
-          lineHeight: 1.2,
-          padding: '0 6px',
-          maxWidth: '100%',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {template.shortLabel}
-      </span>
+      {hasThumbnail ? (
+        <>
+          {/* Thumbnail image */}
+          <img
+            src={template.thumbnailImage}
+            alt={template.shortLabel}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+            loading="lazy"
+          />
+          {/* Gradient overlay for label readability */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '40%',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
+            zIndex: 1,
+          }} />
+          {/* Label over thumbnail */}
+          <span
+            style={{
+              position: 'relative',
+              zIndex: 2,
+              fontSize: 11,
+              fontWeight: 600,
+              color: '#FFFFFF',
+              textAlign: 'center',
+              lineHeight: 1.2,
+              padding: '6px 6px',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textShadow: '0 1px 3px rgba(0,0,0,0.6)',
+            }}
+          >
+            {template.shortLabel}
+          </span>
+        </>
+      ) : (
+        <>
+          {/* Fallback: accent color dot */}
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              backgroundColor: template.thumbnailAccent,
+              opacity: 0.85,
+              marginBottom: 12,
+              boxShadow: `0 0 16px ${template.thumbnailAccent}44`,
+            }}
+          />
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: 'rgba(255,255,255,0.75)',
+              textAlign: 'center',
+              lineHeight: 1.2,
+              padding: '0 6px',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {template.shortLabel}
+          </span>
+        </>
+      )}
     </div>
   );
 }
