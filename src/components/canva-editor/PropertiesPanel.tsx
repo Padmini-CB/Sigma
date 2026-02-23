@@ -1,0 +1,374 @@
+'use client';
+
+import { CanvasElement } from './types';
+import { useState } from 'react';
+
+interface PropertiesPanelProps {
+  element: CanvasElement;
+  onUpdate: (updates: Partial<CanvasElement>) => void;
+}
+
+export default function PropertiesPanel({ element, onUpdate }: PropertiesPanelProps) {
+  const [lockAspect, setLockAspect] = useState(true);
+  const aspectRatio = element.width / element.height;
+
+  const handleWidthChange = (w: number) => {
+    if (lockAspect) {
+      onUpdate({ width: w, height: Math.round(w / aspectRatio) });
+    } else {
+      onUpdate({ width: w });
+    }
+  };
+
+  const handleHeightChange = (h: number) => {
+    if (lockAspect) {
+      onUpdate({ height: h, width: Math.round(h * aspectRatio) });
+    } else {
+      onUpdate({ height: h });
+    }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '4px 8px',
+    borderRadius: 4,
+    border: '1px solid rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    color: '#fff',
+    fontFamily: 'Manrope, sans-serif',
+    fontSize: 12,
+    outline: 'none',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontFamily: 'Manrope, sans-serif',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.45)',
+    marginBottom: 2,
+    display: 'block',
+  };
+
+  const sectionTitle: React.CSSProperties = {
+    fontFamily: 'Manrope, sans-serif',
+    fontSize: 11,
+    fontWeight: 600,
+    color: 'rgba(255,255,255,0.5)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.05em',
+    marginBottom: 8,
+    marginTop: 12,
+  };
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 60,
+        right: 16,
+        width: 220,
+        backgroundColor: '#1e1e2e',
+        borderRadius: 12,
+        border: '1px solid rgba(255,255,255,0.1)',
+        padding: 12,
+        zIndex: 100,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        maxHeight: 'calc(100vh - 140px)',
+        overflowY: 'auto',
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Header */}
+      <div style={{ fontFamily: 'Manrope, sans-serif', fontSize: 12, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
+        {element.type.charAt(0).toUpperCase() + element.type.slice(1)} Properties
+      </div>
+
+      {/* Position */}
+      <div style={sectionTitle}>Position</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+        <div>
+          <span style={labelStyle}>X</span>
+          <input
+            type="number"
+            value={Math.round(element.x)}
+            onChange={(e) => onUpdate({ x: Number(e.target.value) })}
+            style={inputStyle}
+          />
+        </div>
+        <div>
+          <span style={labelStyle}>Y</span>
+          <input
+            type="number"
+            value={Math.round(element.y)}
+            onChange={(e) => onUpdate({ y: Number(e.target.value) })}
+            style={inputStyle}
+          />
+        </div>
+      </div>
+
+      {/* Size */}
+      <div style={sectionTitle}>
+        Size
+        <button
+          onClick={() => setLockAspect(!lockAspect)}
+          style={{
+            marginLeft: 8,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: lockAspect ? '#3B82F6' : 'rgba(255,255,255,0.3)',
+            fontSize: 12,
+          }}
+          title={lockAspect ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
+        >
+          {lockAspect ? '\ud83d\udd12' : '\ud83d\udd13'}
+        </button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+        <div>
+          <span style={labelStyle}>W</span>
+          <input
+            type="number"
+            value={Math.round(element.width)}
+            onChange={(e) => handleWidthChange(Number(e.target.value))}
+            style={inputStyle}
+          />
+        </div>
+        <div>
+          <span style={labelStyle}>H</span>
+          <input
+            type="number"
+            value={Math.round(element.height)}
+            onChange={(e) => handleHeightChange(Number(e.target.value))}
+            style={inputStyle}
+          />
+        </div>
+      </div>
+
+      {/* Rotation */}
+      <div style={sectionTitle}>Rotation</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <input
+          type="range"
+          min={-180}
+          max={180}
+          value={element.rotation}
+          onChange={(e) => onUpdate({ rotation: Number(e.target.value) })}
+          style={{ flex: 1, accentColor: '#3B82F6' }}
+        />
+        <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.5)', width: 36, textAlign: 'right' }}>
+          {element.rotation}\u00b0
+        </span>
+      </div>
+
+      {/* Opacity */}
+      <div style={sectionTitle}>Opacity</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={Math.round(element.opacity * 100)}
+          onChange={(e) => onUpdate({ opacity: Number(e.target.value) / 100 })}
+          style={{ flex: 1, accentColor: '#3B82F6' }}
+        />
+        <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.5)', width: 36, textAlign: 'right' }}>
+          {Math.round(element.opacity * 100)}%
+        </span>
+      </div>
+
+      {/* Text-specific properties */}
+      {element.type === 'text' && element.textStyle && (
+        <>
+          <div style={sectionTitle}>Text</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>
+              <span style={labelStyle}>Font Family</span>
+              <select
+                value={element.textStyle.fontFamily}
+                onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, fontFamily: e.target.value } })}
+                style={{ ...inputStyle, cursor: 'pointer' }}
+              >
+                <option value="Poppins">Poppins</option>
+                <option value="Saira Condensed">Saira Condensed</option>
+                <option value="Kanit">Kanit</option>
+                <option value="Manrope">Manrope</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <div>
+                <span style={labelStyle}>Size</span>
+                <input
+                  type="number"
+                  value={element.textStyle.fontSize}
+                  onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, fontSize: Number(e.target.value) } })}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <span style={labelStyle}>Weight</span>
+                <select
+                  value={element.textStyle.fontWeight}
+                  onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, fontWeight: Number(e.target.value) } })}
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                >
+                  <option value={300}>Light</option>
+                  <option value={400}>Regular</option>
+                  <option value={500}>Medium</option>
+                  <option value={600}>SemiBold</option>
+                  <option value={700}>Bold</option>
+                  <option value={800}>ExtraBold</option>
+                  <option value={900}>Black</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <span style={labelStyle}>Color</span>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                <input
+                  type="color"
+                  value={element.textStyle.color.startsWith('rgba') ? '#ffffff' : element.textStyle.color}
+                  onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, color: e.target.value } })}
+                  style={{ width: 28, height: 28, border: 'none', borderRadius: 4, cursor: 'pointer', padding: 0, backgroundColor: 'transparent' }}
+                />
+                <input
+                  type="text"
+                  value={element.textStyle.color}
+                  onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, color: e.target.value } })}
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+              </div>
+            </div>
+            <div>
+              <span style={labelStyle}>Align</span>
+              <div style={{ display: 'flex', gap: 4 }}>
+                {(['left', 'center', 'right'] as const).map(align => (
+                  <button
+                    key={align}
+                    onClick={() => onUpdate({ textStyle: { ...element.textStyle!, textAlign: align } })}
+                    style={{
+                      flex: 1,
+                      padding: '4px 0',
+                      borderRadius: 4,
+                      border: 'none',
+                      cursor: 'pointer',
+                      backgroundColor: element.textStyle!.textAlign === align ? '#3B82F6' : 'rgba(255,255,255,0.06)',
+                      color: element.textStyle!.textAlign === align ? '#fff' : 'rgba(255,255,255,0.5)',
+                      fontFamily: 'Manrope, sans-serif',
+                      fontSize: 11,
+                      textTransform: 'capitalize' as const,
+                    }}
+                  >
+                    {align}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <div>
+                <span style={labelStyle}>Letter Sp.</span>
+                <input
+                  type="number"
+                  step={0.5}
+                  value={element.textStyle.letterSpacing}
+                  onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, letterSpacing: Number(e.target.value) } })}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <span style={labelStyle}>Line Ht.</span>
+                <input
+                  type="number"
+                  step={0.05}
+                  value={element.textStyle.lineHeight}
+                  onChange={(e) => onUpdate({ textStyle: { ...element.textStyle!, lineHeight: Number(e.target.value) } })}
+                  style={inputStyle}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Image-specific properties */}
+      {element.type === 'image' && element.imageStyle && (
+        <>
+          <div style={sectionTitle}>Image</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>
+              <span style={labelStyle}>Mask</span>
+              <select
+                value={element.imageStyle.maskType ?? 'none'}
+                onChange={(e) => onUpdate({ imageStyle: { ...element.imageStyle!, maskType: e.target.value as 'none' | 'radial' | 'linear' } })}
+                style={{ ...inputStyle, cursor: 'pointer' }}
+              >
+                <option value="none">None</option>
+                <option value="radial">Radial Fade</option>
+                <option value="linear">Linear Fade</option>
+              </select>
+            </div>
+            <div>
+              <span style={labelStyle}>Fit</span>
+              <select
+                value={element.imageStyle.objectFit}
+                onChange={(e) => onUpdate({ imageStyle: { ...element.imageStyle!, objectFit: e.target.value as 'cover' | 'contain' | 'fill' } })}
+                style={{ ...inputStyle, cursor: 'pointer' }}
+              >
+                <option value="contain">Contain</option>
+                <option value="cover">Cover</option>
+                <option value="fill">Fill</option>
+              </select>
+            </div>
+            <div>
+              <span style={labelStyle}>Border Radius</span>
+              <input
+                type="number"
+                min={0}
+                value={element.imageStyle.borderRadius}
+                onChange={(e) => onUpdate({ imageStyle: { ...element.imageStyle!, borderRadius: Number(e.target.value) } })}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Shape-specific */}
+      {element.type === 'shape' && element.shapeStyle && (
+        <>
+          <div style={sectionTitle}>Shape</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>
+              <span style={labelStyle}>Background</span>
+              <input
+                type="text"
+                value={element.shapeStyle.backgroundColor}
+                onChange={(e) => onUpdate({ shapeStyle: { ...element.shapeStyle!, backgroundColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <span style={labelStyle}>Border Color</span>
+              <input
+                type="text"
+                value={element.shapeStyle.borderColor}
+                onChange={(e) => onUpdate({ shapeStyle: { ...element.shapeStyle!, borderColor: e.target.value } })}
+                style={inputStyle}
+              />
+            </div>
+            <div>
+              <span style={labelStyle}>Border Radius</span>
+              <input
+                type="number"
+                min={0}
+                value={element.shapeStyle.borderRadius}
+                onChange={(e) => onUpdate({ shapeStyle: { ...element.shapeStyle!, borderRadius: Number(e.target.value) } })}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

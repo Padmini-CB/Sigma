@@ -1,0 +1,286 @@
+import { AssetSection, CanvasElement } from './types';
+
+let _assetId = 0;
+function aid(): string {
+  return `asset_${++_assetId}`;
+}
+
+export const ASSET_SECTIONS: AssetSection[] = [
+  {
+    id: 'ai-engineering',
+    label: 'AI Engineering Bootcamp',
+    expanded: true,
+    subsections: [
+      {
+        id: 'heroes',
+        label: 'Heroes',
+        items: [
+          {
+            id: aid(), type: 'hero', label: 'Dhaval',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
+            element: {
+              type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
+              glowColor: '#3b82f6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
+            },
+          },
+          {
+            id: aid(), type: 'hero', label: 'Hemanand',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png',
+            element: {
+              type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png',
+              glowColor: '#D7EF3F',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
+            },
+          },
+          {
+            id: aid(), type: 'hero', label: 'Siddhant',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png',
+            element: {
+              type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png',
+              glowColor: '#20C997',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
+            },
+          },
+          {
+            id: aid(), type: 'hero', label: 'Trio',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png',
+            element: {
+              type: 'image', width: 800, height: 540, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png',
+              glowColor: '#3b82f6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
+            },
+          },
+        ],
+      },
+      {
+        id: 'buttons',
+        label: 'Buttons',
+        items: [
+          {
+            id: aid(), type: 'button', label: 'Primary Blue',
+            element: {
+              type: 'button', width: 280, height: 52, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Enroll Now \u2192',
+              buttonStyle: { backgroundColor: '#3B82F6', textColor: '#FFFFFF', fontFamily: 'Poppins', fontSize: 22, fontWeight: 700, borderRadius: 8, paddingX: 36, paddingY: 14 },
+            },
+          },
+          {
+            id: aid(), type: 'button', label: 'Green CTA',
+            element: {
+              type: 'button', width: 300, height: 52, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Start Building \u2192',
+              buttonStyle: { backgroundColor: '#20C997', textColor: '#0D1117', fontFamily: 'Poppins', fontSize: 22, fontWeight: 700, borderRadius: 8, paddingX: 36, paddingY: 14 },
+            },
+          },
+          {
+            id: aid(), type: 'button', label: 'Yellow CTA',
+            element: {
+              type: 'button', width: 260, height: 52, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Level Up \u2192',
+              buttonStyle: { backgroundColor: '#b8c820', textColor: '#0D1117', fontFamily: 'Poppins', fontSize: 22, fontWeight: 700, borderRadius: 8, paddingX: 36, paddingY: 14 },
+            },
+          },
+          {
+            id: aid(), type: 'button', label: 'Outline Blue',
+            element: {
+              type: 'button', width: 280, height: 52, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Learn More \u2192',
+              buttonStyle: { backgroundColor: 'transparent', textColor: '#3B82F6', fontFamily: 'Poppins', fontSize: 22, fontWeight: 700, borderRadius: 8, paddingX: 36, paddingY: 14, borderColor: '#3B82F6', borderWidth: 2 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'badges',
+        label: 'Badges',
+        items: [
+          {
+            id: aid(), type: 'badge', label: 'SW Engineer',
+            element: {
+              type: 'badge', width: 480, height: 38, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '\u26a1 Built exclusively for Software Engineers (2+ yrs)',
+              badgeStyle: { backgroundColor: 'rgba(255,255,255,0.06)', textColor: 'rgba(255,255,255,0.6)', fontFamily: 'Poppins', fontSize: 14, fontWeight: 500, borderRadius: 9999, paddingX: 16, paddingY: 8 },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'Subscribers',
+            element: {
+              type: 'badge', width: 340, height: 38, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '1.4M+ Subscribers \u00b7 4.9\u2605',
+              badgeStyle: { backgroundColor: 'rgba(255,255,255,0.08)', textColor: 'rgba(255,255,255,0.7)', fontFamily: 'Poppins', fontSize: 14, fontWeight: 500, borderRadius: 9999, paddingX: 16, paddingY: 8 },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'Module Pill (Blue)',
+            element: {
+              type: 'badge', width: 180, height: 32, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'MODULES 1\u20138',
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.15)', textColor: '#3b82f6', fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, borderRadius: 8, paddingX: 16, paddingY: 8, borderColor: '#3b82f6', borderWidth: 1 },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'Module Pill (Yellow)',
+            element: {
+              type: 'badge', width: 200, height: 32, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'MODULES 9\u201310',
+              badgeStyle: { backgroundColor: 'rgba(215,239,63,0.15)', textColor: '#D7EF3F', fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, borderRadius: 8, paddingX: 16, paddingY: 8, borderColor: '#D7EF3F', borderWidth: 1 },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'Module Pill (Green)',
+            element: {
+              type: 'badge', width: 210, height: 32, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'MODULES 11\u201312',
+              badgeStyle: { backgroundColor: 'rgba(32,201,151,0.15)', textColor: '#20C997', fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, borderRadius: 8, paddingX: 16, paddingY: 8, borderColor: '#20C997', borderWidth: 1 },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'Free Badge',
+            element: {
+              type: 'badge', width: 200, height: 40, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'INCLUDED FREE',
+              badgeStyle: { backgroundColor: '#20C997', textColor: '#0D1117', fontFamily: 'Poppins', fontSize: 16, fontWeight: 700, borderRadius: 8, paddingX: 16, paddingY: 10 },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'NEW LAUNCH',
+            element: {
+              type: 'badge', width: 180, height: 36, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'NEW LAUNCH',
+              badgeStyle: { backgroundColor: '#D7EF3F', textColor: '#181830', fontFamily: 'Poppins', fontSize: 14, fontWeight: 700, borderRadius: 8, paddingX: 16, paddingY: 8 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'strips',
+        label: 'Bottom Strips',
+        items: [
+          {
+            id: aid(), type: 'strip', label: 'Tag Strip',
+            element: {
+              type: 'strip', width: 1080, height: 60, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '\u2714 Live Sessions \u00b7 \u2714 8+ Projects \u00b7 \u2714 75 Days \u00b7 \u2714 500 Seats \u00b7 March 7',
+              stripStyle: { backgroundColor: 'rgba(255,255,255,0.04)', textColor: 'rgba(255,255,255,0.5)', fontFamily: 'Poppins', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
+            },
+          },
+          {
+            id: aid(), type: 'strip', label: 'Stats Bar',
+            element: {
+              type: 'strip', width: 1080, height: 60, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '500 Seats  /  75 Days  /  8+ Projects  /  March 7',
+              stripStyle: { backgroundColor: 'rgba(59,130,246,0.1)', textColor: '#3b82f6', fontFamily: 'Poppins', fontSize: 16, fontWeight: 700, paddingX: 20, paddingY: 10 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'logos',
+        label: 'Logos',
+        items: [
+          {
+            id: aid(), type: 'logo', label: 'Codebasics (Blue)',
+            thumbnail: '/logos/codebasics-primary.svg',
+            element: {
+              type: 'image', width: 160, height: 48, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/logos/codebasics-primary.svg',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+            },
+          },
+          {
+            id: aid(), type: 'logo', label: 'Codebasics (White)',
+            thumbnail: '/logos/codebasics-white.svg',
+            element: {
+              type: 'image', width: 160, height: 48, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/logos/codebasics-white.svg',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'common',
+    label: 'Common',
+    expanded: false,
+    subsections: [
+      {
+        id: 'common-logos',
+        label: 'Logos',
+        items: [
+          {
+            id: aid(), type: 'logo', label: 'Codebasics Logo',
+            thumbnail: '/logos/codebasics-white.svg',
+            element: {
+              type: 'image', width: 160, height: 48, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '/logos/codebasics-white.svg',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+            },
+          },
+          {
+            id: aid(), type: 'badge', label: 'YouTube Badge',
+            element: {
+              type: 'badge', width: 360, height: 38, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '1 Million+ Subscribers \u00b7 4.9 Rating',
+              badgeStyle: { backgroundColor: 'rgba(255,255,255,0.08)', textColor: 'rgba(255,255,255,0.7)', fontFamily: 'Poppins', fontSize: 14, fontWeight: 500, borderRadius: 9999, paddingX: 16, paddingY: 8 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'common-trust',
+        label: 'Trust Signals',
+        items: [
+          {
+            id: aid(), type: 'strip', label: 'Trust Strip',
+            element: {
+              type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Lifetime Version Access \u2022 100% Refund Policy \u2022 Free Portfolio Website',
+              stripStyle: { backgroundColor: 'rgba(255,255,255,0.04)', textColor: 'rgba(255,255,255,0.5)', fontFamily: 'Poppins', fontSize: 14, fontWeight: 500, paddingX: 20, paddingY: 10 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'genai',
+    label: 'Gen AI Bootcamp',
+    expanded: false,
+    subsections: [],
+  },
+  {
+    id: 'data-science',
+    label: 'Data Science Bootcamp',
+    expanded: false,
+    subsections: [],
+  },
+  {
+    id: 'data-engineering',
+    label: 'Data Engineering Bootcamp',
+    expanded: false,
+    subsections: [],
+  },
+];
+
+// Helper to create a new canvas element from an asset item at a drop position
+export function createElementFromAsset(
+  asset: { element: Omit<CanvasElement, 'id' | 'x' | 'y' | 'zIndex'> },
+  x: number,
+  y: number,
+  maxZIndex: number,
+): CanvasElement {
+  return {
+    ...asset.element,
+    id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    x,
+    y,
+    zIndex: maxZIndex + 1,
+  } as CanvasElement;
+}
