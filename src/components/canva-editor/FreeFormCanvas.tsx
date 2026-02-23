@@ -1,0 +1,1226 @@
+'use client';
+
+import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import type {
+  CanvasElement,
+  ResizeHandle,
+  SnapGuide,
+  DragState,
+  ResizeState,
+  SelectionRect,
+  Position,
+} from './types';
+
+// ─── Props ────────────────────────────────────────────────────────────────────
+
+interface FreeFormCanvasProps {
+  elements: CanvasElement[];
+  selectedIds: string[];
+  canvasWidth: number;
+  canvasHeight: number;
+  zoom: number; // 25-200
+  onElementsChange: (elements: CanvasElement[]) => void;
+  onElementsUpdate: (elements: CanvasElement[]) => void;
+  onSelectionChange: (ids: string[]) => void;
+  onTextEditStart?: () => void;
+  onTextEditEnd?: () => void;
+  canvasExportRef?: React.Ref<HTMLDivElement>;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const SNAP_THRESHOLD = 5;
+const MIN_SIZE = 20;
+const HANDLE_SIZE = 8;
+const GRID_SIZE = 40;
+
+const RESIZE_HANDLES: ResizeHandle[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
+
+const HANDLE_CURSORS: Record<ResizeHandle, string> = {
+  nw: 'nwse-resize',
+  n: 'ns-resize',
+  ne: 'nesw-resize',
+  e: 'ew-resize',
+  se: 'nwse-resize',
+  s: 'ns-resize',
+  sw: 'nesw-resize',
+  w: 'ew-resize',
+};
+
+const HANDLE_POSITIONS: Record<ResizeHandle, { top: string; left: string; transform: string }> = {
+  nw: { top: '0%', left: '0%', transform: 'translate(-50%, -50%)' },
+  n: { top: '0%', left: '50%', transform: 'translate(-50%, -50%)' },
+  ne: { top: '0%', left: '100%', transform: 'translate(-50%, -50%)' },
+  e: { top: '50%', left: '100%', transform: 'translate(-50%, -50%)' },
+  se: { top: '100%', left: '100%', transform: 'translate(-50%, -50%)' },
+  s: { top: '100%', left: '50%', transform: 'translate(-50%, -50%)' },
+  sw: { top: '100%', left: '0%', transform: 'translate(-50%, -50%)' },
+  w: { top: '50%', left: '0%', transform: 'translate(-50%, -50%)' },
+};
+
+// ─── Context Menu Item ────────────────────────────────────────────────────────
+
+interface ContextMenuItem {
+  label: string;
+  action: string;
+  separator?: false;
+}
+
+interface ContextMenuSeparator {
+  separator: true;
+}
+
+type ContextMenuEntry = ContextMenuItem | ContextMenuSeparator;
+
+const CONTEXT_MENU_ITEMS: ContextMenuEntry[] = [
+  { label: 'Bring to Front', action: 'bringToFront' },
+  { label: 'Send to Back', action: 'sendToBack' },
+  { label: 'Bring Forward', action: 'bringForward' },
+  { label: 'Send Backward', action: 'sendBackward' },
+  { separator: true },
+  { label: 'Delete', action: 'delete' },
+];
+
+// ─── Snap Guide Computation ───────────────────────────────────────────────────
+
+function computeSnapGuides(
+  movingIds: string[],
+  allElements: CanvasElement[],
+  canvasWidth: number,
+  canvasHeight: number,
+  currentPositions: Record<string, Position>
+): { guides: SnapGuide[]; snapOffsetX: number; snapOffsetY: number } {
+  const guides: SnapGuide[] = [];
+  let snapOffsetX = 0;
+  let snapOffsetY = 0;
+
+  const movingBounds = movingIds.reduce(
+    (acc, id) => {
+      const el = allElements.find((e) => e.id === id);
+      if (!el) return acc;
+      const pos = currentPositions[id] || { x: el.x, y: el.y };
+      return {
+        left: Math.min(acc.left, pos.x),
+        top: Math.min(acc.top, pos.y),
+        right: Math.max(acc.right, pos.x + el.width),
+        bottom: Math.max(acc.bottom, pos.y + el.height),
+      };
+    },
+    { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }
+  );
+
+  const movingCenterX = (movingBounds.left + movingBounds.right) / 2;
+  const movingCenterY = (movingBounds.top + movingBounds.bottom) / 2;
+
+  // Canvas center guides
+  const canvasCenterX = canvasWidth / 2;
+  const canvasCenterY = canvasHeight / 2;
+
+  const verticalTargets: number[] = [0, canvasCenterX, canvasWidth];
+  const horizontalTargets: number[] = [0, canvasCenterY, canvasHeight];
+
+  // Gather edges from non-moving elements
+  allElements.forEach((el) => {
+    if (movingIds.includes(el.id) || !el.visible) return;
+    verticalTargets.push(el.x, el.x + el.width, el.x + el.width / 2);
+    horizontalTargets.push(el.y, el.y + el.height, el.y + el.height / 2);
+  });
+
+  // Check vertical snaps (moving element edges and center)
+  const movingVEdges = [movingBounds.left, movingCenterX, movingBounds.right];
+  let bestVDist = SNAP_THRESHOLD + 1;
+  let bestVSnap: { target: number; movingEdge: number } | null = null;
+
+  for (const mEdge of movingVEdges) {
+    for (const target of verticalTargets) {
+      const dist = Math.abs(mEdge - target);
+      if (dist < bestVDist) {
+        bestVDist = dist;
+        bestVSnap = { target, movingEdge: mEdge };
+      }
+    }
+  }
+
+  if (bestVSnap && bestVDist <= SNAP_THRESHOLD) {
+    snapOffsetX = bestVSnap.target - bestVSnap.movingEdge;
+    guides.push({ type: 'vertical', position: bestVSnap.target });
+  }
+
+  // Check horizontal snaps
+  const movingHEdges = [movingBounds.top, movingCenterY, movingBounds.bottom];
+  let bestHDist = SNAP_THRESHOLD + 1;
+  let bestHSnap: { target: number; movingEdge: number } | null = null;
+
+  for (const mEdge of movingHEdges) {
+    for (const target of horizontalTargets) {
+      const dist = Math.abs(mEdge - target);
+      if (dist < bestHDist) {
+        bestHDist = dist;
+        bestHSnap = { target, movingEdge: mEdge };
+      }
+    }
+  }
+
+  if (bestHSnap && bestHDist <= SNAP_THRESHOLD) {
+    snapOffsetY = bestHSnap.target - bestHSnap.movingEdge;
+    guides.push({ type: 'horizontal', position: bestHSnap.target });
+  }
+
+  return { guides, snapOffsetX, snapOffsetY };
+}
+
+// ─── Element Renderer ─────────────────────────────────────────────────────────
+
+function renderElementContent(el: CanvasElement): React.ReactNode {
+  switch (el.type) {
+    case 'image': {
+      const imgStyle: React.CSSProperties = {
+        width: '100%',
+        height: '100%',
+        objectFit: el.imageStyle?.objectFit || 'cover',
+        borderRadius: el.imageStyle?.borderRadius ?? 0,
+        opacity: el.imageStyle?.opacity ?? 1,
+        display: 'block',
+        pointerEvents: 'none',
+        userSelect: 'none',
+      };
+
+      if (el.imageStyle?.maskType === 'radial') {
+        imgStyle.maskImage = `radial-gradient(${el.imageStyle.maskParams || 'ellipse at center, black 60%, transparent 100%'})`;
+        imgStyle.WebkitMaskImage = imgStyle.maskImage;
+      } else if (el.imageStyle?.maskType === 'linear') {
+        imgStyle.maskImage = `linear-gradient(${el.imageStyle.maskParams || 'to bottom, black 60%, transparent 100%'})`;
+        imgStyle.WebkitMaskImage = imgStyle.maskImage;
+      }
+
+      const containerStyle: React.CSSProperties = {
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden',
+        borderRadius: el.imageStyle?.borderRadius ?? 0,
+      };
+
+      if (el.glowColor) {
+        containerStyle.filter = `drop-shadow(0 0 30px ${el.glowColor}) drop-shadow(0 0 60px ${el.glowColor})`;
+      }
+
+      return (
+        <div style={containerStyle}>
+          <img src={el.content} alt="" style={imgStyle} draggable={false} />
+        </div>
+      );
+    }
+
+    case 'text': {
+      const ts = el.textStyle;
+      const textStyle: React.CSSProperties = {
+        fontFamily: ts?.fontFamily || 'sans-serif',
+        fontSize: ts?.fontSize ?? 16,
+        fontWeight: ts?.fontWeight ?? 400,
+        fontStyle: ts?.fontStyle || 'normal',
+        color: ts?.color || '#ffffff',
+        textAlign: ts?.textAlign || 'left',
+        letterSpacing: ts?.letterSpacing ?? 0,
+        lineHeight: ts?.lineHeight ?? 1.2,
+        textTransform: ts?.textTransform || 'none',
+        transform: ts?.scaleX != null ? `scaleX(${ts.scaleX})` : undefined,
+        width: '100%',
+        height: '100%',
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+        overflow: 'hidden',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        margin: 0,
+        padding: 0,
+      };
+      return <div style={textStyle}>{el.content}</div>;
+    }
+
+    case 'button': {
+      const bs = el.buttonStyle;
+      const btnStyle: React.CSSProperties = {
+        width: '100%',
+        height: '100%',
+        backgroundColor: bs?.backgroundColor || '#D7EF3F',
+        color: bs?.textColor || '#181830',
+        fontFamily: bs?.fontFamily || 'Kanit, sans-serif',
+        fontSize: bs?.fontSize ?? 16,
+        fontWeight: bs?.fontWeight ?? 600,
+        borderRadius: bs?.borderRadius ?? 8,
+        border: bs?.borderWidth ? `${bs.borderWidth}px solid ${bs.borderColor || 'transparent'}` : 'none',
+        paddingLeft: bs?.paddingX ?? 24,
+        paddingRight: bs?.paddingX ?? 24,
+        paddingTop: bs?.paddingY ?? 12,
+        paddingBottom: bs?.paddingY ?? 12,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'default',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+      };
+      return <div style={btnStyle}>{el.content}</div>;
+    }
+
+    case 'badge': {
+      const bg = el.badgeStyle;
+      const badgeStyle: React.CSSProperties = {
+        width: '100%',
+        height: '100%',
+        backgroundColor: bg?.backgroundColor || 'rgba(255,255,255,0.1)',
+        color: bg?.textColor || '#ffffff',
+        fontFamily: bg?.fontFamily || 'Kanit, sans-serif',
+        fontSize: bg?.fontSize ?? 14,
+        fontWeight: bg?.fontWeight ?? 500,
+        borderRadius: bg?.borderRadius ?? 20,
+        border: bg?.borderWidth ? `${bg.borderWidth}px solid ${bg.borderColor || 'transparent'}` : 'none',
+        paddingLeft: bg?.paddingX ?? 16,
+        paddingRight: bg?.paddingX ?? 16,
+        paddingTop: bg?.paddingY ?? 6,
+        paddingBottom: bg?.paddingY ?? 6,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        pointerEvents: 'none',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+      };
+      return (
+        <div style={badgeStyle}>
+          {bg?.icon && <span>{bg.icon}</span>}
+          <span>{el.content}</span>
+        </div>
+      );
+    }
+
+    case 'strip': {
+      const ss = el.stripStyle;
+      const stripStyle: React.CSSProperties = {
+        width: '100%',
+        height: '100%',
+        backgroundColor: ss?.backgroundColor || '#6F53C1',
+        color: ss?.textColor || '#ffffff',
+        fontFamily: ss?.fontFamily || 'Kanit, sans-serif',
+        fontSize: ss?.fontSize ?? 14,
+        fontWeight: ss?.fontWeight ?? 500,
+        paddingLeft: ss?.paddingX ?? 16,
+        paddingRight: ss?.paddingX ?? 16,
+        paddingTop: ss?.paddingY ?? 8,
+        paddingBottom: ss?.paddingY ?? 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+      };
+      return <div style={stripStyle}>{el.content}</div>;
+    }
+
+    case 'shape': {
+      const sh = el.shapeStyle;
+      const shapeStyle: React.CSSProperties = {
+        width: '100%',
+        height: '100%',
+        backgroundColor: sh?.backgroundColor || 'transparent',
+        borderColor: sh?.borderColor || 'transparent',
+        borderWidth: sh?.borderWidth ?? 0,
+        borderStyle: sh?.borderWidth ? 'solid' : 'none',
+        borderRadius: sh?.borderRadius ?? 0,
+        boxSizing: 'border-box',
+        pointerEvents: 'none',
+        userSelect: 'none',
+      };
+      return <div style={shapeStyle} />;
+    }
+
+    default:
+      return null;
+  }
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export default function FreeFormCanvas({
+  elements,
+  selectedIds,
+  canvasWidth,
+  canvasHeight,
+  zoom = 100,
+  onElementsChange,
+  onElementsUpdate,
+  onSelectionChange,
+  onTextEditStart,
+  onTextEditEnd,
+  canvasExportRef,
+}: FreeFormCanvasProps) {
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const textEditRef = useRef<HTMLDivElement>(null);
+
+  // ── Interactive state ─────────────────────────────────────────────────────
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const [resizeState, setResizeState] = useState<ResizeState | null>(null);
+  const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null);
+  const [snapGuides, setSnapGuides] = useState<SnapGuide[]>([]);
+  const [editingTextId, setEditingTextId] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; elementId: string } | null>(null);
+
+  // Refs for tracking mouse state during drag/resize without re-renders
+  const dragStateRef = useRef<DragState | null>(null);
+  const resizeStateRef = useRef<ResizeState | null>(null);
+  const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const scale = zoom / 100;
+
+  // ── Sorted elements by zIndex ─────────────────────────────────────────────
+  const sortedElements = useMemo(
+    () => [...elements].sort((a, b) => a.zIndex - b.zIndex),
+    [elements]
+  );
+
+  // ── Convert screen coordinates to canvas coordinates ──────────────────────
+  const screenToCanvas = useCallback(
+    (clientX: number, clientY: number): Position => {
+      const canvasEl = canvasRef.current;
+      if (!canvasEl) return { x: 0, y: 0 };
+      const rect = canvasEl.getBoundingClientRect();
+      return {
+        x: (clientX - rect.left) / scale,
+        y: (clientY - rect.top) / scale,
+      };
+    },
+    [scale]
+  );
+
+  // ── Close context menu on any click ───────────────────────────────────────
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handler = () => setContextMenu(null);
+    window.addEventListener('click', handler);
+    return () => window.removeEventListener('click', handler);
+  }, [contextMenu]);
+
+  // ── Dismiss text editing on Escape ────────────────────────────────────────
+  useEffect(() => {
+    if (!editingTextId) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        // Cancel: revert content
+        setEditingTextId(null);
+        onTextEditEnd?.();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [editingTextId, onTextEditEnd]);
+
+  // ── Focus the contentEditable when entering edit mode ─────────────────────
+  useEffect(() => {
+    if (editingTextId && textEditRef.current) {
+      textEditRef.current.focus();
+      // Select all text
+      const range = document.createRange();
+      range.selectNodeContents(textEditRef.current);
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+    }
+  }, [editingTextId]);
+
+  // ── Context menu actions ──────────────────────────────────────────────────
+  const handleContextAction = useCallback(
+    (action: string, elementId: string) => {
+      const idx = elements.findIndex((e) => e.id === elementId);
+      if (idx === -1) return;
+
+      let updated = [...elements];
+      const zIndices = updated.map((e) => e.zIndex);
+      const maxZ = Math.max(...zIndices);
+      const minZ = Math.min(...zIndices);
+
+      switch (action) {
+        case 'bringToFront':
+          updated[idx] = { ...updated[idx], zIndex: maxZ + 1 };
+          break;
+        case 'sendToBack':
+          updated[idx] = { ...updated[idx], zIndex: minZ - 1 };
+          break;
+        case 'bringForward': {
+          const currentZ = updated[idx].zIndex;
+          const nextAbove = updated
+            .filter((e) => e.zIndex > currentZ)
+            .sort((a, b) => a.zIndex - b.zIndex)[0];
+          if (nextAbove) {
+            const swapZ = nextAbove.zIndex;
+            const nextIdx = updated.findIndex((e) => e.id === nextAbove.id);
+            updated[nextIdx] = { ...updated[nextIdx], zIndex: currentZ };
+            updated[idx] = { ...updated[idx], zIndex: swapZ };
+          }
+          break;
+        }
+        case 'sendBackward': {
+          const currentZ = updated[idx].zIndex;
+          const nextBelow = updated
+            .filter((e) => e.zIndex < currentZ)
+            .sort((a, b) => b.zIndex - a.zIndex)[0];
+          if (nextBelow) {
+            const swapZ = nextBelow.zIndex;
+            const nextIdx = updated.findIndex((e) => e.id === nextBelow.id);
+            updated[nextIdx] = { ...updated[nextIdx], zIndex: currentZ };
+            updated[idx] = { ...updated[idx], zIndex: swapZ };
+          }
+          break;
+        }
+        case 'delete':
+          updated = updated.filter((e) => e.id !== elementId);
+          onSelectionChange(selectedIds.filter((id) => id !== elementId));
+          break;
+      }
+
+      onElementsChange(updated);
+      setContextMenu(null);
+    },
+    [elements, selectedIds, onElementsChange, onSelectionChange]
+  );
+
+  // ── Mouse down on element (drag start or select) ─────────────────────────
+  const handleElementMouseDown = useCallback(
+    (e: React.MouseEvent, elementId: string) => {
+      if (e.button === 2) return; // right-click handled separately
+      e.stopPropagation();
+
+      // If we are editing text and click outside the editing element, confirm edit
+      if (editingTextId && editingTextId !== elementId) {
+        confirmTextEdit();
+      }
+
+      const el = elements.find((el) => el.id === elementId);
+      if (!el || el.locked) return;
+
+      // Update selection
+      let newSelected: string[];
+      if (e.shiftKey) {
+        if (selectedIds.includes(elementId)) {
+          newSelected = selectedIds.filter((id) => id !== elementId);
+        } else {
+          newSelected = [...selectedIds, elementId];
+        }
+      } else {
+        if (!selectedIds.includes(elementId)) {
+          newSelected = [elementId];
+        } else {
+          newSelected = selectedIds;
+        }
+      }
+      onSelectionChange(newSelected);
+
+      // Start drag
+      const canvasPos = screenToCanvas(e.clientX, e.clientY);
+      const startPositions: Record<string, Position> = {};
+      newSelected.forEach((id) => {
+        const elem = elements.find((el) => el.id === id);
+        if (elem) {
+          startPositions[id] = { x: elem.x, y: elem.y };
+        }
+      });
+
+      const newDragState: DragState = {
+        isDragging: true,
+        startX: canvasPos.x,
+        startY: canvasPos.y,
+        elementStartPositions: startPositions,
+        constrainAxis: null,
+      };
+      setDragState(newDragState);
+      dragStateRef.current = newDragState;
+    },
+    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId]
+  );
+
+  // ── Double-click to enter text edit mode ──────────────────────────────────
+  const handleElementDoubleClick = useCallback(
+    (e: React.MouseEvent, elementId: string) => {
+      e.stopPropagation();
+      const el = elements.find((el) => el.id === elementId);
+      if (!el || el.locked || el.type !== 'text') return;
+
+      setEditingTextId(elementId);
+      onSelectionChange([elementId]);
+      onTextEditStart?.();
+    },
+    [elements, onSelectionChange, onTextEditStart]
+  );
+
+  // ── Confirm text edit ─────────────────────────────────────────────────────
+  const confirmTextEdit = useCallback(() => {
+    if (!editingTextId || !textEditRef.current) {
+      setEditingTextId(null);
+      onTextEditEnd?.();
+      return;
+    }
+    const newContent = textEditRef.current.innerText;
+    const updated = elements.map((el) =>
+      el.id === editingTextId ? { ...el, content: newContent } : el
+    );
+    onElementsChange(updated);
+    setEditingTextId(null);
+    onTextEditEnd?.();
+  }, [editingTextId, elements, onElementsChange, onTextEditEnd]);
+
+  // ── Resize handle mouse down ──────────────────────────────────────────────
+  const handleResizeMouseDown = useCallback(
+    (e: React.MouseEvent, handle: ResizeHandle) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (selectedIds.length !== 1) return;
+      const el = elements.find((el) => el.id === selectedIds[0]);
+      if (!el || el.locked) return;
+
+      // Corner handles: proportional by default, Shift = free.
+      // Edge handles: always stretch one dimension.
+      const isCorner = ['nw', 'ne', 'se', 'sw'].includes(handle);
+      const lockAspect = isCorner ? !e.shiftKey : false;
+
+      const newResizeState: ResizeState = {
+        isResizing: true,
+        handle,
+        startX: e.clientX,
+        startY: e.clientY,
+        elementStartBounds: { x: el.x, y: el.y, width: el.width, height: el.height },
+        lockAspectRatio: lockAspect,
+      };
+      setResizeState(newResizeState);
+      resizeStateRef.current = newResizeState;
+    },
+    [selectedIds, elements]
+  );
+
+  // ── Right-click context menu ──────────────────────────────────────────────
+  const handleElementContextMenu = useCallback(
+    (e: React.MouseEvent, elementId: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!selectedIds.includes(elementId)) {
+        onSelectionChange([elementId]);
+      }
+
+      // Position relative to the workspace container
+      const workspace = workspaceRef.current;
+      if (!workspace) return;
+      const rect = workspace.getBoundingClientRect();
+      setContextMenu({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        elementId,
+      });
+    },
+    [selectedIds, onSelectionChange]
+  );
+
+  // ── Canvas mouse down (empty area: deselect or start selection rect) ──────
+  const handleCanvasMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.button === 2) return;
+
+      // Close context menu
+      setContextMenu(null);
+
+      // Confirm text edit if active
+      if (editingTextId) {
+        confirmTextEdit();
+        return;
+      }
+
+      // Deselect
+      onSelectionChange([]);
+
+      // Start selection rectangle
+      const canvasPos = screenToCanvas(e.clientX, e.clientY);
+      selectionStartRef.current = canvasPos;
+      setSelectionRect({ x: canvasPos.x, y: canvasPos.y, width: 0, height: 0 });
+    },
+    [onSelectionChange, screenToCanvas, editingTextId, confirmTextEdit]
+  );
+
+  // ── Global mouse move (drag / resize / selection rect) ────────────────────
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // ── Dragging elements ──
+      if (dragStateRef.current) {
+        const ds = dragStateRef.current;
+        const canvasPos = screenToCanvas(e.clientX, e.clientY);
+        let dx = canvasPos.x - ds.startX;
+        let dy = canvasPos.y - ds.startY;
+
+        // Shift constrains to axis
+        if (e.shiftKey) {
+          if (ds.constrainAxis === null) {
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+              const axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+              dragStateRef.current = { ...ds, constrainAxis: axis };
+            }
+          }
+          const axis = dragStateRef.current.constrainAxis;
+          if (axis === 'x') dy = 0;
+          else if (axis === 'y') dx = 0;
+        } else {
+          if (ds.constrainAxis) {
+            dragStateRef.current = { ...ds, constrainAxis: null };
+          }
+        }
+
+        // Compute new positions
+        const newPositions: Record<string, Position> = {};
+        const startPositions = ds.elementStartPositions;
+        for (const id of Object.keys(startPositions)) {
+          const startPos = startPositions[id];
+          newPositions[id] = { x: startPos.x + dx, y: startPos.y + dy };
+        }
+
+        // Snap guides
+        const movingIds = Object.keys(ds.elementStartPositions);
+        const { guides, snapOffsetX, snapOffsetY } = computeSnapGuides(
+          movingIds,
+          elements,
+          canvasWidth,
+          canvasHeight,
+          newPositions
+        );
+        setSnapGuides(guides);
+
+        // Apply snap offset
+        const updatedElements = elements.map((el) => {
+          if (newPositions[el.id]) {
+            return {
+              ...el,
+              x: Math.round(newPositions[el.id].x + snapOffsetX),
+              y: Math.round(newPositions[el.id].y + snapOffsetY),
+            };
+          }
+          return el;
+        });
+
+        onElementsUpdate(updatedElements);
+        return;
+      }
+
+      // ── Resizing element ──
+      if (resizeStateRef.current) {
+        const rs = resizeStateRef.current;
+        const dx = (e.clientX - rs.startX) / scale;
+        const dy = (e.clientY - rs.startY) / scale;
+        const { x: sx, y: sy, width: sw, height: sh } = rs.elementStartBounds;
+        const aspectRatio = sw / sh;
+        const handle = rs.handle;
+
+        let newX = sx;
+        let newY = sy;
+        let newW = sw;
+        let newH = sh;
+
+        // Compute raw new bounds based on handle
+        switch (handle) {
+          case 'se':
+            newW = sw + dx;
+            newH = sh + dy;
+            break;
+          case 'e':
+            newW = sw + dx;
+            break;
+          case 's':
+            newH = sh + dy;
+            break;
+          case 'nw':
+            newX = sx + dx;
+            newY = sy + dy;
+            newW = sw - dx;
+            newH = sh - dy;
+            break;
+          case 'n':
+            newY = sy + dy;
+            newH = sh - dy;
+            break;
+          case 'ne':
+            newW = sw + dx;
+            newY = sy + dy;
+            newH = sh - dy;
+            break;
+          case 'w':
+            newX = sx + dx;
+            newW = sw - dx;
+            break;
+          case 'sw':
+            newX = sx + dx;
+            newW = sw - dx;
+            newH = sh + dy;
+            break;
+        }
+
+        // Lock aspect ratio for corners (unless shift is held)
+        if (rs.lockAspectRatio && !e.shiftKey) {
+          const isCorner = ['nw', 'ne', 'se', 'sw'].includes(handle);
+          if (isCorner) {
+            // Use the dimension with the larger delta to drive
+            const wDelta = Math.abs(newW - sw);
+            const hDelta = Math.abs(newH - sh);
+            if (wDelta > hDelta) {
+              newH = newW / aspectRatio;
+            } else {
+              newW = newH * aspectRatio;
+            }
+            // Adjust position for nw/ne/sw handles
+            if (handle === 'nw') {
+              newX = sx + sw - newW;
+              newY = sy + sh - newH;
+            } else if (handle === 'ne') {
+              newY = sy + sh - newH;
+            } else if (handle === 'sw') {
+              newX = sx + sw - newW;
+            }
+          }
+        }
+
+        // Enforce minimum size
+        if (newW < MIN_SIZE) {
+          if (handle.includes('w')) {
+            newX = sx + sw - MIN_SIZE;
+          }
+          newW = MIN_SIZE;
+        }
+        if (newH < MIN_SIZE) {
+          if (handle.includes('n')) {
+            newY = sy + sh - MIN_SIZE;
+          }
+          newH = MIN_SIZE;
+        }
+
+        const updatedElements = elements.map((el) => {
+          if (el.id === selectedIds[0]) {
+            return {
+              ...el,
+              x: Math.round(newX),
+              y: Math.round(newY),
+              width: Math.round(newW),
+              height: Math.round(newH),
+            };
+          }
+          return el;
+        });
+        onElementsUpdate(updatedElements);
+        return;
+      }
+
+      // ── Selection rectangle ──
+      if (selectionStartRef.current) {
+        const start = selectionStartRef.current;
+        const canvasPos = screenToCanvas(e.clientX, e.clientY);
+        const rx = Math.min(start.x, canvasPos.x);
+        const ry = Math.min(start.y, canvasPos.y);
+        const rw = Math.abs(canvasPos.x - start.x);
+        const rh = Math.abs(canvasPos.y - start.y);
+        setSelectionRect({ x: rx, y: ry, width: rw, height: rh });
+
+        // Select elements that intersect
+        const intersecting = elements
+          .filter((el) => {
+            if (!el.visible) return false;
+            return !(
+              el.x + el.width < rx ||
+              el.x > rx + rw ||
+              el.y + el.height < ry ||
+              el.y > ry + rh
+            );
+          })
+          .map((el) => el.id);
+        onSelectionChange(intersecting);
+      }
+    };
+
+    const handleMouseUp = () => {
+      // Finalize drag
+      if (dragStateRef.current) {
+        dragStateRef.current = null;
+        setDragState(null);
+        setSnapGuides([]);
+        // Commit with history
+        onElementsChange(elements);
+      }
+
+      // Finalize resize
+      if (resizeStateRef.current) {
+        resizeStateRef.current = null;
+        setResizeState(null);
+        onElementsChange(elements);
+      }
+
+      // Finalize selection rect
+      if (selectionStartRef.current) {
+        selectionStartRef.current = null;
+        setSelectionRect(null);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [
+    elements,
+    selectedIds,
+    canvasWidth,
+    canvasHeight,
+    scale,
+    screenToCanvas,
+    onElementsChange,
+    onElementsUpdate,
+    onSelectionChange,
+  ]);
+
+  // ── Keyboard: Delete selected elements ────────────────────────────────────
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (editingTextId) return; // don't delete while editing text
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (
+          selectedIds.length > 0 &&
+          document.activeElement === document.body
+        ) {
+          const updated = elements.filter((el) => !selectedIds.includes(el.id));
+          onElementsChange(updated);
+          onSelectionChange([]);
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [elements, selectedIds, editingTextId, onElementsChange, onSelectionChange]);
+
+  // ── Drop handler for elements dragged from sidebar ──────────────────────
+  const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes('application/sigma-element')) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    }
+  }, []);
+
+  const handleCanvasDrop = useCallback((e: React.DragEvent) => {
+    const data = e.dataTransfer.getData('application/sigma-element');
+    if (!data) return;
+    e.preventDefault();
+
+    try {
+      const partial = JSON.parse(data) as Partial<CanvasElement>;
+      const canvasPos = screenToCanvas(e.clientX, e.clientY);
+      const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+      const w = partial.width || 200;
+      const h = partial.height || 200;
+
+      const newEl: CanvasElement = {
+        id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        type: partial.type || 'shape',
+        x: Math.round(canvasPos.x - w / 2),
+        y: Math.round(canvasPos.y - h / 2),
+        width: w,
+        height: h,
+        rotation: partial.rotation ?? 0,
+        opacity: partial.opacity ?? 1,
+        zIndex: maxZ + 1,
+        locked: false,
+        visible: true,
+        content: partial.content || '',
+        textStyle: partial.textStyle,
+        imageStyle: partial.imageStyle,
+        buttonStyle: partial.buttonStyle,
+        badgeStyle: partial.badgeStyle,
+        stripStyle: partial.stripStyle,
+        shapeStyle: partial.shapeStyle,
+        glowColor: partial.glowColor,
+      };
+
+      onElementsChange([...elements, newEl]);
+      onSelectionChange([newEl.id]);
+    } catch {
+      // Ignore malformed data
+    }
+  }, [elements, screenToCanvas, onElementsChange, onSelectionChange]);
+
+  // ── Prevent default context menu on canvas ────────────────────────────────
+  const handleCanvasContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+  }, []);
+
+  // ── Grid background pattern ───────────────────────────────────────────────
+  const gridBackground = useMemo(
+    () =>
+      `linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+       linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+    []
+  );
+
+  // ─── Render ─────────────────────────────────────────────────────────────────
+
+  return (
+    <div
+      ref={workspaceRef}
+      style={{
+        flex: 1,
+        overflow: 'auto',
+        backgroundColor: '#1a1a2e',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        minHeight: 0,
+      }}
+    >
+      {/* Canvas */}
+      <div
+        ref={(node) => {
+          (canvasRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+          if (canvasExportRef) {
+            if (typeof canvasExportRef === 'function') canvasExportRef(node);
+            else (canvasExportRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+          }
+        }}
+        onMouseDown={handleCanvasMouseDown}
+        onDragOver={handleCanvasDragOver}
+        onDrop={handleCanvasDrop}
+        onContextMenu={handleCanvasContextMenu}
+        style={{
+          width: canvasWidth,
+          height: canvasHeight,
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+          position: 'relative',
+          backgroundColor: '#0D1117',
+          backgroundImage: gridBackground,
+          backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
+          flexShrink: 0,
+          overflow: 'hidden',
+          cursor: 'default',
+        }}
+      >
+        {/* Render elements sorted by zIndex */}
+        {sortedElements.map((el) => {
+          if (!el.visible) return null;
+          const isSelected = selectedIds.includes(el.id);
+          const isEditing = editingTextId === el.id;
+
+          return (
+            <div
+              key={el.id}
+              onMouseDown={(e) => handleElementMouseDown(e, el.id)}
+              onDoubleClick={(e) => handleElementDoubleClick(e, el.id)}
+              onContextMenu={(e) => handleElementContextMenu(e, el.id)}
+              style={{
+                position: 'absolute',
+                left: el.x,
+                top: el.y,
+                width: el.width,
+                height: el.height,
+                opacity: el.opacity,
+                transform: el.rotation ? `rotate(${el.rotation}deg)` : undefined,
+                zIndex: el.zIndex,
+                cursor: el.locked ? 'default' : 'move',
+                outline: isSelected ? '2px solid #3B82F6' : 'none',
+                outlineOffset: -1,
+                pointerEvents: el.locked && !isSelected ? 'none' : 'auto',
+              }}
+            >
+              {/* Element content -- or inline editing */}
+              {isEditing ? (
+                <div
+                  ref={textEditRef}
+                  contentEditable
+                  suppressContentEditableWarning
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onBlur={confirmTextEdit}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    fontFamily: el.textStyle?.fontFamily || 'sans-serif',
+                    fontSize: el.textStyle?.fontSize ?? 16,
+                    fontWeight: el.textStyle?.fontWeight ?? 400,
+                    fontStyle: el.textStyle?.fontStyle || 'normal',
+                    color: el.textStyle?.color || '#ffffff',
+                    textAlign: el.textStyle?.textAlign || 'left',
+                    letterSpacing: el.textStyle?.letterSpacing ?? 0,
+                    lineHeight: el.textStyle?.lineHeight ?? 1.2,
+                    textTransform: el.textStyle?.textTransform || 'none',
+                    transform: el.textStyle?.scaleX != null ? `scaleX(${el.textStyle.scaleX})` : undefined,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    outline: 'none',
+                    border: '1px dashed #3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                    margin: 0,
+                    padding: 0,
+                    overflow: 'hidden',
+                    cursor: 'text',
+                    boxSizing: 'border-box',
+                    caretColor: '#3B82F6',
+                  }}
+                >
+                  {el.content}
+                </div>
+              ) : (
+                renderElementContent(el)
+              )}
+
+              {/* Resize handles */}
+              {isSelected && !isEditing && !el.locked && selectedIds.length === 1 && (
+                <>
+                  {RESIZE_HANDLES.map((handle) => (
+                    <div
+                      key={handle}
+                      onMouseDown={(e) => handleResizeMouseDown(e, handle)}
+                      style={{
+                        position: 'absolute',
+                        top: HANDLE_POSITIONS[handle].top,
+                        left: HANDLE_POSITIONS[handle].left,
+                        transform: HANDLE_POSITIONS[handle].transform,
+                        width: HANDLE_SIZE,
+                        height: HANDLE_SIZE,
+                        backgroundColor: '#ffffff',
+                        border: '1.5px solid #3B82F6',
+                        borderRadius: 1,
+                        cursor: HANDLE_CURSORS[handle],
+                        zIndex: 10000,
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Selection rectangle */}
+        {selectionRect && selectionRect.width > 1 && selectionRect.height > 1 && (
+          <div
+            style={{
+              position: 'absolute',
+              left: selectionRect.x,
+              top: selectionRect.y,
+              width: selectionRect.width,
+              height: selectionRect.height,
+              border: '1.5px dashed #3B82F6',
+              backgroundColor: 'rgba(59, 130, 246, 0.08)',
+              pointerEvents: 'none',
+              zIndex: 99999,
+            }}
+          />
+        )}
+
+        {/* Snap guides */}
+        {snapGuides.map((guide, i) =>
+          guide.type === 'vertical' ? (
+            <div
+              key={`snap-v-${i}`}
+              style={{
+                position: 'absolute',
+                left: guide.position,
+                top: 0,
+                width: 0,
+                height: canvasHeight,
+                borderLeft: '1px dashed #3B82F6',
+                pointerEvents: 'none',
+                zIndex: 99998,
+                opacity: 0.7,
+              }}
+            />
+          ) : (
+            <div
+              key={`snap-h-${i}`}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: guide.position,
+                width: canvasWidth,
+                height: 0,
+                borderTop: '1px dashed #3B82F6',
+                pointerEvents: 'none',
+                zIndex: 99998,
+                opacity: 0.7,
+              }}
+            />
+          )
+        )}
+      </div>
+
+      {/* Context menu */}
+      {contextMenu && (
+        <div
+          style={{
+            position: 'absolute',
+            left: contextMenu.x,
+            top: contextMenu.y,
+            backgroundColor: '#1e1e2e',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 8,
+            padding: '4px 0',
+            minWidth: 180,
+            zIndex: 100000,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {CONTEXT_MENU_ITEMS.map((item, i) => {
+            if (item.separator) {
+              return (
+                <div
+                  key={`sep-${i}`}
+                  style={{
+                    height: 1,
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    margin: '4px 8px',
+                  }}
+                />
+              );
+            }
+            const isDelete = item.action === 'delete';
+            return (
+              <button
+                key={item.action}
+                onClick={() => handleContextAction(item.action, contextMenu.elementId)}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '8px 16px',
+                  background: 'none',
+                  border: 'none',
+                  color: isDelete ? '#ef4444' : '#e2e8f0',
+                  fontSize: 13,
+                  fontFamily: 'inherit',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  borderRadius: 0,
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.06)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.backgroundColor = 'transparent';
+                }}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

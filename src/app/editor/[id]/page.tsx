@@ -1,46 +1,27 @@
 'use client';
 
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import templatesData from '@/data/templates.json';
-import templateDesignsData from '@/data/templateDesigns.json';
-import EditorSidebar from '@/components/EditorSidebar';
-import LivePreview, { LivePreviewHandle } from '@/components/LivePreview';
-import { useExportPng } from '@/hooks/useExportPng';
 import { useToast } from '@/components/Toast';
-import { AIGenerateModal, GeneratedCreative } from '@/components/AIGenerateModal';
-import { CHARACTERS, getCharacterImage, CharacterKey } from '@/data/characters';
-import { type BootcampKey } from '@/data/products';
-import { type FontSizeConfig, type PerSizeFontConfig, FONT_SIZE_PRESETS, DEFAULT_PRESET, buildDefaultPerSizeFonts } from '@/config/fontSizes';
-import SizeTabBar from '@/components/SizeTabBar';
-import { AD_SIZES, DEFAULT_AD_SIZE, type AdSize } from '@/config/adSizes';
-import { type AIEngElementId, type ElementLayout, type ElementOverrides, type PerSizeElementOverrides } from '@/components/DraggableTemplateElement';
 
-interface Template {
-  id: string;
-  name: string;
-  category: string;
-  platform: string;
-  dimensions: {
-    width: number;
-    height: number;
-  };
-  aspectRatio: string;
-  useCase: string;
-  description: string;
-  previewColors: string[];
-}
+// Canva-style editor components
+import CanvaSidebar, { type SidebarTab } from '@/components/canva-editor/CanvaSidebar';
+import FreeFormCanvas from '@/components/canva-editor/FreeFormCanvas';
+import TemplatesPanel from '@/components/canva-editor/TemplatesPanel';
+import ElementsPanel from '@/components/canva-editor/ElementsPanel';
+import TextPanel from '@/components/canva-editor/TextPanel';
+import UploadsPanel from '@/components/canva-editor/UploadsPanel';
+import SettingsPanel from '@/components/canva-editor/SettingsPanel';
+import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
+import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
+import { useCanvasHistory } from '@/components/canva-editor/useCanvasHistory';
+import { useKeyboardShortcuts, setClipboard, getClipboard } from '@/components/canva-editor/useKeyboardShortcuts';
+import { type CanvasElement, type CanvasSize, CANVAS_SIZES } from '@/components/canva-editor/types';
+import { type TemplateInfo } from '@/components/canva-editor/templateDefinitions';
+import { type AssetItem } from '@/components/canva-editor/types';
 
-interface TemplateDesign {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  applicableTo: string[];
-  fields: EditorFields;
-  previewColors: string[];
-}
-
+// Keep legacy exports for other components that import from this file
 export interface EditorFields {
   headline: string;
   subheadline: string;
@@ -57,7 +38,6 @@ export interface SelectedCharacter {
   image: string;
   position: 'left' | 'right' | 'bottom';
   size?: number;
-  // Interactive placement (set after drag/resize)
   x?: number;
   y?: number;
   w?: number;
@@ -67,309 +47,386 @@ export interface SelectedCharacter {
   personId?: string;
 }
 
-const defaultFields: EditorFields = {
-  headline: 'Build Real-World Data Pipelines',
-  subheadline: 'From Zero to Production-Ready Engineer',
-  cta: 'Start Learning Today',
-  price: '₹12,000',
-  courseName: 'Data Engineering Bootcamp 1.0',
-  credibility: '1 Million+ YouTube Subscribers',
-  bodyText: '7 Business Projects • 2 Virtual Internships • Lifetime Access',
-};
+interface TemplateRecord {
+  id: string;
+  name: string;
+  category: string;
+  platform: string;
+  dimensions: { width: number; height: number };
+  aspectRatio: string;
+  useCase: string;
+  description: string;
+  previewColors: string[];
+}
 
 export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const templateId = params.id as string;
   const { showToast } = useToast();
 
   const template = useMemo(() => {
-    return templatesData.templates.find((t) => t.id === templateId) as Template | undefined;
+    return templatesData.templates.find((t) => t.id === templateId) as TemplateRecord | undefined;
   }, [templateId]);
 
-  // Pre-fill fields from query params if coming from intent flow
-  const initialFields = useMemo(() => {
-    const headline = searchParams.get('headline');
-    if (headline) {
-      return { ...defaultFields, headline };
+  // ── Canvas state with undo/redo ──
+  const {
+    elements,
+    setElements,
+    updateWithoutHistory,
+    undo,
+    redo,
+    resetHistory,
+    toastMessage,
+  } = useCanvasHistory([]);
+
+  // ── Selection state ──
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // ── Canvas size (multi-size support) ──
+  const [activeSize, setActiveSize] = useState<CanvasSize>(CANVAS_SIZES[0]);
+  const [perSizeElements, setPerSizeElements] = useState<Record<string, CanvasElement[]>>({});
+
+  // ── Sidebar state ──
+  const [activeTab, setActiveTab] = useState<SidebarTab | null>('templates');
+  const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
+
+  // ── Zoom ──
+  const [zoom, setZoom] = useState(100);
+
+  // ── Text editing mode (disables keyboard shortcuts) ──
+  const [isTextEditing, setIsTextEditing] = useState(false);
+
+  // ── Shortcuts overlay ──
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  // ── Export state ──
+  const [isExporting, setIsExporting] = useState(false);
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // ── Per-size elements helpers ──
+  const handleSizeChange = useCallback((newSize: CanvasSize) => {
+    // Save current size's elements
+    setPerSizeElements(prev => ({ ...prev, [activeSize.id]: structuredClone(elements) }));
+    // Load new size's elements (or empty if never edited)
+    const saved = perSizeElements[newSize.id];
+    if (saved) {
+      resetHistory(saved);
+    } else {
+      resetHistory(elements); // Copy current elements as starting point
     }
-    return defaultFields;
-  }, [searchParams]);
+    setActiveSize(newSize);
+    setSelectedIds([]);
+  }, [activeSize.id, elements, perSizeElements, resetHistory]);
 
-  const [fields, setFields] = useState<EditorFields>(initialFields);
-  const [selectedDesignId, setSelectedDesignId] = useState<string | null>(null);
-  const [customColors, setCustomColors] = useState<string[] | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showAIModal, setShowAIModal] = useState(false);
-  const [jesterLine, setJesterLine] = useState<string | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<BootcampKey | null>(null);
-  const [activeSize, setActiveSize] = useState<AdSize>(DEFAULT_AD_SIZE);
-  const [isExportingAll, setIsExportingAll] = useState(false);
-  const previewRef = useRef<LivePreviewHandle>(null);
-  const { exportPng, isExporting } = useExportPng();
+  // ── Template loading ──
+  const handleSelectTemplate = useCallback((tmpl: TemplateInfo) => {
+    const newElements = tmpl.createElements();
+    resetHistory(newElements);
+    setActiveTemplateId(tmpl.id);
+    setSelectedIds([]);
+    showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
+  }, [resetHistory, showToast]);
 
-  // ── Per-size font state ──
-  const [perSizeFonts, setPerSizeFonts] = useState<PerSizeFontConfig>(() =>
-    buildDefaultPerSizeFonts(AD_SIZES.map(s => s.id)),
-  );
-  // Track which sizes have been manually edited (for badge indicators)
-  const [editedSizes, setEditedSizes] = useState<Set<string>>(new Set());
-
-  // Derived: current size's font config
-  const fontSizes = perSizeFonts[activeSize.id] ?? { ...FONT_SIZE_PRESETS[DEFAULT_PRESET].sizes };
-  const setFontSizes = useCallback((sizes: FontSizeConfig) => {
-    setPerSizeFonts(prev => ({ ...prev, [activeSize.id]: sizes }));
-    setEditedSizes(prev => { const next = new Set(prev); next.add(activeSize.id); return next; });
-  }, [activeSize.id]);
-
-  // ── Per-size character placement ──
-  const [perSizeCharacter, setPerSizeCharacter] = useState<Record<string, SelectedCharacter | null>>({});
-
-  // Derived: current size's character
-  const selectedCharacter = perSizeCharacter[activeSize.id] ?? null;
-  const setSelectedCharacter = useCallback((char: SelectedCharacter | null) => {
-    setPerSizeCharacter(prev => ({ ...prev, [activeSize.id]: char }));
-  }, [activeSize.id]);
-
-  // ── Hero image for AI Engineering template ──
-  const [heroImage, setHeroImage] = useState<string>('/images/bootcamps/ai-engineering/heroes/superhero-trio.png');
-
-  // ── Per-size element overrides (for draggable template elements) ──
-  const [perSizeElementOverrides, setPerSizeElementOverrides] = useState<PerSizeElementOverrides>({});
-  const [selectedElement, setSelectedElement] = useState<AIEngElementId | null>(null);
-
-  // Derived: current size's element overrides
-  const elementOverrides: ElementOverrides = perSizeElementOverrides[activeSize.id] ?? {};
-  const handleElementUpdate = useCallback((id: AIEngElementId, updates: Partial<ElementLayout>) => {
-    setPerSizeElementOverrides(prev => {
-      const current = prev[activeSize.id] ?? {};
-      const existing = current[id] ?? { offsetX: 0, offsetY: 0 };
-      return {
-        ...prev,
-        [activeSize.id]: {
-          ...current,
-          [id]: { ...existing, ...updates },
-        },
-      };
-    });
-  }, [activeSize.id]);
-
-  const handleElementSelect = useCallback((id: AIEngElementId | null) => {
-    setSelectedElement(id);
+  // ── Element drop from sidebar ──
+  const handleElementDragStart = useCallback((item: AssetItem, e: React.DragEvent) => {
+    const elementData = JSON.stringify(item.element);
+    e.dataTransfer.setData('application/sigma-element', elementData);
+    e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  // Apply character to ALL sizes (convenience action)
-  const handleApplyCharacterToAll = useCallback(() => {
-    const current = perSizeCharacter[activeSize.id] ?? null;
-    setPerSizeCharacter(() => {
-      const next: Record<string, SelectedCharacter | null> = {};
-      for (const size of AD_SIZES) {
-        next[size.id] = current;
-      }
-      return next;
+  // ── Upload image drop ──
+  const handleUploadDragStart = useCallback((dataUrl: string, width: number, height: number, e: React.DragEvent) => {
+    const elementData = JSON.stringify({
+      type: 'image',
+      width: Math.min(width, 500),
+      height: Math.min(height, 500),
+      rotation: 0,
+      opacity: 1,
+      locked: false,
+      visible: true,
+      content: dataUrl,
+      imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
     });
-  }, [activeSize.id, perSizeCharacter]);
-
-  // Auto-select design from query params (e.g., coming from concept flow)
-  useEffect(() => {
-    const designId = searchParams.get('designId');
-    if (designId && !selectedDesignId) {
-      const designs = templateDesignsData.designs as TemplateDesign[];
-      const design = designs.find(d => d.id === designId);
-      if (design) {
-        setSelectedDesignId(design.id);
-        setFields(design.fields);
-        setCustomColors(design.previewColors);
-      }
-    }
-  }, [searchParams, selectedDesignId]);
-
-  const handleFieldChange = (field: keyof EditorFields, value: string) => {
-    setFields((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleDesignSelect = (design: TemplateDesign) => {
-    setSelectedDesignId(design.id);
-    setFields(design.fields);
-    setCustomColors(design.previewColors);
-    showToast('success', 'Design Applied', `"${design.name}" template loaded`);
-    // Close mobile sidebar after selecting
-    setIsSidebarOpen(false);
-  };
-
-  const handleCharacterSelect = (character: SelectedCharacter | null) => {
-    setSelectedCharacter(character);
-    if (character) {
-      showToast('success', 'Character Added', `${character.name} added to canvas`);
-    }
-    setIsSidebarOpen(false);
-  };
-
-  const handleCharacterUpdate = useCallback((updates: Partial<SelectedCharacter>) => {
-    setPerSizeCharacter(prev => {
-      const current = prev[activeSize.id] ?? null;
-      if (!current) return prev;
-      return { ...prev, [activeSize.id]: { ...current, ...updates } };
-    });
-  }, [activeSize.id]);
-
-  const handleCharacterDelete = useCallback(() => {
-    setSelectedCharacter(null);
+    e.dataTransfer.setData('application/sigma-element', elementData);
+    e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  const handleReset = () => {
-    setFields(defaultFields);
-    setSelectedDesignId(null);
-    setCustomColors(null);
-    setPerSizeCharacter({});
-    setSelectedCourse(null);
-    setPerSizeFonts(buildDefaultPerSizeFonts(AD_SIZES.map(s => s.id)));
-    setEditedSizes(new Set());
-    setPerSizeElementOverrides({});
-    setSelectedElement(null);
-    showToast('info', 'Reset Complete', 'Fields restored to defaults');
-  };
+  // ── Add text from TextPanel ──
+  const handleAddText = useCallback((preset: 'heading' | 'subheading' | 'body', content?: string) => {
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(e => e.zIndex)) : 0;
+    const configs = {
+      heading: { fontSize: 72, fontWeight: 900, w: 600, h: 100, text: content || 'Add heading' },
+      subheading: { fontSize: 36, fontWeight: 700, w: 500, h: 60, text: content || 'Add subheading' },
+      body: { fontSize: 20, fontWeight: 400, w: 400, h: 50, text: content || 'Add body text' },
+    };
+    const cfg = configs[preset];
+    const newEl: CanvasElement = {
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      type: 'text',
+      x: (activeSize.width - cfg.w) / 2,
+      y: (activeSize.height - cfg.h) / 2,
+      width: cfg.w,
+      height: cfg.h,
+      rotation: 0,
+      opacity: 1,
+      zIndex: maxZ + 1,
+      locked: false,
+      visible: true,
+      content: cfg.text,
+      textStyle: {
+        fontFamily: 'Poppins',
+        fontSize: cfg.fontSize,
+        fontWeight: cfg.fontWeight,
+        fontStyle: 'normal',
+        color: '#FFFFFF',
+        textAlign: 'left',
+        letterSpacing: preset === 'heading' ? -1 : 0,
+        lineHeight: preset === 'heading' ? 0.92 : 1.4,
+        textTransform: preset === 'heading' ? 'uppercase' : 'none',
+        scaleX: preset === 'heading' ? 0.74 : 1,
+      },
+    };
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
+  }, [elements, activeSize, setElements]);
 
-  const handleAIGenerate = (result: GeneratedCreative) => {
-    // Update form fields with generated content
-    setFields((prev) => ({
-      ...prev,
-      headline: result.headline,
-      subheadline: result.subheadline,
-      bodyText: result.bodyText,
-      cta: result.cta,
-    }));
+  // ── Properties panel update ──
+  const handlePropertyUpdate = useCallback((updates: Partial<CanvasElement>) => {
+    if (selectedIds.length !== 1) return;
+    const id = selectedIds[0];
+    const updated = elements.map(el => el.id === id ? { ...el, ...updates } : el);
+    setElements(updated);
+  }, [elements, selectedIds, setElements]);
 
-    // Set jester line if provided
-    if (result.jesterLine) {
-      setJesterLine(result.jesterLine);
-    }
-
-    // Set character if provided
-    if (result.character?.name) {
-      const charKey = result.character.name.toLowerCase() as CharacterKey;
-      const char = CHARACTERS[charKey];
-      if (char) {
-        setSelectedCharacter({
-          key: charKey,
-          name: char.name,
-          image: getCharacterImage(charKey, result.character.pose),
-          position: result.character.position || 'left',
-          size: result.character.size || 250,
-        });
-      }
-    }
-
-    // Set founder if provided
-    if (result.founder?.name) {
-      const founderMap: Record<string, { key: string; image: string }> = {
-        'Dhaval Patel': { key: 'dhaval', image: '/assets/founders/Dhaval.png' },
-        'Hemanand Vadivel': { key: 'hemanand', image: '/assets/founders/Hemanand.png' },
-      };
-      const founder = founderMap[result.founder.name];
-      if (founder) {
-        setSelectedCharacter({
-          key: founder.key,
-          name: result.founder.name,
-          image: founder.image,
-          position: result.founder.position || 'left',
-        });
-      }
-    }
-
-    showToast(
-      'success',
-      result.isDemo ? 'Demo Creative Applied' : 'AI Generated',
-      result.isDemo
-        ? 'Using pre-built creative. Add an API key for live generation.'
-        : 'Creative content has been applied to the editor'
-    );
-  };
-
-  const handleExport = async () => {
-    if (!template || !previewRef.current) return;
-
+  // ── Export (PNG) ──
+  const handleExport = useCallback(async () => {
+    const canvasEl = canvasRef.current;
+    if (!canvasEl || isExporting) return;
+    setIsExporting(true);
     try {
-      const element = previewRef.current.getExportElement();
-      await exportPng(element, {
-        templateName: template.name,
+      const htmlToImage = await import('html-to-image');
+      if (document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r => setTimeout(r, 150));
+      const dataUrl = await htmlToImage.toPng(canvasEl, {
+        quality: 1.0,
+        pixelRatio: 2,
         width: activeSize.width,
         height: activeSize.height,
+        style: { transform: 'none', overflow: 'hidden' },
       });
-      showToast('success', 'Export Complete', `${template.name} (${activeSize.width}×${activeSize.height}) saved as PNG`);
+      const link = document.createElement('a');
+      const name = activeTemplateId || 'canvas';
+      link.download = `${name}_${activeSize.width}x${activeSize.height}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} PNG`);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      showToast('error', 'Export Failed', message);
+      showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setIsExporting(false);
     }
-  };
+  }, [activeSize, activeTemplateId, isExporting, showToast]);
 
-  const handleDownloadAll = async () => {
-    if (!template || !previewRef.current || isExportingAll) return;
-
-    setIsExportingAll(true);
+  // ── Export All Sizes (ZIP) ──
+  const handleExportAll = useCallback(async () => {
+    if (isExporting) return;
+    setIsExporting(true);
     try {
+      showToast('info', 'Exporting', 'Generating all sizes...');
       const JSZip = (await import('jszip')).default;
+      const htmlToImage = await import('html-to-image');
       const zip = new JSZip();
+      const name = activeTemplateId || 'canvas';
 
-      const sanitizedName = template.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
+      // Save current elements before switching
+      const currentElements = structuredClone(elements);
 
-      for (const size of AD_SIZES) {
-        const sizeFonts = perSizeFonts[size.id] ?? fontSizes;
-        const sizeChar = perSizeCharacter[size.id] ?? null;
-        const dataUrl = await previewRef.current.renderAtSize(size.width, size.height, sizeFonts, sizeChar);
-        // Convert data URL to binary
-        const base64 = dataUrl.split(',')[1];
-        zip.file(`${sanitizedName}-${size.width}x${size.height}.png`, base64, { base64: true });
+      for (const size of CANVAS_SIZES) {
+        // Get elements for this size
+        const sizeElements = size.id === activeSize.id
+          ? currentElements
+          : (perSizeElements[size.id] || currentElements);
+
+        // We export the current canvas element - need to temporarily resize
+        const canvasEl = canvasRef.current;
+        if (!canvasEl) continue;
+
+        const origW = canvasEl.style.width;
+        const origH = canvasEl.style.height;
+        canvasEl.style.width = `${size.width}px`;
+        canvasEl.style.height = `${size.height}px`;
+
+        if (document.fonts?.ready) await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 100));
+
+        try {
+          const dataUrl = await htmlToImage.toPng(canvasEl, {
+            quality: 1.0,
+            pixelRatio: 1,
+            width: size.width,
+            height: size.height,
+            style: { transform: 'none', overflow: 'hidden' },
+          });
+          const base64 = dataUrl.split(',')[1];
+          zip.file(`${name}_${size.width}x${size.height}.png`, base64, { base64: true });
+        } finally {
+          canvasEl.style.width = origW;
+          canvasEl.style.height = origH;
+        }
       }
 
       const blob = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
+      link.download = `${name}-all-sizes.zip`;
       link.href = url;
-      link.download = `${sanitizedName}-all-sizes.zip`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-
-      showToast('success', 'Download Complete', `${AD_SIZES.length} sizes exported as ZIP`);
+      showToast('success', 'Download Complete', `${CANVAS_SIZES.length} sizes exported`);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      showToast('error', 'Export Failed', message);
+      showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
     } finally {
-      setIsExportingAll(false);
+      setIsExporting(false);
     }
-  };
+  }, [isExporting, elements, activeSize, activeTemplateId, perSizeElements, showToast]);
 
+  // ── Keyboard shortcut actions ──
+  const shortcutActions = useMemo(() => ({
+    undo,
+    redo,
+    deleteSelected: () => {
+      if (selectedIds.length === 0) return;
+      setElements(elements.filter(el => !selectedIds.includes(el.id)));
+      setSelectedIds([]);
+    },
+    selectAll: () => setSelectedIds(elements.map(el => el.id)),
+    deselectAll: () => setSelectedIds([]),
+    copySelected: () => {
+      const copied = elements.filter(el => selectedIds.includes(el.id));
+      setClipboard(copied);
+      showToast('info', 'Copied', `${copied.length} element(s)`);
+    },
+    paste: () => {
+      const pasted = getClipboard();
+      if (pasted.length === 0) return;
+      const maxZ = Math.max(...elements.map(e => e.zIndex), 0);
+      const newEls = pasted.map((el, i) => ({
+        ...el,
+        id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        x: el.x + 10,
+        y: el.y + 10,
+        zIndex: maxZ + i + 1,
+      }));
+      setElements([...elements, ...newEls]);
+      setSelectedIds(newEls.map(e => e.id));
+    },
+    duplicateSelected: () => {
+      const maxZ = Math.max(...elements.map(e => e.zIndex), 0);
+      const duped = elements
+        .filter(el => selectedIds.includes(el.id))
+        .map((el, i) => ({
+          ...el,
+          id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          x: el.x + 10,
+          y: el.y + 10,
+          zIndex: maxZ + i + 1,
+        }));
+      setElements([...elements, ...duped]);
+      setSelectedIds(duped.map(e => e.id));
+    },
+    nudge: (dx: number, dy: number) => {
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, x: el.x + dx, y: el.y + dy } : el
+      );
+      setElements(updated);
+    },
+    bringForward: () => {
+      if (selectedIds.length === 0) return;
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, zIndex: el.zIndex + 1 } : el
+      );
+      setElements(updated);
+    },
+    sendBackward: () => {
+      if (selectedIds.length === 0) return;
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, zIndex: el.zIndex - 1 } : el
+      );
+      setElements(updated);
+    },
+    bringToFront: () => {
+      if (selectedIds.length === 0) return;
+      const maxZ = Math.max(...elements.map(e => e.zIndex));
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, zIndex: maxZ + 1 } : el
+      );
+      setElements(updated);
+    },
+    sendToBack: () => {
+      if (selectedIds.length === 0) return;
+      const minZ = Math.min(...elements.map(e => e.zIndex));
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, zIndex: minZ - 1 } : el
+      );
+      setElements(updated);
+    },
+    groupSelected: () => {
+      // Simplified grouping - just toast for now
+      showToast('info', 'Group', 'Grouping coming soon');
+    },
+    ungroupSelected: () => {
+      showToast('info', 'Ungroup', 'Ungrouping coming soon');
+    },
+    toggleLock: () => {
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, locked: !el.locked } : el
+      );
+      setElements(updated);
+    },
+    zoomIn: () => setZoom(z => Math.min(200, z + 25)),
+    zoomOut: () => setZoom(z => Math.max(25, z - 25)),
+    zoomToFit: () => setZoom(100),
+    exportCanvas: handleExport,
+    toggleShortcutsHelp: () => setShowShortcuts(s => !s),
+  }), [elements, selectedIds, undo, redo, setElements, showToast, handleExport]);
+
+  useKeyboardShortcuts(shortcutActions, isTextEditing, selectedIds.length > 0);
+
+  // ── Selected element for properties panel ──
+  const selectedElement = selectedIds.length === 1
+    ? elements.find(el => el.id === selectedIds[0]) ?? null
+    : null;
+
+  // ── Not found ──
   if (!template) {
     return (
-      <div className="min-h-screen bg-brand-gray/30 flex items-center justify-center p-4">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h1 className="font-headline text-2xl font-bold text-brand-navy mb-2">
+      <div style={{ minHeight: '100vh', backgroundColor: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: 400 }}>
+          <h1 style={{ fontFamily: 'Manrope, sans-serif', fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
             Template Not Found
           </h1>
-          <p className="font-body text-gray-600 mb-6">
-            The template you&apos;re looking for doesn&apos;t exist or may have been removed.
+          <p style={{ fontFamily: 'Manrope, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>
+            The template doesn&apos;t exist or was removed.
           </p>
           <button
             onClick={() => router.push('/')}
-            className="btn-cta inline-flex items-center gap-2"
+            style={{
+              padding: '10px 24px',
+              borderRadius: 8,
+              border: 'none',
+              backgroundColor: '#3B82F6',
+              color: '#fff',
+              fontFamily: 'Manrope, sans-serif',
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-            </svg>
             Back to Dashboard
           </button>
         </div>
@@ -377,196 +434,184 @@ export default function EditorPage() {
     );
   }
 
-  return (
-    <div className="h-screen bg-brand-gray/30 flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="bg-gradient-dark border-b border-white/10 flex-shrink-0">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors lg:hidden"
-                aria-label="Open editor sidebar"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
+  // ── Render panel content based on active tab ──
+  const renderPanelContent = () => {
+    switch (activeTab) {
+      case 'templates':
+        return <TemplatesPanel onSelectTemplate={handleSelectTemplate} activeTemplateId={activeTemplateId} />;
+      case 'elements':
+        return <ElementsPanel onDragStart={handleElementDragStart} />;
+      case 'text':
+        return <TextPanel onAddText={handleAddText} />;
+      case 'uploads':
+        return <UploadsPanel onDragStart={handleUploadDragStart} />;
+      case 'settings':
+        return (
+          <SettingsPanel
+            activeSize={activeSize}
+            onSizeChange={handleSizeChange}
+            onExport={handleExport}
+            onExportAll={handleExportAll}
+            isExporting={isExporting}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
-              <button
-                onClick={() => router.push('/')}
-                className="hidden sm:flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                <span className="font-ui text-sm">Back</span>
-              </button>
-              <div className="h-6 w-px bg-white/20 hidden sm:block" />
-              <div className="min-w-0">
-                <h1 className="font-headline text-lg sm:text-xl font-bold text-white truncate">
-                  {template.name}
-                </h1>
-                <p className="font-ui text-xs text-gray-400 truncate">
-                  {activeSize.width} × {activeSize.height} • {template.platform}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              <button
-                onClick={handleReset}
-                className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-ui text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span className="hidden md:inline">Reset</span>
-              </button>
-              <button
-                onClick={() => setShowAIModal(true)}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-ui text-sm font-semibold rounded-lg hover:opacity-90 transition"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                <span className="hidden sm:inline">Generate with AI</span>
-              </button>
-            </div>
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: '#1a1a2e' }}>
+      {/* Top Header Bar */}
+      <header style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 16px',
+        height: 48,
+        backgroundColor: '#151528',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        flexShrink: 0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={() => router.push('/')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
+              cursor: 'pointer', fontFamily: 'Manrope, sans-serif', fontSize: 13,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+            Back
+          </button>
+          <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+          <div>
+            <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff' }}>
+              {activeTemplateId
+                ? `AI Engineering \u2014 ${activeTemplateId.replace('concept-', '').toUpperCase()}`
+                : template.name
+              }
+            </span>
           </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Size tabs */}
+          {CANVAS_SIZES.map(size => (
+            <button
+              key={size.id}
+              onClick={() => handleSizeChange(size)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 6,
+                border: 'none',
+                backgroundColor: activeSize.id === size.id ? 'rgba(59,130,246,0.2)' : 'transparent',
+                color: activeSize.id === size.id ? '#3B82F6' : 'rgba(255,255,255,0.4)',
+                fontFamily: 'Manrope, sans-serif',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+              title={size.description}
+            >
+              {size.width}\u00d7{size.height}
+            </button>
+          ))}
+          <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
+          {/* Download button */}
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 14px',
+              borderRadius: 6,
+              border: 'none',
+              backgroundColor: '#3B82F6',
+              color: '#fff',
+              fontFamily: 'Manrope, sans-serif',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: isExporting ? 'not-allowed' : 'pointer',
+              opacity: isExporting ? 0.6 : 1,
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            {isExporting ? 'Exporting...' : 'Download'}
+          </button>
         </div>
       </header>
 
-      {/* Size Tab Bar — sits between header and canvas, does NOT scroll */}
-      <SizeTabBar
-        activeSize={activeSize}
-        onSizeChange={setActiveSize}
-        onDownload={handleExport}
-        onDownloadAll={handleDownloadAll}
-        isExporting={isExporting}
-        isExportingAll={isExportingAll}
-        editedSizes={editedSizes}
-      />
-
       {/* Main Editor Area */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
-        {/* Desktop Sidebar */}
-        <EditorSidebar
-          fields={fields}
-          onFieldChange={handleFieldChange}
-          onDesignSelect={handleDesignSelect}
-          selectedDesignId={selectedDesignId}
-          templateCategory={template.category}
-          selectedCharacter={selectedCharacter}
-          onCharacterSelect={handleCharacterSelect}
-          selectedCourse={selectedCourse}
-          onCourseSelect={setSelectedCourse}
-          fontSizes={fontSizes}
-          onFontSizesChange={setFontSizes}
-          activeSizeLabel={`${activeSize.label} (${activeSize.width} × ${activeSize.height})`}
-          onApplyCharacterToAll={handleApplyCharacterToAll}
-          isAIEngTemplate={selectedDesignId === 'ai-engineering-bootcamp-thumbnail'}
-          selectedElement={selectedElement}
-          elementOverrides={elementOverrides}
-          onElementUpdate={handleElementUpdate}
-          canvasWidth={activeSize.width}
-          canvasHeight={activeSize.height}
-          heroImage={heroImage}
-          onHeroImageChange={setHeroImage}
-        />
-
-        {/* Mobile Sidebar Drawer */}
-        <EditorSidebar
-          fields={fields}
-          onFieldChange={handleFieldChange}
-          onDesignSelect={handleDesignSelect}
-          selectedDesignId={selectedDesignId}
-          templateCategory={template.category}
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          isMobile={true}
-          selectedCharacter={selectedCharacter}
-          onCharacterSelect={handleCharacterSelect}
-          selectedCourse={selectedCourse}
-          onCourseSelect={setSelectedCourse}
-          fontSizes={fontSizes}
-          onFontSizesChange={setFontSizes}
-          activeSizeLabel={`${activeSize.label} (${activeSize.width} × ${activeSize.height})`}
-          onApplyCharacterToAll={handleApplyCharacterToAll}
-          isAIEngTemplate={selectedDesignId === 'ai-engineering-bootcamp-thumbnail'}
-          selectedElement={selectedElement}
-          elementOverrides={elementOverrides}
-          onElementUpdate={handleElementUpdate}
-          canvasWidth={activeSize.width}
-          canvasHeight={activeSize.height}
-          heroImage={heroImage}
-          onHeroImageChange={setHeroImage}
-        />
-
-        {/* Right Panel - Live Preview */}
-        <LivePreview
-          ref={previewRef}
-          template={template}
-          fields={fields}
-          customColors={customColors}
-          selectedDesignId={selectedDesignId}
-          selectedCharacter={selectedCharacter}
-          jesterLine={jesterLine}
-          selectedCourse={selectedCourse}
-          fontSizes={fontSizes}
-          onCharacterUpdate={handleCharacterUpdate}
-          onCharacterDelete={handleCharacterDelete}
-          overrideDimensions={{ width: activeSize.width, height: activeSize.height }}
-          perSizeFonts={perSizeFonts}
-          perSizeCharacter={perSizeCharacter}
-          elementOverrides={elementOverrides}
-          onElementUpdate={handleElementUpdate}
-          selectedElement={selectedElement}
-          onElementSelect={handleElementSelect}
-          perSizeElementOverrides={perSizeElementOverrides}
-          heroImage={heroImage}
-        />
-      </div>
-
-      {/* Mobile Bottom Bar */}
-      <div className="lg:hidden bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm font-medium bg-brand-blue text-white"
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
+        {/* Canva-Style Sidebar */}
+        <CanvaSidebar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          Edit Content
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleReset}
-            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
-            aria-label="Reset"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-          </button>
-          <button
-            onClick={() => router.push('/')}
-            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
-            aria-label="Back to dashboard"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-          </button>
+          {renderPanelContent()}
+        </CanvaSidebar>
+
+        {/* Canvas Area */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+          <FreeFormCanvas
+            elements={elements}
+            selectedIds={selectedIds}
+            canvasWidth={activeSize.width}
+            canvasHeight={activeSize.height}
+            zoom={zoom}
+            onElementsChange={setElements}
+            onElementsUpdate={updateWithoutHistory}
+            onSelectionChange={setSelectedIds}
+            onTextEditStart={() => setIsTextEditing(true)}
+            onTextEditEnd={() => setIsTextEditing(false)}
+            canvasExportRef={canvasRef}
+          />
+
+          {/* Properties Panel (floating right) */}
+          {selectedElement && !isTextEditing && (
+            <PropertiesPanel
+              element={selectedElement}
+              onUpdate={handlePropertyUpdate}
+            />
+          )}
         </div>
       </div>
 
-      {/* AI Generate Modal */}
-      <AIGenerateModal
-        isOpen={showAIModal}
-        onClose={() => setShowAIModal(false)}
-        onGenerate={handleAIGenerate}
+      {/* Undo/Redo Toast */}
+      {toastMessage && (
+        <div style={{
+          position: 'fixed',
+          bottom: 24,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: '8px 20px',
+          borderRadius: 8,
+          backgroundColor: '#1e1e2e',
+          border: '1px solid rgba(255,255,255,0.1)',
+          color: 'rgba(255,255,255,0.7)',
+          fontFamily: 'Manrope, sans-serif',
+          fontSize: 13,
+          fontWeight: 600,
+          zIndex: 300,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+        }}>
+          {toastMessage}
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Overlay */}
+      <KeyboardShortcutsOverlay
+        isOpen={showShortcuts}
+        onClose={() => setShowShortcuts(false)}
       />
     </div>
   );

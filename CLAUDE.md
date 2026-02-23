@@ -36,3 +36,4 @@ Never use: Magic, Instant, Easy, Guaranteed, Ninja, Guru, Master (in 7 days), 10
 Use freely: Pipeline, Architecture, Project, Portfolio, Debug, Build, Real-World, Production, Scale, Competence, Skills, Practical, Enterprise-grade, Hands-on
 
 Read /knowledge/FULL_PRD.md for complete brand guidelines.
+Brand guidelines: see docs/codebasics-brand-guidelines.md
