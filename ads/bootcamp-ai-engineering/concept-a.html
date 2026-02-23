@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080,height=1080">
+<title>Concept A — YOUR TODOs DON'T SHIP — 1080×1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Poppins',sans-serif;background:#0D1117;position:relative}
+
+/* Grid overlay */
+body::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+.canvas{width:1080px;height:1080px;position:relative;overflow:hidden}
+
+/* Logo */
+.logo{position:absolute;left:36px;top:32px;z-index:10}
+.logo img{height:48px;width:auto}
+
+/* Subscriber badge */
+.sub-badge{position:absolute;right:36px;top:36px;z-index:10;font-size:15px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+/* Hero glow */
+.hero-glow{position:absolute;right:80px;bottom:200px;width:350px;height:350px;background:#3b82f6;border-radius:50%;filter:blur(80px);opacity:0.35;z-index:1}
+
+/* Hero image */
+.hero-img{position:absolute;right:-30px;bottom:60px;width:620px;height:780px;z-index:2}
+.hero-img img{width:100%;height:100%;object-fit:contain;object-position:bottom right;mask-image:radial-gradient(ellipse 70% 65% at center 40%,rgba(0,0,0,1) 30%,rgba(0,0,0,0) 100%);-webkit-mask-image:radial-gradient(ellipse 70% 65% at center 40%,rgba(0,0,0,1) 30%,rgba(0,0,0,0) 100%)}
+
+/* Headline */
+.headline{position:absolute;left:40px;top:120px;z-index:5;font-size:120px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:0.92;transform:scaleX(0.74);transform-origin:left;color:#fff}
+.headline .red{color:#f85149}
+
+/* Code mockup */
+.code-mockup{position:absolute;left:40px;top:340px;width:440px;z-index:5;background:rgba(22,27,34,0.9);border:1px solid rgba(59,130,246,0.25);border-radius:10px;padding:18px 22px}
+.code-line{font-family:'Fira Mono',monospace;font-size:14px;line-height:1.7;white-space:nowrap}
+.code-comment{color:rgba(255,255,255,0.35)}
+.code-todo{color:#f85149;text-decoration:line-through}
+.code-live{color:#20C997;font-weight:700}
+
+/* CTA */
+.cta-btn{position:absolute;left:40px;bottom:100px;z-index:5;background:#20C997;color:#0D1117;font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;padding:14px 36px;border-radius:8px;border:none;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+
+/* SW Eng badge */
+.sw-badge{position:absolute;left:320px;bottom:106px;z-index:5;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+/* Bottom strip */
+.bottom-strip{position:absolute;left:0;bottom:0;width:1080px;height:52px;z-index:8;background:rgba(13,17,23,0.95);border-top:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;gap:16px}
+.strip-tag{font-size:16px;font-weight:600;color:#20C997}
+.strip-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.25)}
+
+[data-sigma]{cursor:move;position:absolute}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <!-- 1. Logo -->
+  <div class="logo" data-sigma style="left:36px;top:32px">
+    <img src="../../brand-assets/logos/codebasics-white.svg" alt="Codebasics" height="48">
+  </div>
+
+  <!-- 2. Subscriber Badge -->
+  <div class="sub-badge" data-sigma style="right:36px;top:36px;left:auto">
+    1.4M+ Subscribers · 4.9★
+  </div>
+
+  <!-- 3. Hero Glow -->
+  <div class="hero-glow" data-sigma style="right:80px;bottom:200px;left:auto;top:auto"></div>
+
+  <!-- 4. Hero Image -->
+  <div class="hero-img" data-sigma style="right:-30px;bottom:60px;left:auto;top:auto">
+    <img src="../../public/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png" alt="Dhaval">
+  </div>
+
+  <!-- 5. Headline -->
+  <div class="headline" data-sigma style="left:40px;top:120px">
+    YOUR <span class="red">TODOs</span><br>DON'T SHIP.
+  </div>
+
+  <!-- 6-7. Code Mockup -->
+  <div class="code-mockup" data-sigma style="left:40px;top:340px">
+    <div class="code-line code-comment"># your_project.py</div>
+    <div class="code-line code-todo">TODO: implement RAG pipeline</div>
+    <div class="code-line code-todo">TODO: add agent orchestration</div>
+    <div class="code-line code-todo">TODO: deploy to cloud</div>
+    <div class="code-line code-live">✓ LIVE: RAG pipeline shipping</div>
+    <div class="code-line code-live">✓ LIVE: agents orchestrated</div>
+    <div class="code-line code-live">✓ LIVE: deployed &amp; scaled</div>
+  </div>
+
+  <!-- 8. CTA Button -->
+  <div class="cta-btn" data-sigma style="left:40px;bottom:100px;top:auto">
+    Start Building Live →
+  </div>
+
+  <!-- 9. SW Eng Badge -->
+  <div class="sw-badge" data-sigma style="left:320px;bottom:106px;top:auto">
+    ⚡ Built exclusively for Software Engineers (2+ yrs)
+  </div>
+
+  <!-- 10-11. Bottom Strip -->
+  <div class="bottom-strip" data-sigma style="left:0;bottom:0;top:auto">
+    <span class="strip-tag">✔ Live Sessions</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 8+ Projects</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 75 Days</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 500 Seats · March 7</span>
+  </div>
+</div>
+<script src="_interactive.js"></script>
+</body>
+</html>

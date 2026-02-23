@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080,height=1080">
+<title>Concept C — THREE PILLARS — 1080×1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Poppins',sans-serif;background:#0D1117;position:relative}
+body::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.canvas{width:1080px;height:1080px;position:relative;overflow:hidden}
+
+.logo{position:absolute;left:36px;top:20px;z-index:15}
+.logo img{height:48px;width:auto}
+.sub-badge{position:absolute;right:36px;top:24px;z-index:15;font-size:15px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+/* Trio image with linear gradient fade */
+.trio-img{position:absolute;left:50%;top:-20px;transform:translateX(-50%);width:1000px;height:540px;z-index:2}
+.trio-img img{width:100%;height:100%;object-fit:cover;object-position:center top;mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,0.3) 8%,rgba(0,0,0,1) 20%,rgba(0,0,0,1) 65%,rgba(0,0,0,0) 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,0.3) 8%,rgba(0,0,0,1) 20%,rgba(0,0,0,1) 65%,rgba(0,0,0,0) 100%)}
+
+/* Pillar labels positioned at thirds */
+.pillar-label{position:absolute;top:470px;z-index:5;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:3px;text-align:center}
+.pillar-sub{position:absolute;top:505px;z-index:5;font-size:13px;color:rgba(255,255,255,0.5);text-align:center}
+.pillar-build{left:110px;color:#3b82f6}
+.pillar-build-sub{left:80px}
+.pillar-orch{left:430px;color:#D7EF3F}
+.pillar-orch-sub{left:385px}
+.pillar-dist{left:770px;color:#20C997}
+.pillar-dist-sub{left:740px}
+
+/* Wave divider */
+.wave-divider{position:absolute;left:0;top:500px;width:1080px;height:60px;z-index:4}
+.wave-divider svg{width:100%;height:100%}
+
+/* Headline */
+.headline{position:absolute;left:50%;top:540px;transform:translateX(-50%) scaleX(0.76);z-index:5;font-size:72px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:0.92;text-align:center;color:#fff;transform-origin:center;white-space:nowrap}
+.headline .blue{color:#3b82f6}
+.headline .green{color:#20C997}
+
+.cta-btn{position:absolute;left:50%;bottom:85px;transform:translateX(-50%);z-index:5;background:#3b82f6;color:#fff;font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;padding:14px 36px;border-radius:8px;border:none;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.sw-badge{position:absolute;left:50%;bottom:45px;transform:translateX(-50%);z-index:5;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+.bottom-strip{position:absolute;left:0;bottom:0;width:1080px;height:52px;z-index:8;background:rgba(13,17,23,0.95);border-top:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;gap:16px}
+.strip-tag{font-size:16px;font-weight:600;color:#20C997}
+.strip-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.25)}
+
+[data-sigma]{cursor:move;position:absolute}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="logo" data-sigma style="left:36px;top:20px">
+    <img src="../../brand-assets/logos/codebasics-white.svg" alt="Codebasics" height="48">
+  </div>
+
+  <div class="sub-badge" data-sigma style="right:36px;top:24px;left:auto">
+    1.4M+ Subscribers · 4.9★
+  </div>
+
+  <div class="trio-img" data-sigma style="left:40px;top:-20px">
+    <img src="../../public/images/bootcamps/ai-engineering/heroes/superhero-trio.png" alt="Trio">
+  </div>
+
+  <!-- Pillar labels -->
+  <div class="pillar-label pillar-build" data-sigma style="left:110px;top:470px">BUILD</div>
+  <div class="pillar-sub pillar-build-sub" data-sigma style="left:80px;top:505px">Dhaval · Ex-NVIDIA</div>
+  <div class="pillar-label pillar-orch" data-sigma style="left:430px;top:470px">ORCHESTRATE</div>
+  <div class="pillar-sub pillar-orch-sub" data-sigma style="left:385px;top:505px">Hemanand · Ex-Edgewell</div>
+  <div class="pillar-label pillar-dist" data-sigma style="left:770px;top:470px">DISTRIBUTE</div>
+  <div class="pillar-sub pillar-dist-sub" data-sigma style="left:740px;top:505px">Siddhant · AI Engineer</div>
+
+  <!-- Wave Divider -->
+  <div class="wave-divider" data-sigma style="left:0;top:520px">
+    <svg viewBox="0 0 1080 60" preserveAspectRatio="none">
+      <path d="M0,30 Q135,0 270,30 Q405,60 540,30 Q675,0 810,30 Q945,60 1080,30" fill="none" stroke="#ef4444" stroke-width="3.5" opacity="0.7"/>
+    </svg>
+  </div>
+
+  <!-- Headline -->
+  <div class="headline" data-sigma style="left:160px;top:570px">
+    MOST BOOTCAMPS<br>TEACH YOU TO <span class="blue">BUILD.</span><br>WE TEACH ALL <span class="green">THREE.</span>
+  </div>
+
+  <div class="cta-btn" data-sigma style="left:400px;bottom:85px;top:auto">
+    Get All Three →
+  </div>
+
+  <div class="sw-badge" data-sigma style="left:330px;bottom:45px;top:auto">
+    ⚡ Built exclusively for Software Engineers (2+ yrs)
+  </div>
+
+  <div class="bottom-strip" data-sigma style="left:0;bottom:0;top:auto">
+    <span class="strip-tag">✔ Live Sessions</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 8+ Projects</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 75 Days</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 500 Seats · March 7</span>
+  </div>
+</div>
+<script src="_interactive.js"></script>
+</body>
+</html>

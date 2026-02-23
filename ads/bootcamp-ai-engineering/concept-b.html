@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080,height=1080">
+<title>Concept B — WE SKIP THE BASICS — 1080×1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Poppins',sans-serif;background:#0D1117;position:relative}
+body::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.canvas{width:1080px;height:1080px;position:relative;overflow:hidden}
+
+.logo{position:absolute;left:36px;top:32px;z-index:10}
+.logo img{height:48px;width:auto}
+.sub-badge{position:absolute;right:36px;top:36px;z-index:10;font-size:15px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:6px 16px;border-radius:20px;white-space:nowrap}
+.hero-glow{position:absolute;right:100px;top:250px;width:350px;height:350px;background:#3b82f6;border-radius:50%;filter:blur(80px);opacity:0.35;z-index:1}
+.hero-img{position:absolute;right:-40px;top:80px;width:650px;height:820px;z-index:2}
+.hero-img img{width:100%;height:100%;object-fit:contain;object-position:bottom right;mask-image:radial-gradient(ellipse 70% 65% at center 40%,rgba(0,0,0,1) 30%,rgba(0,0,0,0) 100%);-webkit-mask-image:radial-gradient(ellipse 70% 65% at center 40%,rgba(0,0,0,1) 30%,rgba(0,0,0,0) 100%)}
+
+.headline{position:absolute;left:40px;top:180px;z-index:5;font-size:140px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:0.92;transform:scaleX(0.74);transform-origin:left;color:#fff;max-width:520px}
+
+.subtext{position:absolute;left:40px;top:600px;z-index:5;font-size:22px;font-weight:500;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:1px;transform:scaleX(0.74);transform-origin:left}
+
+.cta-btn{position:absolute;left:40px;bottom:100px;z-index:5;background:#3b82f6;color:#fff;font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;padding:14px 36px;border-radius:8px;border:none;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.sw-badge{position:absolute;left:380px;bottom:106px;z-index:5;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+.bottom-strip{position:absolute;left:0;bottom:0;width:1080px;height:52px;z-index:8;background:rgba(13,17,23,0.95);border-top:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;gap:16px}
+.strip-tag{font-size:16px;font-weight:600;color:#20C997}
+.strip-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.25)}
+
+[data-sigma]{cursor:move;position:absolute}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="logo" data-sigma style="left:36px;top:32px">
+    <img src="../../brand-assets/logos/codebasics-white.svg" alt="Codebasics" height="48">
+  </div>
+
+  <div class="sub-badge" data-sigma style="right:36px;top:36px;left:auto">
+    1.4M+ Subscribers · 4.9★
+  </div>
+
+  <div class="hero-glow" data-sigma style="right:100px;top:250px;left:auto"></div>
+
+  <div class="hero-img" data-sigma style="right:-40px;top:80px;left:auto">
+    <img src="../../public/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png" alt="Dhaval">
+  </div>
+
+  <div class="headline" data-sigma style="left:40px;top:180px">
+    WE SKIP<br>THE<br>BASICS.
+  </div>
+
+  <div class="subtext" data-sigma style="left:40px;top:600px">
+    THIS IS NOT A BEGINNER COURSE.
+  </div>
+
+  <div class="cta-btn" data-sigma style="left:40px;bottom:100px;top:auto">
+    Join the March 7 Batch →
+  </div>
+
+  <div class="sw-badge" data-sigma style="left:380px;bottom:106px;top:auto">
+    ⚡ Built exclusively for Software Engineers (2+ yrs)
+  </div>
+
+  <div class="bottom-strip" data-sigma style="left:0;bottom:0;top:auto">
+    <span class="strip-tag">✔ Live Sessions</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 8+ Projects</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 75 Days</span>
+    <span class="strip-dot"></span>
+    <span class="strip-tag">✔ 500 Seats · March 7</span>
+  </div>
+</div>
+<script src="_interactive.js"></script>
+</body>
+</html>
