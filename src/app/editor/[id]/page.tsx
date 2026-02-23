@@ -518,7 +518,7 @@ export default function EditorPage() {
               }}
               title={size.description}
             >
-              {size.width}\u00d7{size.height}
+              {size.width}×{size.height}
             </button>
           ))}
           <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
