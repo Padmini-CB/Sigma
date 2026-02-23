@@ -12,7 +12,7 @@ const bootcampOptions: BootcampOption[] = [
   { id: 'ds-bootcamp', name: 'GenAI & Data Science 3.0', details: '₹15,000 · RAG, LangChain · Build in Public' },
   { id: 'ai-engineering-bootcamp', name: 'AI Engineering Bootcamp 1.0', details: '75 Days Intensive · Live Sessions · 8+ Projects' },
   { id: 'bundle', name: 'Bundle (DA + AI Toolkit)', details: 'Best value combination' },
-  { id: 'general', name: 'Padmini General', details: 'Brand-level creatives' },
+  { id: 'general', name: 'Codebasics — Brand Creatives', details: 'Brand-level creatives' },
 ];
 
 interface BootcampStepProps {

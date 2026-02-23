@@ -561,7 +561,7 @@ export default function EditorPage() {
         </CanvaSidebar>
 
         {/* Canvas Area */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <div style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
           <FreeFormCanvas
             elements={elements}
             selectedIds={selectedIds}
@@ -575,6 +575,66 @@ export default function EditorPage() {
             onTextEditEnd={() => setIsTextEditing(false)}
             canvasExportRef={canvasRef}
           />
+
+          {/* Zoom Toolbar */}
+          <div style={{
+            position: 'absolute',
+            bottom: 16,
+            right: 16,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            backgroundColor: '#1e1e2e',
+            borderRadius: 8,
+            border: '1px solid rgba(255,255,255,0.1)',
+            padding: '4px 6px',
+            zIndex: 50,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          }}>
+            <button
+              onClick={() => setZoom(z => Math.max(25, z - 25))}
+              style={{
+                width: 28, height: 28, borderRadius: 4,
+                border: 'none', backgroundColor: 'rgba(255,255,255,0.06)',
+                color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 16, fontWeight: 600,
+              }}
+              title="Zoom out (Ctrl+-)"
+            >{'\u2212'}</button>
+            <span style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'rgba(255,255,255,0.6)',
+              minWidth: 44,
+              textAlign: 'center',
+            }}>{zoom}%</span>
+            <button
+              onClick={() => setZoom(z => Math.min(200, z + 25))}
+              style={{
+                width: 28, height: 28, borderRadius: 4,
+                border: 'none', backgroundColor: 'rgba(255,255,255,0.06)',
+                color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 16, fontWeight: 600,
+              }}
+              title="Zoom in (Ctrl++)"
+            >+</button>
+            <div style={{ width: 1, height: 16, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 2px' }} />
+            <button
+              onClick={() => setZoom(100)}
+              style={{
+                height: 28, borderRadius: 4, padding: '0 8px',
+                border: 'none', backgroundColor: zoom === 100 ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.06)',
+                color: zoom === 100 ? '#3B82F6' : 'rgba(255,255,255,0.7)',
+                cursor: 'pointer',
+                fontFamily: 'Manrope, sans-serif',
+                fontSize: 11, fontWeight: 600,
+              }}
+              title="Fit to view (Ctrl+0)"
+            >Fit</button>
+          </div>
 
           {/* Properties Panel (floating right) */}
           {selectedElement && !isTextEditing && (

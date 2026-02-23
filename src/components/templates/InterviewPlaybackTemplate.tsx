@@ -1,7 +1,7 @@
 import { BRAND } from '@/styles/brand-constants';
 import { BottomBar } from '@/components/visual-elements/BottomBar';
 import { YouTubeBadge } from '@/components/visual-elements/YouTubeBadge';
-import { PadminiLogo } from '@/components/visual-elements/PadminiLogo';
+import { CodebasicsLogo } from '@/components/visual-elements/CodebasicsLogo';
 import { getAdSizeConfig } from '@/config/adSizes';
 
 interface InterviewPlaybackTemplateProps {
@@ -88,7 +88,7 @@ export function InterviewPlaybackTemplate({
 
   const topBar = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-      <PadminiLogo />
+      <CodebasicsLogo />
       <YouTubeBadge layoutMode={layoutMode} />
     </div>
   );
@@ -368,7 +368,7 @@ export function InterviewPlaybackTemplate({
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0, marginBottom: 6 * scale }}>
-        <PadminiLogo />
+        <CodebasicsLogo />
         <YouTubeBadge layoutMode={layoutMode} />
       </div>
 

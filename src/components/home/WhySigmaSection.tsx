@@ -30,7 +30,7 @@ export default function WhySigmaSection() {
                 </div>
                 <div>
                   <cite className="font-ui font-semibold text-white not-italic">
-                    Padmini
+                    Codebasics
                   </cite>
                   <p className="font-body text-sm text-gray-400">Creator of Sigma</p>
                 </div>

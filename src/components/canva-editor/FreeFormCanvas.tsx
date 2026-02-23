@@ -371,6 +371,11 @@ export default function FreeFormCanvas({
   const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; elementId: string } | null>(null);
 
+  // ── Space+Drag panning state ────────────────────────────────────────────
+  const [isSpaceHeld, setIsSpaceHeld] = useState(false);
+  const [isPanning, setIsPanning] = useState(false);
+  const panStartRef = useRef<{ x: number; y: number; scrollLeft: number; scrollTop: number } | null>(null);
+
   // Refs for tracking mouse state during drag/resize without re-renders
   const dragStateRef = useRef<DragState | null>(null);
   const resizeStateRef = useRef<ResizeState | null>(null);
@@ -489,10 +494,34 @@ export default function FreeFormCanvas({
     [elements, selectedIds, onElementsChange, onSelectionChange]
   );
 
+  // ── Pan mouse down (Space+Drag) ──────────────────────────────────────────
+  const handlePanMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!isSpaceHeld) return false;
+    e.preventDefault();
+    e.stopPropagation();
+    const workspace = workspaceRef.current;
+    if (!workspace) return false;
+    setIsPanning(true);
+    panStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      scrollLeft: workspace.scrollLeft,
+      scrollTop: workspace.scrollTop,
+    };
+    return true;
+  }, [isSpaceHeld]);
+
   // ── Mouse down on element (drag start or select) ─────────────────────────
   const handleElementMouseDown = useCallback(
     (e: React.MouseEvent, elementId: string) => {
       if (e.button === 2) return; // right-click handled separately
+
+      // Space+click on element = pan (don't start drag)
+      if (isSpaceHeld) {
+        handlePanMouseDown(e);
+        return;
+      }
+
       e.stopPropagation();
 
       // If we are editing text and click outside the editing element, confirm edit
@@ -540,7 +569,7 @@ export default function FreeFormCanvas({
       setDragState(newDragState);
       dragStateRef.current = newDragState;
     },
-    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId]
+    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId, isSpaceHeld, handlePanMouseDown]
   );
 
   // ── Double-click to enter text edit mode ──────────────────────────────────
@@ -630,6 +659,12 @@ export default function FreeFormCanvas({
     (e: React.MouseEvent) => {
       if (e.button === 2) return;
 
+      // Space+click = pan
+      if (isSpaceHeld) {
+        handlePanMouseDown(e);
+        return;
+      }
+
       // Close context menu
       setContextMenu(null);
 
@@ -647,7 +682,7 @@ export default function FreeFormCanvas({
       selectionStartRef.current = canvasPos;
       setSelectionRect({ x: canvasPos.x, y: canvasPos.y, width: 0, height: 0 });
     },
-    [onSelectionChange, screenToCanvas, editingTextId, confirmTextEdit]
+    [onSelectionChange, screenToCanvas, editingTextId, confirmTextEdit, isSpaceHeld, handlePanMouseDown]
   );
 
   // ── Global mouse move (drag / resize / selection rect) ────────────────────
@@ -905,6 +940,52 @@ export default function FreeFormCanvas({
     return () => window.removeEventListener('keydown', handler);
   }, [elements, selectedIds, editingTextId, onElementsChange, onSelectionChange]);
 
+  // ── Space+Drag panning ──────────────────────────────────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !editingTextId && e.target === document.body) {
+        e.preventDefault();
+        setIsSpaceHeld(true);
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        setIsSpaceHeld(false);
+        setIsPanning(false);
+        panStartRef.current = null;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [editingTextId]);
+
+  useEffect(() => {
+    if (!isPanning) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      const ps = panStartRef.current;
+      const workspace = workspaceRef.current;
+      if (!ps || !workspace) return;
+      const dx = e.clientX - ps.x;
+      const dy = e.clientY - ps.y;
+      workspace.scrollLeft = ps.scrollLeft - dx;
+      workspace.scrollTop = ps.scrollTop - dy;
+    };
+    const handleMouseUp = () => {
+      setIsPanning(false);
+      panStartRef.current = null;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isPanning]);
+
   // ── Drop handler for elements dragged from sidebar ──────────────────────
   const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
     if (e.dataTransfer.types.includes('application/sigma-element')) {
@@ -1008,7 +1089,7 @@ export default function FreeFormCanvas({
           boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
           flexShrink: 0,
           overflow: 'hidden',
-          cursor: 'default',
+          cursor: isPanning ? 'grabbing' : isSpaceHeld ? 'grab' : 'default',
         }}
       >
         {/* Render elements sorted by zIndex */}

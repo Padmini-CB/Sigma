@@ -66,7 +66,7 @@ export default function EthicalMarketingSection() {
           <p className="text-gray-500 italic">
             &ldquo;Marketing should feel like a conversation with a trusted friend, not a sales pitch from a stranger.&rdquo;
           </p>
-          <p className="text-gray-400 mt-2">— Padmini, Creator of Sigma</p>
+          <p className="text-gray-400 mt-2">— Codebasics, Creator of Sigma</p>
         </div>
       </div>
     </section>

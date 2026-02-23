@@ -19,7 +19,7 @@ export default function Home() {
                 SIGMA
               </h1>
               <span className="hidden sm:inline font-body text-sm text-gray-400">
-                by Padmini
+                by Codebasics
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -61,7 +61,7 @@ export default function Home() {
               </div>
             </div>
             <p className="font-ui text-xs text-gray-500">
-              Padmini Internal Tool
+              Codebasics Internal Tool
             </p>
           </div>
         </div>
