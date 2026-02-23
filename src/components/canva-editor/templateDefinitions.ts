@@ -210,7 +210,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#20C997',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/A-todos-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo; fallback accent dot renders instead
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -244,7 +244,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#3b82f6',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/B-skip-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -272,7 +272,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#20C997',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/C-three-pillars.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       // Trio image — top ~50%, linear mask
       makeImage({ x: 0, y: 0, width: 1080, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', maskType: 'linear', maskParams: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 5%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)', zIndex: 3 }),
@@ -306,7 +306,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#3b82f6',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/D-500seats-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -336,7 +336,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#3b82f6',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/E-build-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -367,7 +367,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#D7EF3F',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/F-orchestrate-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -398,7 +398,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#20C997',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/G-distribute-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -429,7 +429,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#3b82f6',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/H-personal-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -457,7 +457,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#20C997',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/I-twobootcamps-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
@@ -497,7 +497,7 @@ export const TEMPLATES: TemplateInfo[] = [
     group: 'standalone',
     thumbnailBg: '#0D1117',
     thumbnailAccent: '#3b82f6',
-    thumbnailImage: '/templates/ai-engineering/thumbnails/J-price-v5.png',
+    // thumbnailImage removed — PNGs not yet in repo
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
