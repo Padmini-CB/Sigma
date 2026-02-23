@@ -342,9 +342,9 @@ function SidebarContent({
               <div className="grid grid-cols-2 gap-2">
                 {([
                   { src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', label: 'Superhero Trio' },
-                  { src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', label: 'Dhaval Superhero' },
-                  { src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', label: 'Hemanand Superhero' },
-                  { src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', label: 'Siddhant Superhero' },
+                  { src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', label: 'Dhaval Superhero' },
+                  { src: '/images/bootcamps/ai-engineering/heroes/superhero-hemanand.png', label: 'Hemanand Superhero' },
+                  { src: '/images/bootcamps/ai-engineering/heroes/superhero-siddhant.png', label: 'Siddhant Superhero' },
                 ] as const).map((hero) => {
                   const isActive = heroImage === hero.src;
                   return (

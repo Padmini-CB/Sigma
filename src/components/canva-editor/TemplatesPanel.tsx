@@ -192,34 +192,68 @@ function TemplateThumb({
         </>
       ) : (
         <>
-          {/* Fallback: accent color dot */}
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: '50%',
+          {/* Rich fallback: letter + headline mini-preview */}
+          <div style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 8,
+            gap: 4,
+          }}>
+            {/* Accent glow circle behind letter */}
+            <div style={{
+              position: 'absolute',
+              top: '20%', left: '50%', transform: 'translate(-50%, -50%)',
+              width: 60, height: 60, borderRadius: '50%',
+              background: `radial-gradient(circle, ${template.thumbnailAccent}33 0%, transparent 70%)`,
+            }} />
+            {/* Template letter */}
+            <span style={{
+              position: 'relative',
+              fontSize: 32, fontWeight: 900,
+              color: template.thumbnailAccent,
+              fontFamily: 'Saira Condensed, sans-serif',
+              lineHeight: 1,
+              textShadow: `0 0 20px ${template.thumbnailAccent}66`,
+            }}>
+              {template.id.replace('concept-', '').toUpperCase()}
+            </span>
+            {/* Accent bar */}
+            <div style={{
+              width: 24, height: 2,
               backgroundColor: template.thumbnailAccent,
-              opacity: 0.85,
-              marginBottom: 12,
-              boxShadow: `0 0 16px ${template.thumbnailAccent}44`,
-            }}
-          />
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: 'rgba(255,255,255,0.75)',
+              borderRadius: 1,
+              opacity: 0.6,
+            }} />
+            {/* Headline text */}
+            <span style={{
+              fontSize: 9, fontWeight: 700,
+              color: 'rgba(255,255,255,0.7)',
               textAlign: 'center',
               lineHeight: 1.2,
-              padding: '0 6px',
-              maxWidth: '100%',
+              maxWidth: '90%',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {template.shortLabel}
-          </span>
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              letterSpacing: 0.5,
+              textTransform: 'uppercase',
+            }}>
+              {template.shortLabel}
+            </span>
+          </div>
+          {/* Bottom accent stripe */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0, left: 0, right: 0,
+            height: 3,
+            backgroundColor: template.thumbnailAccent,
+            opacity: 0.5,
+          }} />
         </>
       )}
     </div>

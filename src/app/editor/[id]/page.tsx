@@ -421,7 +421,7 @@ export default function EditorPage() {
       );
       setElements(updated);
     },
-    zoomIn: () => setZoom(z => Math.min(200, z + 25)),
+    zoomIn: () => setZoom(z => Math.min(300, z + 25)),
     zoomOut: () => setZoom(z => Math.max(25, z - 25)),
     zoomToFit: () => setZoom(100),
     exportCanvas: handleExport,
@@ -645,7 +645,7 @@ export default function EditorPage() {
               textAlign: 'center',
             }}>{zoom}%</span>
             <button
-              onClick={() => setZoom(z => Math.min(200, z + 25))}
+              onClick={() => setZoom(z => Math.min(300, z + 25))}
               style={{
                 width: 28, height: 28, borderRadius: 4,
                 border: 'none', backgroundColor: 'rgba(255,255,255,0.06)',

@@ -1201,10 +1201,11 @@ export default function FreeFormCanvas({
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
+        e.stopPropagation();
         const step = 5;
         onZoomChange((prev: number) =>
           e.deltaY < 0
-            ? Math.min(200, prev + step)
+            ? Math.min(300, prev + step)
             : Math.max(25, prev - step)
         );
       }
