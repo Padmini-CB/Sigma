@@ -135,6 +135,10 @@ export interface ResizeState {
   startY: number;
   elementStartBounds: { x: number; y: number; width: number; height: number };
   lockAspectRatio: boolean;
+  // Group resize support
+  isGroupResize?: boolean;
+  groupStartBounds?: { x: number; y: number; width: number; height: number };
+  allElementStartData?: Record<string, { x: number; y: number; width: number; height: number; fontSize?: number }>;
 }
 
 export type ResizeHandle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
