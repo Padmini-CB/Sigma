@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080,height=1080">
+<title>Concept I — TWO BOOTCAMPS. ONE PRICE. — 1080×1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Poppins',sans-serif;background:#0D1117;position:relative}
+body::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.canvas{width:1080px;height:1080px;position:relative;overflow:hidden}
+
+.logo{position:absolute;left:36px;top:32px;z-index:10}
+.logo img{height:48px;width:auto}
+.sub-badge{position:absolute;right:36px;top:36px;z-index:10;font-size:15px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+.headline{position:absolute;left:50%;top:130px;transform:translateX(-50%) scaleX(0.74);transform-origin:center;z-index:5;font-size:110px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:0.92;text-align:center;color:#fff;white-space:nowrap}
+.headline .green{color:#20C997}
+
+/* Card 1 - Main Program */
+.card{position:absolute;border-radius:16px;padding:36px 28px;z-index:5}
+.card-1{left:50px;top:400px;width:470px;height:240px;background:rgba(59,130,246,0.08);border:2px solid rgba(59,130,246,0.3)}
+.card-2{left:560px;top:400px;width:470px;height:240px;background:rgba(32,201,151,0.08);border:2px solid rgba(32,201,151,0.3)}
+
+.card-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.card-1 .card-label{color:#3b82f6}
+.card-2 .card-label{color:#20C997}
+
+.card-title{font-size:24px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.2}
+.card-price{font-size:36px;font-weight:900;color:#fff;margin-bottom:6px}
+.card-detail{font-size:14px;color:rgba(255,255,255,0.5)}
+
+.free-badge{display:inline-block;background:#20C997;color:#0D1117;font-size:16px;font-weight:800;padding:8px 20px;border-radius:8px;text-transform:uppercase;margin-bottom:6px}
+
+.cta-btn{position:absolute;left:50%;bottom:80px;transform:translateX(-50%);z-index:5;background:#20C997;color:#0D1117;font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;padding:14px 36px;border-radius:8px;border:none;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.sw-badge{position:absolute;left:50%;bottom:35px;transform:translateX(-50%);z-index:5;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+[data-sigma]{cursor:move;position:absolute}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="logo" data-sigma style="left:36px;top:32px">
+    <img src="../../brand-assets/logos/codebasics-white.svg" alt="Codebasics" height="48">
+  </div>
+
+  <div class="sub-badge" data-sigma style="right:36px;top:36px;left:auto">
+    1.4M+ Subscribers · 4.9★
+  </div>
+
+  <div class="headline" data-sigma style="left:200px;top:130px">
+    TWO<br>BOOTCAMPS.<br><span class="green">ONE PRICE.</span>
+  </div>
+
+  <!-- Card 1: Main Program -->
+  <div class="card card-1" data-sigma style="left:50px;top:400px">
+    <div class="card-label">MAIN PROGRAM</div>
+    <div class="card-title">AI Engineering<br>Bootcamp 1.0</div>
+    <div class="card-price">₹36,000</div>
+    <div class="card-detail">75 days · 8+ projects · Live</div>
+  </div>
+
+  <!-- Card 2: Bonus -->
+  <div class="card card-2" data-sigma style="left:560px;top:400px">
+    <div class="card-label">INCLUDED BONUS</div>
+    <div class="card-title">Gen AI &amp; Data<br>Science Bootcamp</div>
+    <div class="free-badge">INCLUDED FREE</div>
+    <div class="card-detail">6-8 months · Self-paced</div>
+  </div>
+
+  <div class="cta-btn" data-sigma style="left:370px;bottom:80px;top:auto">
+    Get Both Bootcamps →
+  </div>
+
+  <div class="sw-badge" data-sigma style="left:330px;bottom:35px;top:auto">
+    ⚡ Built exclusively for Software Engineers (2+ yrs)
+  </div>
+</div>
+<script src="_interactive.js"></script>
+</body>
+</html>

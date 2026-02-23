@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080,height=1080">
+<title>Concept E0 — CAROUSEL COVER SLIDE — 1080×1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1080px;overflow:hidden;font-family:'Poppins',sans-serif;background:#0D1117;position:relative}
+body::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.canvas{width:1080px;height:1080px;position:relative;overflow:hidden}
+
+.logo{position:absolute;left:36px;top:32px;z-index:10}
+.logo img{height:48px;width:auto}
+.sub-badge{position:absolute;right:36px;top:36px;z-index:10;font-size:15px;font-weight:500;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+/* Cover glow */
+.cover-glow{position:absolute;left:50%;top:150px;transform:translateX(-50%);width:500px;height:300px;background:linear-gradient(135deg,#3b82f6,#20C997);border-radius:50%;filter:blur(80px);opacity:0.2;z-index:1}
+
+/* Trio with radial mask */
+.trio-img{position:absolute;left:50%;top:30px;transform:translateX(-50%);width:1050px;height:600px;z-index:2}
+.trio-img img{width:100%;height:100%;object-fit:cover;object-position:center top;mask-image:radial-gradient(ellipse 80% 70% at center 35%,rgba(0,0,0,1) 40%,rgba(0,0,0,0) 100%);-webkit-mask-image:radial-gradient(ellipse 80% 70% at center 35%,rgba(0,0,0,1) 40%,rgba(0,0,0,0) 100%)}
+
+/* Headline */
+.headline{position:absolute;left:50%;top:530px;transform:translateX(-50%) scaleX(0.76);z-index:5;font-size:72px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:0.92;text-align:center;color:#fff;transform-origin:center;white-space:nowrap}
+.headline .green{color:#20C997}
+
+.sub-headline{position:absolute;left:50%;top:650px;transform:translateX(-50%);z-index:5;font-size:26px;font-weight:500;color:rgba(255,255,255,0.6);text-align:center;white-space:nowrap}
+
+/* Pillar pills */
+.pillar-pills{position:absolute;left:50%;top:720px;transform:translateX(-50%);z-index:5;display:flex;gap:16px}
+.pill{font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:2px;padding:10px 28px;border-radius:8px;border-width:2px;border-style:solid}
+.pill-build{color:#3b82f6;border-color:#3b82f6;background:rgba(59,130,246,0.1)}
+.pill-orch{color:#D7EF3F;border-color:#D7EF3F;background:rgba(215,239,63,0.1)}
+.pill-dist{color:#20C997;border-color:#20C997;background:rgba(32,201,151,0.1)}
+
+.cta-btn{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);z-index:5;background:#3b82f6;color:#fff;font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;padding:14px 36px;border-radius:8px;border:none;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.sw-badge{position:absolute;left:50%;bottom:55px;transform:translateX(-50%);z-index:5;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;white-space:nowrap}
+
+.swipe-hint{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:5;font-size:14px;font-weight:500;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:2px;white-space:nowrap}
+
+[data-sigma]{cursor:move;position:absolute}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="logo" data-sigma style="left:36px;top:32px">
+    <img src="../../brand-assets/logos/codebasics-white.svg" alt="Codebasics" height="48">
+  </div>
+
+  <div class="sub-badge" data-sigma style="right:36px;top:36px;left:auto">
+    1.4M+ Subscribers · 4.9★
+  </div>
+
+  <div class="cover-glow" data-sigma style="left:290px;top:150px"></div>
+
+  <div class="trio-img" data-sigma style="left:15px;top:30px">
+    <img src="../../public/images/bootcamps/ai-engineering/heroes/superhero-trio.png" alt="Trio">
+  </div>
+
+  <div class="headline" data-sigma style="left:200px;top:530px">
+    AI ENGINEERING<br>BOOTCAMP <span class="green">1.0</span>
+  </div>
+
+  <div class="sub-headline" data-sigma style="left:340px;top:670px">
+    Three pillars. One transformation.
+  </div>
+
+  <div class="pillar-pills" data-sigma style="left:220px;top:720px">
+    <span class="pill pill-build">BUILD</span>
+    <span class="pill pill-orch">ORCHESTRATE</span>
+    <span class="pill pill-dist">DISTRIBUTE</span>
+  </div>
+
+  <div class="cta-btn" data-sigma style="left:380px;bottom:120px;top:auto">
+    Explore the Pillars →
+  </div>
+
+  <div class="sw-badge" data-sigma style="left:330px;bottom:85px;top:auto">
+    ⚡ Built exclusively for Software Engineers (2+ yrs)
+  </div>
+
+  <div class="swipe-hint" data-sigma style="left:330px;bottom:20px;top:auto">
+    SWIPE TO EXPLORE EACH PILLAR →
+  </div>
+</div>
+<script src="_interactive.js"></script>
+</body>
+</html>
