@@ -3,6 +3,7 @@
 import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import type {
   CanvasElement,
+  TextStyle,
   ResizeHandle,
   SnapGuide,
   DragState,
@@ -10,6 +11,7 @@ import type {
   SelectionRect,
   Position,
 } from './types';
+import TextToolbar from './TextToolbar';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -342,6 +344,62 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
 
     default:
       return null;
+  }
+}
+
+// ─── Helpers to extract / apply TextStyle for any editable element ──────────
+
+function getTextStyleFromElement(el: CanvasElement): TextStyle {
+  switch (el.type) {
+    case 'text':
+      return el.textStyle ?? { fontFamily: 'Poppins', fontSize: 16, fontWeight: 400, fontStyle: 'normal', color: '#ffffff', textAlign: 'left', letterSpacing: 0, lineHeight: 1.2, textTransform: 'none' };
+    case 'button': {
+      const bs = el.buttonStyle;
+      return { fontFamily: bs?.fontFamily ?? 'Poppins', fontSize: bs?.fontSize ?? 16, fontWeight: bs?.fontWeight ?? 600, fontStyle: 'normal', color: bs?.textColor ?? '#ffffff', textAlign: 'center', letterSpacing: 0, lineHeight: 1.2, textTransform: 'none' };
+    }
+    case 'badge': {
+      const bg = el.badgeStyle;
+      return { fontFamily: bg?.fontFamily ?? 'Poppins', fontSize: bg?.fontSize ?? 14, fontWeight: bg?.fontWeight ?? 500, fontStyle: 'normal', color: bg?.textColor ?? '#ffffff', textAlign: 'center', letterSpacing: 0, lineHeight: 1.2, textTransform: 'none' };
+    }
+    case 'strip': {
+      const ss = el.stripStyle;
+      return { fontFamily: ss?.fontFamily ?? 'Poppins', fontSize: ss?.fontSize ?? 14, fontWeight: ss?.fontWeight ?? 500, fontStyle: 'normal', color: ss?.textColor ?? '#ffffff', textAlign: 'center', letterSpacing: 0, lineHeight: 1.2, textTransform: 'none' };
+    }
+    default:
+      return { fontFamily: 'Poppins', fontSize: 16, fontWeight: 400, fontStyle: 'normal', color: '#ffffff', textAlign: 'left', letterSpacing: 0, lineHeight: 1.2, textTransform: 'none' };
+  }
+}
+
+function applyTextStyleChanges(el: CanvasElement, changes: Partial<TextStyle>): CanvasElement {
+  switch (el.type) {
+    case 'text':
+      return { ...el, textStyle: { ...el.textStyle!, ...changes } };
+    case 'button': {
+      const bsUpdates: Record<string, unknown> = {};
+      if (changes.fontSize !== undefined) bsUpdates.fontSize = changes.fontSize;
+      if (changes.fontWeight !== undefined) bsUpdates.fontWeight = changes.fontWeight;
+      if (changes.fontFamily !== undefined) bsUpdates.fontFamily = changes.fontFamily;
+      if (changes.color !== undefined) bsUpdates.textColor = changes.color;
+      return { ...el, buttonStyle: { ...el.buttonStyle!, ...bsUpdates } };
+    }
+    case 'badge': {
+      const bgUpdates: Record<string, unknown> = {};
+      if (changes.fontSize !== undefined) bgUpdates.fontSize = changes.fontSize;
+      if (changes.fontWeight !== undefined) bgUpdates.fontWeight = changes.fontWeight;
+      if (changes.fontFamily !== undefined) bgUpdates.fontFamily = changes.fontFamily;
+      if (changes.color !== undefined) bgUpdates.textColor = changes.color;
+      return { ...el, badgeStyle: { ...el.badgeStyle!, ...bgUpdates } };
+    }
+    case 'strip': {
+      const ssUpdates: Record<string, unknown> = {};
+      if (changes.fontSize !== undefined) ssUpdates.fontSize = changes.fontSize;
+      if (changes.fontWeight !== undefined) ssUpdates.fontWeight = changes.fontWeight;
+      if (changes.fontFamily !== undefined) ssUpdates.fontFamily = changes.fontFamily;
+      if (changes.color !== undefined) ssUpdates.textColor = changes.color;
+      return { ...el, stripStyle: { ...el.stripStyle!, ...ssUpdates } };
+    }
+    default:
+      return el;
   }
 }
 
@@ -705,6 +763,32 @@ export default function FreeFormCanvas({
     setEditingTextId(null);
     onTextEditEnd?.();
   }, [editingTextId, elements, onElementsChange, onTextEditEnd]);
+
+  // ── Handle text style changes from toolbar ──────────────────────────────────
+  const handleToolbarStyleChange = useCallback(
+    (changes: Partial<TextStyle>) => {
+      if (!editingTextId) return;
+      const updated = elements.map((el) =>
+        el.id === editingTextId ? applyTextStyleChanges(el, changes) : el
+      );
+      onElementsChange(updated);
+    },
+    [editingTextId, elements, onElementsChange]
+  );
+
+  // ── Compute toolbar position for the editing element ─────────────────────
+  const toolbarPosition = useMemo(() => {
+    if (!editingTextId) return null;
+    const el = elements.find((e) => e.id === editingTextId);
+    if (!el) return null;
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return null;
+    const rect = canvasEl.getBoundingClientRect();
+    return {
+      x: rect.left + (el.x + el.width / 2) * scale,
+      y: rect.top + el.y * scale,
+    };
+  }, [editingTextId, elements, scale]);
 
   // ── Resize handle mouse down ──────────────────────────────────────────────
   const handleResizeMouseDown = useCallback(
@@ -1544,6 +1628,19 @@ export default function FreeFormCanvas({
           })}
         </div>
       )}
+
+      {/* Floating text toolbar when editing any text-containing element */}
+      {editingTextId && toolbarPosition && (() => {
+        const editEl = elements.find((e) => e.id === editingTextId);
+        if (!editEl) return null;
+        return (
+          <TextToolbar
+            style={getTextStyleFromElement(editEl)}
+            position={toolbarPosition}
+            onChange={handleToolbarStyleChange}
+          />
+        );
+      })()}
     </div>
   );
 }
