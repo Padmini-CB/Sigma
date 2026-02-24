@@ -62,17 +62,17 @@ export default function PropertiesPanel({ element, onUpdate }: PropertiesPanelPr
   return (
     <div
       style={{
-        position: 'absolute',
-        top: 60,
-        right: 16,
+        position: 'fixed',
+        top: 80,
+        right: 20,
         width: 220,
-        backgroundColor: '#1e1e2e',
+        backgroundColor: '#1a1d27',
         borderRadius: 12,
-        border: '1px solid rgba(255,255,255,0.1)',
-        padding: 12,
-        zIndex: 100,
+        border: '1px solid rgba(59,130,246,0.3)',
+        padding: 16,
+        zIndex: 9999,
         boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-        maxHeight: 'calc(100vh - 140px)',
+        maxHeight: 'calc(100vh - 120px)',
         overflowY: 'auto',
       }}
       onClick={(e) => e.stopPropagation()}
