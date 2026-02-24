@@ -189,6 +189,37 @@ export default function EditorPage() {
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
+  // ── Click-to-add element from sidebar (fallback when drag doesn't work) ──
+  const handleClickAddElement = useCallback((item: AssetItem) => {
+    if (iframeMode && iframeRef.current) {
+      // In iframe mode, post message to add HTML element at center
+      if (item.htmlSnippet) {
+        iframeRef.current.contentWindow?.postMessage({
+          type: 'sigma-command',
+          command: 'addElement',
+          html: item.htmlSnippet,
+          x: activeSize.width / 2 - 150,
+          y: activeSize.height / 2 - 40,
+        }, '*');
+      }
+    } else {
+      // In FreeFormCanvas mode, add element to center of canvas
+      const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+      const w = item.element.width || 200;
+      const h = item.element.height || 200;
+      const newEl: CanvasElement = {
+        ...item.element,
+        id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        x: Math.round(activeSize.width / 2 - w / 2),
+        y: Math.round(activeSize.height / 2 - h / 2),
+        zIndex: maxZ + 1,
+      } as CanvasElement;
+      setElements([...elements, newEl]);
+      setSelectedIds([newEl.id]);
+    }
+    showToast('success', 'Element Added', `"${item.label}" added to canvas`);
+  }, [iframeMode, elements, activeSize, setElements, showToast]);
+
   // ── Upload image drop ──
   const handleUploadDragStart = useCallback((dataUrl: string, width: number, height: number, e: React.DragEvent) => {
     const elementData = JSON.stringify({
@@ -263,6 +294,27 @@ export default function EditorPage() {
         const newWidth = Math.max(150, Math.ceil(textWidth + paddingX * 2));
         const newHeight = Math.max(40, Math.ceil(fontSize * 1.6 + paddingY * 2));
         merged.width = Math.max(merged.width, newWidth);
+        merged.height = Math.max(merged.height, newHeight);
+      }
+      // Auto-resize badges when font properties change
+      if (merged.type === 'badge' && updates.badgeStyle) {
+        const bs = merged.badgeStyle!;
+        const fontSize = bs.fontSize ?? 14;
+        const paddingX = bs.paddingX ?? 16;
+        const paddingY = bs.paddingY ?? 6;
+        const charWidth = fontSize * 0.62;
+        const textWidth = (merged.content || '').length * charWidth;
+        const newWidth = Math.max(100, Math.ceil(textWidth + paddingX * 2));
+        const newHeight = Math.max(30, Math.ceil(fontSize * 1.6 + paddingY * 2));
+        merged.width = Math.max(merged.width, newWidth);
+        merged.height = Math.max(merged.height, newHeight);
+      }
+      // Auto-resize strips when font properties change
+      if (merged.type === 'strip' && updates.stripStyle) {
+        const ss = merged.stripStyle!;
+        const fontSize = ss.fontSize ?? 15;
+        const paddingY = ss.paddingY ?? 10;
+        const newHeight = Math.max(40, Math.ceil(fontSize * 1.6 + paddingY * 2));
         merged.height = Math.max(merged.height, newHeight);
       }
       return merged;
@@ -548,7 +600,7 @@ export default function EditorPage() {
       case 'templates':
         return <TemplatesPanel onSelectTemplate={handleSelectTemplate} activeTemplateId={activeTemplateId} />;
       case 'elements':
-        return <ElementsPanel onDragStart={handleElementDragStart} />;
+        return <ElementsPanel onDragStart={handleElementDragStart} onClickAdd={handleClickAddElement} />;
       case 'text':
         return <TextPanel onAddText={handleAddText} />;
       case 'uploads':
@@ -671,15 +723,58 @@ export default function EditorPage() {
         {/* Canvas Area */}
         <div style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
           {iframeMode && iframeHtmlPath ? (
-            <div style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '100%',
-              backgroundColor: '#1a1a2e',
-              overflow: 'auto',
-            }}>
+            <div
+              onDragOver={(e) => {
+                if (e.dataTransfer.types.includes('application/sigma-element') || e.dataTransfer.types.includes('text/html')) {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'copy';
+                }
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                const html = e.dataTransfer.getData('text/html');
+                const elementData = e.dataTransfer.getData('application/sigma-element');
+                if (html && iframeRef.current) {
+                  // Drop HTML component into iframe
+                  const iframeRect = iframeRef.current.getBoundingClientRect();
+                  iframeRef.current.contentWindow?.postMessage({
+                    type: 'sigma-command',
+                    command: 'addElement',
+                    html,
+                    x: (e.clientX - iframeRect.left) / (zoom / 100),
+                    y: (e.clientY - iframeRect.top) / (zoom / 100),
+                  }, '*');
+                } else if (elementData && iframeRef.current) {
+                  // Drop canvas element data — create HTML from element data
+                  try {
+                    const partial = JSON.parse(elementData);
+                    const iframeRect = iframeRef.current.getBoundingClientRect();
+                    const x = (e.clientX - iframeRect.left) / (zoom / 100);
+                    const y = (e.clientY - iframeRect.top) / (zoom / 100);
+                    // Create a simple HTML element from canvas element data
+                    const el = document.createElement('div');
+                    el.setAttribute('data-sigma', '');
+                    el.style.cssText = `position:absolute;left:${x}px;top:${y}px;z-index:100;font-family:Poppins,sans-serif;font-size:${partial.buttonStyle?.fontSize || partial.badgeStyle?.fontSize || partial.textStyle?.fontSize || 16}px;font-weight:${partial.buttonStyle?.fontWeight || partial.badgeStyle?.fontWeight || partial.textStyle?.fontWeight || 600};color:${partial.buttonStyle?.textColor || partial.badgeStyle?.textColor || partial.textStyle?.color || '#fff'};background:${partial.buttonStyle?.backgroundColor || partial.badgeStyle?.backgroundColor || 'transparent'};padding:${partial.buttonStyle?.paddingY || partial.badgeStyle?.paddingY || 10}px ${partial.buttonStyle?.paddingX || partial.badgeStyle?.paddingX || 20}px;border-radius:${partial.buttonStyle?.borderRadius || partial.badgeStyle?.borderRadius || 8}px;`;
+                    el.textContent = partial.content || '';
+                    iframeRef.current.contentWindow?.postMessage({
+                      type: 'sigma-command',
+                      command: 'addElement',
+                      html: el.outerHTML,
+                      x, y,
+                    }, '*');
+                  } catch { /* ignore */ }
+                }
+              }}
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100%',
+                backgroundColor: '#1a1a2e',
+                overflow: 'auto',
+              }}
+            >
               <div style={{
                 width: activeSize.width,
                 height: activeSize.height,
@@ -697,6 +792,7 @@ export default function EditorPage() {
                     height: activeSize.height,
                     border: 'none',
                     display: 'block',
+                    pointerEvents: 'auto',
                   }}
                   title="Template Preview"
                 />
