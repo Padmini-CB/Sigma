@@ -159,23 +159,15 @@ export default function EditorPage() {
 
   // ── Template loading ──
   const handleSelectTemplate = useCallback((tmpl: TemplateInfo) => {
-    if (tmpl.htmlPath) {
-      // Switch to iframe mode — load the original HTML template
-      setIframeMode(true);
-      setIframeHtmlPath(tmpl.htmlPath);
-      setActiveTemplateId(tmpl.id);
-      setSelectedIds([]);
-      showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded — drag to rearrange, double-click to edit text`);
-    } else {
-      // Fallback: use canvas element mode
-      setIframeMode(false);
-      setIframeHtmlPath(null);
-      const newElements = tmpl.createElements();
-      resetHistory(newElements);
-      setActiveTemplateId(tmpl.id);
-      setSelectedIds([]);
-      showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
-    }
+    // Always use canvas element mode so template elements are fully interactive
+    // (draggable, resizable, editable, selectable via Ctrl+A, undo/redo, etc.)
+    setIframeMode(false);
+    setIframeHtmlPath(null);
+    const newElements = tmpl.createElements();
+    resetHistory(newElements);
+    setActiveTemplateId(tmpl.id);
+    setSelectedIds([]);
+    showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
   }, [resetHistory, showToast]);
 
   // ── Element drop from sidebar ──
