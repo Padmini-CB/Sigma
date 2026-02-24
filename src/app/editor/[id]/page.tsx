@@ -283,6 +283,46 @@ export default function EditorPage() {
     const updated = elements.map(el => {
       if (el.id !== id) return el;
       const merged = { ...el, ...updates };
+      // Auto-resize when content text changes
+      if (updates.content !== undefined) {
+        const content = updates.content || '';
+        if (merged.type === 'button' && merged.buttonStyle) {
+          const bs = merged.buttonStyle;
+          const charWidth = (bs.fontSize ?? 16) * 0.62;
+          const textWidth = content.length * charWidth;
+          const newWidth = Math.max(150, Math.ceil(textWidth + (bs.paddingX ?? 24) * 2));
+          merged.width = Math.max(merged.width, newWidth);
+        } else if (merged.type === 'badge' && merged.badgeStyle) {
+          const bs = merged.badgeStyle;
+          const charWidth = (bs.fontSize ?? 14) * 0.62;
+          const textWidth = content.length * charWidth;
+          const newWidth = Math.max(100, Math.ceil(textWidth + (bs.paddingX ?? 16) * 2));
+          merged.width = Math.max(merged.width, newWidth);
+        } else if (merged.type === 'strip' && merged.stripStyle) {
+          const ss = merged.stripStyle;
+          const charWidth = (ss.fontSize ?? 14) * 0.62;
+          const textWidth = content.length * charWidth;
+          merged.width = Math.max(merged.width, Math.ceil(textWidth + (ss.paddingX ?? 16) * 2));
+        }
+      }
+      // Auto-resize text elements when font properties change
+      if (merged.type === 'text' && updates.textStyle) {
+        const ts = merged.textStyle!;
+        const fontSize = ts.fontSize ?? 16;
+        const lineHeight = ts.lineHeight ?? 1.2;
+        // Estimate lines from content
+        const content = merged.content || '';
+        const lines = content.split('\n');
+        const charWidth = fontSize * 0.6 * (ts.scaleX ?? 1);
+        const maxLineChars = Math.max(...lines.map(l => l.length), 1);
+        const textWidth = maxLineChars * charWidth;
+        // Auto-grow: only expand, never shrink below current size
+        const lineCount = Math.max(lines.length, Math.ceil(textWidth / Math.max(merged.width, 1)));
+        const neededHeight = Math.max(40, Math.ceil(fontSize * lineHeight * lineCount + 8));
+        if (neededHeight > merged.height) {
+          merged.height = neededHeight;
+        }
+      }
       // Auto-resize buttons when font properties change
       if (merged.type === 'button' && updates.buttonStyle) {
         const bs = merged.buttonStyle!;
@@ -876,7 +916,7 @@ export default function EditorPage() {
           </div>
 
           {/* Properties Panel (floating right) */}
-          {selectedElement && !isTextEditing && (
+          {selectedElement && (
             <PropertiesPanel
               element={selectedElement}
               onUpdate={handlePropertyUpdate}

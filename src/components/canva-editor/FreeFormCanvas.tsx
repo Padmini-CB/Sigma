@@ -701,7 +701,7 @@ export default function FreeFormCanvas({
       }
 
       const el = elements.find((el) => el.id === elementId);
-      if (!el || el.locked) return;
+      if (!el) return;
 
       // Update selection
       let newSelected: string[];
@@ -748,7 +748,7 @@ export default function FreeFormCanvas({
     (e: React.MouseEvent, elementId: string) => {
       e.stopPropagation();
       const el = elements.find((el) => el.id === elementId);
-      if (!el || el.locked || !EDITABLE_TYPES.has(el.type)) return;
+      if (!el || !EDITABLE_TYPES.has(el.type)) return;
 
       setEditingTextId(elementId);
       onSelectionChange([elementId]);
@@ -951,25 +951,10 @@ export default function FreeFormCanvas({
       if (dragStateRef.current) {
         const ds = dragStateRef.current;
         const canvasPos = screenToCanvas(e.clientX, e.clientY);
-        let dx = canvasPos.x - ds.startX;
-        let dy = canvasPos.y - ds.startY;
+        const dx = canvasPos.x - ds.startX;
+        const dy = canvasPos.y - ds.startY;
 
-        // Shift constrains to axis
-        if (e.shiftKey) {
-          if (ds.constrainAxis === null) {
-            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-              const axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-              dragStateRef.current = { ...ds, constrainAxis: axis };
-            }
-          }
-          const axis = dragStateRef.current.constrainAxis;
-          if (axis === 'x') dy = 0;
-          else if (axis === 'y') dx = 0;
-        } else {
-          if (ds.constrainAxis) {
-            dragStateRef.current = { ...ds, constrainAxis: null };
-          }
-        }
+        // Free movement always — both X and Y update every frame
 
         // Compute new positions
         const newPositions: Record<string, Position> = {};
@@ -979,18 +964,26 @@ export default function FreeFormCanvas({
           newPositions[id] = { x: startPos.x + dx, y: startPos.y + dy };
         }
 
-        // Snap guides
-        const movingIds = Object.keys(ds.elementStartPositions);
-        const { guides, snapOffsetX, snapOffsetY } = computeSnapGuides(
-          movingIds,
-          elements,
-          canvasWidth,
-          canvasHeight,
-          newPositions
-        );
-        setSnapGuides(guides);
+        // Snap guides only when Shift is held
+        let snapOffsetX = 0;
+        let snapOffsetY = 0;
+        if (e.shiftKey) {
+          const movingIds = Object.keys(ds.elementStartPositions);
+          const snap = computeSnapGuides(
+            movingIds,
+            elements,
+            canvasWidth,
+            canvasHeight,
+            newPositions
+          );
+          setSnapGuides(snap.guides);
+          snapOffsetX = snap.snapOffsetX;
+          snapOffsetY = snap.snapOffsetY;
+        } else {
+          setSnapGuides([]);
+        }
 
-        // Apply snap offset
+        // Apply positions (with snap offset if Shift held)
         const updatedElements = elements.map((el) => {
           if (newPositions[el.id]) {
             return {
@@ -1180,13 +1173,21 @@ export default function FreeFormCanvas({
     };
 
     const handleMouseUp = () => {
-      // Finalize drag
+      // Finalize drag — only commit to history if actual movement occurred
       if (dragStateRef.current) {
+        const ds = dragStateRef.current;
         dragStateRef.current = null;
         setDragState(null);
         setSnapGuides([]);
-        // Commit with history
-        onElementsChange(elements);
+        // Check if any element actually moved
+        const anyMoved = Object.keys(ds.elementStartPositions).some(id => {
+          const el = elements.find(e => e.id === id);
+          const start = ds.elementStartPositions[id];
+          return el && (Math.round(el.x) !== Math.round(start.x) || Math.round(el.y) !== Math.round(start.y));
+        });
+        if (anyMoved) {
+          onElementsChange(elements);
+        }
       }
 
       // Finalize resize
@@ -1409,7 +1410,7 @@ export default function FreeFormCanvas({
           backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
           boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
           flexShrink: 0,
-          overflow: 'hidden',
+          overflow: 'visible',
           cursor: isPanning ? 'grabbing' : isSpaceHeld ? 'grab' : 'default',
         }}
       >
@@ -1434,10 +1435,10 @@ export default function FreeFormCanvas({
                 opacity: el.opacity,
                 transform: el.rotation ? `rotate(${el.rotation}deg)` : undefined,
                 zIndex: el.zIndex,
-                cursor: el.locked ? 'default' : 'move',
+                cursor: 'move',
                 outline: isSelected ? '2px solid #3B82F6' : 'none',
                 outlineOffset: -1,
-                pointerEvents: el.locked && !isSelected ? 'none' : 'auto',
+                pointerEvents: 'auto',
                 overflow: (el.type === 'button' || el.type === 'badge') ? 'visible' : undefined,
               }}
             >
