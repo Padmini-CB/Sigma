@@ -68,8 +68,7 @@ const TABS: TabDefinition[] = [
   { id: 'elements', label: 'Elements', icon: <ElementsIcon /> },
   { id: 'text', label: 'Text', icon: <TextIcon /> },
   { id: 'uploads', label: 'Uploads', icon: <UploadsIcon /> },
-  // Eraser tool hidden — hero images now have fade baked into PNGs
-  // { id: 'eraser', label: 'Eraser', icon: <EraserIcon /> },
+  { id: 'eraser', label: 'Eraser', icon: <EraserIcon /> },
   { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
 ];
 

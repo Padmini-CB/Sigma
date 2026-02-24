@@ -77,6 +77,7 @@ const HANDLE_POSITIONS: Record<ResizeHandle, { top: string; left: string; transf
 interface ContextMenuItem {
   label: string;
   action: string;
+  shortcut?: string;
   separator?: false;
 }
 
@@ -87,12 +88,13 @@ interface ContextMenuSeparator {
 type ContextMenuEntry = ContextMenuItem | ContextMenuSeparator;
 
 const CONTEXT_MENU_ITEMS: ContextMenuEntry[] = [
-  { label: 'Bring to Front', action: 'bringToFront' },
-  { label: 'Send to Back', action: 'sendToBack' },
-  { label: 'Bring Forward', action: 'bringForward' },
-  { label: 'Send Backward', action: 'sendBackward' },
+  { label: 'Bring to Front', action: 'bringToFront', shortcut: 'Ctrl+]' },
+  { label: 'Bring Forward', action: 'bringForward', shortcut: ']' },
+  { label: 'Send Backward', action: 'sendBackward', shortcut: '[' },
+  { label: 'Send to Back', action: 'sendToBack', shortcut: 'Ctrl+[' },
   { separator: true },
-  { label: 'Delete', action: 'delete' },
+  { label: 'Duplicate', action: 'duplicate', shortcut: 'Ctrl+D' },
+  { label: 'Delete', action: 'delete', shortcut: 'Del' },
 ];
 
 // ─── Snap Guide Computation ───────────────────────────────────────────────────
@@ -824,6 +826,19 @@ export default function FreeFormCanvas({
             updated[nextIdx] = { ...updated[nextIdx], zIndex: currentZ };
             updated[idx] = { ...updated[idx], zIndex: swapZ };
           }
+          break;
+        }
+        case 'duplicate': {
+          const el = updated[idx];
+          const duped: CanvasElement = {
+            ...structuredClone(el),
+            id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+            x: el.x + 10,
+            y: el.y + 10,
+            zIndex: maxZ + 1,
+          };
+          updated = [...updated, duped];
+          onSelectionChange([duped.id]);
           break;
         }
         case 'delete':
@@ -2001,13 +2016,14 @@ export default function FreeFormCanvas({
             position: 'absolute',
             left: contextMenu.x,
             top: contextMenu.y,
-            backgroundColor: '#1e1e2e',
+            backgroundColor: '#1C2333',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 8,
             padding: '4px 0',
-            minWidth: 180,
+            minWidth: 200,
             zIndex: 100000,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+            fontFamily: 'Poppins, sans-serif',
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -2030,12 +2046,14 @@ export default function FreeFormCanvas({
                 key={item.action}
                 onClick={() => handleContextAction(item.action, contextMenu.elementId)}
                 style={{
-                  display: 'block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   width: '100%',
                   padding: '8px 16px',
                   background: 'none',
                   border: 'none',
-                  color: isDelete ? '#ef4444' : '#e2e8f0',
+                  color: isDelete ? '#ef4444' : 'rgba(255,255,255,0.85)',
                   fontSize: 13,
                   fontFamily: 'inherit',
                   textAlign: 'left',
@@ -2043,13 +2061,18 @@ export default function FreeFormCanvas({
                   borderRadius: 0,
                 }}
                 onMouseEnter={(e) => {
-                  (e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.06)';
+                  e.currentTarget.style.backgroundColor = 'rgba(59,130,246,0.15)';
                 }}
                 onMouseLeave={(e) => {
-                  (e.target as HTMLElement).style.backgroundColor = 'transparent';
+                  e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {item.shortcut && (
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 16 }}>
+                    {item.shortcut}
+                  </span>
+                )}
               </button>
             );
           })}
