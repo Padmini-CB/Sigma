@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import templatesData from '@/data/templates.json';
 import { useToast } from '@/components/Toast';
 
@@ -118,7 +118,28 @@ export default function EditorPage() {
 
   // ── Export state ──
   const [isExporting, setIsExporting] = useState(false);
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'png' | 'jpeg'>('png');
+  const [jpegQuality, setJpegQuality] = useState(92);
+  const [exportSizes, setExportSizes] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
+    return initial;
+  });
   const canvasRef = useRef<HTMLDivElement>(null);
+  const downloadMenuRef = useRef<HTMLDivElement>(null);
+
+  // ── Close download menu on click outside ──
+  useEffect(() => {
+    if (!showDownloadMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (downloadMenuRef.current && !downloadMenuRef.current.contains(e.target as Node)) {
+        setShowDownloadMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showDownloadMenu]);
 
   // ── Auto-reflow elements to fit a new canvas size ──
   const reflowElements = useCallback((srcElements: CanvasElement[], fromW: number, fromH: number, toW: number, toH: number): CanvasElement[] => {
@@ -417,116 +438,113 @@ export default function EditorPage() {
     setElements(updated);
   }, [elements, selectedIds, setElements]);
 
-  // ── Export (PNG) ──
-  const handleExport = useCallback(async () => {
+  // ── Export helper: render current canvas as dataUrl ──
+  const renderCanvasDataUrl = useCallback(async (format: 'png' | 'jpeg', quality: number): Promise<string> => {
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) throw new Error('No canvas');
+    const htmlToImage = await import('html-to-image');
+    if (document.fonts?.ready) await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 150));
+    if (format === 'jpeg') {
+      return await htmlToImage.toJpeg(canvasEl, {
+        quality: quality / 100,
+        pixelRatio: 2,
+        width: activeSize.width,
+        height: activeSize.height,
+        backgroundColor: '#0D1117',
+        style: { transform: 'none', overflow: 'hidden' },
+      });
+    }
+    return await htmlToImage.toPng(canvasEl, {
+      quality: 1.0,
+      pixelRatio: 2,
+      width: activeSize.width,
+      height: activeSize.height,
+      style: { transform: 'none', overflow: 'hidden' },
+    });
+  }, [activeSize]);
+
+  // ── Export current size ──
+  const handleExport = useCallback(async (fmt?: 'png' | 'jpeg') => {
     if (isExporting) return;
     setIsExporting(true);
+    setShowDownloadMenu(false);
+    const format = fmt || exportFormat;
     try {
-      if (iframeMode && iframeRef.current) {
-        // Iframe export using html2canvas
-        const iframe = iframeRef.current;
-        const iframeDoc = iframe.contentDocument;
-        if (!iframeDoc) throw new Error('Cannot access iframe content');
-
-        // Tell iframe to clean up selection UI for export
-        iframe.contentWindow?.postMessage({ type: 'sigma-command', command: 'prepareExport' }, '*');
-        await new Promise(r => setTimeout(r, 300));
-
-        const html2canvas = (await import('html2canvas')).default;
-        const canvas = await html2canvas(iframeDoc.body, {
-          width: activeSize.width,
-          height: activeSize.height,
-          scale: 2,
-          backgroundColor: '#0D1117',
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
-        });
-
-        // Restore handles after export
-        iframe.contentWindow?.postMessage({ type: 'sigma-command', command: 'restoreHandles' }, '*');
-
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
-        const link = document.createElement('a');
-        const name = activeTemplateId || 'canvas';
-        link.download = `${name}_${activeSize.width}x${activeSize.height}.png`;
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} PNG`);
-      } else {
-        // Canvas element export
-        const canvasEl = canvasRef.current;
-        if (!canvasEl) return;
-        const htmlToImage = await import('html-to-image');
-        if (document.fonts?.ready) await document.fonts.ready;
-        await new Promise(r => setTimeout(r, 150));
-        const dataUrl = await htmlToImage.toPng(canvasEl, {
-          quality: 1.0,
-          pixelRatio: 2,
-          width: activeSize.width,
-          height: activeSize.height,
-          style: { transform: 'none', overflow: 'hidden' },
-        });
-        const link = document.createElement('a');
-        const name = activeTemplateId || 'canvas';
-        link.download = `${name}_${activeSize.width}x${activeSize.height}.png`;
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} PNG`);
-      }
+      const dataUrl = await renderCanvasDataUrl(format, jpegQuality);
+      const link = document.createElement('a');
+      const name = activeTemplateId || 'canvas';
+      link.download = `${name}_${activeSize.width}x${activeSize.height}.${format === 'jpeg' ? 'jpg' : 'png'}`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} ${format.toUpperCase()}`);
     } catch (error) {
       showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsExporting(false);
     }
-  }, [activeSize, activeTemplateId, isExporting, iframeMode, showToast]);
+  }, [activeSize, activeTemplateId, isExporting, exportFormat, jpegQuality, showToast, renderCanvasDataUrl]);
 
-  // ── Export All Sizes (ZIP) ──
-  const handleExportAll = useCallback(async () => {
+  // ── Export selected sizes (zip if multiple) ──
+  const handleExportSelected = useCallback(async () => {
     if (isExporting) return;
+    const selectedSizeIds = Object.entries(exportSizes).filter(([, v]) => v).map(([k]) => k);
+    if (selectedSizeIds.length === 0) {
+      showToast('error', 'No Sizes', 'Select at least one size to download');
+      return;
+    }
+    // If only the current size is selected, just do a single export
+    if (selectedSizeIds.length === 1 && selectedSizeIds[0] === activeSize.id) {
+      handleExport();
+      return;
+    }
     setIsExporting(true);
+    setShowDownloadMenu(false);
     try {
-      showToast('info', 'Exporting', 'Generating all sizes...');
+      showToast('info', 'Exporting', `Generating ${selectedSizeIds.length} size(s)...`);
       const JSZip = (await import('jszip')).default;
       const htmlToImage = await import('html-to-image');
       const zip = new JSZip();
       const name = activeTemplateId || 'canvas';
+      const ext = exportFormat === 'jpeg' ? 'jpg' : 'png';
+      const canvasEl = canvasRef.current;
+      if (!canvasEl) return;
 
-      // Save current elements before switching
-      const currentElements = structuredClone(elements);
-
-      for (const size of CANVAS_SIZES) {
-        // Get elements for this size
-        const sizeElements = size.id === activeSize.id
-          ? currentElements
-          : (perSizeElements[size.id] || currentElements);
-
-        // We export the current canvas element - need to temporarily resize
-        const canvasEl = canvasRef.current;
-        if (!canvasEl) continue;
+      for (const sizeId of selectedSizeIds) {
+        const size = CANVAS_SIZES.find(s => s.id === sizeId);
+        if (!size) continue;
 
         const origW = canvasEl.style.width;
         const origH = canvasEl.style.height;
         canvasEl.style.width = `${size.width}px`;
         canvasEl.style.height = `${size.height}px`;
-
         if (document.fonts?.ready) await document.fonts.ready;
         await new Promise(r => setTimeout(r, 100));
 
         try {
-          const dataUrl = await htmlToImage.toPng(canvasEl, {
-            quality: 1.0,
-            pixelRatio: 1,
-            width: size.width,
-            height: size.height,
-            style: { transform: 'none', overflow: 'hidden' },
-          });
+          let dataUrl: string;
+          if (exportFormat === 'jpeg') {
+            dataUrl = await htmlToImage.toJpeg(canvasEl, {
+              quality: jpegQuality / 100,
+              pixelRatio: 1,
+              width: size.width,
+              height: size.height,
+              backgroundColor: '#0D1117',
+              style: { transform: 'none', overflow: 'hidden' },
+            });
+          } else {
+            dataUrl = await htmlToImage.toPng(canvasEl, {
+              quality: 1.0,
+              pixelRatio: 1,
+              width: size.width,
+              height: size.height,
+              style: { transform: 'none', overflow: 'hidden' },
+            });
+          }
           const base64 = dataUrl.split(',')[1];
-          zip.file(`${name}_${size.width}x${size.height}.png`, base64, { base64: true });
+          zip.file(`${name}_${size.width}x${size.height}.${ext}`, base64, { base64: true });
         } finally {
           canvasEl.style.width = origW;
           canvasEl.style.height = origH;
@@ -536,19 +554,19 @@ export default function EditorPage() {
       const blob = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `${name}-all-sizes.zip`;
+      link.download = `${name}-${selectedSizeIds.length}sizes.zip`;
       link.href = url;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      showToast('success', 'Download Complete', `${CANVAS_SIZES.length} sizes exported`);
+      showToast('success', 'Download Complete', `${selectedSizeIds.length} sizes exported as ${exportFormat.toUpperCase()}`);
     } catch (error) {
       showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsExporting(false);
     }
-  }, [isExporting, elements, activeSize, activeTemplateId, perSizeElements, showToast]);
+  }, [isExporting, exportSizes, exportFormat, jpegQuality, activeSize, activeTemplateId, showToast, handleExport]);
 
   // ── Keyboard shortcut actions ──
   const shortcutActions = useMemo(() => ({
@@ -724,8 +742,8 @@ export default function EditorPage() {
           <SettingsPanel
             activeSize={activeSize}
             onSizeChange={handleSizeChange}
-            onExport={handleExport}
-            onExportAll={handleExportAll}
+            onExport={() => handleExport()}
+            onExportAll={handleExportSelected}
             isExporting={isExporting}
           />
         );
@@ -796,31 +814,109 @@ export default function EditorPage() {
             </button>
           ))}
           <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
-          {/* Download button */}
-          <button
-            onClick={handleExport}
-            disabled={isExporting}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px',
-              borderRadius: 6,
-              border: 'none',
-              backgroundColor: '#3B82F6',
-              color: '#fff',
-              fontFamily: 'Manrope, sans-serif',
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: isExporting ? 'not-allowed' : 'pointer',
-              opacity: isExporting ? 0.6 : 1,
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            {isExporting ? 'Exporting...' : 'Download'}
-          </button>
+          {/* Download button with dropdown */}
+          <div style={{ position: 'relative' }} ref={downloadMenuRef}>
+            <button
+              onClick={() => setShowDownloadMenu(v => !v)}
+              disabled={isExporting}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '6px 14px',
+                borderRadius: 6,
+                border: 'none',
+                backgroundColor: '#3B82F6',
+                color: '#fff',
+                fontFamily: 'Manrope, sans-serif',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: isExporting ? 'not-allowed' : 'pointer',
+                opacity: isExporting ? 0.6 : 1,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              {isExporting ? 'Exporting...' : 'Download'}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            {showDownloadMenu && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                marginTop: 6,
+                width: 280,
+                backgroundColor: '#1C2333',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 10,
+                padding: '16px',
+                zIndex: 200,
+                boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
+                fontFamily: 'Manrope, sans-serif',
+              }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, marginBottom: 10, textTransform: 'uppercase' }}>Format</div>
+                <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                  {(['png', 'jpeg'] as const).map(fmt => (
+                    <button key={fmt} onClick={() => setExportFormat(fmt)} style={{
+                      flex: 1, padding: '6px 0', borderRadius: 6, border: 'none',
+                      backgroundColor: exportFormat === fmt ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.06)',
+                      color: exportFormat === fmt ? '#3B82F6' : 'rgba(255,255,255,0.6)',
+                      fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                    }}>{fmt.toUpperCase()}</button>
+                  ))}
+                </div>
+                {exportFormat === 'jpeg' && (
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>Quality</span>
+                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{jpegQuality}%</span>
+                    </div>
+                    <input type="range" min={10} max={100} value={jpegQuality} onChange={e => setJpegQuality(Number(e.target.value))}
+                      style={{ width: '100%', accentColor: '#3B82F6' }} />
+                  </div>
+                )}
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' }}>Sizes</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14 }}>
+                  {CANVAS_SIZES.map(size => (
+                    <label key={size.id} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '3px 0' }}>
+                      <input type="checkbox" checked={!!exportSizes[size.id]}
+                        onChange={() => setExportSizes(prev => ({ ...prev, [size.id]: !prev[size.id] }))}
+                        style={{ accentColor: '#3B82F6', width: 14, height: 14 }} />
+                      <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>
+                        {size.width}&times;{size.height}
+                      </span>
+                      <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginLeft: 'auto' }}>
+                        {size.description}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <button onClick={handleExportSelected} disabled={isExporting} style={{
+                    width: '100%', padding: '8px 0', borderRadius: 6, border: 'none',
+                    backgroundColor: '#3B82F6', color: '#fff',
+                    fontSize: 12, fontWeight: 600, cursor: isExporting ? 'not-allowed' : 'pointer',
+                    opacity: isExporting ? 0.6 : 1,
+                  }}>
+                    {isExporting ? 'Exporting...' : 'Download Selected Sizes'}
+                  </button>
+                  <button onClick={() => handleExport()} disabled={isExporting} style={{
+                    width: '100%', padding: '8px 0', borderRadius: 6,
+                    border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent',
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: 12, fontWeight: 600, cursor: isExporting ? 'not-allowed' : 'pointer',
+                    opacity: isExporting ? 0.6 : 1,
+                  }}>
+                    Download Current Size
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
