@@ -244,8 +244,9 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
     case 'button': {
       const bs = el.buttonStyle;
       const btnStyle: React.CSSProperties = {
-        width: '100%',
-        height: '100%',
+        width: 'auto',
+        height: 'auto',
+        minWidth: 150,
         backgroundColor: bs?.backgroundColor || '#D7EF3F',
         color: bs?.textColor || '#181830',
         fontFamily: bs?.fontFamily || 'Kanit, sans-serif',
@@ -257,9 +258,10 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
         paddingRight: bs?.paddingX ?? 24,
         paddingTop: bs?.paddingY ?? 12,
         paddingBottom: bs?.paddingY ?? 12,
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
+        whiteSpace: 'nowrap',
         cursor: 'default',
         pointerEvents: 'none',
         userSelect: 'none',
@@ -445,6 +447,9 @@ function getEditingStyles(el: CanvasElement): React.CSSProperties {
       const bs = el.buttonStyle;
       return {
         ...base,
+        width: 'auto',
+        height: 'auto',
+        minWidth: 150,
         fontFamily: bs?.fontFamily || 'Kanit, sans-serif',
         fontSize: bs?.fontSize ?? 16,
         fontWeight: bs?.fontWeight ?? 600,
@@ -455,10 +460,11 @@ function getEditingStyles(el: CanvasElement): React.CSSProperties {
         paddingRight: bs?.paddingX ?? 24,
         paddingTop: bs?.paddingY ?? 12,
         paddingBottom: bs?.paddingY ?? 12,
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
+        whiteSpace: 'nowrap',
       };
     }
     case 'badge': {
@@ -1429,6 +1435,7 @@ export default function FreeFormCanvas({
                 outline: isSelected ? '2px solid #3B82F6' : 'none',
                 outlineOffset: -1,
                 pointerEvents: el.locked && !isSelected ? 'none' : 'auto',
+                overflow: el.type === 'button' ? 'visible' : undefined,
               }}
             >
               {/* Element content -- or inline editing */}

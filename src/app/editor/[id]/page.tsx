@@ -249,7 +249,24 @@ export default function EditorPage() {
   const handlePropertyUpdate = useCallback((updates: Partial<CanvasElement>) => {
     if (selectedIds.length !== 1) return;
     const id = selectedIds[0];
-    const updated = elements.map(el => el.id === id ? { ...el, ...updates } : el);
+    const updated = elements.map(el => {
+      if (el.id !== id) return el;
+      const merged = { ...el, ...updates };
+      // Auto-resize buttons when font properties change
+      if (merged.type === 'button' && updates.buttonStyle) {
+        const bs = merged.buttonStyle!;
+        const fontSize = bs.fontSize ?? 16;
+        const paddingX = bs.paddingX ?? 24;
+        const paddingY = bs.paddingY ?? 12;
+        const charWidth = fontSize * 0.62;
+        const textWidth = (merged.content || '').length * charWidth;
+        const newWidth = Math.max(150, Math.ceil(textWidth + paddingX * 2));
+        const newHeight = Math.max(40, Math.ceil(fontSize * 1.6 + paddingY * 2));
+        merged.width = Math.max(merged.width, newWidth);
+        merged.height = Math.max(merged.height, newHeight);
+      }
+      return merged;
+    });
     setElements(updated);
   }, [elements, selectedIds, setElements]);
 
