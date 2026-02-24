@@ -33,6 +33,10 @@ interface FreeFormCanvasProps {
   eraserBrushSize?: number;
   eraserSoftness?: number;
   eraserOpacity?: number;
+  eraserMagicMode?: boolean;
+  eraserMagicTolerance?: number;
+  eraserMagicRadius?: number;
+  eraserMagicSoftness?: number;
   // File drop handler for uploads
   onFileDrop?: (dataUrl: string, width: number, height: number, x: number, y: number) => void;
 }
@@ -552,6 +556,10 @@ export default function FreeFormCanvas({
   eraserBrushSize = 50,
   eraserSoftness = 70,
   eraserOpacity = 100,
+  eraserMagicMode,
+  eraserMagicTolerance = 30,
+  eraserMagicRadius = 100,
+  eraserMagicSoftness = 50,
   onFileDrop,
 }: FreeFormCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -584,6 +592,7 @@ export default function FreeFormCanvas({
   const isEraserPaintingRef = useRef(false);
   const lastEraserPosRef = useRef<Position | null>(null);
   const eraserInitializedRef = useRef<string | null>(null);
+  const eraserNaturalSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
 
   const scale = zoom / 100;
 
@@ -612,7 +621,11 @@ export default function FreeFormCanvas({
   const eraserPaint = useCallback((canvasEl: HTMLCanvasElement, localX: number, localY: number) => {
     const ctx = canvasEl.getContext('2d');
     if (!ctx) return;
-    const radius = eraserBrushSize / 2;
+    // Scale brush size from element display coords to natural image pixel coords
+    const nat = eraserNaturalSizeRef.current;
+    const el = eraserTargetId ? elements.find(e => e.id === eraserTargetId) : null;
+    const brushScale = (nat.w > 0 && el) ? nat.w / el.width : 1;
+    const radius = (eraserBrushSize / 2) * brushScale;
     const softnessFrac = eraserSoftness / 100;
     const opacityFrac = eraserOpacity / 100;
 
@@ -627,7 +640,7 @@ export default function FreeFormCanvas({
     ctx.arc(localX, localY, radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
-  }, [eraserBrushSize, eraserSoftness, eraserOpacity]);
+  }, [eraserBrushSize, eraserSoftness, eraserOpacity, eraserTargetId, elements]);
 
   const eraserPaintLine = useCallback((canvasEl: HTMLCanvasElement, from: Position, to: Position) => {
     const dx = to.x - from.x;
@@ -649,11 +662,68 @@ export default function FreeFormCanvas({
     const canvasEl = eraserCanvasRef.current;
     if (!canvasEl) return null;
     const rect = canvasEl.getBoundingClientRect();
+    // Map screen coords to the canvas pixel buffer (which uses natural image dimensions)
+    const scaleX = canvasEl.width / rect.width;
+    const scaleY = canvasEl.height / rect.height;
     return {
-      x: (clientX - rect.left) * (canvasEl.width / rect.width),
-      y: (clientY - rect.top) * (canvasEl.height / rect.height),
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
     };
   }, []);
+
+  const magicErase = useCallback((canvasEl: HTMLCanvasElement, clickX: number, clickY: number) => {
+    const ctx = canvasEl.getContext('2d');
+    if (!ctx) return;
+    // Scale radius from element display coords to natural image pixel coords
+    const nat = eraserNaturalSizeRef.current;
+    const el = eraserTargetId ? elements.find(e => e.id === eraserTargetId) : null;
+    const brushScale = (nat.w > 0 && el) ? nat.w / el.width : 1;
+    const radius = eraserMagicRadius * brushScale;
+    const tolerance = eraserMagicTolerance;
+    const softness = Math.max(0.01, eraserMagicSoftness / 100);
+
+    const cw = canvasEl.width;
+    const ch = canvasEl.height;
+    const imageData = ctx.getImageData(0, 0, cw, ch);
+    const data = imageData.data;
+
+    const cx = Math.round(clickX);
+    const cy = Math.round(clickY);
+    if (cx < 0 || cx >= cw || cy < 0 || cy >= ch) return;
+
+    const targetIdx = (cy * cw + cx) * 4;
+    const tR = data[targetIdx];
+    const tG = data[targetIdx + 1];
+    const tB = data[targetIdx + 2];
+
+    const r = Math.ceil(radius);
+    const yStart = Math.max(0, cy - r);
+    const yEnd = Math.min(ch - 1, cy + r);
+    const xStart = Math.max(0, cx - r);
+    const xEnd = Math.min(cw - 1, cx + r);
+
+    for (let y = yStart; y <= yEnd; y++) {
+      for (let x = xStart; x <= xEnd; x++) {
+        const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+        if (dist > radius) continue;
+
+        const i = (y * cw + x) * 4;
+        const colorDiff = Math.sqrt(
+          (data[i] - tR) ** 2 +
+          (data[i + 1] - tG) ** 2 +
+          (data[i + 2] - tB) ** 2
+        );
+
+        if (colorDiff <= tolerance * 2.55) {
+          const edgeFactor = dist / radius;
+          const softFactor = edgeFactor > (1 - softness)
+            ? (1 - edgeFactor) / softness : 1;
+          data[i + 3] = Math.max(0, Math.round(data[i + 3] - 255 * Math.max(0, softFactor)));
+        }
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+  }, [eraserTargetId, elements, eraserMagicRadius, eraserMagicTolerance, eraserMagicSoftness]);
 
   const saveEraserResult = useCallback(() => {
     if (!eraserTargetId || !eraserCanvasRef.current) return;
@@ -805,27 +875,47 @@ export default function FreeFormCanvas({
           setEraserTargetId(elementId);
           onSelectionChange([elementId]);
 
-          // Start painting — the canvas init happens via ref callback
-          isEraserPaintingRef.current = true;
+          // Start erasing — the canvas init happens via ref callback
+          if (eraserMagicMode) {
+            // Magic eraser: single click removes similar-colored pixels
+            requestAnimationFrame(() => {
+              const canvasEl = eraserCanvasRef.current;
+              if (canvasEl) {
+                const ctx = canvasEl.getContext('2d');
+                if (ctx) {
+                  eraserStrokeHistoryRef.current.push(
+                    ctx.getImageData(0, 0, canvasEl.width, canvasEl.height)
+                  );
+                }
+                const pos = screenToEraserCanvas(e.clientX, e.clientY);
+                if (pos) {
+                  magicErase(canvasEl, pos.x, pos.y);
+                }
+              }
+            });
+          } else {
+            // Brush eraser: paint transparency
+            isEraserPaintingRef.current = true;
 
-          // Save state for undo before first stroke
-          requestAnimationFrame(() => {
-            const canvasEl = eraserCanvasRef.current;
-            if (canvasEl) {
-              const ctx = canvasEl.getContext('2d');
-              if (ctx) {
-                eraserStrokeHistoryRef.current.push(
-                  ctx.getImageData(0, 0, canvasEl.width, canvasEl.height)
-                );
+            // Save state for undo before first stroke
+            requestAnimationFrame(() => {
+              const canvasEl = eraserCanvasRef.current;
+              if (canvasEl) {
+                const ctx = canvasEl.getContext('2d');
+                if (ctx) {
+                  eraserStrokeHistoryRef.current.push(
+                    ctx.getImageData(0, 0, canvasEl.width, canvasEl.height)
+                  );
+                }
+                // Paint at click position
+                const pos = screenToEraserCanvas(e.clientX, e.clientY);
+                if (pos) {
+                  eraserPaint(canvasEl, pos.x, pos.y);
+                  lastEraserPosRef.current = pos;
+                }
               }
-              // Paint at click position
-              const pos = screenToEraserCanvas(e.clientX, e.clientY);
-              if (pos) {
-                eraserPaint(canvasEl, pos.x, pos.y);
-                lastEraserPosRef.current = pos;
-              }
-            }
-          });
+            });
+          }
           return;
         }
         // Non-image click in eraser mode: just select
@@ -883,7 +973,7 @@ export default function FreeFormCanvas({
       setDragState(newDragState);
       dragStateRef.current = newDragState;
     },
-    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId, isSpaceHeld, handlePanMouseDown, eraserMode, eraserTargetId, saveEraserResult, screenToEraserCanvas, eraserPaint]
+    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId, isSpaceHeld, handlePanMouseDown, eraserMode, eraserMagicMode, eraserTargetId, saveEraserResult, screenToEraserCanvas, eraserPaint, magicErase]
   );
 
   // ── Double-click to enter text edit mode ──────────────────────────────────
@@ -1731,26 +1821,32 @@ export default function FreeFormCanvas({
                           if (node && eraserInitializedRef.current !== el.id) {
                             eraserCanvasRef.current = node;
                             eraserInitializedRef.current = el.id;
-                            // Initialize canvas with image
-                            const ctx = node.getContext('2d');
-                            if (ctx) {
-                              const img = new Image();
-                              img.crossOrigin = 'anonymous';
-                              img.onload = () => {
-                                ctx.drawImage(img, 0, 0, node.width, node.height);
+                            // Initialize canvas with NATURAL image dimensions to prevent stretching
+                            const img = new Image();
+                            img.crossOrigin = 'anonymous';
+                            img.onload = () => {
+                              const natW = img.naturalWidth || img.width;
+                              const natH = img.naturalHeight || img.height;
+                              // Set canvas pixel buffer to natural image size
+                              node.width = natW;
+                              node.height = natH;
+                              eraserNaturalSizeRef.current = { w: natW, h: natH };
+                              const ctx = node.getContext('2d');
+                              if (ctx) {
+                                ctx.drawImage(img, 0, 0, natW, natH);
                                 eraserStrokeHistoryRef.current = [
-                                  ctx.getImageData(0, 0, node.width, node.height),
+                                  ctx.getImageData(0, 0, natW, natH),
                                 ];
-                              };
-                              img.src = el.content;
-                            }
+                              }
+                            };
+                            img.src = el.content;
                           } else if (node) {
                             eraserCanvasRef.current = node;
                           }
                         }}
-                        width={el.width}
-                        height={el.height}
-                        style={{ ...imgStyle, position: 'relative', zIndex: 1 }}
+                        width={1}
+                        height={1}
+                        style={{ ...imgStyle, position: 'relative', zIndex: 1, objectFit: undefined }}
                       />
                     </div>
                   );
