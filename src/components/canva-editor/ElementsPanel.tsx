@@ -6,9 +6,10 @@ import { AssetItem, AssetSection } from './types';
 
 interface ElementsPanelProps {
   onDragStart: (item: AssetItem, e: React.DragEvent) => void;
+  onClickAdd?: (item: AssetItem) => void;
 }
 
-export default function ElementsPanel({ onDragStart }: ElementsPanelProps) {
+export default function ElementsPanel({ onDragStart, onClickAdd }: ElementsPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -71,6 +72,7 @@ export default function ElementsPanel({ onDragStart }: ElementsPanelProps) {
             isExpanded={searchQuery.trim() ? true : !!expandedSections[section.id]}
             onToggle={() => toggleSection(section.id)}
             onDragStart={onDragStart}
+            onClickAdd={onClickAdd}
           />
         ))}
 
@@ -89,11 +91,13 @@ function SectionBlock({
   isExpanded,
   onToggle,
   onDragStart,
+  onClickAdd,
 }: {
   section: AssetSection;
   isExpanded: boolean;
   onToggle: () => void;
   onDragStart: (item: AssetItem, e: React.DragEvent) => void;
+  onClickAdd?: (item: AssetItem) => void;
 }) {
   return (
     <div style={styles.sectionBlock}>
@@ -130,7 +134,7 @@ function SectionBlock({
               <div style={styles.subsectionLabel}>{sub.label}</div>
               <div style={styles.itemsGrid}>
                 {sub.items.map((item) => (
-                  <AssetItemCard key={item.id} item={item} onDragStart={onDragStart} />
+                  <AssetItemCard key={item.id} item={item} onDragStart={onDragStart} onClickAdd={onClickAdd} />
                 ))}
               </div>
             </div>
@@ -146,15 +150,21 @@ function SectionBlock({
 function AssetItemCard({
   item,
   onDragStart,
+  onClickAdd,
 }: {
   item: AssetItem;
   onDragStart: (item: AssetItem, e: React.DragEvent) => void;
+  onClickAdd?: (item: AssetItem) => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.effectAllowed = 'copy';
     onDragStart(item, e);
+  };
+
+  const handleClick = () => {
+    if (onClickAdd) onClickAdd(item);
   };
 
   const renderPreview = () => {
@@ -292,14 +302,16 @@ function AssetItemCard({
     <div
       draggable="true"
       onDragStart={handleDragStart}
+      onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
         ...styles.itemCard,
         borderColor: hovered ? 'rgba(59,130,246,0.5)' : 'rgba(255,255,255,0.06)',
         backgroundColor: hovered ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.02)',
+        cursor: 'grab',
       }}
-      title={item.label}
+      title={`${item.label} — Click to add, or drag to canvas`}
     >
       {renderPreview()}
       <span style={styles.itemLabel}>{item.label}</span>

@@ -22,7 +22,7 @@ export const ASSET_SECTIONS: AssetSection[] = [
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
               glowColor: '#3b82f6',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 60% 55% at center 35%, black 20%, transparent 90%' },
             },
           },
           {
@@ -101,11 +101,11 @@ export const ASSET_SECTIONS: AssetSection[] = [
         items: [
           {
             id: aid(), type: 'html-component', label: 'Bootcamp Title Card',
-            htmlSnippet: '<div data-sigma style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;position:absolute;z-index:100;font-family:\'Saira Condensed\',sans-serif;"><div style="font-size:52px;font-weight:800;color:#ffffff;text-transform:uppercase;line-height:1;letter-spacing:-1px;">AI ENGINEERING</div><div style="font-size:52px;font-weight:800;color:#3B82F6;text-transform:uppercase;line-height:1;letter-spacing:-1px;">BOOTCAMP <span style="color:#D7EF3F;">1.0</span></div><div style="margin-top:4px;font-size:15px;font-weight:500;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;font-family:Poppins,sans-serif;">Built exclusively for Software Engineers</div></div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="title-card" style="position:absolute;z-index:100;font-family:Poppins,sans-serif;"><div style="font-size:64px;font-weight:900;color:#FFFFFF;text-transform:uppercase;letter-spacing:-1px;line-height:0.95;transform:scaleX(0.76);transform-origin:left;">AI ENGINEERING<br>BOOTCAMP <span style="color:#3b82f6;font-size:50px;font-weight:900;">1.0</span></div><div style="font-size:20px;font-weight:400;color:rgba(255,255,255,0.55);font-style:italic;margin-top:12px;">Built Exclusively for</div><div style="font-size:72px;font-weight:900;color:#20C997;text-transform:uppercase;letter-spacing:-1px;line-height:0.92;transform:scaleX(0.76);transform-origin:left;margin-top:8px;">SOFTWARE<br>ENGINEERS</div></div>',
             element: {
-              type: 'text', width: 540, height: 160, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: 'AI ENGINEERING\nBOOTCAMP 1.0',
-              textStyle: { fontFamily: 'Saira Condensed', fontSize: 52, fontWeight: 800, fontStyle: 'normal', color: '#ffffff', textAlign: 'left', letterSpacing: -1, lineHeight: 1, textTransform: 'uppercase' },
+              type: 'text', width: 600, height: 350, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'AI ENGINEERING\nBOOTCAMP 1.0\nSOFTWARE ENGINEERS',
+              textStyle: { fontFamily: 'Poppins', fontSize: 64, fontWeight: 900, fontStyle: 'normal', color: '#ffffff', textAlign: 'left', letterSpacing: -1, lineHeight: 0.95, textTransform: 'uppercase', scaleX: 0.76 },
             },
           },
         ],
@@ -179,6 +179,15 @@ export const ASSET_SECTIONS: AssetSection[] = [
               badgeStyle: { backgroundColor: '#D7EF3F', textColor: '#181830', fontFamily: 'Poppins', fontSize: 14, fontWeight: 700, borderRadius: 8, paddingX: 16, paddingY: 8 },
             },
           },
+          {
+            id: aid(), type: 'html-component', label: 'Software Engineers Badge',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="audience-badge" style="position:absolute;z-index:100;font-family:Poppins,sans-serif;display:inline-flex;flex-direction:column;align-items:center;gap:4px;"><div style="padding:8px 20px;background:rgba(32,201,151,0.1);border:1px solid rgba(32,201,151,0.3);border-radius:8px;"><span style="font-size:16px;font-weight:600;color:rgba(255,255,255,0.9);">Built Exclusively for</span><span style="font-size:16px;font-weight:800;color:#20C997;"> Software Engineers</span></div><span style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.4);">2+ Years Experience Required</span></div>',
+            element: {
+              type: 'badge', width: 340, height: 60, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Built Exclusively for Software Engineers',
+              badgeStyle: { backgroundColor: 'rgba(32,201,151,0.1)', textColor: 'rgba(255,255,255,0.9)', fontFamily: 'Poppins', fontSize: 16, fontWeight: 600, borderRadius: 8, paddingX: 20, paddingY: 8, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1 },
+            },
+          },
         ],
       },
       {
@@ -187,7 +196,7 @@ export const ASSET_SECTIONS: AssetSection[] = [
         items: [
           {
             id: aid(), type: 'html-component', label: 'Price Card',
-            htmlSnippet: '<div class="price-card" data-sigma style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:linear-gradient(180deg,rgba(59,130,246,0.08),rgba(13,17,23,0.95));border:1px solid rgba(59,130,246,0.25);border-radius:16px;min-width:340px;position:absolute;z-index:100;font-family:Poppins,sans-serif;"><span style="font-size:11px;font-weight:600;color:#3b82f6;letter-spacing:2.5px;text-transform:uppercase;">Investment</span><div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.7);">\u20B9</span><span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">36,000</span></div><span style="font-size:13px;font-weight:500;color:#20C997;">+ Gen AI &amp; DS Bootcamp Included for Free</span><div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px;"><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 75 days \u00b7 Live cohorts \u00b7 March 7 batch</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 8+ production projects you deploy</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 500 seats only</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> Full refund before March 14</div></div><div style="margin-top:8px;padding:14px 40px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:700;color:#fff;letter-spacing:0.5px;text-transform:uppercase;width:100%;text-align:center;">ENROLL NOW \u2014 \u20B936,000 \u2192</div><div style="display:flex;gap:16px;margin-top:2px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">EMI Available</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">\u00b7</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">No-Risk Refund</span></div></div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-card" style="position:absolute;z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:linear-gradient(180deg,rgba(59,130,246,0.08),rgba(13,17,23,0.95));border:1px solid rgba(59,130,246,0.25);border-radius:16px;min-width:340px;font-family:Poppins,sans-serif;"><span style="font-size:11px;font-weight:600;color:#3b82f6;letter-spacing:2.5px;text-transform:uppercase;">Investment</span><div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.7);">\u20B9</span><span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">36,000</span></div><span style="font-size:13px;font-weight:500;color:#20C997;">+ Gen AI &amp; DS Bootcamp Included for Free</span><div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px;"><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 75 days \u00b7 Live cohorts \u00b7 March 7</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 8+ production projects</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 500 seats only</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> Full refund before March 14</div></div><div style="margin-top:8px;padding:14px 40px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:700;color:#fff;text-transform:uppercase;width:100%;text-align:center;">ENROLL NOW \u2014 \u20B936,000 \u2192</div><div style="display:flex;gap:16px;margin-top:2px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">EMI Available \u00b7 No-Risk Refund</span></div></div>',
             element: {
               type: 'badge', width: 380, height: 340, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '\u20B936,000 \u2014 Investment',

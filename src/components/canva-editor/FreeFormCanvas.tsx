@@ -273,8 +273,10 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
     case 'badge': {
       const bg = el.badgeStyle;
       const badgeStyle: React.CSSProperties = {
-        width: '100%',
-        height: '100%',
+        width: 'auto',
+        height: 'auto',
+        minWidth: '100%',
+        minHeight: '100%',
         backgroundColor: bg?.backgroundColor || 'rgba(255,255,255,0.1)',
         color: bg?.textColor || '#ffffff',
         fontFamily: bg?.fontFamily || 'Kanit, sans-serif',
@@ -286,10 +288,11 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
         paddingRight: bg?.paddingX ?? 16,
         paddingTop: bg?.paddingY ?? 6,
         paddingBottom: bg?.paddingY ?? 6,
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 6,
+        whiteSpace: 'nowrap',
         pointerEvents: 'none',
         userSelect: 'none',
         boxSizing: 'border-box',
@@ -1435,7 +1438,7 @@ export default function FreeFormCanvas({
                 outline: isSelected ? '2px solid #3B82F6' : 'none',
                 outlineOffset: -1,
                 pointerEvents: el.locked && !isSelected ? 'none' : 'auto',
-                overflow: el.type === 'button' ? 'visible' : undefined,
+                overflow: (el.type === 'button' || el.type === 'badge') ? 'visible' : undefined,
               }}
             >
               {/* Element content -- or inline editing */}
