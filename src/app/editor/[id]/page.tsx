@@ -12,6 +12,7 @@ import TemplatesPanel from '@/components/canva-editor/TemplatesPanel';
 import ElementsPanel from '@/components/canva-editor/ElementsPanel';
 import TextPanel from '@/components/canva-editor/TextPanel';
 import UploadsPanel from '@/components/canva-editor/UploadsPanel';
+import EraserPanel from '@/components/canva-editor/EraserPanel';
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
@@ -101,6 +102,12 @@ export default function EditorPage() {
 
   // ── Text editing mode (disables keyboard shortcuts) ──
   const [isTextEditing, setIsTextEditing] = useState(false);
+
+  // ── Eraser tool ──
+  const [eraserBrushSize, setEraserBrushSize] = useState(50);
+  const [eraserSoftness, setEraserSoftness] = useState(70);
+  const [eraserOpacity, setEraserOpacity] = useState(100);
+  const eraserMode = activeTab === 'eraser';
 
   // ── Shortcuts overlay ──
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -220,6 +227,66 @@ export default function EditorPage() {
     e.dataTransfer.setData('application/sigma-element', elementData);
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
+
+  // ── Upload click-to-add ──
+  const handleUploadClickAdd = useCallback((dataUrl: string, width: number, height: number) => {
+    if (iframeMode) {
+      setIframeMode(false);
+      setIframeHtmlPath(null);
+    }
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+    const maxDim = 400;
+    let w = Math.min(width, 500);
+    let h = Math.min(height, 500);
+    if (w > maxDim || h > maxDim) {
+      const ratio = Math.min(maxDim / w, maxDim / h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+    const newEl: CanvasElement = {
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      type: 'image',
+      x: Math.round(activeSize.width / 2 - w / 2),
+      y: Math.round(activeSize.height / 2 - h / 2),
+      width: w,
+      height: h,
+      rotation: 0,
+      opacity: 1,
+      zIndex: maxZ + 1,
+      locked: false,
+      visible: true,
+      content: dataUrl,
+      imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+    };
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
+    showToast('success', 'Image Added', 'Uploaded image added to canvas');
+  }, [iframeMode, elements, activeSize, setElements, showToast]);
+
+  // ── File drop on canvas ──
+  const handleFileDrop = useCallback((dataUrl: string, width: number, height: number, x: number, y: number) => {
+    if (iframeMode) {
+      setIframeMode(false);
+      setIframeHtmlPath(null);
+    }
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+    const newEl: CanvasElement = {
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      type: 'image',
+      x, y,
+      width, height,
+      rotation: 0,
+      opacity: 1,
+      zIndex: maxZ + 1,
+      locked: false,
+      visible: true,
+      content: dataUrl,
+      imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+    };
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
+    showToast('success', 'Image Added', 'File dropped onto canvas');
+  }, [iframeMode, elements, setElements, showToast]);
 
   // ── Add text from TextPanel ──
   const handleAddText = useCallback((preset: 'heading' | 'subheading' | 'body', content?: string) => {
@@ -579,7 +646,7 @@ export default function EditorPage() {
     toggleShortcutsHelp: () => setShowShortcuts(s => !s),
   }), [elements, selectedIds, undo, redo, setElements, showToast, handleExport]);
 
-  useKeyboardShortcuts(shortcutActions, isTextEditing, selectedIds.length > 0);
+  useKeyboardShortcuts(shortcutActions, isTextEditing || eraserMode, selectedIds.length > 0);
 
   // ── Selected element for properties panel ──
   const selectedElement = selectedIds.length === 1
@@ -628,7 +695,18 @@ export default function EditorPage() {
       case 'text':
         return <TextPanel onAddText={handleAddText} />;
       case 'uploads':
-        return <UploadsPanel onDragStart={handleUploadDragStart} />;
+        return <UploadsPanel onDragStart={handleUploadDragStart} onClickAdd={handleUploadClickAdd} />;
+      case 'eraser':
+        return (
+          <EraserPanel
+            brushSize={eraserBrushSize}
+            softness={eraserSoftness}
+            opacity={eraserOpacity}
+            onBrushSizeChange={setEraserBrushSize}
+            onSoftnessChange={setEraserSoftness}
+            onOpacityChange={setEraserOpacity}
+          />
+        );
       case 'settings':
         return (
           <SettingsPanel
@@ -829,6 +907,11 @@ export default function EditorPage() {
               onTextEditEnd={() => setIsTextEditing(false)}
               onZoomChange={setZoom}
               canvasExportRef={canvasRef}
+              eraserMode={eraserMode}
+              eraserBrushSize={eraserBrushSize}
+              eraserSoftness={eraserSoftness}
+              eraserOpacity={eraserOpacity}
+              onFileDrop={handleFileDrop}
             />
           )}
 

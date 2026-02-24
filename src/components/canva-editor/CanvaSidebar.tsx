@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 
-export type SidebarTab = 'templates' | 'elements' | 'text' | 'uploads' | 'settings';
+export type SidebarTab = 'templates' | 'elements' | 'text' | 'uploads' | 'eraser' | 'settings';
 
 interface CanvaSidebarProps {
   activeTab: SidebarTab | null;
@@ -49,6 +49,13 @@ const UploadsIcon = () => (
   </svg>
 );
 
+const EraserIcon = () => (
+  <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 20H7L3 16a1 1 0 0 1 0-1.41l9.59-9.59a2 2 0 0 1 2.82 0l5.17 5.17a2 2 0 0 1 0 2.83L14 20" />
+    <path d="M6 11l8 8" />
+  </svg>
+);
+
 const SettingsIcon = () => (
   <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3" />
@@ -61,6 +68,7 @@ const TABS: TabDefinition[] = [
   { id: 'elements', label: 'Elements', icon: <ElementsIcon /> },
   { id: 'text', label: 'Text', icon: <TextIcon /> },
   { id: 'uploads', label: 'Uploads', icon: <UploadsIcon /> },
+  { id: 'eraser', label: 'Eraser', icon: <EraserIcon /> },
   { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
 ];
 

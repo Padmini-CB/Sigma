@@ -28,6 +28,13 @@ interface FreeFormCanvasProps {
   onTextEditEnd?: () => void;
   onZoomChange?: (updater: number | ((prev: number) => number)) => void;
   canvasExportRef?: React.Ref<HTMLDivElement>;
+  // Eraser tool
+  eraserMode?: boolean;
+  eraserBrushSize?: number;
+  eraserSoftness?: number;
+  eraserOpacity?: number;
+  // File drop handler for uploads
+  onFileDrop?: (dataUrl: string, width: number, height: number, x: number, y: number) => void;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -541,6 +548,11 @@ export default function FreeFormCanvas({
   onTextEditEnd,
   onZoomChange,
   canvasExportRef,
+  eraserMode,
+  eraserBrushSize = 50,
+  eraserSoftness = 70,
+  eraserOpacity = 100,
+  onFileDrop,
 }: FreeFormCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
@@ -564,6 +576,15 @@ export default function FreeFormCanvas({
   const resizeStateRef = useRef<ResizeState | null>(null);
   const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
 
+  // ── Eraser state ──
+  const [eraserTargetId, setEraserTargetId] = useState<string | null>(null);
+  const [eraserCursorPos, setEraserCursorPos] = useState<Position | null>(null);
+  const eraserCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const eraserStrokeHistoryRef = useRef<ImageData[]>([]);
+  const isEraserPaintingRef = useRef(false);
+  const lastEraserPosRef = useRef<Position | null>(null);
+  const eraserInitializedRef = useRef<string | null>(null);
+
   const scale = zoom / 100;
 
   // ── Sorted elements by zIndex ─────────────────────────────────────────────
@@ -585,6 +606,76 @@ export default function FreeFormCanvas({
     },
     [scale]
   );
+
+  // ── Eraser helpers ──────────────────────────────────────────────────────────
+
+  const eraserPaint = useCallback((canvasEl: HTMLCanvasElement, localX: number, localY: number) => {
+    const ctx = canvasEl.getContext('2d');
+    if (!ctx) return;
+    const radius = eraserBrushSize / 2;
+    const softnessFrac = eraserSoftness / 100;
+    const opacityFrac = eraserOpacity / 100;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    const innerRadius = radius * Math.max(0, 1 - softnessFrac);
+    const gradient = ctx.createRadialGradient(localX, localY, innerRadius, localX, localY, radius);
+    gradient.addColorStop(0, `rgba(0,0,0,${opacityFrac})`);
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(localX, localY, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }, [eraserBrushSize, eraserSoftness, eraserOpacity]);
+
+  const eraserPaintLine = useCallback((canvasEl: HTMLCanvasElement, from: Position, to: Position) => {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const spacing = Math.max(2, eraserBrushSize / 4);
+    if (dist < spacing) {
+      eraserPaint(canvasEl, to.x, to.y);
+      return;
+    }
+    const steps = Math.ceil(dist / spacing);
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      eraserPaint(canvasEl, from.x + dx * t, from.y + dy * t);
+    }
+  }, [eraserBrushSize, eraserPaint]);
+
+  const screenToEraserCanvas = useCallback((clientX: number, clientY: number): Position | null => {
+    const canvasEl = eraserCanvasRef.current;
+    if (!canvasEl) return null;
+    const rect = canvasEl.getBoundingClientRect();
+    return {
+      x: (clientX - rect.left) * (canvasEl.width / rect.width),
+      y: (clientY - rect.top) * (canvasEl.height / rect.height),
+    };
+  }, []);
+
+  const saveEraserResult = useCallback(() => {
+    if (!eraserTargetId || !eraserCanvasRef.current) return;
+    const canvasEl = eraserCanvasRef.current;
+    const dataUrl = canvasEl.toDataURL('image/png');
+    const updated = elements.map(el =>
+      el.id === eraserTargetId ? { ...el, content: dataUrl } : el
+    );
+    onElementsChange(updated);
+    setEraserTargetId(null);
+    eraserStrokeHistoryRef.current = [];
+    eraserInitializedRef.current = null;
+  }, [eraserTargetId, elements, onElementsChange]);
+
+  // When eraser mode deactivates, save result
+  const prevEraserModeRef = useRef(eraserMode);
+  useEffect(() => {
+    if (prevEraserModeRef.current && !eraserMode && eraserTargetId) {
+      saveEraserResult();
+    }
+    prevEraserModeRef.current = eraserMode;
+  }, [eraserMode, eraserTargetId, saveEraserResult]);
 
   // ── Close context menu on any click ───────────────────────────────────────
   useEffect(() => {
@@ -699,6 +790,47 @@ export default function FreeFormCanvas({
     (e: React.MouseEvent, elementId: string) => {
       if (e.button === 2) return; // right-click handled separately
 
+      // Eraser mode: start painting on image elements
+      if (eraserMode) {
+        const el = elements.find((el) => el.id === elementId);
+        if (el && el.type === 'image') {
+          e.stopPropagation();
+          e.preventDefault();
+
+          // If switching to a different image, save previous eraser result
+          if (eraserTargetId && eraserTargetId !== elementId) {
+            saveEraserResult();
+          }
+
+          setEraserTargetId(elementId);
+          onSelectionChange([elementId]);
+
+          // Start painting — the canvas init happens via ref callback
+          isEraserPaintingRef.current = true;
+
+          // Save state for undo before first stroke
+          requestAnimationFrame(() => {
+            const canvasEl = eraserCanvasRef.current;
+            if (canvasEl) {
+              const ctx = canvasEl.getContext('2d');
+              if (ctx) {
+                eraserStrokeHistoryRef.current.push(
+                  ctx.getImageData(0, 0, canvasEl.width, canvasEl.height)
+                );
+              }
+              // Paint at click position
+              const pos = screenToEraserCanvas(e.clientX, e.clientY);
+              if (pos) {
+                eraserPaint(canvasEl, pos.x, pos.y);
+                lastEraserPosRef.current = pos;
+              }
+            }
+          });
+          return;
+        }
+        // Non-image click in eraser mode: just select
+      }
+
       // Space+click on element = pan (don't start drag)
       if (isSpaceHeld) {
         handlePanMouseDown(e);
@@ -751,7 +883,7 @@ export default function FreeFormCanvas({
       setDragState(newDragState);
       dragStateRef.current = newDragState;
     },
-    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId, isSpaceHeld, handlePanMouseDown]
+    [elements, selectedIds, onSelectionChange, screenToCanvas, editingTextId, isSpaceHeld, handlePanMouseDown, eraserMode, eraserTargetId, saveEraserResult, screenToEraserCanvas, eraserPaint]
   );
 
   // ── Double-click to enter text edit mode ──────────────────────────────────
@@ -958,6 +1090,32 @@ export default function FreeFormCanvas({
   // ── Global mouse move (drag / resize / selection rect) ────────────────────
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      // ── Eraser cursor tracking ──
+      if (eraserMode) {
+        const canvasEl = canvasRef.current;
+        if (canvasEl) {
+          const rect = canvasEl.getBoundingClientRect();
+          setEraserCursorPos({
+            x: (e.clientX - rect.left) / scale,
+            y: (e.clientY - rect.top) / scale,
+          });
+        }
+      }
+
+      // ── Eraser painting ──
+      if (isEraserPaintingRef.current && eraserCanvasRef.current) {
+        const pos = screenToEraserCanvas(e.clientX, e.clientY);
+        if (pos) {
+          if (lastEraserPosRef.current) {
+            eraserPaintLine(eraserCanvasRef.current, lastEraserPosRef.current, pos);
+          } else {
+            eraserPaint(eraserCanvasRef.current, pos.x, pos.y);
+          }
+          lastEraserPosRef.current = pos;
+        }
+        return;
+      }
+
       // ── Dragging elements ──
       if (dragStateRef.current) {
         const ds = dragStateRef.current;
@@ -1184,6 +1342,13 @@ export default function FreeFormCanvas({
     };
 
     const handleMouseUp = () => {
+      // Finalize eraser stroke
+      if (isEraserPaintingRef.current) {
+        isEraserPaintingRef.current = false;
+        lastEraserPosRef.current = null;
+        return;
+      }
+
       // Finalize drag — only commit to history if actual movement occurred
       if (dragStateRef.current) {
         const ds = dragStateRef.current;
@@ -1231,7 +1396,38 @@ export default function FreeFormCanvas({
     onElementsChange,
     onElementsUpdate,
     onSelectionChange,
+    eraserMode,
+    eraserPaint,
+    eraserPaintLine,
+    screenToEraserCanvas,
   ]);
+
+  // ── Eraser keyboard: Ctrl+Z undo stroke, Escape to save & exit ──────────
+  useEffect(() => {
+    if (!eraserMode) return;
+    const handler = (e: KeyboardEvent) => {
+      // Ctrl+Z: undo last stroke
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        const history = eraserStrokeHistoryRef.current;
+        if (history.length > 0 && eraserCanvasRef.current) {
+          const ctx = eraserCanvasRef.current.getContext('2d');
+          if (ctx) {
+            const prev = history.pop()!;
+            ctx.putImageData(prev, 0, 0);
+          }
+        }
+      }
+      // Escape: save and exit eraser on this element
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        saveEraserResult();
+      }
+    };
+    window.addEventListener('keydown', handler, true); // capture phase to beat other handlers
+    return () => window.removeEventListener('keydown', handler, true);
+  }, [eraserMode, saveEraserResult]);
 
   // ── Keyboard: Delete selected elements ────────────────────────────────────
   useEffect(() => {
@@ -1319,54 +1515,85 @@ export default function FreeFormCanvas({
     return () => workspace.removeEventListener('wheel', handleWheel);
   }, [onZoomChange]);
 
-  // ── Drop handler for elements dragged from sidebar ──────────────────────
+  // ── Drop handler for elements dragged from sidebar + file drops ─────────
   const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes('application/sigma-element')) {
+    if (e.dataTransfer.types.includes('application/sigma-element') || e.dataTransfer.types.includes('Files')) {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'copy';
     }
   }, []);
 
   const handleCanvasDrop = useCallback((e: React.DragEvent) => {
+    // Handle element drops from sidebar
     const data = e.dataTransfer.getData('application/sigma-element');
-    if (!data) return;
-    e.preventDefault();
+    if (data) {
+      e.preventDefault();
+      try {
+        const partial = JSON.parse(data) as Partial<CanvasElement>;
+        const canvasPos = screenToCanvas(e.clientX, e.clientY);
+        const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+        const w = partial.width || 200;
+        const h = partial.height || 200;
 
-    try {
-      const partial = JSON.parse(data) as Partial<CanvasElement>;
-      const canvasPos = screenToCanvas(e.clientX, e.clientY);
-      const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
-      const w = partial.width || 200;
-      const h = partial.height || 200;
+        const newEl: CanvasElement = {
+          id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          type: partial.type || 'shape',
+          x: Math.round(canvasPos.x - w / 2),
+          y: Math.round(canvasPos.y - h / 2),
+          width: w,
+          height: h,
+          rotation: partial.rotation ?? 0,
+          opacity: partial.opacity ?? 1,
+          zIndex: maxZ + 1,
+          locked: false,
+          visible: true,
+          content: partial.content || '',
+          textStyle: partial.textStyle,
+          imageStyle: partial.imageStyle,
+          buttonStyle: partial.buttonStyle,
+          badgeStyle: partial.badgeStyle,
+          stripStyle: partial.stripStyle,
+          shapeStyle: partial.shapeStyle,
+          glowColor: partial.glowColor,
+        };
 
-      const newEl: CanvasElement = {
-        id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        type: partial.type || 'shape',
-        x: Math.round(canvasPos.x - w / 2),
-        y: Math.round(canvasPos.y - h / 2),
-        width: w,
-        height: h,
-        rotation: partial.rotation ?? 0,
-        opacity: partial.opacity ?? 1,
-        zIndex: maxZ + 1,
-        locked: false,
-        visible: true,
-        content: partial.content || '',
-        textStyle: partial.textStyle,
-        imageStyle: partial.imageStyle,
-        buttonStyle: partial.buttonStyle,
-        badgeStyle: partial.badgeStyle,
-        stripStyle: partial.stripStyle,
-        shapeStyle: partial.shapeStyle,
-        glowColor: partial.glowColor,
-      };
-
-      onElementsChange([...elements, newEl]);
-      onSelectionChange([newEl.id]);
-    } catch {
-      // Ignore malformed data
+        onElementsChange([...elements, newEl]);
+        onSelectionChange([newEl.id]);
+      } catch {
+        // Ignore malformed data
+      }
+      return;
     }
-  }, [elements, screenToCanvas, onElementsChange, onSelectionChange]);
+
+    // Handle file drops from desktop
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && onFileDrop) {
+      e.preventDefault();
+      const file = files[0];
+      if (!file.type.startsWith('image/')) return;
+      if (file.size > 10 * 1024 * 1024) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target?.result as string;
+        const img = new Image();
+        img.onload = () => {
+          const canvasPos = screenToCanvas(e.clientX, e.clientY);
+          const maxDim = 400;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            const ratio = Math.min(maxDim / w, maxDim / h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+          }
+          onFileDrop(dataUrl, w, h, Math.round(canvasPos.x - w / 2), Math.round(canvasPos.y - h / 2));
+        };
+        img.src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+  }, [elements, screenToCanvas, onElementsChange, onSelectionChange, onFileDrop]);
 
   // ── Prevent default context menu on canvas ────────────────────────────────
   const handleCanvasContextMenu = useCallback((e: React.MouseEvent) => {
@@ -1407,6 +1634,7 @@ export default function FreeFormCanvas({
           }
         }}
         onMouseDown={handleCanvasMouseDown}
+        onMouseLeave={() => { if (eraserMode) setEraserCursorPos(null); }}
         onDragOver={handleCanvasDragOver}
         onDrop={handleCanvasDrop}
         onContextMenu={handleCanvasContextMenu}
@@ -1422,7 +1650,7 @@ export default function FreeFormCanvas({
           boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
           flexShrink: 0,
           overflow: 'visible',
-          cursor: isPanning ? 'grabbing' : isSpaceHeld ? 'grab' : 'default',
+          cursor: isPanning ? 'grabbing' : isSpaceHeld ? 'grab' : eraserMode ? 'none' : 'default',
         }}
       >
         {/* Render elements sorted by zIndex */}
@@ -1446,14 +1674,14 @@ export default function FreeFormCanvas({
                 opacity: el.opacity,
                 transform: el.rotation ? `rotate(${el.rotation}deg)` : undefined,
                 zIndex: el.zIndex,
-                cursor: 'move',
+                cursor: eraserMode && el.type === 'image' ? 'none' : 'move',
                 outline: isSelected ? '2px solid #3B82F6' : 'none',
                 outlineOffset: -1,
                 pointerEvents: 'auto',
                 overflow: (el.type === 'button' || el.type === 'badge') ? 'visible' : undefined,
               }}
             >
-              {/* Element content -- or inline editing */}
+              {/* Element content -- or inline editing -- or eraser canvas */}
               {isEditing ? (
                 <div
                   ref={textEditRef}
@@ -1465,6 +1693,68 @@ export default function FreeFormCanvas({
                 >
                   {el.content}
                 </div>
+              ) : eraserMode && eraserTargetId === el.id && el.type === 'image' ? (
+                (() => {
+                  // Eraser canvas replaces the image
+                  const imgStyle: React.CSSProperties = {
+                    width: '100%',
+                    height: '100%',
+                    display: 'block',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                  };
+                  if (el.imageStyle?.maskType === 'radial') {
+                    imgStyle.maskImage = `radial-gradient(${el.imageStyle.maskParams || 'ellipse at center, black 60%, transparent 100%'})`;
+                    imgStyle.WebkitMaskImage = imgStyle.maskImage;
+                  } else if (el.imageStyle?.maskType === 'linear') {
+                    imgStyle.maskImage = `linear-gradient(${el.imageStyle.maskParams || 'to bottom, black 60%, transparent 100%'})`;
+                    imgStyle.WebkitMaskImage = imgStyle.maskImage;
+                  }
+                  const containerStyle: React.CSSProperties = {
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
+                    borderRadius: el.imageStyle?.borderRadius ?? 0,
+                  };
+                  const glowDiv = el.glowColor ? (
+                    <div style={{
+                      position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%',
+                      background: `radial-gradient(circle, ${el.glowColor} 0%, transparent 70%)`,
+                      filter: 'blur(80px)', opacity: 0.35, pointerEvents: 'none', zIndex: 0,
+                    }} />
+                  ) : null;
+                  return (
+                    <div style={containerStyle}>
+                      {glowDiv}
+                      <canvas
+                        ref={(node) => {
+                          if (node && eraserInitializedRef.current !== el.id) {
+                            eraserCanvasRef.current = node;
+                            eraserInitializedRef.current = el.id;
+                            // Initialize canvas with image
+                            const ctx = node.getContext('2d');
+                            if (ctx) {
+                              const img = new Image();
+                              img.crossOrigin = 'anonymous';
+                              img.onload = () => {
+                                ctx.drawImage(img, 0, 0, node.width, node.height);
+                                eraserStrokeHistoryRef.current = [
+                                  ctx.getImageData(0, 0, node.width, node.height),
+                                ];
+                              };
+                              img.src = el.content;
+                            }
+                          } else if (node) {
+                            eraserCanvasRef.current = node;
+                          }
+                        }}
+                        width={el.width}
+                        height={el.height}
+                        style={{ ...imgStyle, position: 'relative', zIndex: 1 }}
+                      />
+                    </div>
+                  );
+                })()
               ) : (
                 renderElementContent(el)
               )}
@@ -1586,6 +1876,25 @@ export default function FreeFormCanvas({
               }}
             />
           )
+        )}
+
+        {/* Eraser cursor circle */}
+        {eraserMode && eraserCursorPos && (
+          <div
+            style={{
+              position: 'absolute',
+              left: eraserCursorPos.x - eraserBrushSize / 2,
+              top: eraserCursorPos.y - eraserBrushSize / 2,
+              width: eraserBrushSize,
+              height: eraserBrushSize,
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.7)',
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.3)',
+              pointerEvents: 'none',
+              zIndex: 100001,
+              background: `radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent ${Math.round((1 - eraserSoftness / 100) * 100)}%, transparent 100%)`,
+            }}
+          />
         )}
       </div>
 
