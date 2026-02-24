@@ -58,7 +58,7 @@ function makeImage(opts: {
     imageStyle: {
       objectFit: opts.objectFit ?? 'contain',
       borderRadius: 0,
-      maskType: opts.maskType ?? 'radial',
+      maskType: opts.maskType ?? 'none',
       maskParams: opts.maskParams,
     },
   };
@@ -280,7 +280,7 @@ export const TEMPLATES: TemplateInfo[] = [
     thumbnailHeadline: 'BUILD. ORCHESTRATE. DISTRIBUTE.',
     createElements: () => [
       // Trio image — top ~50%, linear mask, blue glow
-      makeImage({ x: 0, y: 0, width: 1080, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', maskType: 'linear', maskParams: 'to bottom, transparent 0%, rgba(0,0,0,0.3) 5%, black 15%, black 70%, transparent 100%', glowColor: '#3b82f6', zIndex: 3 }),
+      makeImage({ x: 0, y: 0, width: 1080, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 3 }),
       makeLogo(36, 32, 30),
       makeSubscriberBadge(),
       // Pillar labels overlaid near bottom of trio
@@ -382,7 +382,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 840, y: 90, width: 190, height: 36, content: 'MODULES 9-10', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Hemanand hero — centered, gold glow
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, black 30%, transparent 100%', glowColor: '#D7EF3F', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', maskType: 'none', glowColor: '#D7EF3F', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Hemanand Vadivel · Co-founder · Ex-Edgewell', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -414,7 +414,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 830, y: 90, width: 200, height: 36, content: 'MODULES 11-12', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Siddhant hero — green glow
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, black 30%, transparent 100%', glowColor: '#20C997', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', maskType: 'none', glowColor: '#20C997', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Siddhant Pandey · AI Research Engineer', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
