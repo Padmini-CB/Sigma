@@ -82,6 +82,26 @@ export default function PropertiesPanel({ element, onUpdate }: PropertiesPanelPr
         {element.type.charAt(0).toUpperCase() + element.type.slice(1)} Properties
       </div>
 
+      {/* Text Content — for all text-containing elements */}
+      {(element.type === 'text' || element.type === 'button' || element.type === 'badge' || element.type === 'strip') && (
+        <>
+          <div style={sectionTitle}>
+            {element.type === 'button' ? 'Button Label' : element.type === 'badge' ? 'Badge Text' : element.type === 'strip' ? 'Strip Text' : 'Text Content'}
+          </div>
+          <textarea
+            value={element.content}
+            onChange={(e) => onUpdate({ content: e.target.value })}
+            rows={element.type === 'text' ? 3 : 2}
+            style={{
+              ...inputStyle,
+              resize: 'vertical',
+              minHeight: element.type === 'text' ? 56 : 36,
+              lineHeight: '1.4',
+            }}
+          />
+        </>
+      )}
+
       {/* Position */}
       <div style={sectionTitle}>Position</div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
