@@ -197,6 +197,7 @@ export interface TemplateInfo {
   thumbnailAccent: string;
   thumbnailHeadline: string;
   thumbnailImage?: string;
+  htmlPath?: string;
   createElements: () => CanvasElement[];
 }
 
@@ -205,6 +206,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-a',
     filename: 'concept-a.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-a.html',
     label: 'A — YOUR TODOs DON\'T SHIP.',
     shortLabel: 'TODOs Don\'t Ship',
     description: 'Dhaval hero right, code mockup left, green CTA',
@@ -239,6 +241,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-b',
     filename: 'concept-b.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-b.html',
     label: 'B — WE SKIP THE BASICS.',
     shortLabel: 'Skip the Basics',
     description: 'Dhaval hero, blue accent headline, italic subtext',
@@ -267,6 +270,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-c',
     filename: 'concept-c.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-c.html',
     label: 'C — THREE PILLARS',
     shortLabel: 'Three Pillars',
     description: 'Trio image, BUILD/ORCHESTRATE/DISTRIBUTE pillars',
@@ -301,6 +305,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-d',
     filename: 'concept-d.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-d.html',
     label: 'D — 500 SEATS. THEN WE CLOSE.',
     shortLabel: '500 Seats',
     description: 'Dhaval hero, scarcity headline, founder quote',
@@ -331,6 +336,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-e',
     filename: 'concept-e.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-e.html',
     label: 'E — BUILD.',
     shortLabel: 'Build',
     description: 'Dhaval hero centered, MODULE 1-8 badge, massive BUILD headline',
@@ -362,6 +368,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-f',
     filename: 'concept-f.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-f.html',
     label: 'F — ORCHESTRATE.',
     shortLabel: 'Orchestrate',
     description: 'Hemanand hero, MODULES 9-10, gold/yellow theme',
@@ -393,6 +400,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-g',
     filename: 'concept-g.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-g.html',
     label: 'G — DISTRIBUTE.',
     shortLabel: 'Distribute',
     description: 'Siddhant hero, MODULES 11-12, green theme',
@@ -424,6 +432,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-h',
     filename: 'concept-h.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-h.html',
     label: 'H — 500 ENGINEERS. ONE ROOM.',
     shortLabel: '500 Engineers',
     description: 'Dhaval hero, personal connection theme',
@@ -452,6 +461,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-i',
     filename: 'concept-i.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-i.html',
     label: 'I — TWO BOOTCAMPS. ONE PRICE.',
     shortLabel: 'Two Bootcamps',
     description: 'Dhaval hero with two comparison cards',
@@ -492,6 +502,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-j',
     filename: 'concept-j.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-j.html',
     label: 'J — ₹36,000 / 75 DAYS',
     shortLabel: '₹36,000 / 75 Days',
     description: 'Price card with feature checklist, Dhaval background hero',

@@ -91,6 +91,11 @@ export default function EditorPage() {
   const [activeTab, setActiveTab] = useState<SidebarTab | null>('templates');
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
 
+  // ── Iframe mode (for HTML templates) ──
+  const [iframeMode, setIframeMode] = useState(false);
+  const [iframeHtmlPath, setIframeHtmlPath] = useState<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
   // ── Zoom ──
   const [zoom, setZoom] = useState(100);
 
@@ -154,17 +159,33 @@ export default function EditorPage() {
 
   // ── Template loading ──
   const handleSelectTemplate = useCallback((tmpl: TemplateInfo) => {
-    const newElements = tmpl.createElements();
-    resetHistory(newElements);
-    setActiveTemplateId(tmpl.id);
-    setSelectedIds([]);
-    showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
+    if (tmpl.htmlPath) {
+      // Switch to iframe mode — load the original HTML template
+      setIframeMode(true);
+      setIframeHtmlPath(tmpl.htmlPath);
+      setActiveTemplateId(tmpl.id);
+      setSelectedIds([]);
+      showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded — drag to rearrange, double-click to edit text`);
+    } else {
+      // Fallback: use canvas element mode
+      setIframeMode(false);
+      setIframeHtmlPath(null);
+      const newElements = tmpl.createElements();
+      resetHistory(newElements);
+      setActiveTemplateId(tmpl.id);
+      setSelectedIds([]);
+      showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
+    }
   }, [resetHistory, showToast]);
 
   // ── Element drop from sidebar ──
   const handleElementDragStart = useCallback((item: AssetItem, e: React.DragEvent) => {
     const elementData = JSON.stringify(item.element);
     e.dataTransfer.setData('application/sigma-element', elementData);
+    // Also set text/html for iframe mode (HTML components can be dropped into the iframe)
+    if (item.htmlSnippet) {
+      e.dataTransfer.setData('text/html', item.htmlSnippet);
+    }
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
@@ -234,34 +255,71 @@ export default function EditorPage() {
 
   // ── Export (PNG) ──
   const handleExport = useCallback(async () => {
-    const canvasEl = canvasRef.current;
-    if (!canvasEl || isExporting) return;
+    if (isExporting) return;
     setIsExporting(true);
     try {
-      const htmlToImage = await import('html-to-image');
-      if (document.fonts?.ready) await document.fonts.ready;
-      await new Promise(r => setTimeout(r, 150));
-      const dataUrl = await htmlToImage.toPng(canvasEl, {
-        quality: 1.0,
-        pixelRatio: 2,
-        width: activeSize.width,
-        height: activeSize.height,
-        style: { transform: 'none', overflow: 'hidden' },
-      });
-      const link = document.createElement('a');
-      const name = activeTemplateId || 'canvas';
-      link.download = `${name}_${activeSize.width}x${activeSize.height}.png`;
-      link.href = dataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} PNG`);
+      if (iframeMode && iframeRef.current) {
+        // Iframe export using html2canvas
+        const iframe = iframeRef.current;
+        const iframeDoc = iframe.contentDocument;
+        if (!iframeDoc) throw new Error('Cannot access iframe content');
+
+        // Tell iframe to clean up selection UI for export
+        iframe.contentWindow?.postMessage({ type: 'sigma-command', command: 'prepareExport' }, '*');
+        await new Promise(r => setTimeout(r, 300));
+
+        const html2canvas = (await import('html2canvas')).default;
+        const canvas = await html2canvas(iframeDoc.body, {
+          width: activeSize.width,
+          height: activeSize.height,
+          scale: 2,
+          backgroundColor: '#0D1117',
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+        });
+
+        // Restore handles after export
+        iframe.contentWindow?.postMessage({ type: 'sigma-command', command: 'restoreHandles' }, '*');
+
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
+        const link = document.createElement('a');
+        const name = activeTemplateId || 'canvas';
+        link.download = `${name}_${activeSize.width}x${activeSize.height}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} PNG`);
+      } else {
+        // Canvas element export
+        const canvasEl = canvasRef.current;
+        if (!canvasEl) return;
+        const htmlToImage = await import('html-to-image');
+        if (document.fonts?.ready) await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 150));
+        const dataUrl = await htmlToImage.toPng(canvasEl, {
+          quality: 1.0,
+          pixelRatio: 2,
+          width: activeSize.width,
+          height: activeSize.height,
+          style: { transform: 'none', overflow: 'hidden' },
+        });
+        const link = document.createElement('a');
+        const name = activeTemplateId || 'canvas';
+        link.download = `${name}_${activeSize.width}x${activeSize.height}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} PNG`);
+      }
     } catch (error) {
       showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsExporting(false);
     }
-  }, [activeSize, activeTemplateId, isExporting, showToast]);
+  }, [activeSize, activeTemplateId, isExporting, iframeMode, showToast]);
 
   // ── Export All Sizes (ZIP) ──
   const handleExportAll = useCallback(async () => {
@@ -595,20 +653,54 @@ export default function EditorPage() {
 
         {/* Canvas Area */}
         <div style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
-          <FreeFormCanvas
-            elements={elements}
-            selectedIds={selectedIds}
-            canvasWidth={activeSize.width}
-            canvasHeight={activeSize.height}
-            zoom={zoom}
-            onElementsChange={setElements}
-            onElementsUpdate={updateWithoutHistory}
-            onSelectionChange={setSelectedIds}
-            onTextEditStart={() => setIsTextEditing(true)}
-            onTextEditEnd={() => setIsTextEditing(false)}
-            onZoomChange={setZoom}
-            canvasExportRef={canvasRef}
-          />
+          {iframeMode && iframeHtmlPath ? (
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100%',
+              backgroundColor: '#1a1a2e',
+              overflow: 'auto',
+            }}>
+              <div style={{
+                width: activeSize.width,
+                height: activeSize.height,
+                transform: `scale(${zoom / 100})`,
+                transformOrigin: 'center center',
+                flexShrink: 0,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
+                position: 'relative',
+              }}>
+                <iframe
+                  ref={iframeRef}
+                  src={iframeHtmlPath}
+                  style={{
+                    width: activeSize.width,
+                    height: activeSize.height,
+                    border: 'none',
+                    display: 'block',
+                  }}
+                  title="Template Preview"
+                />
+              </div>
+            </div>
+          ) : (
+            <FreeFormCanvas
+              elements={elements}
+              selectedIds={selectedIds}
+              canvasWidth={activeSize.width}
+              canvasHeight={activeSize.height}
+              zoom={zoom}
+              onElementsChange={setElements}
+              onElementsUpdate={updateWithoutHistory}
+              onSelectionChange={setSelectedIds}
+              onTextEditStart={() => setIsTextEditing(true)}
+              onTextEditEnd={() => setIsTextEditing(false)}
+              onZoomChange={setZoom}
+              canvasExportRef={canvasRef}
+            />
+          )}
 
           {/* Zoom Toolbar */}
           <div style={{

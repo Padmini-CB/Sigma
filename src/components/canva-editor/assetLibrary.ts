@@ -158,6 +158,30 @@ export const ASSET_SECTIONS: AssetSection[] = [
         ],
       },
       {
+        id: 'html-components',
+        label: 'HTML Components',
+        items: [
+          {
+            id: aid(), type: 'html-component', label: 'Bootcamp Badge',
+            htmlSnippet: '<div class="bootcamp-badge" style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;position:absolute;z-index:100;"><div style="display:inline-flex;align-items:center;gap:10px;padding:10px 22px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(32,201,151,0.1));border:1.5px solid rgba(59,130,246,0.4);border-radius:50px;"><div style="width:8px;height:8px;border-radius:50%;background:#20C997;box-shadow:0 0 8px rgba(32,201,151,0.6);"></div><span style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.95);letter-spacing:0.5px;text-transform:uppercase;font-family:Poppins,sans-serif;">AI Engineering Bootcamp <span style="color:#3b82f6;font-weight:700;">1.0</span></span></div><span style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;font-family:Poppins,sans-serif;">Designed for Software Engineers</span></div>',
+            element: {
+              type: 'badge', width: 360, height: 60, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'AI Engineering Bootcamp 1.0',
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.15)', textColor: 'rgba(255,255,255,0.95)', fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, borderRadius: 50, paddingX: 22, paddingY: 10, borderColor: 'rgba(59,130,246,0.4)', borderWidth: 1.5 },
+            },
+          },
+          {
+            id: aid(), type: 'html-component', label: 'Price Card',
+            htmlSnippet: '<div class="price-card" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:linear-gradient(180deg,rgba(59,130,246,0.08),rgba(13,17,23,0.95));border:1px solid rgba(59,130,246,0.25);border-radius:16px;min-width:340px;position:absolute;z-index:100;font-family:Poppins,sans-serif;"><span style="font-size:11px;font-weight:600;color:#3b82f6;letter-spacing:2.5px;text-transform:uppercase;">Investment</span><div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.7);">\u20B9</span><span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">36,000</span></div><span style="font-size:13px;font-weight:500;color:#20C997;">+ Gen AI &amp; DS Bootcamp Included for Free</span><div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px;"><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 75 days \u00b7 Live cohorts \u00b7 March 7 batch</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 8+ production projects you deploy</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 500 seats only</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> Full refund before March 14</div></div><div style="margin-top:8px;padding:14px 40px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:700;color:#fff;letter-spacing:0.5px;text-transform:uppercase;width:100%;text-align:center;">ENROLL NOW \u2014 \u20B936,000 \u2192</div><div style="display:flex;gap:16px;margin-top:2px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">EMI Available</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">\u00b7</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">No-Risk Refund</span></div></div>',
+            element: {
+              type: 'badge', width: 380, height: 340, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '\u20B936,000 \u2014 Investment',
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: '#ffffff', fontFamily: 'Poppins', fontSize: 16, fontWeight: 700, borderRadius: 16, paddingX: 40, paddingY: 28, borderColor: 'rgba(59,130,246,0.25)', borderWidth: 1 },
+            },
+          },
+        ],
+      },
+      {
         id: 'strips',
         label: 'Bottom Strips',
         items: [
