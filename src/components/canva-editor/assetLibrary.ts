@@ -17,30 +17,30 @@ export const ASSET_SECTIONS: AssetSection[] = [
         items: [
           {
             id: aid(), type: 'hero', label: 'Dhaval',
-            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png',
+              content: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png',
               glowColor: '#3b82f6',
               imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
             },
           },
           {
             id: aid(), type: 'hero', label: 'Hemanand',
-            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-hemanand.png',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '/images/bootcamps/ai-engineering/heroes/superhero-hemanand.png',
+              content: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png',
               glowColor: '#D7EF3F',
               imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
             },
           },
           {
             id: aid(), type: 'hero', label: 'Siddhant',
-            thumbnail: '/images/bootcamps/ai-engineering/heroes/superhero-siddhant.png',
+            thumbnail: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '/images/bootcamps/ai-engineering/heroes/superhero-siddhant.png',
+              content: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png',
               glowColor: '#20C997',
               imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial' },
             },
@@ -96,9 +96,33 @@ export const ASSET_SECTIONS: AssetSection[] = [
         ],
       },
       {
+        id: 'title-cards',
+        label: 'Title Cards',
+        items: [
+          {
+            id: aid(), type: 'html-component', label: 'Bootcamp Title Card',
+            htmlSnippet: '<div data-sigma style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;position:absolute;z-index:100;font-family:\'Saira Condensed\',sans-serif;"><div style="font-size:52px;font-weight:800;color:#ffffff;text-transform:uppercase;line-height:1;letter-spacing:-1px;">AI ENGINEERING</div><div style="font-size:52px;font-weight:800;color:#3B82F6;text-transform:uppercase;line-height:1;letter-spacing:-1px;">BOOTCAMP <span style="color:#D7EF3F;">1.0</span></div><div style="margin-top:4px;font-size:15px;font-weight:500;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;font-family:Poppins,sans-serif;">Built exclusively for Software Engineers</div></div>',
+            element: {
+              type: 'text', width: 540, height: 160, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'AI ENGINEERING\nBOOTCAMP 1.0',
+              textStyle: { fontFamily: 'Saira Condensed', fontSize: 52, fontWeight: 800, fontStyle: 'normal', color: '#ffffff', textAlign: 'left', letterSpacing: -1, lineHeight: 1, textTransform: 'uppercase' },
+            },
+          },
+        ],
+      },
+      {
         id: 'badges',
         label: 'Badges',
         items: [
+          {
+            id: aid(), type: 'html-component', label: 'Bootcamp Badge',
+            htmlSnippet: '<div class="bootcamp-badge" data-sigma style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;position:absolute;z-index:100;"><div style="display:inline-flex;align-items:center;gap:10px;padding:10px 22px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(32,201,151,0.1));border:1.5px solid rgba(59,130,246,0.4);border-radius:50px;"><div style="width:8px;height:8px;border-radius:50%;background:#20C997;box-shadow:0 0 8px rgba(32,201,151,0.6);"></div><span style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.95);letter-spacing:0.5px;text-transform:uppercase;font-family:Poppins,sans-serif;">AI Engineering Bootcamp <span style="color:#3b82f6;font-weight:700;">1.0</span></span></div><span style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;font-family:Poppins,sans-serif;">Designed for Software Engineers</span></div>',
+            element: {
+              type: 'badge', width: 360, height: 60, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'AI Engineering Bootcamp 1.0',
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.15)', textColor: 'rgba(255,255,255,0.95)', fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, borderRadius: 50, paddingX: 22, paddingY: 10, borderColor: 'rgba(59,130,246,0.4)', borderWidth: 1.5 },
+            },
+          },
           {
             id: aid(), type: 'badge', label: 'SW Engineer',
             element: {
@@ -153,6 +177,21 @@ export const ASSET_SECTIONS: AssetSection[] = [
               type: 'badge', width: 180, height: 36, rotation: 0, opacity: 1, locked: false, visible: true,
               content: 'NEW LAUNCH',
               badgeStyle: { backgroundColor: '#D7EF3F', textColor: '#181830', fontFamily: 'Poppins', fontSize: 14, fontWeight: 700, borderRadius: 8, paddingX: 16, paddingY: 8 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'price-cards',
+        label: 'Price Cards',
+        items: [
+          {
+            id: aid(), type: 'html-component', label: 'Price Card',
+            htmlSnippet: '<div class="price-card" data-sigma style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:linear-gradient(180deg,rgba(59,130,246,0.08),rgba(13,17,23,0.95));border:1px solid rgba(59,130,246,0.25);border-radius:16px;min-width:340px;position:absolute;z-index:100;font-family:Poppins,sans-serif;"><span style="font-size:11px;font-weight:600;color:#3b82f6;letter-spacing:2.5px;text-transform:uppercase;">Investment</span><div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.7);">\u20B9</span><span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">36,000</span></div><span style="font-size:13px;font-weight:500;color:#20C997;">+ Gen AI &amp; DS Bootcamp Included for Free</span><div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px;"><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 75 days \u00b7 Live cohorts \u00b7 March 7 batch</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 8+ production projects you deploy</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 500 seats only</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> Full refund before March 14</div></div><div style="margin-top:8px;padding:14px 40px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:700;color:#fff;letter-spacing:0.5px;text-transform:uppercase;width:100%;text-align:center;">ENROLL NOW \u2014 \u20B936,000 \u2192</div><div style="display:flex;gap:16px;margin-top:2px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">EMI Available</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">\u00b7</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">No-Risk Refund</span></div></div>',
+            element: {
+              type: 'badge', width: 380, height: 340, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '\u20B936,000 \u2014 Investment',
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: '#ffffff', fontFamily: 'Poppins', fontSize: 16, fontWeight: 700, borderRadius: 16, paddingX: 40, paddingY: 28, borderColor: 'rgba(59,130,246,0.25)', borderWidth: 1 },
             },
           },
         ],

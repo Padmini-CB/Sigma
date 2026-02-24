@@ -197,6 +197,7 @@ export interface TemplateInfo {
   thumbnailAccent: string;
   thumbnailHeadline: string;
   thumbnailImage?: string;
+  htmlPath?: string;
   createElements: () => CanvasElement[];
 }
 
@@ -205,6 +206,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-a',
     filename: 'concept-a.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-a.html',
     label: 'A — YOUR TODOs DON\'T SHIP.',
     shortLabel: 'TODOs Don\'t Ship',
     description: 'Dhaval hero right, code mockup left, green CTA',
@@ -216,7 +218,7 @@ export const TEMPLATES: TemplateInfo[] = [
       makeLogo(),
       makeSubscriberBadge(),
       // Dhaval hero — right side, seamless mask, blue glow
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
       // Name + title near hero
       makeText({ x: 580, y: 520, width: 400, height: 30, content: 'Dhaval Patel', fontSize: 20, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 12 }),
       makeText({ x: 580, y: 555, width: 400, height: 24, content: 'Founder, Codebasics · Ex-NVIDIA', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
@@ -239,6 +241,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-b',
     filename: 'concept-b.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-b.html',
     label: 'B — WE SKIP THE BASICS.',
     shortLabel: 'Skip the Basics',
     description: 'Dhaval hero, blue accent headline, italic subtext',
@@ -250,7 +253,7 @@ export const TEMPLATES: TemplateInfo[] = [
       makeLogo(),
       makeSubscriberBadge(),
       // Dhaval hero
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
       // Headline
       makeText({ x: 40, y: 300, width: 700, height: 150, content: 'WE SKIP', fontSize: 130, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 440, width: 700, height: 150, content: 'THE BASICS.', fontSize: 130, color: '#3b82f6', zIndex: 10 }),
@@ -267,6 +270,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-c',
     filename: 'concept-c.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-c.html',
     label: 'C — THREE PILLARS',
     shortLabel: 'Three Pillars',
     description: 'Trio image, BUILD/ORCHESTRATE/DISTRIBUTE pillars',
@@ -301,6 +305,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-d',
     filename: 'concept-d.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-d.html',
     label: 'D — 500 SEATS. THEN WE CLOSE.',
     shortLabel: '500 Seats',
     description: 'Dhaval hero, scarcity headline, founder quote',
@@ -312,7 +317,7 @@ export const TEMPLATES: TemplateInfo[] = [
       makeLogo(),
       makeSubscriberBadge(),
       // Dhaval hero
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
       // Headline
       makeText({ x: 40, y: 280, width: 600, height: 130, content: '500 SEATS.', fontSize: 120, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 400, width: 700, height: 130, content: 'THEN WE CLOSE.', fontSize: 120, color: '#3b82f6', zIndex: 10 }),
@@ -331,6 +336,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-e',
     filename: 'concept-e.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-e.html',
     label: 'E — BUILD.',
     shortLabel: 'Build',
     description: 'Dhaval hero centered, MODULE 1-8 badge, massive BUILD headline',
@@ -344,7 +350,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 860, y: 90, width: 170, height: 36, content: 'MODULE 1-8', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Dhaval hero — centered, upper 55%
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Dhaval Patel · Founder, Codebasics · Ex-NVIDIA', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -362,6 +368,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-f',
     filename: 'concept-f.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-f.html',
     label: 'F — ORCHESTRATE.',
     shortLabel: 'Orchestrate',
     description: 'Hemanand hero, MODULES 9-10, gold/yellow theme',
@@ -375,7 +382,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 840, y: 90, width: 190, height: 36, content: 'MODULES 9-10', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Hemanand hero — centered, gold glow
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-hemanand.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#D7EF3F', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#D7EF3F', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Hemanand Vadivel · Co-founder · Ex-Edgewell', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -393,6 +400,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-g',
     filename: 'concept-g.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-g.html',
     label: 'G — DISTRIBUTE.',
     shortLabel: 'Distribute',
     description: 'Siddhant hero, MODULES 11-12, green theme',
@@ -406,7 +414,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 830, y: 90, width: 200, height: 36, content: 'MODULES 11-12', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Siddhant hero — green glow
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-siddhant.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#20C997', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#20C997', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Siddhant Pandey · AI Research Engineer', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -424,6 +432,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-h',
     filename: 'concept-h.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-h.html',
     label: 'H — 500 ENGINEERS. ONE ROOM.',
     shortLabel: '500 Engineers',
     description: 'Dhaval hero, personal connection theme',
@@ -435,7 +444,7 @@ export const TEMPLATES: TemplateInfo[] = [
       makeLogo(),
       makeSubscriberBadge(),
       // Dhaval hero
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 5 }),
       // Quote above headline
       makeText({ x: 40, y: 260, width: 500, height: 40, content: '"We intentionally keep the cohort small."', fontSize: 17, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, fontStyle: 'italic', zIndex: 11 }),
       // Headline
@@ -452,6 +461,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-i',
     filename: 'concept-i.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-i.html',
     label: 'I — TWO BOOTCAMPS. ONE PRICE.',
     shortLabel: 'Two Bootcamps',
     description: 'Dhaval hero with two comparison cards',
@@ -463,7 +473,7 @@ export const TEMPLATES: TemplateInfo[] = [
       makeLogo(),
       makeSubscriberBadge(),
       // Dhaval hero — right side
-      makeImage({ x: 560, y: 40, width: 520, height: 600, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 4 }),
+      makeImage({ x: 560, y: 40, width: 520, height: 600, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', glowColor: '#3b82f6', zIndex: 4 }),
       // Left card — "YOU ENROLL IN"
       makeShape({ x: 50, y: 130, width: 470, height: 280, bgColor: 'rgba(32,201,151,0.06)', borderRadius: 16, borderColor: 'rgba(32,201,151,0.25)', borderWidth: 1, zIndex: 8 }),
       makeText({ x: 70, y: 145, width: 200, height: 20, content: 'YOU ENROLL IN', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 9 }),
@@ -492,6 +502,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     id: 'concept-j',
     filename: 'concept-j.html',
+    htmlPath: '/ads/bootcamp-ai-engineering/concept-j.html',
     label: 'J — ₹36,000 / 75 DAYS',
     shortLabel: '₹36,000 / 75 Days',
     description: 'Price card with feature checklist, Dhaval background hero',
@@ -503,7 +514,7 @@ export const TEMPLATES: TemplateInfo[] = [
       makeLogo(),
       makeSubscriberBadge(),
       // Dhaval hero — right side, faded
-      makeImage({ x: 500, y: 100, width: 580, height: 700, src: '/images/bootcamps/ai-engineering/heroes/superhero-dhaval.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', opacity: 0.5, glowColor: '#3b82f6', zIndex: 3 }),
+      makeImage({ x: 500, y: 100, width: 580, height: 700, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'radial-gradient(ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)', opacity: 0.5, glowColor: '#3b82f6', zIndex: 3 }),
       // "INVESTMENT" label
       makeText({ x: 40, y: 120, width: 200, height: 20, content: 'INVESTMENT', fontSize: 14, fontWeight: 600, color: '#3b82f6', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 11 }),
       // Price

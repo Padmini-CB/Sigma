@@ -170,10 +170,11 @@ export interface TemplateDefinition {
 // Asset library items
 export interface AssetItem {
   id: string;
-  type: 'hero' | 'button' | 'badge' | 'strip' | 'logo';
+  type: 'hero' | 'button' | 'badge' | 'strip' | 'logo' | 'html-component';
   label: string;
   thumbnail?: string;
   element: Omit<CanvasElement, 'id' | 'x' | 'y' | 'zIndex'>;
+  htmlSnippet?: string;
 }
 
 export interface AssetSection {

@@ -258,6 +258,27 @@ function AssetItemCard({
           </div>
         );
 
+      case 'html-component':
+        return (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: 48,
+              borderRadius: 6,
+              background: 'linear-gradient(135deg, rgba(59,130,246,0.12), rgba(32,201,151,0.08))',
+              border: '1px solid rgba(59,130,246,0.25)',
+              padding: '4px 8px',
+            }}
+          >
+            <span style={{ fontSize: 9, fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase' as const, letterSpacing: 0.5, textAlign: 'center' as const }}>
+              {item.label}
+            </span>
+          </div>
+        );
+
       default:
         return (
           <div style={styles.defaultPreview}>
