@@ -12,7 +12,7 @@ import TemplatesPanel from '@/components/canva-editor/TemplatesPanel';
 import ElementsPanel from '@/components/canva-editor/ElementsPanel';
 import TextPanel from '@/components/canva-editor/TextPanel';
 import UploadsPanel from '@/components/canva-editor/UploadsPanel';
-import EraserPanel from '@/components/canva-editor/EraserPanel';
+import EraserPanel, { type EraserMode } from '@/components/canva-editor/EraserPanel';
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
@@ -107,6 +107,10 @@ export default function EditorPage() {
   const [eraserBrushSize, setEraserBrushSize] = useState(50);
   const [eraserSoftness, setEraserSoftness] = useState(70);
   const [eraserOpacity, setEraserOpacity] = useState(100);
+  const [eraserModeType, setEraserModeType] = useState<EraserMode>('brush');
+  const [magicTolerance, setMagicTolerance] = useState(25);
+  const [magicRadius, setMagicRadius] = useState(100);
+  const [magicSoftness, setMagicSoftness] = useState(30);
   const eraserMode = activeTab === 'eraser';
 
   // ── Shortcuts overlay ──
@@ -699,12 +703,20 @@ export default function EditorPage() {
       case 'eraser':
         return (
           <EraserPanel
+            mode={eraserModeType}
+            onModeChange={setEraserModeType}
             brushSize={eraserBrushSize}
             softness={eraserSoftness}
             opacity={eraserOpacity}
             onBrushSizeChange={setEraserBrushSize}
             onSoftnessChange={setEraserSoftness}
             onOpacityChange={setEraserOpacity}
+            magicTolerance={magicTolerance}
+            magicRadius={magicRadius}
+            magicSoftness={magicSoftness}
+            onMagicToleranceChange={setMagicTolerance}
+            onMagicRadiusChange={setMagicRadius}
+            onMagicSoftnessChange={setMagicSoftness}
           />
         );
       case 'settings':
@@ -911,6 +923,10 @@ export default function EditorPage() {
               eraserBrushSize={eraserBrushSize}
               eraserSoftness={eraserSoftness}
               eraserOpacity={eraserOpacity}
+              eraserMagicMode={eraserModeType === 'magic'}
+              eraserMagicTolerance={magicTolerance}
+              eraserMagicRadius={magicRadius}
+              eraserMagicSoftness={magicSoftness}
               onFileDrop={handleFileDrop}
             />
           )}
