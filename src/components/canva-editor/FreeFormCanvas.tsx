@@ -200,17 +200,29 @@ function renderElementContent(el: CanvasElement): React.ReactNode {
         width: '100%',
         height: '100%',
         position: 'relative',
-        overflow: 'hidden',
         borderRadius: el.imageStyle?.borderRadius ?? 0,
       };
 
-      if (el.glowColor) {
-        containerStyle.filter = `drop-shadow(0 0 30px ${el.glowColor}) drop-shadow(0 0 60px ${el.glowColor})`;
-      }
+      // Glow: a blurred colored circle behind the hero image
+      const glowDiv = el.glowColor ? (
+        <div style={{
+          position: 'absolute',
+          top: '10%',
+          left: '10%',
+          width: '80%',
+          height: '80%',
+          background: `radial-gradient(circle, ${el.glowColor} 0%, transparent 70%)`,
+          filter: 'blur(80px)',
+          opacity: 0.35,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }} />
+      ) : null;
 
       return (
         <div style={containerStyle}>
-          <img src={el.content} alt="" style={imgStyle} draggable={false} />
+          {glowDiv}
+          <img src={el.content} alt="" style={{ ...imgStyle, position: 'relative', zIndex: 1 }} draggable={false} />
         </div>
       );
     }
