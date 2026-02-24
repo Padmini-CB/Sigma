@@ -735,7 +735,6 @@ export default function FreeFormCanvas({
         startX: canvasPos.x,
         startY: canvasPos.y,
         elementStartPositions: startPositions,
-        constrainAxis: null,
       };
       setDragState(newDragState);
       dragStateRef.current = newDragState;

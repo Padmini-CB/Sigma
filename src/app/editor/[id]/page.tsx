@@ -189,34 +189,26 @@ export default function EditorPage() {
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  // ── Click-to-add element from sidebar (fallback when drag doesn't work) ──
+  // ── Click-to-add element from sidebar ──
   const handleClickAddElement = useCallback((item: AssetItem) => {
-    if (iframeMode && iframeRef.current) {
-      // In iframe mode, post message to add HTML element at center
-      if (item.htmlSnippet) {
-        iframeRef.current.contentWindow?.postMessage({
-          type: 'sigma-command',
-          command: 'addElement',
-          html: item.htmlSnippet,
-          x: activeSize.width / 2 - 150,
-          y: activeSize.height / 2 - 40,
-        }, '*');
-      }
-    } else {
-      // In FreeFormCanvas mode, add element to center of canvas
-      const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
-      const w = item.element.width || 200;
-      const h = item.element.height || 200;
-      const newEl: CanvasElement = {
-        ...item.element,
-        id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        x: Math.round(activeSize.width / 2 - w / 2),
-        y: Math.round(activeSize.height / 2 - h / 2),
-        zIndex: maxZ + 1,
-      } as CanvasElement;
-      setElements([...elements, newEl]);
-      setSelectedIds([newEl.id]);
+    // Always add to FreeFormCanvas. Exit iframe mode if active so the canvas renders.
+    if (iframeMode) {
+      setIframeMode(false);
+      setIframeHtmlPath(null);
     }
+
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+    const w = item.element.width || 200;
+    const h = item.element.height || 200;
+    const newEl: CanvasElement = {
+      ...item.element,
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      x: Math.round(activeSize.width / 2 - w / 2),
+      y: Math.round(activeSize.height / 2 - h / 2),
+      zIndex: maxZ + 1,
+    } as CanvasElement;
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
     showToast('success', 'Element Added', `"${item.label}" added to canvas`);
   }, [iframeMode, elements, activeSize, setElements, showToast]);
 
@@ -772,38 +764,31 @@ export default function EditorPage() {
               }}
               onDrop={(e) => {
                 e.preventDefault();
-                const html = e.dataTransfer.getData('text/html');
                 const elementData = e.dataTransfer.getData('application/sigma-element');
-                if (html && iframeRef.current) {
-                  // Drop HTML component into iframe
-                  const iframeRect = iframeRef.current.getBoundingClientRect();
-                  iframeRef.current.contentWindow?.postMessage({
-                    type: 'sigma-command',
-                    command: 'addElement',
-                    html,
-                    x: (e.clientX - iframeRect.left) / (zoom / 100),
-                    y: (e.clientY - iframeRect.top) / (zoom / 100),
-                  }, '*');
-                } else if (elementData && iframeRef.current) {
-                  // Drop canvas element data — create HTML from element data
-                  try {
-                    const partial = JSON.parse(elementData);
-                    const iframeRect = iframeRef.current.getBoundingClientRect();
-                    const x = (e.clientX - iframeRect.left) / (zoom / 100);
-                    const y = (e.clientY - iframeRect.top) / (zoom / 100);
-                    // Create a simple HTML element from canvas element data
-                    const el = document.createElement('div');
-                    el.setAttribute('data-sigma', '');
-                    el.style.cssText = `position:absolute;left:${x}px;top:${y}px;z-index:100;font-family:Poppins,sans-serif;font-size:${partial.buttonStyle?.fontSize || partial.badgeStyle?.fontSize || partial.textStyle?.fontSize || 16}px;font-weight:${partial.buttonStyle?.fontWeight || partial.badgeStyle?.fontWeight || partial.textStyle?.fontWeight || 600};color:${partial.buttonStyle?.textColor || partial.badgeStyle?.textColor || partial.textStyle?.color || '#fff'};background:${partial.buttonStyle?.backgroundColor || partial.badgeStyle?.backgroundColor || 'transparent'};padding:${partial.buttonStyle?.paddingY || partial.badgeStyle?.paddingY || 10}px ${partial.buttonStyle?.paddingX || partial.badgeStyle?.paddingX || 20}px;border-radius:${partial.buttonStyle?.borderRadius || partial.badgeStyle?.borderRadius || 8}px;`;
-                    el.textContent = partial.content || '';
-                    iframeRef.current.contentWindow?.postMessage({
-                      type: 'sigma-command',
-                      command: 'addElement',
-                      html: el.outerHTML,
-                      x, y,
-                    }, '*');
-                  } catch { /* ignore */ }
-                }
+                if (!elementData) return;
+
+                // Switch to canvas mode so FreeFormCanvas renders with the new element
+                setIframeMode(false);
+                setIframeHtmlPath(null);
+
+                try {
+                  const partial = JSON.parse(elementData) as Partial<CanvasElement>;
+                  const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+                  const w = partial.width || 200;
+                  const h = partial.height || 200;
+                  const newEl: CanvasElement = {
+                    ...partial,
+                    id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+                    x: Math.round(activeSize.width / 2 - w / 2),
+                    y: Math.round(activeSize.height / 2 - h / 2),
+                    zIndex: maxZ + 1,
+                    locked: false,
+                    visible: true,
+                  } as CanvasElement;
+                  setElements([...elements, newEl]);
+                  setSelectedIds([newEl.id]);
+                  showToast('success', 'Element Added', 'Element added to canvas');
+                } catch { /* ignore */ }
               }}
               style={{
                 flex: 1,
