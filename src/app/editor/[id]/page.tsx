@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 import templatesData from '@/data/templates.json';
 import { useToast } from '@/components/Toast';
 
@@ -64,6 +65,7 @@ export default function EditorPage() {
   const router = useRouter();
   const templateId = params.id as string;
   const { showToast } = useToast();
+  const { data: session } = useSession();
 
   const template = useMemo(() => {
     return templatesData.templates.find((t) => t.id === templateId) as TemplateRecord | undefined;
@@ -966,6 +968,32 @@ export default function EditorPage() {
               </div>
             )}
           </div>
+          {/* User email + Logout */}
+          {session?.user && (
+            <>
+              <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
+                  {session.user.email}
+                </span>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  style={{
+                    padding: '4px 12px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 6,
+                    color: 'rgba(255,255,255,0.6)',
+                    fontSize: 12,
+                    cursor: 'pointer',
+                    fontFamily: 'Poppins, sans-serif',
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </header>
 

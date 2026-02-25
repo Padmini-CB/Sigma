@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
+import SessionProvider from "@/components/SessionProvider";
 
 export const metadata: Metadata = {
   title: "SIGMA - Strategic Image Generation for Marketing Assets",
@@ -31,9 +32,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <SessionProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   );
