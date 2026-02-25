@@ -1,7 +1,8 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 import templatesData from '@/data/templates.json';
 import { useToast } from '@/components/Toast';
 
@@ -12,6 +13,7 @@ import TemplatesPanel from '@/components/canva-editor/TemplatesPanel';
 import ElementsPanel from '@/components/canva-editor/ElementsPanel';
 import TextPanel from '@/components/canva-editor/TextPanel';
 import UploadsPanel from '@/components/canva-editor/UploadsPanel';
+import EraserPanel, { type EraserMode } from '@/components/canva-editor/EraserPanel';
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
@@ -64,6 +66,7 @@ export default function EditorPage() {
   const router = useRouter();
   const templateId = params.id as string;
   const { showToast } = useToast();
+  const { data: session } = useSession();
 
   const template = useMemo(() => {
     return templatesData.templates.find((t) => t.id === templateId) as TemplateRecord | undefined;
@@ -102,31 +105,43 @@ export default function EditorPage() {
   // ── Text editing mode (disables keyboard shortcuts) ──
   const [isTextEditing, setIsTextEditing] = useState(false);
 
+  // ── Eraser tool ──
+  const [eraserBrushSize, setEraserBrushSize] = useState(50);
+  const [eraserSoftness, setEraserSoftness] = useState(70);
+  const [eraserOpacity, setEraserOpacity] = useState(100);
+  const [eraserModeType, setEraserModeType] = useState<EraserMode>('brush');
+  const [magicTolerance, setMagicTolerance] = useState(25);
+  const [magicRadius, setMagicRadius] = useState(100);
+  const [magicSoftness, setMagicSoftness] = useState(30);
+  const eraserMode = false; // Eraser disabled — Coming Soon
+
   // ── Shortcuts overlay ──
   const [showShortcuts, setShowShortcuts] = useState(false);
 
   // ── Export state ──
   const [isExporting, setIsExporting] = useState(false);
-  const canvasRef = useRef<HTMLDivElement>(null);
-
-  // ── Download dropdown state ──
-  const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   const [exportFormat, setExportFormat] = useState<'png' | 'jpeg'>('png');
   const [jpegQuality, setJpegQuality] = useState(92);
-  const [selectedExportSizes, setSelectedExportSizes] = useState<Set<string>>(() => new Set([CANVAS_SIZES[0].id]));
-  const downloadDropdownRef = useRef<HTMLDivElement>(null);
+  const [exportSizes, setExportSizes] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
+    return initial;
+  });
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const downloadMenuRef = useRef<HTMLDivElement>(null);
 
-  // ── Close download dropdown on outside click ──
+  // ── Close download menu on click outside ──
   useEffect(() => {
-    if (!showDownloadDropdown) return;
+    if (!showDownloadMenu) return;
     const handler = (e: MouseEvent) => {
-      if (downloadDropdownRef.current && !downloadDropdownRef.current.contains(e.target as Node)) {
-        setShowDownloadDropdown(false);
+      if (downloadMenuRef.current && !downloadMenuRef.current.contains(e.target as Node)) {
+        setShowDownloadMenu(false);
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, [showDownloadDropdown]);
+  }, [showDownloadMenu]);
 
   // ── Auto-reflow elements to fit a new canvas size ──
   const reflowElements = useCallback((srcElements: CanvasElement[], fromW: number, fromH: number, toW: number, toH: number): CanvasElement[] => {
@@ -178,23 +193,15 @@ export default function EditorPage() {
 
   // ── Template loading ──
   const handleSelectTemplate = useCallback((tmpl: TemplateInfo) => {
-    if (tmpl.htmlPath) {
-      // Switch to iframe mode — load the original HTML template
-      setIframeMode(true);
-      setIframeHtmlPath(tmpl.htmlPath);
-      setActiveTemplateId(tmpl.id);
-      setSelectedIds([]);
-      showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded — drag to rearrange, double-click to edit text`);
-    } else {
-      // Fallback: use canvas element mode
-      setIframeMode(false);
-      setIframeHtmlPath(null);
-      const newElements = tmpl.createElements();
-      resetHistory(newElements);
-      setActiveTemplateId(tmpl.id);
-      setSelectedIds([]);
-      showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
-    }
+    // Always use canvas element mode so template elements are fully interactive
+    // (draggable, resizable, editable, selectable via Ctrl+A, undo/redo, etc.)
+    setIframeMode(false);
+    setIframeHtmlPath(null);
+    const newElements = tmpl.createElements();
+    resetHistory(newElements);
+    setActiveTemplateId(tmpl.id);
+    setSelectedIds([]);
+    showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
   }, [resetHistory, showToast]);
 
   // ── Element drop from sidebar ──
@@ -208,34 +215,26 @@ export default function EditorPage() {
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  // ── Click-to-add element from sidebar (fallback when drag doesn't work) ──
+  // ── Click-to-add element from sidebar ──
   const handleClickAddElement = useCallback((item: AssetItem) => {
-    if (iframeMode && iframeRef.current) {
-      // In iframe mode, post message to add HTML element at center
-      if (item.htmlSnippet) {
-        iframeRef.current.contentWindow?.postMessage({
-          type: 'sigma-command',
-          command: 'addElement',
-          html: item.htmlSnippet,
-          x: activeSize.width / 2 - 150,
-          y: activeSize.height / 2 - 40,
-        }, '*');
-      }
-    } else {
-      // In FreeFormCanvas mode, add element to center of canvas
-      const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
-      const w = item.element.width || 200;
-      const h = item.element.height || 200;
-      const newEl: CanvasElement = {
-        ...item.element,
-        id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        x: Math.round(activeSize.width / 2 - w / 2),
-        y: Math.round(activeSize.height / 2 - h / 2),
-        zIndex: maxZ + 1,
-      } as CanvasElement;
-      setElements([...elements, newEl]);
-      setSelectedIds([newEl.id]);
+    // Always add to FreeFormCanvas. Exit iframe mode if active so the canvas renders.
+    if (iframeMode) {
+      setIframeMode(false);
+      setIframeHtmlPath(null);
     }
+
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+    const w = item.element.width || 200;
+    const h = item.element.height || 200;
+    const newEl: CanvasElement = {
+      ...item.element,
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      x: Math.round(activeSize.width / 2 - w / 2),
+      y: Math.round(activeSize.height / 2 - h / 2),
+      zIndex: maxZ + 1,
+    } as CanvasElement;
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
     showToast('success', 'Element Added', `"${item.label}" added to canvas`);
   }, [iframeMode, elements, activeSize, setElements, showToast]);
 
@@ -255,6 +254,66 @@ export default function EditorPage() {
     e.dataTransfer.setData('application/sigma-element', elementData);
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
+
+  // ── Upload click-to-add ──
+  const handleUploadClickAdd = useCallback((dataUrl: string, width: number, height: number) => {
+    if (iframeMode) {
+      setIframeMode(false);
+      setIframeHtmlPath(null);
+    }
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+    const maxDim = 400;
+    let w = Math.min(width, 500);
+    let h = Math.min(height, 500);
+    if (w > maxDim || h > maxDim) {
+      const ratio = Math.min(maxDim / w, maxDim / h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+    const newEl: CanvasElement = {
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      type: 'image',
+      x: Math.round(activeSize.width / 2 - w / 2),
+      y: Math.round(activeSize.height / 2 - h / 2),
+      width: w,
+      height: h,
+      rotation: 0,
+      opacity: 1,
+      zIndex: maxZ + 1,
+      locked: false,
+      visible: true,
+      content: dataUrl,
+      imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+    };
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
+    showToast('success', 'Image Added', 'Uploaded image added to canvas');
+  }, [iframeMode, elements, activeSize, setElements, showToast]);
+
+  // ── File drop on canvas ──
+  const handleFileDrop = useCallback((dataUrl: string, width: number, height: number, x: number, y: number) => {
+    if (iframeMode) {
+      setIframeMode(false);
+      setIframeHtmlPath(null);
+    }
+    const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+    const newEl: CanvasElement = {
+      id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      type: 'image',
+      x, y,
+      width, height,
+      rotation: 0,
+      opacity: 1,
+      zIndex: maxZ + 1,
+      locked: false,
+      visible: true,
+      content: dataUrl,
+      imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'none' },
+    };
+    setElements([...elements, newEl]);
+    setSelectedIds([newEl.id]);
+    showToast('success', 'Image Added', 'File dropped onto canvas');
+  }, [iframeMode, elements, setElements, showToast]);
 
   // ── Add text from TextPanel ──
   const handleAddText = useCallback((preset: 'heading' | 'subheading' | 'body', content?: string) => {
@@ -381,170 +440,135 @@ export default function EditorPage() {
     setElements(updated);
   }, [elements, selectedIds, setElements]);
 
-  // ── Helper: convert PNG data URL to JPEG with dark background ──
-  const convertToJpeg = useCallback((pngDataUrl: string, width: number, height: number, quality: number): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = width;
-        tempCanvas.height = height;
-        const ctx = tempCanvas.getContext('2d');
-        if (!ctx) { reject(new Error('No 2d context')); return; }
-        ctx.fillStyle = '#0D1117';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(tempCanvas.toDataURL('image/jpeg', quality / 100));
-      };
-      img.onerror = reject;
-      img.src = pngDataUrl;
-    });
-  }, []);
-
-  // ── Export current canvas at given size as data URL ──
-  const exportCanvasDataUrl = useCallback(async (targetWidth: number, targetHeight: number, format: 'png' | 'jpeg', quality: number): Promise<string> => {
-    if (iframeMode && iframeRef.current) {
-      const iframe = iframeRef.current;
-      const iframeDoc = iframe.contentDocument;
-      if (!iframeDoc) throw new Error('Cannot access iframe content');
-      iframe.contentWindow?.postMessage({ type: 'sigma-command', command: 'prepareExport' }, '*');
-      await new Promise(r => setTimeout(r, 300));
-      const html2canvas = (await import('html2canvas')).default;
-      const canvas = await html2canvas(iframeDoc.body, {
-        width: targetWidth, height: targetHeight, scale: 2,
-        backgroundColor: '#0D1117', useCORS: true, allowTaint: true, logging: false,
-      });
-      iframe.contentWindow?.postMessage({ type: 'sigma-command', command: 'restoreHandles' }, '*');
-      const pngUrl = canvas.toDataURL('image/png', 1.0);
-      return format === 'jpeg' ? convertToJpeg(pngUrl, targetWidth * 2, targetHeight * 2, quality) : pngUrl;
-    } else {
-      const canvasEl = canvasRef.current;
-      if (!canvasEl) throw new Error('Canvas not available');
-      const htmlToImage = await import('html-to-image');
-      if (document.fonts?.ready) await document.fonts.ready;
-      await new Promise(r => setTimeout(r, 150));
-      const pngUrl = await htmlToImage.toPng(canvasEl, {
-        quality: 1.0, pixelRatio: 2, width: targetWidth, height: targetHeight,
+  // ── Export helper: render current canvas as dataUrl ──
+  const renderCanvasDataUrl = useCallback(async (format: 'png' | 'jpeg', quality: number): Promise<string> => {
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) throw new Error('No canvas');
+    const htmlToImage = await import('html-to-image');
+    if (document.fonts?.ready) await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 150));
+    if (format === 'jpeg') {
+      return await htmlToImage.toJpeg(canvasEl, {
+        quality: quality / 100,
+        pixelRatio: 2,
+        width: activeSize.width,
+        height: activeSize.height,
+        backgroundColor: '#0D1117',
         style: { transform: 'none', overflow: 'hidden' },
       });
-      return format === 'jpeg' ? convertToJpeg(pngUrl, targetWidth * 2, targetHeight * 2, quality) : pngUrl;
     }
-  }, [iframeMode, convertToJpeg]);
+    return await htmlToImage.toPng(canvasEl, {
+      quality: 1.0,
+      pixelRatio: 2,
+      width: activeSize.width,
+      height: activeSize.height,
+      style: { transform: 'none', overflow: 'hidden' },
+    });
+  }, [activeSize]);
 
-  // ── Export current size (single file download) ──
-  const handleExport = useCallback(async () => {
+  // ── Export current size ──
+  const handleExport = useCallback(async (fmt?: 'png' | 'jpeg') => {
     if (isExporting) return;
     setIsExporting(true);
+    setShowDownloadMenu(false);
+    const format = fmt || exportFormat;
     try {
-      const ext = exportFormat === 'jpeg' ? 'jpg' : 'png';
-      const dataUrl = await exportCanvasDataUrl(activeSize.width, activeSize.height, exportFormat, jpegQuality);
+      const dataUrl = await renderCanvasDataUrl(format, jpegQuality);
       const link = document.createElement('a');
       const name = activeTemplateId || 'canvas';
-      link.download = `${name}_${activeSize.width}x${activeSize.height}.${ext}`;
+      link.download = `${name}_${activeSize.width}x${activeSize.height}.${format === 'jpeg' ? 'jpg' : 'png'}`;
       link.href = dataUrl;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} ${ext.toUpperCase()}`);
+      showToast('success', 'Export Complete', `Saved as ${activeSize.width}\u00d7${activeSize.height} ${format.toUpperCase()}`);
     } catch (error) {
       showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsExporting(false);
     }
-  }, [activeSize, activeTemplateId, isExporting, exportFormat, jpegQuality, exportCanvasDataUrl, showToast]);
+  }, [activeSize, activeTemplateId, isExporting, exportFormat, jpegQuality, showToast, renderCanvasDataUrl]);
 
-  // ── Export selected sizes (ZIP if multiple, single file if one) ──
+  // ── Export selected sizes (zip if multiple) ──
   const handleExportSelected = useCallback(async () => {
     if (isExporting) return;
-    const sizesToExport = CANVAS_SIZES.filter(s => selectedExportSizes.has(s.id));
-    if (sizesToExport.length === 0) return;
-
+    const selectedSizeIds = Object.entries(exportSizes).filter(([, v]) => v).map(([k]) => k);
+    if (selectedSizeIds.length === 0) {
+      showToast('error', 'No Sizes', 'Select at least one size to download');
+      return;
+    }
+    // If only the current size is selected, just do a single export
+    if (selectedSizeIds.length === 1 && selectedSizeIds[0] === activeSize.id) {
+      handleExport();
+      return;
+    }
     setIsExporting(true);
+    setShowDownloadMenu(false);
     try {
-      const ext = exportFormat === 'jpeg' ? 'jpg' : 'png';
+      showToast('info', 'Exporting', `Generating ${selectedSizeIds.length} size(s)...`);
+      const JSZip = (await import('jszip')).default;
+      const htmlToImage = await import('html-to-image');
+      const zip = new JSZip();
       const name = activeTemplateId || 'canvas';
+      const ext = exportFormat === 'jpeg' ? 'jpg' : 'png';
+      const canvasEl = canvasRef.current;
+      if (!canvasEl) return;
 
-      if (sizesToExport.length === 1) {
-        // Single size — download directly
-        const size = sizesToExport[0];
-        const canvasEl = canvasRef.current;
-        if (!canvasEl) return;
+      for (const sizeId of selectedSizeIds) {
+        const size = CANVAS_SIZES.find(s => s.id === sizeId);
+        if (!size) continue;
+
         const origW = canvasEl.style.width;
         const origH = canvasEl.style.height;
         canvasEl.style.width = `${size.width}px`;
         canvasEl.style.height = `${size.height}px`;
+        if (document.fonts?.ready) await document.fonts.ready;
         await new Promise(r => setTimeout(r, 100));
+
         try {
-          const dataUrl = await exportCanvasDataUrl(size.width, size.height, exportFormat, jpegQuality);
-          const link = document.createElement('a');
-          link.download = `${name}_${size.width}x${size.height}.${ext}`;
-          link.href = dataUrl;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          let dataUrl: string;
+          if (exportFormat === 'jpeg') {
+            dataUrl = await htmlToImage.toJpeg(canvasEl, {
+              quality: jpegQuality / 100,
+              pixelRatio: 1,
+              width: size.width,
+              height: size.height,
+              backgroundColor: '#0D1117',
+              style: { transform: 'none', overflow: 'hidden' },
+            });
+          } else {
+            dataUrl = await htmlToImage.toPng(canvasEl, {
+              quality: 1.0,
+              pixelRatio: 1,
+              width: size.width,
+              height: size.height,
+              style: { transform: 'none', overflow: 'hidden' },
+            });
+          }
+          const base64 = dataUrl.split(',')[1];
+          zip.file(`${name}_${size.width}x${size.height}.${ext}`, base64, { base64: true });
         } finally {
           canvasEl.style.width = origW;
           canvasEl.style.height = origH;
         }
-        showToast('success', 'Export Complete', `Saved as ${size.width}\u00d7${size.height} ${ext.toUpperCase()}`);
-      } else {
-        // Multiple sizes — ZIP
-        showToast('info', 'Exporting', `Generating ${sizesToExport.length} sizes...`);
-        const JSZip = (await import('jszip')).default;
-        const zip = new JSZip();
-
-        for (const size of sizesToExport) {
-          const canvasEl = canvasRef.current;
-          if (!canvasEl) continue;
-          const origW = canvasEl.style.width;
-          const origH = canvasEl.style.height;
-          canvasEl.style.width = `${size.width}px`;
-          canvasEl.style.height = `${size.height}px`;
-          await new Promise(r => setTimeout(r, 100));
-          try {
-            const htmlToImage = await import('html-to-image');
-            if (document.fonts?.ready) await document.fonts.ready;
-            const pngUrl = await htmlToImage.toPng(canvasEl, {
-              quality: 1.0, pixelRatio: 1, width: size.width, height: size.height,
-              style: { transform: 'none', overflow: 'hidden' },
-            });
-            let finalUrl = pngUrl;
-            if (exportFormat === 'jpeg') {
-              finalUrl = await convertToJpeg(pngUrl, size.width, size.height, jpegQuality);
-            }
-            const base64 = finalUrl.split(',')[1];
-            zip.file(`${name}_${size.width}x${size.height}.${ext}`, base64, { base64: true });
-          } finally {
-            canvasEl.style.width = origW;
-            canvasEl.style.height = origH;
-          }
-        }
-
-        const blob = await zip.generateAsync({ type: 'blob' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = `${name}-${sizesToExport.length}sizes.zip`;
-        link.href = url;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        showToast('success', 'Download Complete', `${sizesToExport.length} sizes exported`);
       }
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `${name}-${selectedSizeIds.length}sizes.zip`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('success', 'Download Complete', `${selectedSizeIds.length} sizes exported as ${exportFormat.toUpperCase()}`);
     } catch (error) {
       showToast('error', 'Export Failed', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setIsExporting(false);
     }
-  }, [isExporting, exportFormat, jpegQuality, activeTemplateId, selectedExportSizes, exportCanvasDataUrl, convertToJpeg, showToast]);
-
-  // ── Legacy export all (used by settings panel) ──
-  const handleExportAll = useCallback(async () => {
-    // Select all sizes and trigger export
-    setSelectedExportSizes(new Set(CANVAS_SIZES.map(s => s.id)));
-    // Defer to let state update
-    setTimeout(() => handleExportSelected(), 50);
-  }, [handleExportSelected]);
+  }, [isExporting, exportSizes, exportFormat, jpegQuality, activeSize, activeTemplateId, showToast, handleExport]);
 
   // ── Keyboard shortcut actions ──
   const shortcutActions = useMemo(() => ({
@@ -646,7 +670,7 @@ export default function EditorPage() {
     toggleShortcutsHelp: () => setShowShortcuts(s => !s),
   }), [elements, selectedIds, undo, redo, setElements, showToast, handleExport]);
 
-  useKeyboardShortcuts(shortcutActions, isTextEditing, selectedIds.length > 0);
+  useKeyboardShortcuts(shortcutActions, isTextEditing || eraserMode, selectedIds.length > 0);
 
   // ── Selected element for properties panel ──
   const selectedElement = selectedIds.length === 1
@@ -695,7 +719,7 @@ export default function EditorPage() {
       case 'text':
         return <TextPanel onAddText={handleAddText} />;
       case 'uploads':
-        return <UploadsPanel onDragStart={handleUploadDragStart} />;
+        return <UploadsPanel onDragStart={handleUploadDragStart} onClickAdd={handleUploadClickAdd} />;
       case 'eraser':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 24, textAlign: 'center' }}>
@@ -712,8 +736,8 @@ export default function EditorPage() {
           <SettingsPanel
             activeSize={activeSize}
             onSizeChange={handleSizeChange}
-            onExport={handleExport}
-            onExportAll={handleExportAll}
+            onExport={() => handleExport()}
+            onExportAll={handleExportSelected}
             isExporting={isExporting}
           />
         );
@@ -784,10 +808,10 @@ export default function EditorPage() {
             </button>
           ))}
           <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
-          {/* Download button + dropdown */}
-          <div ref={downloadDropdownRef} style={{ position: 'relative' }}>
+          {/* Download button with dropdown */}
+          <div style={{ position: 'relative' }} ref={downloadMenuRef}>
             <button
-              onClick={() => setShowDownloadDropdown(prev => !prev)}
+              onClick={() => setShowDownloadMenu(v => !v)}
               disabled={isExporting}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6,
@@ -809,163 +833,110 @@ export default function EditorPage() {
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               {isExporting ? 'Exporting...' : 'Download'}
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </button>
-
-            {/* Download Dropdown Panel */}
-            {showDownloadDropdown && (
+            {showDownloadMenu && (
               <div style={{
                 position: 'absolute',
-                top: 'calc(100% + 8px)',
+                top: '100%',
                 right: 0,
+                marginTop: 6,
+                width: 280,
                 backgroundColor: '#1C2333',
                 border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 12,
-                padding: 20,
+                borderRadius: 10,
+                padding: '16px',
+                zIndex: 200,
                 boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
-                fontFamily: "'Poppins', sans-serif",
-                minWidth: 280,
-                zIndex: 99999,
+                fontFamily: 'Manrope, sans-serif',
               }}>
-                {/* FORMAT */}
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.45)', marginBottom: 8 }}>
-                  Format
-                </div>
-                <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, marginBottom: 10, textTransform: 'uppercase' }}>Format</div>
+                <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
                   {(['png', 'jpeg'] as const).map(fmt => (
-                    <button
-                      key={fmt}
-                      onClick={() => setExportFormat(fmt)}
-                      style={{
-                        flex: 1,
-                        padding: '6px 0',
-                        borderRadius: 6,
-                        border: exportFormat === fmt ? '1.5px solid #3B82F6' : '1.5px solid rgba(255,255,255,0.12)',
-                        backgroundColor: exportFormat === fmt ? 'rgba(59,130,246,0.15)' : 'transparent',
-                        color: exportFormat === fmt ? '#3B82F6' : 'rgba(255,255,255,0.6)',
-                        fontSize: 13,
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        fontFamily: 'inherit',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {fmt}
-                    </button>
+                    <button key={fmt} onClick={() => setExportFormat(fmt)} style={{
+                      flex: 1, padding: '6px 0', borderRadius: 6, border: 'none',
+                      backgroundColor: exportFormat === fmt ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.06)',
+                      color: exportFormat === fmt ? '#3B82F6' : 'rgba(255,255,255,0.6)',
+                      fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                    }}>{fmt.toUpperCase()}</button>
                   ))}
                 </div>
-
-                {/* JPEG Quality slider */}
                 {exportFormat === 'jpeg' && (
-                  <div style={{ marginBottom: 16 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Quality</span>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>{jpegQuality}%</span>
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>Quality</span>
+                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{jpegQuality}%</span>
                     </div>
-                    <input
-                      type="range"
-                      min={10}
-                      max={100}
-                      value={jpegQuality}
-                      onChange={(e) => setJpegQuality(Number(e.target.value))}
-                      style={{ width: '100%', accentColor: '#3B82F6', cursor: 'pointer' }}
-                    />
+                    <input type="range" min={10} max={100} value={jpegQuality} onChange={e => setJpegQuality(Number(e.target.value))}
+                      style={{ width: '100%', accentColor: '#3B82F6' }} />
                   </div>
                 )}
-
-                {/* SIZES */}
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.45)', marginBottom: 8 }}>
-                  Sizes
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' }}>Sizes</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14 }}>
+                  {CANVAS_SIZES.map(size => (
+                    <label key={size.id} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '3px 0' }}>
+                      <input type="checkbox" checked={!!exportSizes[size.id]}
+                        onChange={() => setExportSizes(prev => ({ ...prev, [size.id]: !prev[size.id] }))}
+                        style={{ accentColor: '#3B82F6', width: 14, height: 14 }} />
+                      <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>
+                        {size.width}&times;{size.height}
+                      </span>
+                      <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginLeft: 'auto' }}>
+                        {size.description}
+                      </span>
+                    </label>
+                  ))}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
-                  {CANVAS_SIZES.map(size => {
-                    const isChecked = selectedExportSizes.has(size.id);
-                    return (
-                      <label
-                        key={size.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 10,
-                          padding: '6px 8px',
-                          borderRadius: 6,
-                          cursor: 'pointer',
-                          backgroundColor: isChecked ? 'rgba(59,130,246,0.08)' : 'transparent',
-                        }}
-                        onMouseEnter={(e) => { if (!isChecked) (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'); }}
-                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = isChecked ? 'rgba(59,130,246,0.08)' : 'transparent'; }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => {
-                            setSelectedExportSizes(prev => {
-                              const next = new Set(prev);
-                              if (next.has(size.id)) next.delete(size.id);
-                              else next.add(size.id);
-                              return next;
-                            });
-                          }}
-                          style={{ accentColor: '#3B82F6', width: 15, height: 15, cursor: 'pointer' }}
-                        />
-                        <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.85)', minWidth: 90 }}>
-                          {size.width}&times;{size.height}
-                        </span>
-                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
-                          {size.description}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
-
-                {/* Action buttons */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <button
-                    onClick={() => { setShowDownloadDropdown(false); handleExport(); }}
-                    disabled={isExporting}
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                      width: '100%', height: 40, borderRadius: 8, border: 'none',
-                      backgroundColor: '#3B82F6', color: '#fff',
-                      fontSize: 13, fontWeight: 600, cursor: isExporting ? 'not-allowed' : 'pointer',
-                      fontFamily: 'inherit', opacity: isExporting ? 0.6 : 1,
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <button onClick={handleExportSelected} disabled={isExporting} style={{
+                    width: '100%', padding: '8px 0', borderRadius: 6, border: 'none',
+                    backgroundColor: '#3B82F6', color: '#fff',
+                    fontSize: 12, fontWeight: 600, cursor: isExporting ? 'not-allowed' : 'pointer',
+                    opacity: isExporting ? 0.6 : 1,
+                  }}>
+                    {isExporting ? 'Exporting...' : 'Download Selected Sizes'}
+                  </button>
+                  <button onClick={() => handleExport()} disabled={isExporting} style={{
+                    width: '100%', padding: '8px 0', borderRadius: 6,
+                    border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent',
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: 12, fontWeight: 600, cursor: isExporting ? 'not-allowed' : 'pointer',
+                    opacity: isExporting ? 0.6 : 1,
+                  }}>
                     Download Current Size
                   </button>
-                  {selectedExportSizes.size > 0 && (
-                    <button
-                      onClick={() => { setShowDownloadDropdown(false); handleExportSelected(); }}
-                      disabled={isExporting}
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                        width: '100%', height: 40, borderRadius: 8,
-                        border: '1.5px solid rgba(255,255,255,0.15)',
-                        backgroundColor: 'transparent', color: 'rgba(255,255,255,0.7)',
-                        fontSize: 13, fontWeight: 600, cursor: isExporting ? 'not-allowed' : 'pointer',
-                        fontFamily: 'inherit', opacity: isExporting ? 0.6 : 1,
-                      }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                      </svg>
-                      Download All Selected ({selectedExportSizes.size})
-                    </button>
-                  )}
                 </div>
               </div>
             )}
           </div>
+          {/* User email + Logout */}
+          {session?.user && (
+            <>
+              <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', fontFamily: 'Manrope, sans-serif' }}>
+                  {session.user.email}
+                </span>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  style={{
+                    padding: '4px 12px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 6,
+                    color: 'rgba(255,255,255,0.6)',
+                    fontSize: 12,
+                    cursor: 'pointer',
+                    fontFamily: 'Poppins, sans-serif',
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
@@ -991,38 +962,31 @@ export default function EditorPage() {
               }}
               onDrop={(e) => {
                 e.preventDefault();
-                const html = e.dataTransfer.getData('text/html');
                 const elementData = e.dataTransfer.getData('application/sigma-element');
-                if (html && iframeRef.current) {
-                  // Drop HTML component into iframe
-                  const iframeRect = iframeRef.current.getBoundingClientRect();
-                  iframeRef.current.contentWindow?.postMessage({
-                    type: 'sigma-command',
-                    command: 'addElement',
-                    html,
-                    x: (e.clientX - iframeRect.left) / (zoom / 100),
-                    y: (e.clientY - iframeRect.top) / (zoom / 100),
-                  }, '*');
-                } else if (elementData && iframeRef.current) {
-                  // Drop canvas element data — create HTML from element data
-                  try {
-                    const partial = JSON.parse(elementData);
-                    const iframeRect = iframeRef.current.getBoundingClientRect();
-                    const x = (e.clientX - iframeRect.left) / (zoom / 100);
-                    const y = (e.clientY - iframeRect.top) / (zoom / 100);
-                    // Create a simple HTML element from canvas element data
-                    const el = document.createElement('div');
-                    el.setAttribute('data-sigma', '');
-                    el.style.cssText = `position:absolute;left:${x}px;top:${y}px;z-index:100;font-family:Poppins,sans-serif;font-size:${partial.buttonStyle?.fontSize || partial.badgeStyle?.fontSize || partial.textStyle?.fontSize || 16}px;font-weight:${partial.buttonStyle?.fontWeight || partial.badgeStyle?.fontWeight || partial.textStyle?.fontWeight || 600};color:${partial.buttonStyle?.textColor || partial.badgeStyle?.textColor || partial.textStyle?.color || '#fff'};background:${partial.buttonStyle?.backgroundColor || partial.badgeStyle?.backgroundColor || 'transparent'};padding:${partial.buttonStyle?.paddingY || partial.badgeStyle?.paddingY || 10}px ${partial.buttonStyle?.paddingX || partial.badgeStyle?.paddingX || 20}px;border-radius:${partial.buttonStyle?.borderRadius || partial.badgeStyle?.borderRadius || 8}px;`;
-                    el.textContent = partial.content || '';
-                    iframeRef.current.contentWindow?.postMessage({
-                      type: 'sigma-command',
-                      command: 'addElement',
-                      html: el.outerHTML,
-                      x, y,
-                    }, '*');
-                  } catch { /* ignore */ }
-                }
+                if (!elementData) return;
+
+                // Switch to canvas mode so FreeFormCanvas renders with the new element
+                setIframeMode(false);
+                setIframeHtmlPath(null);
+
+                try {
+                  const partial = JSON.parse(elementData) as Partial<CanvasElement>;
+                  const maxZ = elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) : 0;
+                  const w = partial.width || 200;
+                  const h = partial.height || 200;
+                  const newEl: CanvasElement = {
+                    ...partial,
+                    id: `el_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+                    x: Math.round(activeSize.width / 2 - w / 2),
+                    y: Math.round(activeSize.height / 2 - h / 2),
+                    zIndex: maxZ + 1,
+                    locked: false,
+                    visible: true,
+                  } as CanvasElement;
+                  setElements([...elements, newEl]);
+                  setSelectedIds([newEl.id]);
+                  showToast('success', 'Element Added', 'Element added to canvas');
+                } catch { /* ignore */ }
               }}
               style={{
                 flex: 1,
@@ -1071,6 +1035,15 @@ export default function EditorPage() {
               onTextEditEnd={() => setIsTextEditing(false)}
               onZoomChange={setZoom}
               canvasExportRef={canvasRef}
+              eraserMode={eraserMode}
+              eraserBrushSize={eraserBrushSize}
+              eraserSoftness={eraserSoftness}
+              eraserOpacity={eraserOpacity}
+              eraserMagicMode={eraserModeType === 'magic'}
+              eraserMagicTolerance={magicTolerance}
+              eraserMagicRadius={magicRadius}
+              eraserMagicSoftness={magicSoftness}
+              onFileDrop={handleFileDrop}
             />
           )}
 
