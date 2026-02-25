@@ -12,30 +12,17 @@ interface UploadedFile {
 
 interface UploadsPanelProps {
   onDragStart: (dataUrl: string, width: number, height: number, e: React.DragEvent) => void;
-  onClickAdd?: (dataUrl: string, width: number, height: number) => void;
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp', 'image/gif'];
-
-export default function UploadsPanel({ onDragStart, onClickAdd }: UploadsPanelProps) {
+export default function UploadsPanel({ onDragStart }: UploadsPanelProps) {
   const [uploads, setUploads] = useState<UploadedFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
-    setError(null);
     Array.from(files).forEach(file => {
-      if (!file.type.startsWith('image/') && !ACCEPTED_TYPES.includes(file.type)) {
-        setError(`Unsupported format: ${file.name}`);
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        setError(`File too large (max 10MB): ${file.name}`);
-        return;
-      }
+      if (!file.type.startsWith('image/')) return;
       const reader = new FileReader();
       reader.onload = (e) => {
         const dataUrl = e.target?.result as string;
@@ -53,16 +40,6 @@ export default function UploadsPanel({ onDragStart, onClickAdd }: UploadsPanelPr
       };
       reader.readAsDataURL(file);
     });
-  };
-
-  const handleDelete = (id: string) => {
-    setUploads(prev => prev.filter(f => f.id !== id));
-  };
-
-  const handleClickAdd = (file: UploadedFile) => {
-    if (onClickAdd) {
-      onClickAdd(file.dataUrl, file.width, file.height);
-    }
   };
 
   return (
@@ -103,30 +80,18 @@ export default function UploadsPanel({ onDragStart, onClickAdd }: UploadsPanelPr
           Drop images here or click to upload
         </span>
         <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
-          PNG, JPG, SVG, WebP, GIF &middot; Max 10MB
+          PNG, JPG, SVG
         </span>
       </div>
 
       <input
         ref={inputRef}
         type="file"
-        accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif"
+        accept="image/*"
         multiple
         style={{ display: 'none' }}
-        onChange={(e) => { handleFiles(e.target.files); if (e.target) e.target.value = ''; }}
+        onChange={(e) => handleFiles(e.target.files)}
       />
-
-      {/* Error message */}
-      {error && (
-        <div style={{
-          padding: '8px 12px',
-          borderRadius: 6,
-          backgroundColor: 'rgba(239,68,68,0.1)',
-          border: '1px solid rgba(239,68,68,0.3)',
-        }}>
-          <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 11, color: '#ef4444' }}>{error}</span>
-        </div>
-      )}
 
       {/* Uploaded files */}
       {uploads.length > 0 && (
@@ -140,14 +105,13 @@ export default function UploadsPanel({ onDragStart, onClickAdd }: UploadsPanelPr
                 key={file.id}
                 draggable
                 onDragStart={(e) => onDragStart(file.dataUrl, file.width, file.height, e)}
-                onClick={() => handleClickAdd(file)}
                 style={{
                   position: 'relative',
                   aspectRatio: '1',
                   borderRadius: 8,
                   overflow: 'hidden',
                   border: '1px solid rgba(255,255,255,0.1)',
-                  cursor: 'pointer',
+                  cursor: 'grab',
                   backgroundColor: '#0D1117',
                 }}
               >
@@ -157,31 +121,6 @@ export default function UploadsPanel({ onDragStart, onClickAdd }: UploadsPanelPr
                   alt={file.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                {/* Delete button */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleDelete(file.id); }}
-                  style={{
-                    position: 'absolute',
-                    top: 4,
-                    right: 4,
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    border: 'none',
-                    backgroundColor: 'rgba(0,0,0,0.7)',
-                    color: '#fff',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    lineHeight: 1,
-                    padding: 0,
-                  }}
-                  title="Remove from library"
-                >
-                  &times;
-                </button>
                 <div style={{
                   position: 'absolute', bottom: 0, left: 0, right: 0,
                   background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
