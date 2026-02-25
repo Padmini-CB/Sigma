@@ -58,7 +58,7 @@ function makeImage(opts: {
     imageStyle: {
       objectFit: opts.objectFit ?? 'contain',
       borderRadius: 0,
-      maskType: opts.maskType ?? 'none',
+      maskType: opts.maskType ?? 'radial',
       maskParams: opts.maskParams,
     },
   };
@@ -217,8 +217,8 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
-      // Dhaval hero — right side, tighter mask to avoid square border, blue glow
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
+      // Dhaval hero — right side, seamless mask, blue glow
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#3b82f6', zIndex: 5 }),
       // Name + title near hero
       makeText({ x: 580, y: 520, width: 400, height: 30, content: 'Dhaval Patel', fontSize: 20, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 12 }),
       makeText({ x: 580, y: 555, width: 400, height: 24, content: 'Founder, Codebasics · Ex-NVIDIA', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
@@ -252,8 +252,8 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
-      // Dhaval hero — tighter mask
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
+      // Dhaval hero
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#3b82f6', zIndex: 5 }),
       // Headline
       makeText({ x: 40, y: 300, width: 700, height: 150, content: 'WE SKIP', fontSize: 130, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 440, width: 700, height: 150, content: 'THE BASICS.', fontSize: 130, color: '#3b82f6', zIndex: 10 }),
@@ -279,8 +279,8 @@ export const TEMPLATES: TemplateInfo[] = [
     thumbnailAccent: '#20C997',
     thumbnailHeadline: 'BUILD. ORCHESTRATE. DISTRIBUTE.',
     createElements: () => [
-      // Trio image — top ~50%, linear mask, blue glow
-      makeImage({ x: 0, y: 0, width: 1080, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 3 }),
+      // Trio image — top ~50%, linear mask
+      makeImage({ x: 0, y: 0, width: 1080, height: 560, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio.png', maskType: 'linear', maskParams: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 5%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)', zIndex: 3 }),
       makeLogo(36, 32, 30),
       makeSubscriberBadge(),
       // Pillar labels overlaid near bottom of trio
@@ -316,8 +316,8 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
-      // Dhaval hero — tighter mask
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
+      // Dhaval hero
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#3b82f6', zIndex: 5 }),
       // Headline
       makeText({ x: 40, y: 280, width: 600, height: 130, content: '500 SEATS.', fontSize: 120, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 400, width: 700, height: 130, content: 'THEN WE CLOSE.', fontSize: 120, color: '#3b82f6', zIndex: 10 }),
@@ -349,8 +349,8 @@ export const TEMPLATES: TemplateInfo[] = [
       makeSubscriberBadge(),
       // Module badge
       makeBadge({ x: 860, y: 90, width: 170, height: 36, content: 'MODULE 1-8', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
-      // Dhaval hero — centered, upper 55%, tighter mask
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
+      // Dhaval hero — centered, upper 55%
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#3b82f6', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Dhaval Patel · Founder, Codebasics · Ex-NVIDIA', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -382,7 +382,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 840, y: 90, width: 190, height: 36, content: 'MODULES 9-10', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Hemanand hero — centered, gold glow
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', maskType: 'none', glowColor: '#D7EF3F', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/hemanand-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#D7EF3F', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Hemanand Vadivel · Co-founder · Ex-Edgewell', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -414,7 +414,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Module badge
       makeBadge({ x: 830, y: 90, width: 200, height: 36, content: 'MODULES 11-12', bgColor: 'rgba(32,201,151,0.12)', textColor: '#20C997', fontSize: 14, borderRadius: 9999, borderColor: 'rgba(32,201,151,0.3)', borderWidth: 1, zIndex: 30 }),
       // Siddhant hero — green glow
-      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', maskType: 'none', glowColor: '#20C997', zIndex: 5 }),
+      makeImage({ x: 190, y: 60, width: 700, height: 560, src: '/images/bootcamps/ai-engineering/heroes/siddhant-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#20C997', zIndex: 5 }),
       // Instructor line
       makeText({ x: 140, y: 600, width: 800, height: 28, content: 'Siddhant Pandey · AI Research Engineer', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textAlign: 'center', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Massive headline
@@ -443,8 +443,8 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
-      // Dhaval hero — tighter mask
-      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
+      // Dhaval hero
+      makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#3b82f6', zIndex: 5 }),
       // Quote above headline
       makeText({ x: 40, y: 260, width: 500, height: 40, content: '"We intentionally keep the cohort small."', fontSize: 17, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, fontStyle: 'italic', zIndex: 11 }),
       // Headline
@@ -472,8 +472,8 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
-      // Dhaval hero — right side, tighter mask
-      makeImage({ x: 560, y: 40, width: 520, height: 600, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 4 }),
+      // Dhaval hero — right side
+      makeImage({ x: 560, y: 40, width: 520, height: 600, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', glowColor: '#3b82f6', zIndex: 4 }),
       // Left card — "YOU ENROLL IN"
       makeShape({ x: 50, y: 130, width: 470, height: 280, bgColor: 'rgba(32,201,151,0.06)', borderRadius: 16, borderColor: 'rgba(32,201,151,0.25)', borderWidth: 1, zIndex: 8 }),
       makeText({ x: 70, y: 145, width: 200, height: 20, content: 'YOU ENROLL IN', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 9 }),
@@ -513,8 +513,8 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       makeLogo(),
       makeSubscriberBadge(),
-      // Dhaval hero — right side, faded, tighter mask
-      makeImage({ x: 500, y: 100, width: 580, height: 700, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 60% 55% at center 40%, black 20%, transparent 90%', opacity: 0.5, glowColor: '#3b82f6', zIndex: 3 }),
+      // Dhaval hero — right side, faded
+      makeImage({ x: 500, y: 100, width: 580, height: 700, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'radial', maskParams: 'ellipse 70% 65% at center 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%', opacity: 0.5, glowColor: '#3b82f6', zIndex: 3 }),
       // "INVESTMENT" label
       makeText({ x: 40, y: 120, width: 200, height: 20, content: 'INVESTMENT', fontSize: 14, fontWeight: 600, color: '#3b82f6', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 11 }),
       // Price

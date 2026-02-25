@@ -125,6 +125,7 @@ export interface DragState {
   startX: number;
   startY: number;
   elementStartPositions: Record<string, Position>;
+  constrainAxis?: 'x' | 'y' | null;
 }
 
 export interface ResizeState {

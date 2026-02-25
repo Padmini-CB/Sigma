@@ -180,7 +180,7 @@ export const ASSET_SECTIONS: AssetSection[] = [
             },
           },
           {
-            id: aid(), type: 'html-component', label: 'Audience Badge',
+            id: aid(), type: 'html-component', label: 'Software Engineers Badge',
             htmlSnippet: '<div class="sigma-element" data-sigma data-type="audience-badge" style="position:absolute;z-index:100;font-family:Poppins,sans-serif;display:inline-flex;flex-direction:column;align-items:center;gap:4px;"><div style="padding:8px 20px;background:rgba(32,201,151,0.1);border:1px solid rgba(32,201,151,0.3);border-radius:8px;"><span style="font-size:16px;font-weight:600;color:rgba(255,255,255,0.9);">Built Exclusively for</span><span style="font-size:16px;font-weight:800;color:#20C997;"> Software Engineers</span></div><span style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.4);">2+ Years Experience Required</span></div>',
             element: {
               type: 'badge', width: 340, height: 60, rotation: 0, opacity: 1, locked: false, visible: true,
