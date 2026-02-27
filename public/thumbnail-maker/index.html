@@ -1,0 +1,3476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codebasics Thumbnail Generator</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;600;700;800;900&family=Kanit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            /* Palette - Premium Indigo + Purple */
+            --bg-main: #0F172A;
+            --panel-bg: #1E293B;
+            --card-bg: #111827;
+            --card-surface: rgba(255, 255, 255, 0.03);
+            --card-border: #334155;
+
+            --accent: #6366F1;
+            /* Indigo */
+            --accent-secondary: #8B5CF6;
+            /* Soft Purple */
+            --accent-dim: rgba(99, 102, 241, 0.15);
+
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+
+            /* UI Tokens */
+            --radius-lg: 12px;
+            --radius-md: 8px;
+            --radius-sm: 4px;
+            --spacing-card: 24px;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Scrollbar ──────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--panel-border);
+            border-radius: 4px;
+        }
+
+        /* ── Controls Panel ─────────────────────────────────── */
+        .controls {
+            width: 400px;
+            min-width: 400px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--card-border);
+            height: 100vh;
+            overflow-y: auto;
+            padding: 0 0 40px 0;
+        }
+
+        .controls-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            background: var(--panel-bg);
+            z-index: 100;
+        }
+
+        .controls-header h1 {
+            font-family: 'Saira Condensed', sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-logo {
+            height: 32px;
+            width: auto;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            padding: 24px 28px;
+            margin-bottom: 0;
+        }
+
+        /* ── Tabs ───────────────────────────────────────────── */
+        .tabs-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .tab-btn {
+            padding: 8px 4px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-family: 'Kanit', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .tab-btn.active::after {
+            display: none;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Saira Condensed', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .num {
+            background: var(--accent);
+            color: #FFFFFF;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        /* ── Form Controls ──────────────────────────────────── */
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+
+        label:first-of-type {
+            margin-top: 0;
+        }
+
+        select,
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: 'Kanit', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        select:focus,
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        select option {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        textarea {
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        input[type="file"] {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        input[type="file"]::file-selector-button {
+            background: var(--accent-dim);
+            border: 1px solid rgba(215, 239, 63, 0.3);
+            border-radius: 6px;
+            color: var(--accent);
+            padding: 5px 14px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background 0.2s;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: rgba(99, 102, 241, 0.25);
+        }
+
+        /* ── Sliders ─────────────────────────────────────────── */
+        .slider-row {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .slider-row .slider-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slider-row label {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .slider-row .val {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .slider-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #FFFFFF;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+        }
+
+        /* ── Buttons ────────────────────────────────────────── */
+        .btn-download-container {
+            display: flex;
+            justify-content: center;
+            padding: 30px 28px;
+            background: var(--panel-bg);
+            border-top: 1px solid var(--card-border);
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: #FFFFFF;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Saira Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .toggle-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .btn-secondary {
+            background: var(--panel-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--panel-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+        }
+
+        /* ── Element slot ───────────────────────────────────── */
+        .element-slot {
+            background: var(--bg-main);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .element-slot-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .element-slot {
+            position: relative;
+            background: var(--panel-surface);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .element-slot-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .btn-remove-el {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: transparent;
+            color: #ff4d4d;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            padding: 2px 6px;
+        }
+
+        .btn-remove-el:hover {
+            color: #ff8080;
+        }
+
+        .btn-add-el {
+            background: var(--panel-surface);
+            color: var(--text-primary);
+            border: 1px dashed var(--panel-border);
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: var(--radius);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-add-el:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── Char Selector ──────────────────────────────────── */
+        .preview-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0c1630;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            /* Anchor for zoom controls */
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 16px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            background: #18181b;
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 20;
+        }
+
+        .btn-zoom {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-zoom:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .zoom-label {
+            width: 44px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-primary);
+            user-select: none;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .canvas-scaler {
+            position: relative;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: top center;
+        }
+
+        /* ── Canvas (1920×1080 internal, CSS-scaled to fit) ──── */
+        .canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1920px;
+            height: 1080px;
+            transform-origin: top left;
+            /* scale is set by JS */
+        }
+
+        .canvas .bg-layer {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 40%, #3B82F6 0%, #181830 100%);
+            z-index: 1;
+        }
+
+        /* Backlight — soft radial glow behind character on bg */
+        .canvas .backlight-layer {
+            position: absolute;
+            z-index: 2;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Elements */
+        .canvas .el-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .canvas .el-img {
+            position: absolute;
+            max-width: 320px;
+            max-height: 320px;
+            transform: translate(-50%, -50%);
+            object-fit: contain;
+        }
+
+        /* Character */
+        .canvas .char-wrap {
+            position: absolute;
+            z-index: 5;
+            overflow: visible;
+        }
+
+        .canvas .char-wrap img {
+            display: block;
+            position: relative;
+            z-index: 3;
+        }
+
+        .canvas .char-wrap .glow-layer {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .canvas .char-wrap #glowInner {
+            z-index: 2;
+        }
+
+        .canvas .char-wrap #glowOuter {
+            z-index: 1;
+        }
+
+        /* Title */
+        .canvas .title-layer {
+            position: absolute;
+            z-index: 6;
+            font-family: 'Saira Condensed', sans-serif;
+            font-weight: 900;
+            font-size: 160px;
+            line-height: 0.85;
+            font-weight: 900;
+            font-size: 160px;
+            line-height: 0.85;
+            /* text-transform: uppercase; Removed - handled by JS toggle */
+            color: #FFFFFF;
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .canvas .title-layer .hl {
+            color: #D7EF3F;
+        }
+
+        /* ── Color swatches ─────────────────────────────────── */
+        .swatch-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .swatch:hover,
+        .swatch.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(215, 239, 63, 0.3);
+            transform: scale(1.1);
+        }
+
+        .glow-swatch {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .glow-swatch:hover,
+        .glow-swatch.active {
+            border-color: #fff;
+            transform: scale(1.15);
+        }
+
+        /* ── Misc ───────────────────────────────────────────── */
+        .hint {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .word-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+
+        .word-chip {
+            padding: 4px 8px;
+            font-size: 11px;
+            background: var(--panel-surface);
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .word-chip:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .word-chip.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Mixed Weight bold indicator */
+        .word-chip.bold {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: #fff;
+            font-weight: 900;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-left: auto;
+            /* Push to right */
+        }
+
+        .toggle-btn.active {
+            background: var(--accent);
+            color: #111;
+            border-color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* ── Char Selector ──────────────────────────────────── */
+        /* ── Char Selector Carousel ─────────────────────────── */
+        .carousel-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 12px;
+            margin-top: 4px;
+        }
+
+        .carousel-viewport {
+            flex: 1;
+            overflow: hidden;
+            padding: 5px 0;
+        }
+
+        .char-selector {
+            display: flex;
+            gap: 12px;
+            /* Increased gap for better spacing */
+            transition: transform 0.3s ease;
+            will-change: transform;
+        }
+
+        .carousel-btn {
+            width: 28px;
+            height: 28px;
+            background: var(--panel-surface);
+            border: 1px solid var(--panel-border);
+            border-radius: 50%;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .carousel-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(215, 239, 63, 0.1);
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .char-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            width: 58px;
+            /* Fixed width for consistent sliding: 54px thumb + 2px border * 2 = 58px */
+        }
+
+        .char-thumb {
+            width: 54px;
+            height: 54px;
+            border-radius: 8px;
+            border: 2px solid var(--panel-border);
+            background-size: cover;
+            background-position: center top;
+            transition: all 0.2s;
+        }
+
+        .char-option:hover .char-thumb {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        .char-option.active .char-thumb {
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(215, 239, 63, 0.4);
+        }
+
+        .char-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .char-option.active .char-label {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Adjust none-opt to match thumb size */
+        .char-option.none-opt .char-thumb {
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .char-option.none-opt .char-thumb::after {
+            content: "NONE";
+        }
+
+        /* Hide pseudo-element on parent from previous CSS */
+        .char-option.none-opt {
+            background: transparent;
+        }
+
+        .char-option.none-opt::after {
+            content: none;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--panel-border);
+            margin: 14px 0;
+        }
+
+        /* ── Font Style Presets ─────────────────────────── */
+        .preset-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            margin-top: 4px;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .preset-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 6px;
+            border-radius: 6px;
+            background: var(--panel-surface);
+            border: 1.5px solid var(--panel-border);
+            color: var(--text-secondary);
+            font-family: 'Kanit', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            text-align: center;
+            line-height: 1.2;
+            gap: 5px;
+        }
+
+        .preset-btn:hover {
+            border-color: rgba(215, 239, 63, 0.45);
+            color: var(--text-primary);
+            background: rgba(215, 239, 63, 0.06);
+        }
+
+        .preset-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(215, 239, 63, 0.12);
+            box-shadow: 0 0 10px rgba(215, 239, 63, 0.25), inset 0 0 8px rgba(215, 239, 63, 0.06);
+            font-weight: 700;
+        }
+
+        .preset-btn .preset-icon {
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* ── Preset Sub-Panels ──────────────────────────── */
+        .preset-sub-panel {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: none;
+            /* hidden by default */
+        }
+
+        .preset-sub-panel.visible {
+            display: block;
+        }
+
+        .sub-panel-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        /* ── Color Picker Row ───────────────────────────── */
+        .color-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .color-picker-row select,
+        .preset-sub-panel select,
+        .controls-panel select {
+            flex: 1;
+            font-size: 11px;
+            padding: 5px 8px;
+            background: #1E1E2F;
+            color: #FFFFFF;
+            border: 1.5px solid var(--panel-border);
+            border-radius: 6px;
+            cursor: pointer;
+            outline: none;
+            appearance: auto;
+            transition: border-color 0.2s;
+        }
+
+        .color-picker-row select:hover,
+        .preset-sub-panel select:hover,
+        .controls-panel select:hover {
+            border-color: var(--accent);
+        }
+
+        .color-picker-row select:focus,
+        .preset-sub-panel select:focus,
+        .controls-panel select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(215, 239, 63, 0.15);
+        }
+
+        /* Option elements inherit select's bg/color in Chrome & Edge */
+        .color-picker-row select option,
+        .preset-sub-panel select option,
+        .controls-panel select option {
+            background: #1E1E2F;
+            color: #FFFFFF;
+        }
+
+        .color-picker-row input[type="color"] {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1.5px solid var(--panel-border);
+            background: none;
+            cursor: pointer;
+            padding: 2px;
+            flex-shrink: 0;
+            transition: border-color 0.2s;
+        }
+
+        .color-picker-row input[type="color"]:hover {
+            border-color: var(--accent);
+        }
+
+        /* ── Glow Toggle ────────────────────────────────── */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .toggle-row label {
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--panel-border);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-track::before {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            left: 3px;
+            top: 3px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .toggle-switch input:checked+.toggle-track {
+            background: rgba(215, 239, 63, 0.35);
+        }
+
+        .toggle-switch input:checked+.toggle-track::before {
+            transform: translateX(16px);
+            background: var(--accent);
+        }
+
+        /* hide angle row when radial */
+        .angle-row {
+            display: flex;
+        }
+
+        .angle-row.hidden {
+            display: none;
+        }
+
+        /* Mode Toggle (Segmented Control style) */
+        .mode-toggle {
+            display: flex;
+            background: var(--panel-surface);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .mode-toggle label {
+            flex: 1;
+            text-align: center;
+            font-size: 13px !important;
+            padding: 6px 0;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin: 0 !important;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-toggle input {
+            display: none;
+        }
+
+        .mode-toggle label:has(input:checked) {
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .mode-toggle label:hover:not(:has(input:checked)) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        /* ── Subtitle Layer ─────────────────────────────── */
+        /* .subtitle-box is the direct canvas child: positioned, stacked, transformed. */
+        /* .subtitle-layer is the text child: inline, no position, no transform.       */
+        .subtitle-box {
+            position: absolute;
+            z-index: 3;
+            /* above el-layer (1), backlight (2) */
+            pointer-events: none;
+            transform-origin: center center;
+            display: none;
+            /* hidden until JS sets inline-flex */
+        }
+
+        .subtitle-layer {
+            /* NO position: absolute — must flow as flex-child inside .subtitle-box */
+            display: block;
+            font-family: 'Saira Condensed', sans-serif;
+            font-weight: 600;
+            color: #FFFFFF;
+            line-height: 1.1;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .slider-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        /* Subtitle weight pill buttons */
+        .subtitle-weight-btns {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .sub-weight-btn {
+            flex: 1;
+            padding: 5px 0;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1.5px solid var(--panel-border);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sub-weight-btn.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Subtitle controls wrapper visibility */
+        .subtitle-box-controls,
+        #subTextControls {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .subtitle-box-controls.visible,
+        #subTextControls.visible {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════════════ CONTROLS PANEL ════════════════════ -->
+    <div class="controls">
+
+        <div class="controls-header">
+            <h1><img src="assets/cb_logo.png" class="header-logo" alt="Codebasics Logo">Thumbnail Maker</h1>
+        </div>
+
+        <!-- 1. BACKGROUND -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="left"><span class="num">1</span> Background</div>
+            </div>
+
+            <label>Background Type</label>
+            <div class="mode-toggle" style="margin-bottom: 15px;">
+                <label><input type="radio" name="bgMode" value="theme" checked> Theme</label>
+                <label style="margin-left: 15px;"><input type="radio" name="bgMode" value="custom"> Custom
+                    Gradient</label>
+            </div>
+
+            <div id="bgThemePanel">
+                <label>Color Theme</label>
+                <div class="swatch-row" id="bgSwatches"></div>
+            </div>
+
+            <div id="bgCustomPanel" style="display:none;">
+                <div class="sub-panel-title" style="color:var(--accent); margin-bottom: 10px;">🎨 Gradient Settings
+                </div>
+
+                <div class="mode-toggle" style="margin-bottom: 15px;">
+                    <label><input type="radio" name="gradType" value="linear" checked> Linear</label>
+                    <label style="margin-left: 15px;"><input type="radio" name="gradType" value="radial"> Radial</label>
+                </div>
+
+                <div id="gradSimpleControls">
+                    <div class="color-picker-row">
+                        <div style="flex:1;">
+                            <label>Color 1</label>
+                            <input type="color" id="gradColor1" value="#0F1029" style="width:100%;">
+                        </div>
+                        <div style="flex:1;">
+                            <label>Color 2</label>
+                            <input type="color" id="gradColor2" value="#1F3A66" style="width:100%;">
+                        </div>
+                    </div>
+
+                    <div id="linearControls">
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Angle</label>
+                                <span class="val" id="gradAngleVal">135°</span>
+                            </div>
+                            <input type="range" id="gradAngle" min="0" max="360" value="135">
+                        </div>
+                    </div>
+
+                    <div id="radialControls" style="display:none;">
+                        <div class="slider-pair">
+                            <div class="slider-row">
+                                <div class="slider-label-row">
+                                    <label>Pos X</label>
+                                    <span class="val" id="gradPosXVal">50%</span>
+                                </div>
+                                <input type="range" id="gradPosX" min="0" max="100" value="50">
+                            </div>
+                            <div class="slider-row">
+                                <div class="slider-label-row">
+                                    <label>Pos Y</label>
+                                    <span class="val" id="gradPosYVal">50%</span>
+                                </div>
+                                <input type="range" id="gradPosY" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Radius</label>
+                                <span class="val" id="gradRadiusVal">100%</span>
+                            </div>
+                            <input type="range" id="gradRadius" min="10" max="150" value="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="gradAdvancedControls"
+                    style="display:none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--panel-border);">
+                    <div id="stopsList"></div>
+                    <button id="btnAddStop" class="btn-upload-custom" style="width:100%; margin-top:10px;">+ Add Color
+                        Stop</button>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:12px; margin-top:15px;">
+                    <input type="checkbox" id="gradAdvancedToggle" style="width:18px; height:18px; cursor:pointer;">
+                    <label for="gradAdvancedToggle" style="margin:0; cursor:pointer; font-size:13px;">Advanced
+                        Stops</label>
+                </div>
+
+                <div style="display:flex; gap:8px; margin-top:15px;">
+                    <button id="btnReverseGrad" class="btn-upload-custom" style="flex:1;">🔄 Reverse</button>
+                    <button id="btnCopyGradCSS" class="btn-upload-custom" style="flex:1;">📋 Copy CSS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CHARACTER -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="left"><span class="num">2</span> Character</div>
+            </div>
+
+            <div class="carousel-container">
+                <button id="charPrev" class="carousel-btn" disabled>◀</button>
+                <div class="carousel-viewport">
+                    <div id="charSelector" class="char-selector">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                <button id="charNext" class="carousel-btn">▶</button>
+            </div>
+
+            <label>OR Upload Headshot</label>
+            <input type="file" id="charUpload" accept="image/*">
+
+            <label>Position</label>
+            <select id="charPosition">
+                <option value="left">Left</option>
+                <option value="right" selected>Right</option>
+                <option value="center">Center</option>
+            </select>
+
+            <div class="slider-pair">
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>X Offset</label>
+                        <span class="val" id="charXVal">0</span>
+                    </div>
+                    <input type="range" id="charXOff" min="-960" max="960" value="0">
+                </div>
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Y Offset</label>
+                        <span class="val" id="charYVal">0</span>
+                    </div>
+                    <input type="range" id="charYOff" min="-540" max="540" value="0">
+                </div>
+            </div>
+
+            <div class="slider-row">
+                <div class="slider-label-row">
+                    <label>Scale</label>
+                    <span class="val" id="charScaleVal">1.0x</span>
+                </div>
+                <input type="range" id="charScale" min="50" max="200" value="100">
+            </div>
+
+            <label>Rim Glow Color</label>
+            <div class="swatch-row" id="glowSwatches"></div>
+
+            <div class="slider-row">
+                <div class="slider-label-row">
+                    <label>Size</label>
+                    <span class="val" id="glowSizeVal">4</span>
+                </div>
+                <input type="range" id="glowSize" min="0" max="20" value="4">
+            </div>
+
+            <div class="slider-pair">
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Opacity</label>
+                        <span class="val" id="glowOpacityVal">55%</span>
+                    </div>
+                    <input type="range" id="glowOpacity" min="0" max="100" value="55">
+                </div>
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Blur</label>
+                        <span class="val" id="glowBlurVal">5</span>
+                    </div>
+                    <input type="range" id="glowBlur" min="0" max="20" value="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. TITLE -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="left"><span class="num">3</span> Title Text</div>
+                <button id="btnCaps" class="toggle-btn" title="Toggle ALL CAPS">AA</button>
+            </div>
+
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="toggleTab(this, 'title-style')">Style</button>
+                <button class="tab-btn" onclick="toggleTab(this, 'title-transform')">Transform</button>
+                <button class="tab-btn" onclick="toggleTab(this, 'title-effects')">Effects</button>
+            </div>
+
+            <!-- TAB: Style -->
+            <div id="title-style" class="tab-content active">
+                <textarea id="titleInput" rows="3">BUILD YOUR AI AGENT</textarea>
+
+                <div class="preset-label" style="margin-top:16px;">Font Style Preset</div>
+                <div id="presetGrid" class="preset-grid">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div id="wordChips" class="word-chips"></div>
+            </div>
+
+            <!-- TAB: Transform -->
+            <div id="title-transform" class="tab-content">
+                <div class="slider-pair">
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>X Offset</label>
+                            <span class="val" id="textXVal">0</span>
+                        </div>
+                        <input type="range" id="textXOff" min="-400" max="400" value="0">
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Y Offset</label>
+                            <span class="val" id="textYVal">0</span>
+                        </div>
+                        <input type="range" id="textYOff" min="-400" max="400" value="0">
+                    </div>
+                </div>
+
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Size</label>
+                        <span class="val" id="fontSizeVal">160</span>
+                    </div>
+                    <input type="range" id="fontSize" min="60" max="260" value="160">
+                </div>
+
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Rotate</label>
+                        <span class="val" id="textRotVal">0°</span>
+                    </div>
+                    <input type="range" id="textRot" min="-45" max="45" value="0">
+                </div>
+
+                <div class="slider-pair">
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Skew X</label>
+                            <span class="val" id="textSkewXVal">0°</span>
+                        </div>
+                        <input type="range" id="textSkewX" min="-25" max="25" value="0">
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Skew Y</label>
+                            <span class="val" id="textSkewYVal">0°</span>
+                        </div>
+                        <input type="range" id="textSkewY" min="-25" max="25" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Effects -->
+            <div id="title-effects" class="tab-content">
+                <!-- Gradient Impact Sub-Panel -->
+                <div id="gradientControls" class="preset-sub-panel visible">
+                    <div class="sub-panel-title">⬡ Gradient Settings</div>
+
+                    <label>Gradient Type</label>
+                    <select id="gradientType">
+                        <option value="linear">Linear</option>
+                        <option value="radial">Radial</option>
+                    </select>
+
+                    <div class="slider-row angle-row" id="gradientAngleRow">
+                        <div class="slider-label-row">
+                            <label>Angle</label>
+                            <span class="val" id="gradientAngleVal">90°</span>
+                        </div>
+                        <input type="range" id="gradientAngle" min="0" max="360" value="90">
+                    </div>
+
+                    <label style="margin-top:16px;">Start Color</label>
+                    <div class="color-picker-row">
+                        <select id="gradStartColorBrand"></select>
+                        <input type="color" id="gradStartColorCustom" value="#D7EF3F" title="Custom start color">
+                    </div>
+
+                    <label style="margin-top:10px;">End Color</label>
+                    <div class="color-picker-row">
+                        <select id="gradEndColorBrand"></select>
+                        <input type="color" id="gradEndColorCustom" value="#3B82F6" title="Custom end color">
+                    </div>
+                </div>
+
+                <!-- Outlined Style Sub-Panel -->
+                <div id="outlineControls" class="preset-sub-panel visible" style="margin-top:16px;">
+                    <div class="sub-panel-title">◻ Outline Settings</div>
+
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Stroke Width</label>
+                            <span class="val" id="strokeWidthVal">8</span>
+                        </div>
+                        <input type="range" id="strokeWidth" min="1" max="30" value="8">
+                    </div>
+
+                    <label style="margin-top:16px;">Stroke Color</label>
+                    <div class="color-picker-row">
+                        <select id="strokeColorBrand"></select>
+                        <input type="color" id="strokeColorCustom" value="#D7EF3F" title="Custom stroke color">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3b. SUBTITLE -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="left"><span class="num">3b</span> Subtitle Text</div>
+                <button id="subBtnCaps" class="toggle-btn" title="Toggle ALL CAPS">AA</button>
+            </div>
+
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="toggleTab(this, 'sub-text')">Text</button>
+                <button class="tab-btn" onclick="toggleTab(this, 'sub-box')">Box</button>
+                <button class="tab-btn" onclick="toggleTab(this, 'sub-transform')">Transform</button>
+            </div>
+
+            <div id="subPresetWrapper" style="margin-top: 15px;">
+                <button id="btnApplyPremiumBadge" class="btn btn-secondary"
+                    style="width: 100%; height: 40px; border-radius: 30px; border: 1px solid var(--accent); color: var(--accent); font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    🎯 Apply Rounded Premium Badge
+                </button>
+            </div>
+
+            <!-- TAB: Text -->
+            <div id="sub-text" class="tab-content active">
+                <label>Subtitle</label>
+                <textarea id="subtitleInput" rows="2" placeholder="Subtitle text…" style="resize:vertical;"></textarea>
+
+                <div class="slider-row" style="margin-top:16px;">
+                    <div class="slider-label-row">
+                        <label>Font Size</label>
+                        <span class="val" id="subFontSizeVal">48</span>
+                    </div>
+                    <input type="range" id="subFontSize" min="18" max="120" value="48">
+                </div>
+
+                <label style="margin-top:16px;">Font Weight</label>
+                <div class="subtitle-weight-btns">
+                    <button class="sub-weight-btn" id="subWtMedium" data-weight="600">Medium</button>
+                    <button class="sub-weight-btn active" id="subWtBold" data-weight="900">Bold</button>
+                </div>
+
+                <label style="margin-top:16px;">Text Color</label>
+                <div class="color-picker-row">
+                    <select id="subTextColorBrand"></select>
+                    <input type="color" id="subTextColorCustom" value="#FFFFFF" title="Custom text color">
+                </div>
+            </div>
+
+            <!-- TAB: Box -->
+            <div id="sub-box" class="tab-content">
+                <div style="display:flex;align-items:center;gap:12px;margin:10px 0 20px 0;">
+                    <input type="checkbox" id="subBoxEnabled" style="width:20px;height:20px;cursor:pointer;">
+                    <label for="subBoxEnabled"
+                        style="margin:0;cursor:pointer;font-size:15px;color:var(--text-primary);">Background Box</label>
+                </div>
+
+                <label>Box Color</label>
+                <div class="color-picker-row">
+                    <select id="subBoxColorBrand"></select>
+                    <input type="color" id="subBoxColorCustom" value="#D7EF3F" title="Custom box color">
+                </div>
+
+                <div class="slider-pair">
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Padding H</label>
+                            <span class="val" id="subBoxPadHVal">16</span>
+                        </div>
+                        <input type="range" id="subBoxPadH" min="0" max="80" value="16">
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Padding V</label>
+                            <span class="val" id="subBoxPadVVal">8</span>
+                        </div>
+                        <input type="range" id="subBoxPadV" min="0" max="60" value="8">
+                    </div>
+                </div>
+
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Border Radius</label>
+                        <span class="val" id="subBoxRadiusVal">6</span>
+                    </div>
+                    <input type="range" id="subBoxRadius" min="0" max="60" value="6">
+                </div>
+
+                <div class="slider-row">
+                    <div class="slider-label-row">
+                        <label>Box Opacity</label>
+                        <span class="val" id="subBoxOpacityVal">100%</span>
+                    </div>
+                    <input type="range" id="subBoxOpacity" min="0" max="100" value="100">
+                </div>
+            </div>
+
+            <!-- TAB: Transform -->
+            <div id="sub-transform" class="tab-content">
+                <!-- Subtitle Text Transform (Visible when Box is OFF) -->
+                <div id="subTextControls" class="visible">
+                    <div class="sub-panel-title" style="color:var(--accent);">&#9633; Text Transform</div>
+                    <div class="slider-pair">
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>X Offset</label>
+                                <span class="val" id="subTextXOffVal">0</span>
+                            </div>
+                            <input type="range" id="subTextXOff" min="-500" max="500" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Y Offset</label>
+                                <span class="val" id="subTextYOffVal">0</span>
+                            </div>
+                            <input type="range" id="subTextYOff" min="-500" max="500" value="0">
+                        </div>
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Scale</label>
+                            <span class="val" id="subTextScaleVal">1.0x</span>
+                        </div>
+                        <input type="range" id="subTextScale" min="50" max="300" value="100">
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Rotate</label>
+                            <span class="val" id="subTextRotVal">0°</span>
+                        </div>
+                        <input type="range" id="subTextRot" min="-45" max="45" value="0">
+                    </div>
+                    <div class="slider-pair">
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Skew X</label>
+                                <span class="val" id="subTextSkewXVal">0°</span>
+                            </div>
+                            <input type="range" id="subTextSkewX" min="-25" max="25" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Skew Y</label>
+                                <span class="val" id="subTextSkewYVal">0°</span>
+                            </div>
+                            <input type="range" id="subTextSkewY" min="-25" max="25" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Box transforms (Visible when Box is ON) -->
+                <div id="subBoxControls" class="visible">
+                    <div class="sub-panel-title" style="color:var(--accent);">&#9645; Box Position</div>
+                    <div class="slider-pair">
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>X Offset</label>
+                                <span class="val" id="subBoxXOffVal">0</span>
+                            </div>
+                            <input type="range" id="subBoxXOff" min="-960" max="960" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Y Offset</label>
+                                <span class="val" id="subBoxYOffVal">0</span>
+                            </div>
+                            <input type="range" id="subBoxYOff" min="-600" max="480" value="0">
+                        </div>
+                    </div>
+
+                    <div class="sub-panel-title" style="margin-top:20px;color:var(--accent);">&#9645; Box Transform
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Scale</label>
+                            <span class="val" id="subBoxScaleVal">1.0×</span>
+                        </div>
+                        <input type="range" id="subBoxScale" min="50" max="300" value="100">
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label-row">
+                            <label>Rotate</label>
+                            <span class="val" id="subBoxRotVal">0°</span>
+                        </div>
+                        <input type="range" id="subBoxRot" min="-45" max="45" value="0">
+                    </div>
+                    <div class="slider-pair">
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Skew X</label>
+                                <span class="val" id="subBoxSkewXVal">0°</span>
+                            </div>
+                            <input type="range" id="subBoxSkewX" min="-25" max="25" value="0">
+                        </div>
+                        <div class="slider-row">
+                            <div class="slider-label-row">
+                                <label>Skew Y</label>
+                                <span class="val" id="subBoxSkewYVal">0°</span>
+                            </div>
+                            <input type="range" id="subBoxSkewY" min="-25" max="25" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ELEMENTS -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="left"><span class="num">4</span> Elements</div>
+            </div>
+
+            <div id="elementsList">
+                <!-- Populated by JS -->
+            </div>
+
+            <button id="btnAddElement" class="btn btn-secondary" style="width:100%; margin-top:10px;">+ Add
+                Element</button>
+        </div>
+
+        <!-- 5. DOWNLOAD -->
+        <div class="btn-download-container">
+            <button class="btn-download" id="btnDownload">⬇ Download Thumbnail</button>
+        </div>
+
+    </div>
+
+    <!-- ════════════════════ PREVIEW ════════════════════ -->
+    <div class="preview-wrapper">
+        <div class="zoom-controls">
+            <button class="btn-zoom" id="btnZoomOut" title="Zoom Out">−</button>
+            <div class="zoom-label" id="zoomLabel">100%</div>
+            <button class="btn-zoom" id="btnZoomIn" title="Zoom In">+</button>
+        </div>
+        <div class="canvas-scaler">
+            <div class="canvas" id="canvas">
+
+                <!-- Layer 1: Background gradient -->
+                <div class="bg-layer" id="bgLayer"></div>
+
+                <!-- Layer 2: Elements (Dynamic) -->
+                <div class="el-layer" id="elLayer"></div>
+
+                <!-- Layer 2b: Backlight (radial glow behind character) -->
+                <div class="backlight-layer" id="backlightLayer" style="display:none;"></div>
+
+                <!-- Layer 3: Subtitle (box is container, text is child) -->
+                <div class="subtitle-box" id="subtitleBox">
+                    <div class="subtitle-layer" id="subtitleLayer"></div>
+                </div>
+
+                <!-- Layer 3: Character -->
+                <div class="char-wrap" id="charWrap">
+                    <canvas id="glowOuter" class="glow-layer" width="0" height="0"></canvas>
+                    <canvas id="glowInner" class="glow-layer" width="0" height="0"></canvas>
+                    <img id="charImg" style="display:none;">
+                </div>
+
+                <!-- Layer 4: Title -->
+                <div class="title-layer" id="titleLayer"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════ SCRIPT ════════════════════ -->
+    <script>
+        /* ─── Config ──────────────────────────────────── */
+        let CFG = null;
+
+        const BG_OPTIONS = {
+            "Blue": "#3B82F6",
+            "Purple": "#6F53C1",
+            "Blue-Gray": "#3F4C78",
+            "Dark Navy": "#181830",
+            "Midnight Blue": "linear-gradient(135deg, #0F1029, #1F3A66)",
+            "Royal Blue": "linear-gradient(135deg, #1C2B4F, #2F5DA8)",
+            "Deep Purple": "linear-gradient(135deg, #2B0F54, #4C2A9C)",
+            "Emerald Dark": "linear-gradient(135deg, #0B2E1F, #0F5C4A)",
+            "Dark Wine": "linear-gradient(135deg, #2A0F0F, #5A1E1E)"
+        };
+
+        const GLOW_OPTIONS = [
+            { label: "Teal", rgb: "32,201,151", hex: "#20C997" },
+            { label: "Lavender", rgb: "225,227,250", hex: "#E1E3FA" },
+            { label: "Orange", rgb: "253,126,21", hex: "#FD7E15" },
+            { label: "Pink", rgb: "214,51,132", hex: "#D63384" }
+        ];
+
+        const characterImages = [
+            "assets/photo1.png",
+            "assets/photo2.png",
+            "assets/photo3.png",
+            "assets/photo4.png",
+            "assets/photo5.png",
+            "assets/photo6.png",
+            "assets/photo7.png"
+        ];
+
+        /* ─── UI Interactions ─────────────────────────── */
+        function toggleTab(btn, contentId) {
+            const card = btn.closest('.section-card');
+
+            // Toggle active button
+            card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Toggle active content
+            card.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            card.querySelector(`#${contentId}`).classList.add('active');
+        }
+
+        /* EL_POSITIONS removed — elements now use per-slot sliders */
+
+        /* ─── State ───────────────────────────────────── */
+        let state = {
+            previewZoom: 1.0,
+            // ── Background State ──────────────────────────
+            backgroundMode: "theme", // "theme" or "custom"
+            customBg: {
+                type: "linear", // "linear" or "radial"
+                linear: {
+                    color1: "#0F1029",
+                    color2: "#1F3A66",
+                    angle: 135
+                },
+                radial: {
+                    color1: "#0F1029",
+                    color2: "#1F3A66",
+                    posX: 50,
+                    posY: 50,
+                    radius: 100
+                },
+                advancedEnabled: false,
+                stops: [
+                    { id: Date.now(), color: "#0F1029", pos: 0 },
+                    { id: Date.now() + 1, color: "#1F3A66", pos: 100 }
+                ]
+            },
+            bgColor: "#3B82F6",
+            charSrc: characterImages[0],
+            charPosition: "right",
+            charXOff: 0,
+            charYOff: 0,
+            charScale: 1.0,
+            glowIdx: 0,
+            glowSize: 4,
+            glowOpacity: 55,
+            glowBlur: 5,
+            textXOff: 0,
+            textYOff: 0,
+            fontSize: 160,
+            textRotation: 0,
+            textSkewX: 0,
+            textSkewY: 0,
+            textCaps: true,
+            textHighlights: new Set(),
+            elements: [
+                { src: null, x: 0, y: 0, rot: 0, opacity: 20, blur: 0 }
+            ],
+            // ── Typography Preset State ──────────────────
+            typography: {
+                activePreset: "bold_clean",
+                gradient: {
+                    type: "linear",
+                    angle: 90,
+                    startColor: "#D7EF3F",
+                    endColor: "#3B82F6"
+                },
+                outline: {
+                    strokeWidth: 8,
+                    strokeColor: "#D7EF3F"
+                },
+                mixedWeightWords: new Set()
+            },
+            // ── Subtitle State ────────────────────────────
+            charCarouselIndex: 0,
+            subtitle: {
+                text: "",
+                fontSize: 48,
+                fontWeight: 900,
+                textColor: "#FFFFFF",
+                boxEnabled: false,
+                boxColor: "#D7EF3F",
+                boxOpacity: 100,
+                boxPadH: 16,
+                boxPadV: 8,
+                boxRadius: 6,
+                boxRotation: 0,
+                boxSkewX: 0,
+                boxSkewY: 0,
+                boxScale: 1,
+                boxXOff: 0,
+                boxYOff: 0,
+                xOff: 0,
+                yOff: 0,
+                rotation: 0,
+                skewX: 0,
+                skewY: 0,
+                textScale: 1,
+                textCaps: false,
+                boxShadowEnabled: false,
+                boxShadowColor: "rgba(0,0,0,0.15)",
+                boxShadowBlur: 20,
+                boxShadowY: 10
+            }
+        };
+
+        /* ─── DOM refs ────────────────────────────────── */
+        const $ = id => document.getElementById(id);
+        const bgLayer = $("bgLayer");
+        const backlightLayer = $("backlightLayer");
+        const charWrap = $("charWrap");
+        const charImg = $("charImg");
+        const glowInner = $("glowInner");
+        const glowOuter = $("glowOuter");
+        const titleLayer = $("titleLayer");
+        const canvas = $("canvas");
+
+        /* ─── Load brand_config.json ──────────────────── */
+        fetch("brand_config.json")
+            .then(r => r.json())
+            .then(cfg => {
+                CFG = cfg;
+                // Apply canvas dimensions from config
+                canvas.style.width = cfg.canvas.width + "px";
+                canvas.style.height = cfg.canvas.height + "px";
+                // Apply character offsets
+                state.charXOff = cfg.character_logic.x_offset || 0;
+                state.charYOff = cfg.character_logic.y_offset || 0;
+                $("charXOff").value = state.charXOff;
+                $("charYOff").value = state.charYOff;
+                $("charXVal").textContent = state.charXOff;
+                $("charYVal").textContent = state.charYOff;
+                // Apply text offsets
+                state.textXOff = cfg.typography.x_offset || 0;
+                state.textYOff = cfg.typography.y_offset || 0;
+                $("textXOff").value = state.textXOff;
+                $("textYOff").value = state.textYOff;
+                $("textXVal").textContent = state.textXOff;
+                $("textYVal").textContent = state.textYOff;
+                // Glow
+                state.glowSize = cfg.character_logic.glow_intensity || 4;
+                $("glowSize").value = state.glowSize;
+                $("glowSizeVal").textContent = state.glowSize;
+
+                state.glowOpacity = (cfg.character_logic.glow_opacity || 0.55) * 100;
+                $("glowOpacity").value = state.glowOpacity;
+                $("glowOpacityVal").textContent = state.glowOpacity + "%";
+
+                scaleCanvas();
+                render();
+                // Initialise preset system now that CFG is loaded
+                buildPresetButtons();
+                buildPresetBrandDropdowns();
+                bindPresetControls();
+                // Subtitle color pickers (need CFG for brand colors)
+                buildColorPickerRow(
+                    "subTextColorBrand", "subTextColorCustom",
+                    state.subtitle, "textColor", state.subtitle.textColor
+                );
+                buildColorPickerRow(
+                    "subBoxColorBrand", "subBoxColorCustom",
+                    state.subtitle, "boxColor", state.subtitle.boxColor
+                );
+            })
+            .catch(() => { scaleCanvas(); render(); });
+
+        /* ─── Build swatches ──────────────────────────── */
+        function buildBgSwatches() {
+            const row = $("bgSwatches");
+            Object.entries(BG_OPTIONS).forEach(([name, val], i) => {
+                const s = document.createElement("div");
+                s.className = "swatch" + (i === 0 ? " active" : "");
+                // If val is a hex, use it as background color, otherwise it's a gradient string
+                s.style.background = val;
+                s.title = name;
+                s.addEventListener("click", () => {
+                    row.querySelectorAll(".swatch").forEach(sw => sw.classList.remove("active"));
+                    s.classList.add("active");
+                    state.bgColor = val;
+                    render();
+                });
+                row.appendChild(s);
+            });
+        }
+
+        function buildGlowSwatches() {
+            const row = $("glowSwatches");
+            GLOW_OPTIONS.forEach((g, i) => {
+                const s = document.createElement("div");
+                s.className = "glow-swatch" + (i === 0 ? " active" : "");
+                s.style.background = g.hex;
+                s.title = g.label;
+                s.addEventListener("click", () => {
+                    row.querySelectorAll(".glow-swatch").forEach(sw => sw.classList.remove("active"));
+                    s.classList.add("active");
+                    state.glowIdx = i;
+                    render();
+                });
+                row.appendChild(s);
+            });
+        }
+
+        /* ─── Robust Character Loading Logic ────────────────────── */
+        function updateCharacterImage(src) {
+            if (!src) return;
+            state.charSrc = src; // Update state immediately
+
+            // Preload to prevent blank canvas
+            const temp = new Image();
+            temp.onload = () => {
+                // Determine if this is still the active request
+                if (state.charSrc !== src) return;
+
+                // Start transition
+                charImg.style.transition = "opacity 0.15s ease-out";
+                charImg.style.opacity = "0";
+
+                setTimeout(() => {
+                    charImg.src = src;
+                    charImg.style.display = "block";
+
+                    // Render frame
+                    requestAnimationFrame(() => {
+                        render();
+                        // Fade in
+                        requestAnimationFrame(() => {
+                            charImg.style.opacity = "1";
+                        });
+                    });
+                }, 150); // 150ms fade out
+            };
+
+            temp.onerror = () => {
+                console.error("Failed to load image:", src);
+                charImg.style.opacity = "1";
+            };
+
+            temp.src = src;
+        }
+
+        function buildCharSelector() {
+            const wrap = $("charSelector");
+            const prevBtn = $("charPrev");
+            const nextBtn = $("charNext");
+            wrap.innerHTML = "";
+
+            // "None" option
+            const noneOpt = document.createElement("div");
+            noneOpt.className = "char-option none-opt";
+            noneOpt.innerHTML = `<div class="char-thumb"></div><div class="char-label">None</div>`;
+
+            noneOpt.addEventListener("click", () => {
+                wrap.querySelectorAll(".char-option").forEach(c => c.classList.remove("active"));
+                noneOpt.classList.add("active");
+                $("charUpload").value = "";
+                charImg.style.display = "none";
+                state.charSrc = null;
+                render();
+            });
+            wrap.appendChild(noneOpt);
+
+            // Asset options
+            characterImages.forEach((src, i) => {
+                const label = src.split("/").pop().split(".")[0];
+                const el = document.createElement("div");
+                el.className = "char-option";
+                if (state.charSrc === src) el.classList.add("active");
+                el.innerHTML = `
+                   <div class="char-thumb" style="background-image: url('${src}')"></div>
+                   <div class="char-label">${label}</div>
+               `;
+                el.addEventListener("click", () => {
+                    wrap.querySelectorAll(".char-option").forEach(c => c.classList.remove("active"));
+                    el.classList.add("active");
+                    $("charUpload").value = "";
+                    updateCharacterImage(src);
+                });
+                wrap.appendChild(el);
+            });
+
+            // Carousel Logic
+            const itemWidth = 58 + 12; // width + gap
+            const totalItems = wrap.children.length;
+            const visibleItems = 4;
+            const maxIndex = Math.max(0, totalItems - visibleItems);
+
+            const updateCarousel = () => {
+                const offset = -state.charCarouselIndex * itemWidth;
+                wrap.style.transform = `translateX(${offset}px)`;
+                prevBtn.disabled = state.charCarouselIndex === 0;
+                nextBtn.disabled = state.charCarouselIndex >= maxIndex;
+            };
+
+            prevBtn.onclick = () => {
+                if (state.charCarouselIndex > 0) {
+                    state.charCarouselIndex--;
+                    updateCarousel();
+                }
+            };
+
+            nextBtn.onclick = () => {
+                if (state.charCarouselIndex < maxIndex) {
+                    state.charCarouselIndex++;
+                    updateCarousel();
+                }
+            };
+
+            // Initialize position
+            updateCarousel();
+        }
+
+        buildBgSwatches();
+        buildGlowSwatches();
+        buildCharSelector();
+
+        /* ─── Font Style Preset System ──────────────── */
+
+        // Icon map per preset key (fallback if not found)
+        const PRESET_ICONS = {
+            bold_clean: "🔤",
+            gradient_impact: "🌈",
+            outlined: "□",
+            mixed_weight: "Aa"
+        };
+
+        /**
+         * buildPresetButtons()
+         * Reads CFG.typography.style_presets and creates one .preset-btn per key.
+         * Fully config-driven — add a new preset to brand_config.json, reload, done.
+         */
+        function buildPresetButtons() {
+            const grid = $("presetGrid");
+            if (!grid || !CFG || !CFG.typography || !CFG.typography.style_presets) return;
+
+            grid.innerHTML = "";
+            Object.entries(CFG.typography.style_presets).forEach(([key, cfg]) => {
+                const btn = document.createElement("button");
+                btn.className = "preset-btn" + (key === state.typography.activePreset ? " active" : "");
+                btn.dataset.preset = key;
+
+                const icon = PRESET_ICONS[key] || "🔤";
+                const label = cfg.label || key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                btn.innerHTML = `<span class="preset-icon">${icon}</span>${label}`;
+
+                btn.addEventListener("click", () => {
+                    applyPreset(key);
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        /**
+         * applyPreset(key)
+         * Resets conflicting style props, updates state, shows/hides sub-panels,
+         * updates active button, then rerenders canvas.
+         */
+        function applyPreset(key) {
+            if (!CFG || !CFG.typography.style_presets[key]) return;
+
+            state.typography.activePreset = key;
+            const preset = CFG.typography.style_presets[key];
+
+            // Reset conflicting CSS on titleLayer immediately
+            titleLayer.style.webkitBackgroundClip = "";
+            titleLayer.style.backgroundClip = "";
+            titleLayer.style.webkitTextFillColor = "";
+            titleLayer.style.webkitTextStroke = "";
+            titleLayer.style.textShadow = "2px 4px 8px rgba(0,0,0,0.3)";
+            titleLayer.style.background = "none";
+            titleLayer.style.color = "#FFFFFF";
+
+            // Clear mixed weight word selection
+            if (!preset.mixed_weight) {
+                state.typography.mixedWeightWords.clear();
+            }
+
+            // Update active button highlight
+            $("presetGrid").querySelectorAll(".preset-btn").forEach(b => {
+                b.classList.toggle("active", b.dataset.preset === key);
+            });
+
+            // Show/hide sub-panels
+            $("gradientControls").classList.toggle("visible", !!preset.gradient);
+            $("outlineControls").classList.toggle("visible", !!preset.stroke);
+
+            render();
+        }
+
+        /**
+         * buildColorPickerRow(brandSelectId, customPickerId, stateRef, key, initialColor)
+         * Populates a brand-color dropdown from CFG and syncs both controls to state.
+         */
+        function buildColorPickerRow(brandSelectId, customPickerId, stateRef, key, initialColor) {
+            const sel = $(brandSelectId);
+            const picker = $(customPickerId);
+            if (!sel || !picker || !CFG || !CFG.typography.brand_colors) return;
+
+            sel.innerHTML = "";
+            // Add "Custom" sentinel option first
+            const customOpt = document.createElement("option");
+            customOpt.value = "__custom__";
+            customOpt.textContent = "Custom…";
+            sel.appendChild(customOpt);
+
+            CFG.typography.brand_colors.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.hex;
+                opt.textContent = c.label;
+                sel.appendChild(opt);
+            });
+
+            // Set initial value to match state
+            const cur = initialColor || stateRef[key];
+            const matchOpt = [...sel.options].find(o => o.value.toLowerCase() === cur.toLowerCase());
+            sel.value = matchOpt ? matchOpt.value : "__custom__";
+            picker.value = toHexSix(cur);
+
+            // Dropdown change → update state & picker
+            sel.addEventListener("change", () => {
+                if (sel.value === "__custom__") return; // wait for picker
+                stateRef[key] = sel.value;
+                picker.value = toHexSix(sel.value);
+                render();
+            });
+
+            // Custom picker change → update state & select
+            picker.addEventListener("input", () => {
+                stateRef[key] = picker.value;
+                sel.value = "__custom__";
+                render();
+            });
+        }
+
+        /** Ensure hex is 6-char (#RRGGBB) for <input type=color> */
+        function toHexSix(hex) {
+            hex = hex.replace("#", "");
+            if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
+            return "#" + hex.substring(0, 6).padEnd(6, "0");
+        }
+
+        /**
+         * buildPresetBrandDropdowns()
+         * Initialises all brand-color dropdowns for gradient and outline controls.
+         */
+        function buildPresetBrandDropdowns() {
+            // Gradient start / end
+            buildColorPickerRow(
+                "gradStartColorBrand", "gradStartColorCustom",
+                state.typography.gradient, "startColor", state.typography.gradient.startColor
+            );
+            buildColorPickerRow(
+                "gradEndColorBrand", "gradEndColorCustom",
+                state.typography.gradient, "endColor", state.typography.gradient.endColor
+            );
+
+            // Outline stroke color
+            buildColorPickerRow(
+                "strokeColorBrand", "strokeColorCustom",
+                state.typography.outline, "strokeColor", state.typography.outline.strokeColor
+            );
+        }
+
+        /**
+         * applyTitleStyle()
+         * Called inside render() — applies the correct CSS to titleLayer
+         * based on the active preset without touching layout/transform state.
+         */
+        function applyTitleStyle() {
+            const preset = state.typography.activePreset;
+            const g = state.typography.gradient;
+            const o = state.typography.outline;
+
+            // Build shared drop shadow from brand_config.json (single source of truth)
+            const sd = (CFG && CFG.typography && CFG.typography.default_shadow) || {};
+            const sdColor = sd.color || "#000000";
+            const sdOpacity = sd.opacity !== undefined ? sd.opacity : 0.25;
+            const sdBlur = sd.blur !== undefined ? sd.blur : 20;
+            const sdX = sd.offset_x !== undefined ? sd.offset_x : 0;
+            const sdY = sd.offset_y !== undefined ? sd.offset_y : 7;
+            // Convert #RRGGBB + opacity → rgba()
+            const sdR = parseInt(sdColor.slice(1, 3), 16);
+            const sdG = parseInt(sdColor.slice(3, 5), 16);
+            const sdB = parseInt(sdColor.slice(5, 7), 16);
+            const defaultShadow = `${sdX}px ${sdY}px ${sdBlur}px rgba(${sdR},${sdG},${sdB},${sdOpacity})`;
+
+            // Always reset first
+            titleLayer.style.color = "";
+            titleLayer.style.background = "none";
+            titleLayer.style.webkitBackgroundClip = "";
+            titleLayer.style.backgroundClip = "";
+            titleLayer.style.webkitTextFillColor = "";
+            titleLayer.style.webkitTextStroke = "";
+            titleLayer.style.textShadow = defaultShadow;   // ← unified default for ALL presets
+            titleLayer.style.fontWeight = "900";
+
+            if (preset === "bold_clean" || preset === "mixed_weight") {
+                // White fill — shadow already set above
+                titleLayer.style.color = "#FFFFFF";
+
+            } else if (preset === "gradient_impact") {
+                let gradStr;
+                if (g.type === "radial") {
+                    gradStr = `radial-gradient(circle, ${g.startColor} 0%, ${g.endColor} 100%)`;
+                } else {
+                    gradStr = `linear-gradient(${g.angle}deg, ${g.startColor} 0%, ${g.endColor} 100%)`;
+                }
+                titleLayer.style.background = gradStr;
+                titleLayer.style.webkitBackgroundClip = "text";
+                titleLayer.style.backgroundClip = "text";
+                titleLayer.style.webkitTextFillColor = "transparent";
+                titleLayer.style.textShadow = "none";   // no shadow for gradient_impact
+
+            } else if (preset === "outlined") {
+                // Stroke only — pure stroke, no fill, no glow, no shadow
+                titleLayer.style.webkitTextFillColor = "transparent";
+                titleLayer.style.webkitTextStroke = `${o.strokeWidth}px ${o.strokeColor}`;
+                titleLayer.style.textShadow = "none";   // zero shadow for outlined
+            }
+        }
+
+        /** Show/hide angle row depending on gradient type */
+        function updateGradientAngleVisibility() {
+            const type = $("gradientType").value;
+            $("gradientAngleRow").classList.toggle("hidden", type === "radial");
+        }
+
+        /* ─── Preset Control Event Bindings ─────────────── */
+        function bindPresetControls() {
+            // Gradient type dropdown
+            $("gradientType").addEventListener("change", () => {
+                state.typography.gradient.type = $("gradientType").value;
+                updateGradientAngleVisibility();
+                render();
+            });
+
+            // Gradient angle slider
+            $("gradientAngle").addEventListener("input", () => {
+                const v = parseInt($("gradientAngle").value);
+                state.typography.gradient.angle = v;
+                $("gradientAngleVal").textContent = v + "°";
+                render();
+            });
+
+            // Stroke width slider
+            $("strokeWidth").addEventListener("input", () => {
+                const v = parseInt($("strokeWidth").value);
+                state.typography.outline.strokeWidth = v;
+                $("strokeWidthVal").textContent = v;
+                render();
+            });
+        }
+
+        /* ─── Canvas scaling ──────────────────────────── */
+        function scaleCanvas() {
+            const scaler = document.querySelector(".canvas-scaler");
+            const sw = scaler.clientWidth;
+            const sh = scaler.clientHeight;
+            const fitScale = Math.min(sw / 1920, sh / 1080);
+
+            // Apply Manual Zoom on top of Fit Scale
+            const zoom = state.previewZoom || 1;
+            const finalScale = fitScale * zoom;
+
+            canvas.style.transform = `scale(${finalScale})`;
+
+            // Update Label
+            const label = $("zoomLabel");
+            if (label) label.textContent = Math.round(zoom * 100) + "%";
+        }
+        window.addEventListener("resize", scaleCanvas);
+
+        // Zoom Listeners
+        $("btnZoomIn").addEventListener("click", () => {
+            state.previewZoom = Math.min((state.previewZoom || 1) + 0.1, 3);
+            scaleCanvas();
+        });
+        $("btnZoomOut").addEventListener("click", () => {
+            state.previewZoom = Math.max((state.previewZoom || 1) - 0.1, 0.2);
+            scaleCanvas();
+        });
+
+        /* ─── Render ──────────────────────────────────── */
+        function render() {
+            const W = 1920;
+            const H = 1080;
+
+            // 1) Background gradient — fills the entire 1920×1080 canvas
+            if (state.backgroundMode === "theme") {
+                if (state.bgColor.startsWith("linear-gradient")) {
+                    bgLayer.style.background = state.bgColor;
+                } else {
+                    const darkenHex = darken(state.bgColor, 0.4);
+                    bgLayer.style.background = `radial-gradient(ellipse at 50% 40%, ${state.bgColor} 0%, ${darkenHex} 100%)`;
+                }
+            } else {
+                // Custom Gradient Mode
+                bgLayer.style.background = generateGradientString();
+            }
+
+            // 2) Character — dynamic scaling from natural image dimensions
+            const pos = state.charPosition;
+            // Base anchor (percentage of canvas width)
+            let anchorX;
+            if (pos === "left") anchorX = 0.20 * W;
+            else if (pos === "center") anchorX = 0.50 * W;
+            else anchorX = 0.80 * W;
+
+            if (charImg.naturalWidth && charImg.naturalHeight) {
+                // Scale image so its height fills the canvas height, then apply user scale
+                const aspect = charImg.naturalWidth / charImg.naturalHeight;
+                const imgH = Math.round(H * state.charScale);
+                const imgW = Math.round(imgH * aspect);
+                charImg.style.width = imgW + "px";
+                charImg.style.height = imgH + "px";
+            }
+
+            // Position char-wrap: anchor + offset, bottom-aligned
+            const finalX = anchorX + state.charXOff;
+            const finalY = state.charYOff;
+            charWrap.style.left = finalX + "px";
+            charWrap.style.bottom = (0 - finalY) + "px";
+            charWrap.style.top = "auto";
+            charWrap.style.transform = "translateX(-50%)";
+
+            // Cinematic rim lighting (html2canvas-compatible)
+            charImg.style.filter = "none";
+            renderNeonGlow();
+            renderBacklight(finalX, H, pos);
+
+            // 3) Title text — word chips highlighting + manual casing + transforms
+            const rawText = $("titleInput").value;
+            const renderText = state.textCaps ? rawText.toUpperCase() : rawText;
+
+            // Build HTML — handles highlights (bold clean) AND mixed_weight (per-word weight+color)
+            const isMixed = state.typography.activePreset === "mixed_weight";
+            // Read brand colors from config for mixed weight
+            const hlColor = (CFG && CFG.colors && CFG.colors.highlight_color) || "#D7EF3F";
+            const txtWhite = (CFG && CFG.colors && CFG.colors.text_white) || "#FFFFFF";
+            const tokens = renderText.split(/(\s+)/);
+            let wordIdx = 0;
+            const html = tokens.map(token => {
+                if (!token.trim()) return token; // whitespace
+                const isHl = state.textHighlights.has(wordIdx);
+                const isBold = isMixed && state.typography.mixedWeightWords.has(wordIdx);
+                wordIdx++;
+
+                if (isMixed) {
+                    // Mixed Weight: selected = 900 + highlight_color, unselected = 600 + text_white
+                    const fw = isBold ? 900 : 600;
+                    const color = isBold ? hlColor : txtWhite;
+                    return `<span style="font-weight:${fw};color:${color};">${token}</span>`;
+                }
+
+                // Default / Bold Clean / Gradient / Outlined: yellow highlight class only
+                return isHl ? `<span class="hl">${token}</span>` : token;
+            }).join("").replace(/\n/g, "<br>");
+
+            titleLayer.innerHTML = html;
+            applyTitleStyle();
+            titleLayer.style.fontSize = state.fontSize + "px";
+
+            // Complex Transform
+            titleLayer.style.transform = `
+                translate(-50%, -50%) 
+                rotate(${state.textRotation}deg) 
+                skew(${state.textSkewX}deg, ${state.textSkewY}deg)
+            `;
+
+            // Position Logic update for transform origin centering
+            // We set transform-origin to center, so we position the center point
+            titleLayer.style.transformOrigin = "center center";
+
+            let tx, ty;
+            if (pos === "right") {
+                tx = (80 + state.textXOff);
+                ty = (160 + state.textYOff);
+                titleLayer.style.textAlign = "left";
+                // Approx position relative to left edge
+                titleLayer.style.left = tx + "px";
+                titleLayer.style.top = ty + "px";
+                titleLayer.style.right = "auto";
+                // To keep rotation/skew stable, use translate in transform for fine tuning?
+                // Actually the existing logic used left/top/right.
+                // With transform translate(-50%, -50%), left/top should be the Center coordinates.
+                // But previously they were top-left coords?
+                // Current CSS: title-layer is absolute.
+                // Let's adjust:
+                titleLayer.style.transform = `rotate(${state.textRotation}deg) skew(${state.textSkewX}deg, ${state.textSkewY}deg)`;
+                // Revert translate to avoid conflict with positioning logic, unless we refactor positioning.
+                // Original logic:
+                // titleLayer.style.left = ...
+            } else if (pos === "left") {
+                titleLayer.style.left = "auto";
+                titleLayer.style.right = (80 - state.textXOff) + "px";
+                titleLayer.style.top = (160 + state.textYOff) + "px";
+                titleLayer.style.textAlign = "right";
+            } else {
+                titleLayer.style.left = (80 + state.textXOff) + "px";
+                titleLayer.style.right = "auto";
+                titleLayer.style.top = (60 + state.textYOff) + "px";
+                titleLayer.style.textAlign = "center";
+            }
+
+            // 4) Elements — positioned via transform using per-slot sliders
+            // Update DOM to match state.elements length
+            const elLayer = $("elLayer");
+            const currentImages = elLayer.querySelectorAll("img");
+
+            // Add missing images
+            if (currentImages.length < state.elements.length) {
+                for (let i = currentImages.length; i < state.elements.length; i++) {
+                    const img = document.createElement("img");
+                    img.className = "el-img";
+                    img.style.display = "none";
+                    elLayer.appendChild(img);
+                }
+            }
+            // Remove extra images
+            else if (currentImages.length > state.elements.length) {
+                for (let i = currentImages.length - 1; i >= state.elements.length; i--) {
+                    currentImages[i].remove();
+                }
+            }
+
+            // Apply styles
+            const domImages = elLayer.querySelectorAll("img");
+            state.elements.forEach((d, i) => {
+                const el = domImages[i];
+                if (!d.src) {
+                    el.style.display = "none";
+                    return;
+                }
+                el.style.display = "block";
+                el.src = d.src;
+                // Center the element on the canvas, then apply user offsets
+                const cx = (W / 2) + d.x;
+                const cy = (H / 2) + d.y;
+                el.style.left = cx + "px";
+                el.style.top = cy + "px";
+
+                const scale = d.scale !== undefined ? d.scale : 1;
+                el.style.transform = `translate(-50%, -50%) rotate(${d.rot}deg) scale(${scale})`;
+
+                el.style.opacity = d.opacity / 100;
+                // Apply blur (optional)
+                el.style.filter = d.blur > 0 ? `blur(${d.blur}px)` : "none";
+            });
+            renderSubtitle();
+        }
+
+        /* ─── Subtitle Layer Render ──────────────────────────── */
+        // Architecture: #subtitleBox is the positioned container (transforms here).
+        //               #subtitleLayer is a plain flex-child text node inside the box.
+        function renderSubtitle() {
+            const sub = state.subtitle;
+            const box = $("subtitleBox");    // container: position + transforms
+            const txt = $("subtitleLayer");  // child: text styling only
+
+            if (!sub.text.trim()) {
+                box.style.display = "none";
+                return;
+            }
+
+            // ── 1. Style text child (flex-child, no position, no transform) ──
+            let displayText = sub.text;
+            if (sub.textCaps) {
+                displayText = sub.text.toUpperCase();
+            }
+
+            txt.textContent = displayText;
+            txt.style.fontFamily = "'Saira Condensed', sans-serif";
+            txt.style.fontSize = sub.fontSize + "px";
+            txt.style.fontWeight = sub.fontWeight;
+            txt.style.color = sub.textColor || "#FFFFFF";
+            txt.style.letterSpacing = sub.letterSpacing || "normal";
+            txt.style.whiteSpace = "nowrap";
+            txt.style.lineHeight = "1.1";
+            txt.style.display = "block";
+            txt.style.textShadow = sub.textShadow || "none";
+
+            // ── 2. Auto-anchor: horizontally centered, just below title ──
+            const canvasH = 1080;
+            const canvasW = 1920;
+            const canvasEl = $("canvas");
+            const titleEl = $("titleLayer");
+            const canvasRect = canvasEl.getBoundingClientRect();
+            const titleRect = titleEl.getBoundingClientRect();
+            const scaleY = canvasH / canvasRect.height;
+            const scaleX = canvasW / canvasRect.width;
+
+            const titleBottomCx = (titleRect.bottom - canvasRect.top) * scaleY;
+            const autoY = Math.max(titleBottomCx + 40, 600); // base Y: 40px gap, min 600px
+            const autoX = canvasW / 2;                        // base X: canvas center
+
+            // ── 3. Position + show the box container ──
+            // Set display + styling first so offsetWidth/Height reflect natural size.
+            box.style.display = "inline-flex";
+            box.style.alignItems = "center";
+            box.style.justifyContent = "center";
+            box.style.position = "absolute";
+            box.style.zIndex = "3";
+            box.style.width = "auto";
+            box.style.height = "auto";
+            box.style.transformOrigin = "center center";
+
+            // Apply appearance before measuring so padding is baked in
+            if (sub.boxEnabled) {
+                box.style.padding = `${sub.boxPadV}px ${sub.boxPadH}px`;
+            } else {
+                box.style.padding = "0";
+            }
+
+            // Measure natural (pre-transform) box size in screen px, convert to canvas px
+            const natW = box.offsetWidth * scaleX;
+            const natH = box.offsetHeight * scaleY;
+
+            // Scaling logic: box mode uses boxScale, text mode uses textScale
+            const sc = sub.boxEnabled ? sub.boxScale : sub.textScale;
+
+            const scaledW = natW * sc;
+            const scaledH = natH * sc;
+
+            // Dynamic slider bounds: box must be fully inside canvas
+            const minXOff = Math.round(-(autoX - scaledW / 2));
+            const maxXOff = Math.round(canvasW - autoX - scaledW / 2);
+            const minYOff = Math.round(-(autoY - scaledH / 2));
+            const maxYOff = Math.round(canvasH - autoY - scaledH / 2);
+
+            // Update sliders based on current mode
+            if (sub.boxEnabled) {
+                const xSlider = $("subBoxXOff");
+                const ySlider = $("subBoxYOff");
+                if (xSlider) { xSlider.min = minXOff; xSlider.max = maxXOff; }
+                if (ySlider) { ySlider.min = minYOff; ySlider.max = maxYOff; }
+            } else {
+                const xSlider = $("subTextXOff");
+                const ySlider = $("subTextYOff");
+                if (xSlider) { xSlider.min = minXOff; xSlider.max = maxXOff; }
+                if (ySlider) { ySlider.min = minYOff; ySlider.max = maxYOff; }
+            }
+
+            // Select offsets based on mode
+            const currentXOff = sub.boxEnabled ? sub.boxXOff : sub.xOff;
+            const currentYOff = sub.boxEnabled ? sub.boxYOff : sub.yOff;
+
+            // Clamp current offsets
+            const clampedX = Math.max(minXOff, Math.min(maxXOff, currentXOff));
+            const clampedY = Math.max(minYOff, Math.min(maxYOff, currentYOff));
+
+            const anchorX = autoX + clampedX;
+            const anchorY = autoY + clampedY;
+
+            box.style.left = anchorX + "px";
+            box.style.top = anchorY + "px";
+
+            // ── 4. Appearance + transform (box-level container only) ──
+            if (sub.boxEnabled) {
+                box.style.background = sub.boxColor;
+                box.style.opacity = String(sub.boxOpacity / 100);
+                box.style.borderRadius = sub.boxRadius + "px";
+                box.style.transform = [
+                    "translateX(-50%)",
+                    `scale(${sub.boxScale})`,
+                    `rotate(${sub.boxRotation}deg)`,
+                    `skew(${sub.boxSkewX}deg, ${sub.boxSkewY}deg)`
+                ].join(" ");
+
+                if (sub.boxShadowEnabled) {
+                    box.style.boxShadow = `0px ${sub.boxShadowY}px ${sub.boxShadowBlur}px ${sub.boxShadowColor}`;
+                } else {
+                    box.style.boxShadow = "none";
+                }
+            } else {
+                box.style.background = "transparent";
+                box.style.opacity = "1";
+                box.style.borderRadius = "0";
+                box.style.boxShadow = "none";
+                box.style.transform = [
+                    "translateX(-50%)",
+                    `scale(${sub.textScale})`,
+                    `rotate(${sub.rotation}deg)`,
+                    `skew(${sub.skewX}deg, ${sub.skewY}deg)`
+                ].join(" ");
+            }
+        }
+
+        /* ─── Cinematic Dual-Layer Rim Lighting ─────────── */
+        // Desaturate a color toward grey for natural integration
+        function desaturateRGB(r, g, b, amount) {
+            const grey = 0.299 * r + 0.587 * g + 0.114 * b;
+            return [
+                Math.round(r + (grey - r) * amount),
+                Math.round(g + (grey - g) * amount),
+                Math.round(b + (grey - b) * amount)
+            ];
+        }
+
+        /* ─── Neon Outer Glow (3-Layer Drop Shadow) ─────── */
+        // Build a colored silhouette of the character image
+        function buildSilhouette(w, h, pad, glowRGB) {
+            const c = document.createElement("canvas");
+            c.width = w; c.height = h;
+            const ctx = c.getContext("2d");
+            // Draw image centered in the padded canvas
+            ctx.drawImage(charImg, pad, pad,
+                charImg.clientWidth || charImg.naturalWidth,
+                charImg.clientHeight || charImg.naturalHeight);
+
+            // Composite source-in to tint it
+            ctx.globalCompositeOperation = "source-in";
+            ctx.fillStyle = `rgb(${glowRGB})`;
+            ctx.fillRect(0, 0, w, h);
+            return c;
+        }
+
+        function renderNeonGlow() {
+            const gs = parseInt(state.glowSize) || 0;
+            const gBlur = parseInt(state.glowBlur) || 0;
+            const opacity = parseInt(state.glowOpacity) || 0;
+
+            const glow = GLOW_OPTIONS[state.glowIdx];
+            const imgW = charImg.clientWidth || charImg.naturalWidth;
+            const imgH = charImg.clientHeight || charImg.naturalHeight;
+
+            // Hide glowInner (unused in neon mode)
+            glowInner.width = 0; glowInner.height = 0; glowInner.style.display = "none";
+
+            // If disabled
+            if (gs <= 0 || opacity <= 0 || charImg.style.display === "none" || !imgW || !imgH) {
+                glowOuter.width = 0; glowOuter.height = 0; glowOuter.style.display = "none";
+                return;
+            }
+
+            // Parse RGB
+            const glowRGB = glow.rgb; // Use full color for neon, or desaturate slightly?
+            // Let's keep a slight desaturation to prevent burning eyes, or use as is.
+            // User asked for "Neon", which usually means saturated.
+            // But let's use the existing helper if we want. 
+            // I'll stick to the raw RGB to be "Neon".
+
+            // Calculate Padding
+            // Layer 3 Max Radius estimation: 4 + (20*1.5) + (20*3) = 94px.
+            // Safety padding: 100px + gs*5
+            const pad = 150;
+            const w = imgW + pad * 2;
+            const h = imgH + pad * 2;
+
+            glowOuter.width = w; glowOuter.height = h;
+            glowOuter.style.display = "block";
+            // Center the canvas relative to the image
+            glowOuter.style.left = (-pad) + "px";
+            glowOuter.style.top = (-pad) + "px";
+
+            const ctx = glowOuter.getContext("2d");
+            ctx.clearRect(0, 0, w, h);
+
+            // Create Silhouette
+            const sil = buildSilhouette(w, h, pad, glowRGB);
+            const baseOp = opacity / 100;
+
+            // ── Draw 3 Layers (Back to Front or Front to Back?) ──
+            // Order doesn't matter much for additive/normal blend, but let's do largest first.
+
+            // Layer 3: Large, Soft Aura
+            // Blobby, wide.
+            const r3 = 10 + (gs * 3.0) + (gBlur * 4.0);
+            ctx.filter = `blur(${r3}px)`;
+            ctx.globalAlpha = baseOp * 0.4;
+            ctx.drawImage(sil, 0, 0);
+
+            // Layer 2: Medium Glow
+            const r2 = 5 + (gs * 1.5) + (gBlur * 1.5);
+            ctx.filter = `blur(${r2}px)`;
+            ctx.globalAlpha = baseOp * 0.6;
+            ctx.drawImage(sil, 0, 0);
+
+            // Layer 1: Core/Tight Glow
+            const r1 = 2 + (gs * 0.5) + (gBlur * 0.2);
+            ctx.filter = `blur(${r1}px)`;
+            ctx.globalAlpha = baseOp * 1.0;
+            ctx.drawImage(sil, 0, 0);
+
+            // Reset
+            ctx.filter = "none";
+            ctx.globalAlpha = 1.0;
+        }
+
+        /* ─── Radial Backlight behind Character ───────── */
+        function renderBacklight(charCenterX, canvasH, pos) {
+            const gs = state.glowSize;
+            const glow = GLOW_OPTIONS[state.glowIdx];
+            const imgW = charImg.clientWidth || charImg.naturalWidth;
+            const imgH = charImg.clientHeight || charImg.naturalHeight;
+
+            if (gs <= 0 || charImg.style.display === "none" || !imgW || !imgH) {
+                backlightLayer.style.display = "none";
+                return;
+            }
+
+            // Parse and heavily desaturate for subtlety
+            const parts = glow.rgb.split(",").map(Number);
+            const desat = desaturateRGB(parts[0], parts[1], parts[2], 0.5);
+
+            // Size: proportional to character, positioned behind upper body/head
+            const blSize = Math.round(imgH * 0.8);
+            const intensity = Math.min(gs / 20, 1) * 0.12; // very subtle, max 12% opacity
+
+            // Slight offset toward light-facing side
+            const lightOffX = (pos === "right") ? -blSize * 0.15 : blSize * 0.15;
+
+            backlightLayer.style.display = "block";
+            backlightLayer.style.width = blSize + "px";
+            backlightLayer.style.height = blSize + "px";
+            backlightLayer.style.left = (charCenterX + lightOffX - blSize / 2) + "px";
+            backlightLayer.style.top = (canvasH * 0.12) + "px";  // Behind head area
+            backlightLayer.style.background = `radial-gradient(ellipse at 50% 45%, rgba(${desat.join(",")}, ${intensity}) 0%, rgba(${desat.join(",")}, ${intensity * 0.4}) 40%, transparent 70%)`;
+            backlightLayer.style.borderRadius = "50%";
+        }
+
+        /* ─── Darken hex color ────────────────────────── */
+        function darken(hex, factor) {
+            hex = hex.replace("#", "");
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            r = Math.round(r * (1 - factor));
+            g = Math.round(g * (1 - factor));
+            b = Math.round(b * (1 - factor));
+            return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+        }
+
+        /* ─── Character upload ────────────────────────── */
+        /* ─── Character upload ────────────────────────── */
+        $("charUpload").addEventListener("change", e => {
+            if (!e.target.files[0]) return;
+
+            // Clear presets selection
+            const wrap = $("charSelector");
+            if (wrap) wrap.querySelectorAll(".char-option").forEach(c => c.classList.remove("active"));
+
+            // Reset default dropdown (removed but safe check)
+            // $("charDefault").value = ""; 
+
+            const reader = new FileReader();
+            reader.onload = evt => {
+                updateCharacterImage(evt.target.result);
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+        /* ─── Character Default Dropdown Removed ──────────────── */
+        // Replaced by buildCharSelector logic above
+
+        /* ─── Character position ──────────────────────── */
+        $("charPosition").addEventListener("change", e => {
+            state.charPosition = e.target.value;
+            render();
+        });
+
+        /* ─── Sliders ─────────────────────────────────── */
+        function bindSlider(id, valId, key, cb) {
+            const sl = $(id);
+            sl.addEventListener("input", () => {
+                const v = parseInt(sl.value);
+                $(valId).textContent = v;
+                if (cb) cb(v); else { state[key] = v; render(); }
+            });
+        }
+
+        bindSlider("charXOff", "charXVal", "charXOff");
+        bindSlider("charYOff", "charYVal", "charYOff");
+        bindSlider("charScale", "charScaleVal", "charScale", v => {
+            state.charScale = v / 100;
+            $("charScaleVal").textContent = (v / 100).toFixed(1) + "x";
+            render();
+        });
+        bindSlider("textXOff", "textXVal", "textXOff");
+        bindSlider("textYOff", "textYVal", "textYOff");
+        bindSlider("glowSize", "glowSizeVal", "glowSize");
+        bindSlider("glowOpacity", "glowOpacityVal", "glowOpacity", v => {
+            state.glowOpacity = v;
+            $("glowOpacityVal").textContent = v + "%";
+            render();
+        });
+        bindSlider("glowBlur", "glowBlurVal", "glowBlur");
+
+        bindSlider("fontSize", "fontSizeVal", "fontSize");
+        bindSlider("textRot", "textRotVal", "textRotation", v => {
+            state.textRotation = v;
+            $("textRotVal").textContent = v + "°";
+            render();
+        });
+        bindSlider("textSkewX", "textSkewXVal", "textSkewX", v => {
+            state.textSkewX = v;
+            $("textSkewXVal").textContent = v + "°";
+            render();
+        });
+        bindSlider("textSkewY", "textSkewYVal", "textSkewY", v => {
+            state.textSkewY = v;
+            $("textSkewYVal").textContent = v + "°";
+            render();
+        });
+
+        /* ─── Title input & Chips ────────────────────── */
+        function renderWordChips() {
+            const raw = $("titleInput").value;
+            const words = raw.trim().split(/\s+/);
+            const container = $("wordChips");
+            container.innerHTML = "";
+
+            if (!raw.trim()) return;
+
+            const isMixedPreset = state.typography.activePreset === "mixed_weight";
+
+            words.forEach((w, i) => {
+                const btn = document.createElement("div");
+                const isHl = state.textHighlights.has(i);
+                const isBold = isMixedPreset && state.typography.mixedWeightWords.has(i);
+
+                let cls = "word-chip";
+                if (isHl) cls += " active";   // yellow highlight
+                if (isBold) cls += " bold";   // mixed-weight bold indicator
+
+                btn.className = cls;
+                btn.textContent = w;
+
+                btn.addEventListener("click", () => {
+                    if (isMixedPreset) {
+                        // In mixed weight mode: chip click toggles bold
+                        if (state.typography.mixedWeightWords.has(i))
+                            state.typography.mixedWeightWords.delete(i);
+                        else
+                            state.typography.mixedWeightWords.add(i);
+                    } else {
+                        // Default: chip click toggles highlight
+                        if (state.textHighlights.has(i)) state.textHighlights.delete(i);
+                        else state.textHighlights.add(i);
+                    }
+                    renderWordChips();
+                    render();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        $("titleInput").addEventListener("input", () => {
+            state.textHighlights.clear();
+            state.typography.mixedWeightWords.clear();
+            renderWordChips();
+            render();
+        });
+
+        // Initial chips
+        renderWordChips();
+
+        // Caps Toggle
+        $("btnCaps").addEventListener("click", () => {
+            state.textCaps = !state.textCaps;
+            $("btnCaps").classList.toggle("active", state.textCaps);
+            render();
+        });
+        $("btnCaps").classList.toggle("active", state.textCaps); // init state
+
+        /* ─── Element Management ──────────────────────── */
+        function renderElementControls() {
+            const list = $("elementsList");
+            list.innerHTML = "";
+
+            state.elements.forEach((elData, i) => {
+                const slot = document.createElement("div");
+                slot.className = "element-slot";
+
+                // Title + Remove Button
+                const title = document.createElement("div");
+                title.className = "element-slot-title";
+                title.textContent = `Element ${i + 1}`;
+
+                const removeBtn = document.createElement("button");
+                removeBtn.className = "btn-remove-el";
+                removeBtn.textContent = "✖";
+                removeBtn.title = "Remove Element";
+                removeBtn.onclick = () => {
+                    if (confirm("Remove this element?")) {
+                        state.elements.splice(i, 1);
+                        renderElementControls();
+                        render();
+                    }
+                };
+                slot.appendChild(removeBtn);
+                slot.appendChild(title);
+
+                // Upload Container
+                const upContainer = document.createElement("div");
+                upContainer.style.marginBottom = "8px";
+
+                // Hidden File Input
+                const upload = document.createElement("input");
+                upload.type = "file";
+                upload.accept = "image/*";
+                upload.style.display = "none";
+                upload.id = `el-upload-${i}`;
+
+                // Custom Button
+                const btn = document.createElement("label");
+                btn.className = "btn-upload-custom";
+                btn.textContent = "📂 Upload Image";
+                btn.htmlFor = `el-upload-${i}`;
+
+                // Inline styles for button (or add to CSS, but inline is safe here)
+                btn.style.display = "inline-block";
+                btn.style.background = "var(--panel-surface)";
+                btn.style.border = "1px solid var(--panel-border)";
+                btn.style.borderRadius = "4px";
+                btn.style.padding = "4px 8px";
+                btn.style.fontSize = "12px";
+                btn.style.cursor = "pointer";
+                btn.style.color = "var(--text-primary)";
+                btn.style.transition = "all 0.2s";
+
+                btn.onmouseover = () => { btn.style.borderColor = "var(--accent)"; btn.style.color = "var(--accent)"; };
+                btn.onmouseout = () => { btn.style.borderColor = "var(--panel-border)"; btn.style.color = "var(--text-primary)"; };
+
+                // Filename Display
+                const nameDisplay = document.createElement("div");
+                nameDisplay.style.fontSize = "11px";
+                nameDisplay.style.color = "var(--text-secondary)";
+                nameDisplay.style.marginTop = "4px";
+                nameDisplay.style.fontStyle = "italic";
+                nameDisplay.style.whiteSpace = "nowrap";
+                nameDisplay.style.overflow = "hidden";
+                nameDisplay.style.textOverflow = "ellipsis";
+
+                if (elData.fileName) {
+                    nameDisplay.textContent = elData.fileName;
+                    nameDisplay.style.color = "var(--accent)";
+                } else {
+                    nameDisplay.textContent = "No file chosen";
+                }
+
+                upload.onchange = (e) => {
+                    if (!e.target.files[0]) return;
+                    const file = e.target.files[0];
+
+                    state.elements[i].fileName = file.name; // Save filename
+
+                    const reader = new FileReader();
+                    reader.onload = evt => {
+                        state.elements[i].src = evt.target.result;
+                        renderElementControls(); // Re-render UI to show filename
+                        render();
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                upContainer.appendChild(upload);
+                upContainer.appendChild(btn);
+                upContainer.appendChild(nameDisplay);
+                slot.appendChild(upContainer);
+
+                // Helper to create slider row
+                const createSlider = (label, key, min, max, val, suffix) => {
+                    const row = document.createElement("div");
+                    row.className = "slider-row";
+
+                    const labelRow = document.createElement("div");
+                    labelRow.className = "slider-label-row";
+
+                    const lab = document.createElement("label");
+                    lab.textContent = label;
+
+                    const span = document.createElement("span");
+                    span.className = "val";
+                    span.textContent = val + (suffix || "");
+
+                    labelRow.appendChild(lab);
+                    labelRow.appendChild(span);
+
+                    const inp = document.createElement("input");
+                    inp.type = "range";
+                    inp.min = min;
+                    inp.max = max;
+                    inp.value = val;
+
+                    inp.oninput = (e) => {
+                        const v = parseInt(e.target.value);
+                        if (key === 'scale') {
+                            state.elements[i].scale = v / 100;
+                        } else {
+                            state.elements[i][key] = v;
+                        }
+                        span.textContent = v + (suffix || "");
+                        render();
+                    };
+
+                    row.appendChild(labelRow);
+                    row.appendChild(inp);
+                    return row;
+                };
+
+                slot.appendChild(createSlider("X Offset", "x", -1000, 1000, elData.x));
+                slot.appendChild(createSlider("Y Offset", "y", -600, 600, elData.y));
+                slot.appendChild(createSlider("Rotation", "rot", -180, 180, elData.rot, "°"));
+
+                const currentScalePct = Math.round((elData.scale !== undefined ? elData.scale : 1) * 100);
+                slot.appendChild(createSlider("Scale", "scale", 10, 300, currentScalePct, "%"));
+
+                slot.appendChild(createSlider("Opacity", "opacity", 0, 100, elData.opacity, "%"));
+                slot.appendChild(createSlider("Blur", "blur", 0, 20, elData.blur || 0)); // default 0
+
+                list.appendChild(slot);
+            });
+        }
+
+        $("btnAddElement").onclick = () => {
+            state.elements.push({ src: null, fileName: null, x: 0, y: 0, rot: 0, scale: 1, opacity: 100, blur: 0 });
+            renderElementControls();
+            render(); // will add blank img
+        };
+
+        // Initial build
+        renderElementControls();
+
+        /* ─── Download PNG ────────────────────────────── */
+        /* ─── Export Logic (JPEG < 2MB) ──────────────── */
+        function optimizeAndDownload(c) {
+            const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+            let quality = 0.9;
+
+            function tryToBlob() {
+                c.toBlob(blob => {
+                    if (!blob) {
+                        alert("Export failed");
+                        $("btnDownload").textContent = "⬇ Download JPEG";
+                        return;
+                    }
+
+                    // Check if file size is under limit OR quality is too low
+                    if (blob.size <= MAX_SIZE || quality < 0.5) {
+                        const link = document.createElement("a");
+                        link.download = "codebasics_thumbnail.jpg";
+                        link.href = URL.createObjectURL(blob);
+                        link.click();
+
+                        setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+                        $("btnDownload").textContent = "⬇ Download JPEG";
+
+                    } else {
+                        // Reduce quality and retry
+                        quality -= 0.05;
+                        tryToBlob();
+                    }
+                }, "image/jpeg", quality);
+            }
+            tryToBlob();
+        }
+
+        $("btnDownload").addEventListener("click", () => {
+            $("btnDownload").textContent = "⏳ Processing...";
+
+            // 1. Temporarily remove the preview scaling to capture full resolution
+            const originalTransform = canvas.style.transform;
+            canvas.style.transform = "none";
+
+            html2canvas(canvas, {
+                scale: 1, // 1920x1080 native
+                width: 1920,
+                height: 1080,
+                windowWidth: 1920,
+                windowHeight: 1080,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: null,
+                scrollX: 0,
+                scrollY: 0,
+                x: 0,
+                y: 0
+            }).then(c => {
+                // Restore preview scaling
+                canvas.style.transform = originalTransform;
+
+                // Start optimization loop
+                optimizeAndDownload(c);
+
+            }).catch(err => {
+                canvas.style.transform = originalTransform;
+                console.error(err);
+                $("btnDownload").textContent = "⬇ Download JPEG";
+
+                if (err.message && err.message.includes("Tainted")) {
+                    alert("⚠️ BROWSER SECURITY WARNING\n\nBecause you are running this file locally (file://), using the default photos will block the download.\n\nPLEASE RUN 'start_server.bat' included in this folder to fix this issue!");
+                } else {
+                    alert("Export failed: " + err.message);
+                }
+            });
+        });
+
+        /* ─── Subtitle Event Bindings ────────────────────────── */
+        (function bindSubtitleControls() {
+            // Text input
+            $("subtitleInput").addEventListener("input", () => {
+                state.subtitle.text = $("subtitleInput").value;
+                render();
+            });
+
+            // Font size
+            $("subFontSize").addEventListener("input", () => {
+                const v = parseInt($("subFontSize").value);
+                state.subtitle.fontSize = v;
+                $("subFontSizeVal").textContent = v;
+                render();
+            });
+
+            // Weight toggle (Medium / Bold)
+            [$("subWtMedium"), $("subWtBold")].forEach(btn => {
+                btn.addEventListener("click", () => {
+                    state.subtitle.fontWeight = parseInt(btn.dataset.weight);
+                    $("subWtMedium").classList.toggle("active", state.subtitle.fontWeight === 600);
+                    $("subWtBold").classList.toggle("active", state.subtitle.fontWeight === 900);
+                    render();
+                });
+            });
+
+            // Text color
+            $("subTextColorCustom").addEventListener("input", () => {
+                state.subtitle.textColor = $("subTextColorCustom").value;
+                render();
+            });
+
+            // Box enable checkbox
+            $("subBoxEnabled").addEventListener("change", () => {
+                state.subtitle.boxEnabled = $("subBoxEnabled").checked;
+                $("subBoxControls").classList.toggle("visible", state.subtitle.boxEnabled);
+                $("subTextControls").classList.toggle("visible", !state.subtitle.boxEnabled);
+                if (state.subtitle.boxEnabled) {
+                    state.subtitle.xOff = 0; state.subtitle.yOff = 0;
+                    state.subtitle.rotation = 0; state.subtitle.skewX = 0; state.subtitle.skewY = 0;
+                    state.subtitle.textScale = 1; state.subtitle.textCaps = false;
+                    $("subTextXOff").value = 0; $("subTextXOffVal").textContent = "0";
+                    $("subTextYOff").value = 0; $("subTextYOffVal").textContent = "0";
+                    $("subTextScale").value = 100; $("subTextScaleVal").textContent = "1.0x";
+                    $("subTextRot").value = 0; $("subTextRotVal").textContent = "0°";
+                    $("subTextSkewX").value = 0; $("subTextSkewXVal").textContent = "0°";
+                    $("subTextSkewY").value = 0; $("subTextSkewYVal").textContent = "0°";
+                    $("subBtnCaps").classList.remove("active");
+                }
+                render();
+            });
+
+            // Independent transforms
+            $("subTextXOff").oninput = e => { state.subtitle.xOff = parseInt(e.target.value); $("subTextXOffVal").textContent = e.target.value; render(); };
+            $("subTextYOff").oninput = e => { state.subtitle.yOff = parseInt(e.target.value); $("subTextYOffVal").textContent = e.target.value; render(); };
+            $("subTextRot").oninput = e => { state.subtitle.rotation = parseInt(e.target.value); $("subTextRotVal").textContent = e.target.value + "°"; render(); };
+            $("subTextSkewX").oninput = e => { state.subtitle.skewX = parseInt(e.target.value); $("subTextSkewXVal").textContent = e.target.value + "°"; render(); };
+            $("subTextSkewY").oninput = e => { state.subtitle.skewY = parseInt(e.target.value); $("subTextSkewYVal").textContent = e.target.value + "°"; render(); };
+            $("subTextScale").oninput = e => { state.subtitle.textScale = parseInt(e.target.value) / 100; $("subTextScaleVal").textContent = (parseInt(e.target.value) / 100).toFixed(1) + "x"; render(); };
+
+            $("subBtnCaps").addEventListener("click", () => {
+                state.subtitle.textCaps = !state.subtitle.textCaps;
+                $("subBtnCaps").classList.toggle("active", state.subtitle.textCaps);
+                render();
+            });
+
+            // Box settings
+            $("subBoxColorCustom").oninput = () => { state.subtitle.boxColor = $("subBoxColorCustom").value; render(); };
+            $("subBoxPadH").oninput = () => { state.subtitle.boxPadH = parseInt($("subBoxPadH").value); $("subBoxPadHVal").textContent = $("subBoxPadH").value; render(); };
+            $("subBoxPadV").oninput = () => { state.subtitle.boxPadV = parseInt($("subBoxPadV").value); $("subBoxPadVVal").textContent = $("subBoxPadV").value; render(); };
+            $("subBoxRadius").oninput = () => { state.subtitle.boxRadius = parseInt($("subBoxRadius").value); $("subBoxRadiusVal").textContent = $("subBoxRadius").value; render(); };
+            $("subBoxOpacity").oninput = () => { state.subtitle.boxOpacity = parseInt($("subBoxOpacity").value); $("subBoxOpacityVal").textContent = $("subBoxOpacity").value + "%"; render(); };
+            $("subBoxRot").oninput = () => { state.subtitle.boxRotation = parseInt($("subBoxRot").value); $("subBoxRotVal").textContent = $("subBoxRot").value + "°"; render(); };
+            $("subBoxSkewX").oninput = () => { state.subtitle.boxSkewX = parseInt($("subBoxSkewX").value); $("subBoxSkewXVal").textContent = $("subBoxSkewX").value + "°"; render(); };
+            $("subBoxSkewY").oninput = () => { state.subtitle.boxSkewY = parseInt($("subBoxSkewY").value); $("subBoxSkewYVal").textContent = $("subBoxSkewY").value + "°"; render(); };
+            $("subBoxScale").oninput = () => { state.subtitle.boxScale = parseInt($("subBoxScale").value) / 100; $("subBoxScaleVal").textContent = (parseInt($("subBoxScale").value) / 100).toFixed(1) + "×"; render(); };
+            $("subBoxXOff").oninput = () => { state.subtitle.boxXOff = parseInt($("subBoxXOff").value); $("subBoxXOffVal").textContent = $("subBoxXOff").value; render(); };
+            $("subBoxYOff").oninput = () => { state.subtitle.boxYOff = parseInt($("subBoxYOff").value); $("subBoxYOffVal").textContent = $("subBoxYOff").value; render(); };
+
+            // Premium Preset
+            $("btnApplyPremiumBadge").addEventListener("click", () => {
+                const sub = state.subtitle;
+                sub.fontWeight = 900; sub.textColor = "#1E293B"; sub.textCaps = false; sub.letterSpacing = "1px";
+                sub.boxEnabled = true; sub.boxColor = "#F3F4F6"; sub.boxOpacity = 100; sub.boxRadius = 60; sub.boxPadH = 50; sub.boxPadV = 20;
+                sub.boxRotation = -3; sub.boxShadowEnabled = true; sub.boxShadowColor = "rgba(0,0,0,0.15)"; sub.boxShadowBlur = 20; sub.boxShadowY = 10;
+                sub.xOff = 0; sub.yOff = 0; sub.rotation = 0; sub.skewX = 0; sub.skewY = 0; sub.textScale = 1;
+
+                // Sync UI
+                $("subBoxEnabled").checked = true;
+                $("subBoxControls").classList.add("visible");
+                $("subTextControls").classList.remove("visible");
+                $("subFontSize").value = sub.fontSize; $("subFontSizeVal").textContent = sub.fontSize;
+                $("subBoxOpacity").value = sub.boxOpacity; $("subBoxOpacityVal").textContent = sub.boxOpacity + "%";
+                $("subBoxRadius").value = sub.boxRadius; $("subBoxRadiusVal").textContent = sub.boxRadius;
+                $("subBoxPadH").value = sub.boxPadH; $("subBoxPadHVal").textContent = sub.boxPadH;
+                $("subBoxPadV").value = sub.boxPadV; $("subBoxPadVVal").textContent = sub.boxPadV;
+                $("subBoxRot").value = sub.boxRotation; $("subBoxRotVal").textContent = sub.boxRotation + "°";
+                $("subTextColorCustom").value = sub.textColor;
+                $("subBoxColorCustom").value = sub.boxColor;
+                render();
+            });
+        })();
+
+        // ─── Background Event Bindings ───────────────────────
+        (function bindBackgroundControls() {
+            // Mode Toggle
+            document.querySelectorAll('input[name="bgMode"]').forEach(radio => {
+                radio.onchange = () => {
+                    state.backgroundMode = radio.value;
+                    $("bgThemePanel").style.display = state.backgroundMode === "theme" ? "block" : "none";
+                    $("bgCustomPanel").style.display = state.backgroundMode === "custom" ? "block" : "none";
+                    render();
+                };
+            });
+
+            // Gradient Type
+            document.querySelectorAll('input[name="gradType"]').forEach(radio => {
+                radio.onchange = () => {
+                    state.customBg.type = radio.value;
+                    $("linearControls").style.display = state.customBg.type === "linear" ? "block" : "none";
+                    $("radialControls").style.display = state.customBg.type === "radial" ? "block" : "none";
+                    render();
+                };
+            });
+
+            // Simple Settings
+            $("gradColor1").oninput = e => {
+                const val = e.target.value;
+                if (state.customBg.type === "linear") state.customBg.linear.color1 = val;
+                else state.customBg.radial.color1 = val;
+                render();
+            };
+            $("gradColor2").oninput = e => {
+                const val = e.target.value;
+                if (state.customBg.type === "linear") state.customBg.linear.color2 = val;
+                else state.customBg.radial.color2 = val;
+                render();
+            };
+            $("gradAngle").oninput = e => {
+                state.customBg.linear.angle = parseInt(e.target.value);
+                $("gradAngleVal").textContent = e.target.value + "°";
+                render();
+            };
+            $("gradPosX").oninput = e => {
+                state.customBg.radial.posX = parseInt(e.target.value);
+                $("gradPosXVal").textContent = e.target.value + "%";
+                render();
+            };
+            $("gradPosY").oninput = e => {
+                state.customBg.radial.posY = parseInt(e.target.value);
+                $("gradPosYVal").textContent = e.target.value + "%";
+                render();
+            };
+            $("gradRadius").oninput = e => {
+                state.customBg.radial.radius = parseInt(e.target.value);
+                $("gradRadiusVal").textContent = e.target.value + "%";
+                render();
+            };
+
+            // Advanced Toggle
+            $("gradAdvancedToggle").onchange = e => {
+                state.customBg.advancedEnabled = e.target.checked;
+                $("gradAdvancedControls").style.display = state.customBg.advancedEnabled ? "block" : "none";
+                $("gradSimpleControls").style.display = state.customBg.advancedEnabled ? "none" : "block";
+                if (state.customBg.advancedEnabled) renderStopsList();
+                render();
+            };
+
+            // Add Stop
+            $("btnAddStop").onclick = () => {
+                if (state.customBg.stops.length < 5) {
+                    state.customBg.stops.push({ id: Date.now(), color: "#ffffff", pos: 50 });
+                    renderStopsList();
+                    render();
+                } else {
+                    alert("Maximum 5 stops allowed.");
+                }
+            };
+
+            // Reverse
+            $("btnReverseGrad").onclick = () => {
+                const cg = state.customBg;
+                if (cg.advancedEnabled) {
+                    const colors = cg.stops.map(s => s.color).reverse();
+                    cg.stops.forEach((s, i) => s.color = colors[i]);
+                    renderStopsList();
+                } else {
+                    const t = cg.type;
+                    const tmp = cg[t].color1;
+                    cg[t].color1 = cg[t].color2;
+                    cg[t].color2 = tmp;
+                    $("gradColor1").value = cg[t].color1;
+                    $("gradColor2").value = cg[t].color2;
+                }
+                render();
+            };
+
+            // Copy CSS
+            $("btnCopyGradCSS").onclick = () => {
+                const css = generateGradientString();
+                navigator.clipboard.writeText(`background: ${css};`).then(() => {
+                    const btn = $("btnCopyGradCSS");
+                    const old = btn.textContent;
+                    btn.textContent = "✅ Copied!";
+                    setTimeout(() => btn.textContent = old, 2000);
+                });
+            };
+
+            // Initialize UI from State
+            const initBgUI = () => {
+                const bgMode = state.backgroundMode;
+                const bgCustom = state.customBg;
+                const mRadio = document.querySelector(`input[name="bgMode"][value="${bgMode}"]`);
+                if (mRadio) mRadio.checked = true;
+                const tRadio = document.querySelector(`input[name="gradType"][value="${bgCustom.type}"]`);
+                if (tRadio) tRadio.checked = true;
+                $("bgThemePanel").style.display = bgMode === "theme" ? "block" : "none";
+                $("bgCustomPanel").style.display = bgMode === "custom" ? "block" : "none";
+                $("linearControls").style.display = bgCustom.type === "linear" ? "block" : "none";
+                $("radialControls").style.display = bgCustom.type === "radial" ? "block" : "none";
+                $("gradColor1").value = bgCustom[bgCustom.type].color1;
+                $("gradColor2").value = bgCustom[bgCustom.type].color2;
+                $("gradAngle").value = bgCustom.linear.angle;
+                $("gradAngleVal").textContent = bgCustom.linear.angle + "°";
+                $("gradPosX").value = bgCustom.radial.posX;
+                $("gradPosXVal").textContent = bgCustom.radial.posX + "%";
+                $("gradPosY").value = bgCustom.radial.posY;
+                $("gradPosYVal").textContent = bgCustom.radial.posY + "%";
+                $("gradRadius").value = bgCustom.radial.radius;
+                $("gradRadiusVal").textContent = bgCustom.radial.radius + "%";
+                $("gradAdvancedToggle").checked = bgCustom.advancedEnabled;
+                $("gradAdvancedControls").style.display = bgCustom.advancedEnabled ? "block" : "none";
+                $("gradSimpleControls").style.display = bgCustom.advancedEnabled ? "none" : "block";
+                if (bgCustom.advancedEnabled) renderStopsList();
+            };
+            initBgUI();
+        })();
+
+        function generateGradientString() {
+            const cg = state.customBg;
+            const stopsStr = cg.advancedEnabled
+                ? cg.stops.slice().sort((a, b) => a.pos - b.pos).map(s => `${s.color} ${s.pos}%`).join(", ")
+                : `${cg[cg.type].color1}, ${cg[cg.type].color2}`;
+            if (cg.type === "linear") return `linear-gradient(${cg.linear.angle}deg, ${stopsStr})`;
+            if (!cg.advancedEnabled) return `radial-gradient(circle ${cg.radial.radius}% at ${cg.radial.posX}% ${cg.radial.posY}%, ${cg.radial.color1}, ${cg.radial.color2})`;
+            return `radial-gradient(circle at ${cg.radial.posX}% ${cg.radial.posY}%, ${stopsStr})`;
+        }
+
+        function renderStopsList() {
+            const container = $("stopsList");
+            if (!container) return;
+            container.innerHTML = "";
+            state.customBg.stops.forEach((stop, index) => {
+                const row = document.createElement("div");
+                row.style = "display:flex; align-items:center; gap:8px; margin-bottom:10px;";
+                row.innerHTML = `
+                    <input type="color" value="${stop.color}" style="width:30px; height:30px; border:none; padding:0; background:none; cursor:pointer;">
+                    <input type="range" min="0" max="100" value="${stop.pos}" style="flex:1;">
+                    <span style="font-size:11px; width:25px;">${stop.pos}%</span>
+                    <button style="background:none; border:none; color:#ff4d4d; cursor:pointer; padding:4px;">✖</button>
+                `;
+                const colorInput = row.querySelectorAll("input")[0];
+                const posInput = row.querySelectorAll("input")[1];
+                const removeBtn = row.querySelector("button");
+                colorInput.oninput = () => { stop.color = colorInput.value; render(); };
+                posInput.oninput = () => { stop.pos = parseInt(posInput.value); row.querySelector("span").textContent = stop.pos + "%"; render(); };
+                removeBtn.onclick = () => {
+                    if (state.customBg.stops.length > 2) {
+                        state.customBg.stops.splice(index, 1);
+                        renderStopsList();
+                        render();
+                    } else alert("Minimum 2 stops required.");
+                };
+                container.appendChild(row);
+            });
+        }
+
+        /* ─── Initial render ──────────────────────────────── */
+        render();
+        setTimeout(scaleCanvas, 100);
+
+    </script>
+</body>
+
+</html>

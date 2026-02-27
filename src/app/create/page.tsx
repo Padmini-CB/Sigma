@@ -28,7 +28,7 @@ export default function CreatePage() {
 
   const handleTypeSelect = (type: 'ad' | 'thumbnail') => {
     if (type === 'thumbnail') {
-      router.push('/thumbnail');
+      router.push('/thumbnail-maker');
     } else {
       setStep(1);
     }
