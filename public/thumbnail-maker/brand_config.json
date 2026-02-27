@@ -1,0 +1,170 @@
+{
+  "brand": "Codebasics",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "ratio": "16:9"
+  },
+  "colors": {
+    "background_options": {
+      "Blue": "#3B82F6",
+      "Purple": "#6F53C1",
+      "Blue-Gray": "#3F4C78",
+      "Dark Navy": "#181830"
+    },
+    "glow_options": [
+      "#20C997",
+      "#E1E3FA",
+      "#FD7E15",
+      "#D63384"
+    ],
+    "highlight_color": "#D7EF3F",
+    "text_white": "#FFFFFF"
+  },
+  "background_logic": {
+    "modes": [
+      "Radial Gradient"
+    ],
+    "gradient_darkening_factor": 0.4
+  },
+  "element_layer": {
+    "max_elements": 3,
+    "default_opacity": 20,
+    "default_blur": 2,
+    "positions": {
+      "top-left": {
+        "x": 12,
+        "y": 12
+      },
+      "top-right": {
+        "x": 80,
+        "y": 12
+      },
+      "bottom-left": {
+        "x": 12,
+        "y": 80
+      },
+      "bottom-right": {
+        "x": 80,
+        "y": 80
+      },
+      "center-left": {
+        "x": 12,
+        "y": 45
+      },
+      "center-right": {
+        "x": 80,
+        "y": 45
+      }
+    }
+  },
+  "character_logic": {
+    "glow_style": "edge_rim",
+    "glow_color": "#20C997",
+    "glow_intensity": 4,
+    "glow_opacity": 0.2,
+    "shadow_blur": 20,
+    "shadow_opacity": 0.25,
+    "zone_percent": 40,
+    "x_offset": 0,
+    "y_offset": 0
+  },
+  "typography": {
+    "main_font": "Saira Condensed",
+    "secondary_font": "Saira",
+    "title_weight": "900",
+    "line_height": "0.85",
+    "x_offset": 0,
+    "y_offset": 0,
+    "filler_words": [
+      "the",
+      "a",
+      "an",
+      "for",
+      "in",
+      "of",
+      "and",
+      "to",
+      "is",
+      "with",
+      "how",
+      "what",
+      "why",
+      "your",
+      "you",
+      "this",
+      "that"
+    ],
+    "highlight_trigger": "[]",
+    "style_presets": {
+      "bold_clean": {
+        "label": "Bold Clean",
+        "fill": true,
+        "gradient": false,
+        "stroke": false,
+        "mixed_weight": false
+      },
+      "gradient_impact": {
+        "label": "Gradient Impact",
+        "fill": false,
+        "gradient": true,
+        "gradient_type": "linear",
+        "gradient_direction": "left-right",
+        "stroke": false,
+        "mixed_weight": false
+      },
+      "outlined": {
+        "label": "Outlined",
+        "fill": false,
+        "gradient": false,
+        "stroke": true,
+        "stroke_width": 8,
+        "mixed_weight": false
+      },
+      "mixed_weight": {
+        "label": "Mixed Weight",
+        "fill": true,
+        "gradient": false,
+        "stroke": false,
+        "mixed_weight": true
+      }
+    },
+    "brand_colors": [
+      {
+        "label": "Lime",
+        "hex": "#D7EF3F"
+      },
+      {
+        "label": "White",
+        "hex": "#FFFFFF"
+      },
+      {
+        "label": "Teal",
+        "hex": "#20C997"
+      },
+      {
+        "label": "Blue",
+        "hex": "#3B82F6"
+      },
+      {
+        "label": "Purple",
+        "hex": "#6F53C1"
+      },
+      {
+        "label": "Orange",
+        "hex": "#FD7E15"
+      },
+      {
+        "label": "Pink",
+        "hex": "#D63384"
+      }
+    ],
+    "default_shadow": {
+      "color": "#000000",
+      "opacity": 0.25,
+      "blur": 20,
+      "offset_x": 0,
+      "offset_y": 7
+    }
+  }
+}
