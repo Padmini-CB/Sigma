@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { TEMPLATES, TemplateInfo, getStandaloneTemplates, getCarouselTemplates } from './templateDefinitions';
+import { TEMPLATES, TemplateInfo, getStandaloneTemplates, getCarouselTemplates, getBannerTemplates } from './templateDefinitions';
 
 interface TemplatesPanelProps {
   onSelectTemplate: (template: TemplateInfo) => void;
@@ -13,6 +13,7 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
 
   const standaloneTemplates = useMemo(() => getStandaloneTemplates(), []);
   const carouselTemplates = useMemo(() => getCarouselTemplates(), []);
+  const bannerTemplates = useMemo(() => getBannerTemplates(), []);
 
   const filterTemplates = (templates: TemplateInfo[]) => {
     if (!searchQuery.trim()) return templates;
@@ -24,6 +25,7 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
 
   const filteredStandalone = filterTemplates(standaloneTemplates);
   const filteredCarousel = filterTemplates(carouselTemplates);
+  const filteredBanners = filterTemplates(bannerTemplates);
 
   return (
     <div style={styles.container}>
@@ -70,6 +72,27 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
           </div>
         )}
 
+        {/* Homepage Banners Section */}
+        {filteredBanners.length > 0 && (
+          <div style={styles.section}>
+            <div style={styles.divider}>
+              <span style={styles.dividerLine} />
+              <span style={styles.dividerText}>Homepage Banners</span>
+              <span style={styles.dividerLine} />
+            </div>
+            <div style={styles.grid}>
+              {filteredBanners.map((template) => (
+                <TemplateThumb
+                  key={template.id}
+                  template={template}
+                  isActive={activeTemplateId === template.id}
+                  onClick={() => onSelectTemplate(template)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Carousel Section */}
         {filteredCarousel.length > 0 && (
           <div style={styles.section}>
@@ -91,7 +114,7 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
           </div>
         )}
 
-        {filteredStandalone.length === 0 && filteredCarousel.length === 0 && (
+        {filteredStandalone.length === 0 && filteredCarousel.length === 0 && filteredBanners.length === 0 && (
           <div style={styles.emptyState}>No templates match your search.</div>
         )}
       </div>

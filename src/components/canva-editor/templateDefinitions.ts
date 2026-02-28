@@ -192,12 +192,14 @@ export interface TemplateInfo {
   label: string;
   shortLabel: string;
   description: string;
-  group: 'standalone' | 'carousel';
+  group: 'standalone' | 'carousel' | 'banner';
   thumbnailBg: string;
   thumbnailAccent: string;
   thumbnailHeadline: string;
   thumbnailImage?: string;
   htmlPath?: string;
+  /** When set, selecting this template auto-switches to the matching canvas size */
+  targetSize?: { width: number; height: number };
   createElements: () => CanvasElement[];
 }
 
@@ -535,6 +537,80 @@ export const TEMPLATES: TemplateInfo[] = [
       makeBottomStrip('✔ EMI Available  ·  ✔ No-Risk Refund  ·  ✔ March 7'),
     ],
   },
+
+  // ── Homepage Banner — SWE to AI Engineer (1920×680) ──
+  {
+    id: 'homepage-banner-swe-to-ai',
+    filename: 'homepage-banner.html',
+    label: 'Homepage Banner — SWE to AI Engineer',
+    shortLabel: 'SWE → AI Engineer',
+    description: 'Full-width 1920×680 banner with superhero trio, gradient headline, three pillars',
+    group: 'banner',
+    thumbnailBg: '#0A0E14',
+    thumbnailAccent: '#3b82f6',
+    thumbnailHeadline: 'SWE → AI ENGINEER',
+    targetSize: { width: 1920, height: 680 },
+    createElements: () => [
+      // ── Background ambient glows (decorative, low z-index) ──
+      makeShape({ x: 1100, y: 50, width: 700, height: 500, bgColor: 'rgba(59,130,246,0.12)', borderRadius: 999, zIndex: 1 }),
+      makeShape({ x: 300, y: 150, width: 500, height: 400, bgColor: 'rgba(245,158,11,0.08)', borderRadius: 999, zIndex: 1 }),
+      makeShape({ x: 1500, y: 200, width: 400, height: 350, bgColor: 'rgba(32,201,151,0.08)', borderRadius: 999, zIndex: 1 }),
+
+      // ── Element 16: Codebasics Logo (top-left) ──
+      makeImage({ x: 90, y: 28, width: 120, height: 40, src: '/logos/codebasics-white.svg', zIndex: 30, maskType: 'none', objectFit: 'contain' }),
+
+      // ── Element 15: YouTube Badge (top-right) ──
+      makeBadge({ x: 1720, y: 28, width: 210, height: 32, content: '▶ 1.4M+ Subscribers · 4.9★', bgColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.45)', fontSize: 11, borderRadius: 8, zIndex: 30, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1 }),
+
+      // ── Element 1: Launch Badge (top-left) ──
+      makeBadge({ x: 90, y: 80, width: 250, height: 28, content: '● NEW LAUNCH · LIVE COHORT', bgColor: 'rgba(59,130,246,0.1)', textColor: '#3b82f6', fontSize: 11, borderRadius: 100, zIndex: 25, borderColor: 'rgba(59,130,246,0.2)', borderWidth: 1 }),
+
+      // ── Element 2: Bootcamp Title Label ──
+      makeText({ x: 90, y: 130, width: 500, height: 20, content: 'AI ENGINEERING BOOTCAMP 1.0', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.25)', letterSpacing: 5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 3: "Go From" text ──
+      makeText({ x: 90, y: 160, width: 200, height: 32, content: 'Go From', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 4: "Software Engineer" headline ──
+      makeText({ x: 90, y: 190, width: 700, height: 85, content: 'Software Engineer', fontSize: 78, fontWeight: 900, color: '#FFFFFF', letterSpacing: -2, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
+
+      // ── Element 5: "to" connector text ──
+      makeText({ x: 90, y: 275, width: 100, height: 32, content: 'to', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 6: "AI Engineer" headline (blue) ──
+      makeText({ x: 90, y: 300, width: 600, height: 85, content: 'AI Engineer', fontSize: 78, fontWeight: 900, color: '#3b82f6', letterSpacing: -2, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
+
+      // ── Element 7: "in" part ──
+      makeText({ x: 90, y: 385, width: 40, height: 36, content: 'in', fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+      // ── Element 7b: "75 Days." part (lime yellow) ──
+      makeText({ x: 130, y: 385, width: 200, height: 36, content: '75 Days.', fontSize: 28, fontWeight: 800, color: '#D7EF3F', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 8: BUILD pillar ──
+      makeText({ x: 90, y: 440, width: 120, height: 28, content: 'BUILD', fontSize: 20, fontWeight: 900, color: '#3b82f6', letterSpacing: 4, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      // Divider line between BUILD and ORCHESTRATE
+      makeShape({ x: 215, y: 440, width: 1, height: 28, bgColor: 'rgba(255,255,255,0.08)', borderRadius: 0, zIndex: 10 }),
+      // ── Element 9: ORCHESTRATE pillar ──
+      makeText({ x: 230, y: 440, width: 220, height: 28, content: 'ORCHESTRATE', fontSize: 20, fontWeight: 900, color: '#D7EF3F', letterSpacing: 4, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      // Divider line between ORCHESTRATE and DISTRIBUTE
+      makeShape({ x: 455, y: 440, width: 1, height: 28, bgColor: 'rgba(255,255,255,0.08)', borderRadius: 0, zIndex: 10 }),
+      // ── Element 10: DISTRIBUTE pillar ──
+      makeText({ x: 470, y: 440, width: 210, height: 28, content: 'DISTRIBUTE', fontSize: 20, fontWeight: 900, color: '#20C997', letterSpacing: 4, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 11: CTA Button ──
+      makeButton({ x: 90, y: 500, width: 230, height: 50, content: 'Explore Bootcamp →', bgColor: '#3b82f6', textColor: '#FFFFFF', fontSize: 15, borderRadius: 12, zIndex: 20 }),
+
+      // ── Element 12: "Starts" meta ──
+      makeText({ x: 340, y: 500, width: 130, height: 20, content: 'STARTS', fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.2)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 340, y: 520, width: 130, height: 24, content: 'March 7, 2026', fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.75)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 13: "Format" meta ──
+      makeText({ x: 500, y: 500, width: 130, height: 20, content: 'FORMAT', fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.2)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 500, y: 520, width: 130, height: 24, content: 'Live Sessions', fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.75)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Element 14: Superhero Trio Image ──
+      makeImage({ x: 1200, y: -30, width: 720, height: 720, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio-soft.png', maskType: 'radial', maskParams: 'ellipse 85% 85% at 50% 45%, black 40%, transparent 75%', glowColor: '#3b82f6', zIndex: 5 }),
+    ],
+  },
 ];
 
 export function getStandaloneTemplates(): TemplateInfo[] {
@@ -543,4 +619,8 @@ export function getStandaloneTemplates(): TemplateInfo[] {
 
 export function getCarouselTemplates(): TemplateInfo[] {
   return TEMPLATES.filter(t => t.group === 'carousel');
+}
+
+export function getBannerTemplates(): TemplateInfo[] {
+  return TEMPLATES.filter(t => t.group === 'banner');
 }
