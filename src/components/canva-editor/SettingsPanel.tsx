@@ -33,9 +33,9 @@ export default function SettingsPanel({
     <div style={styles.container}>
       <div style={styles.scrollArea}>
         {/* Canvas Size Section */}
-        <div style={styles.sectionLabel}>Canvas Size</div>
+        <div style={styles.sectionLabel}>Ad Creatives</div>
         <div style={styles.sizeGrid}>
-          {CANVAS_SIZES.map((size) => {
+          {CANVAS_SIZES.filter(s => s.category === 'ad-creatives').map((size) => {
             const isActive = activeSize.id === size.id;
             const isHovered = hoveredSizeId === size.id;
 
@@ -66,6 +66,66 @@ export default function SettingsPanel({
                     ...styles.sizeIconWrapper,
                   }}
                 >
+                  <div
+                    style={{
+                      width: size.width >= size.height ? 28 : Math.round(28 * (size.width / size.height)),
+                      height: size.height >= size.width ? 28 : Math.round(28 * (size.height / size.width)),
+                      borderRadius: 3,
+                      border: `1.5px solid ${isActive ? '#3B82F6' : 'rgba(255,255,255,0.25)'}`,
+                      backgroundColor: isActive ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.04)',
+                      transition: 'border-color 0.15s ease',
+                    }}
+                  />
+                </div>
+                <div style={styles.sizeInfo}>
+                  <span
+                    style={{
+                      ...styles.sizeDimensions,
+                      color: isActive ? '#ffffff' : 'rgba(255,255,255,0.8)',
+                    }}
+                  >
+                    {size.label}
+                  </span>
+                  <span style={styles.sizeDescription}>{size.description}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Homepage Banner Sizes */}
+        <div style={styles.sectionDivider}>
+          <span style={styles.dividerLine} />
+          <span style={styles.dividerText}>Homepage Banner</span>
+          <span style={styles.dividerLine} />
+        </div>
+        <div style={styles.sizeGrid}>
+          {CANVAS_SIZES.filter(s => s.category === 'homepage-banner').map((size) => {
+            const isActive = activeSize.id === size.id;
+            const isHovered = hoveredSizeId === size.id;
+
+            return (
+              <button
+                key={size.id}
+                onClick={() => onSizeChange(size)}
+                onMouseEnter={() => setHoveredSizeId(size.id)}
+                onMouseLeave={() => setHoveredSizeId(null)}
+                style={{
+                  ...styles.sizeCard,
+                  borderColor: isActive
+                    ? '#3B82F6'
+                    : isHovered
+                      ? 'rgba(59,130,246,0.4)'
+                      : 'rgba(255,255,255,0.08)',
+                  boxShadow: isActive ? '0 0 0 2px rgba(59,130,246,0.3)' : 'none',
+                  backgroundColor: isActive
+                    ? 'rgba(59,130,246,0.1)'
+                    : isHovered
+                      ? 'rgba(255,255,255,0.06)'
+                      : 'rgba(255,255,255,0.02)',
+                }}
+              >
+                <div style={styles.sizeIconWrapper}>
                   <div
                     style={{
                       width: size.width >= size.height ? 28 : Math.round(28 * (size.width / size.height)),

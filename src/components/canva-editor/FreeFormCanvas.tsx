@@ -1238,10 +1238,10 @@ export default function FreeFormCanvas({
           newPositions[id] = { x: startPos.x + dx, y: startPos.y + dy };
         }
 
-        // Snap guides only when Shift is held
+        // Snap guides always active during drag
         let snapOffsetX = 0;
         let snapOffsetY = 0;
-        if (e.shiftKey) {
+        {
           const movingIds = Object.keys(ds.elementStartPositions);
           const snap = computeSnapGuides(
             movingIds,
@@ -1253,8 +1253,6 @@ export default function FreeFormCanvas({
           setSnapGuides(snap.guides);
           snapOffsetX = snap.snapOffsetX;
           snapOffsetY = snap.snapOffsetY;
-        } else {
-          setSnapGuides([]);
         }
 
         // Apply positions (with snap offset if Shift held)
@@ -1963,12 +1961,12 @@ export default function FreeFormCanvas({
                 position: 'absolute',
                 left: guide.position,
                 top: 0,
-                width: 0,
+                width: 1,
                 height: canvasHeight,
-                borderLeft: '1px dashed #3B82F6',
+                backgroundColor: '#FF00FF',
                 pointerEvents: 'none',
-                zIndex: 99998,
-                opacity: 0.7,
+                zIndex: 99999,
+                opacity: 0.9,
               }}
             />
           ) : (
@@ -1979,11 +1977,11 @@ export default function FreeFormCanvas({
                 left: 0,
                 top: guide.position,
                 width: canvasWidth,
-                height: 0,
-                borderTop: '1px dashed #3B82F6',
+                height: 1,
+                backgroundColor: '#FF00FF',
                 pointerEvents: 'none',
-                zIndex: 99998,
-                opacity: 0.7,
+                zIndex: 99999,
+                opacity: 0.9,
               }}
             />
           )

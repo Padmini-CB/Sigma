@@ -122,7 +122,7 @@ export default function EditorPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   const [exportFormat, setExportFormat] = useState<'png' | 'jpeg'>('png');
-  const [jpegQuality, setJpegQuality] = useState(92);
+  const [jpegQuality, setJpegQuality] = useState(95);
   const [exportSizes, setExportSizes] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
@@ -542,7 +542,7 @@ export default function EditorPage() {
           if (exportFormat === 'jpeg') {
             dataUrl = await htmlToImage.toJpeg(canvasEl, {
               quality: jpegQuality / 100,
-              pixelRatio: 1,
+              pixelRatio: 2,
               width: size.width,
               height: size.height,
               backgroundColor: '#0D1117',
@@ -551,7 +551,7 @@ export default function EditorPage() {
           } else {
             dataUrl = await htmlToImage.toPng(canvasEl, {
               quality: 1.0,
-              pixelRatio: 1,
+              pixelRatio: 2,
               width: size.width,
               height: size.height,
               style: { transform: 'none', overflow: 'hidden' },
@@ -797,8 +797,31 @@ export default function EditorPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* Size tabs */}
-          {CANVAS_SIZES.map(size => (
+          {/* Ad Creative size tabs */}
+          {CANVAS_SIZES.filter(s => s.category === 'ad-creatives').map(size => (
+            <button
+              key={size.id}
+              onClick={() => handleSizeChange(size)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 6,
+                border: 'none',
+                backgroundColor: activeSize.id === size.id ? 'rgba(59,130,246,0.2)' : 'transparent',
+                color: activeSize.id === size.id ? '#3B82F6' : 'rgba(255,255,255,0.4)',
+                fontFamily: 'Manrope, sans-serif',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+              title={size.description}
+            >
+              {size.width}×{size.height}
+            </button>
+          ))}
+          <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
+          <span style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: 1, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' }}>Banner</span>
+          {CANVAS_SIZES.filter(s => s.category === 'homepage-banner').map(size => (
             <button
               key={size.id}
               onClick={() => handleSizeChange(size)}

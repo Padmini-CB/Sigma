@@ -223,13 +223,13 @@ export const TEMPLATES: TemplateInfo[] = [
       makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
       // Name + title near hero
       makeText({ x: 580, y: 520, width: 400, height: 30, content: 'Dhaval Patel', fontSize: 20, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 12 }),
-      makeText({ x: 580, y: 555, width: 400, height: 24, content: 'Founder, Codebasics · Ex-NVIDIA', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
+      makeText({ x: 580, y: 555, width: 400, height: 24, content: 'Founder, Codebasics · Ex-NVIDIA', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 12 }),
       // Headline
       makeText({ x: 40, y: 300, width: 600, height: 130, content: 'YOUR TODOS', fontSize: 110, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 420, width: 600, height: 130, content: 'DON\'T SHIP.', fontSize: 110, color: '#20C997', zIndex: 10 }),
       // Code mockup card
       makeShape({ x: 40, y: 580, width: 460, height: 180, bgColor: 'rgba(255,255,255,0.04)', borderRadius: 12, borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, zIndex: 8 }),
-      makeText({ x: 52, y: 590, width: 440, height: 20, content: 'my_learning.py', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.4, zIndex: 9 }),
+      makeText({ x: 52, y: 590, width: 440, height: 20, content: 'my_learning.py', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.4, zIndex: 9 }),
       makeText({ x: 52, y: 620, width: 440, height: 28, content: '// TODO: watch that AI tutorial late...', fontSize: 15, fontWeight: 500, color: '#f85149', fontFamily: 'monospace', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, zIndex: 9 }),
       makeText({ x: 52, y: 660, width: 440, height: 28, content: '● LIVE: building RAG pipeline now', fontSize: 15, fontWeight: 500, color: '#20C997', fontFamily: 'monospace', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, zIndex: 9 }),
       // CTA
@@ -287,11 +287,11 @@ export const TEMPLATES: TemplateInfo[] = [
       makeSubscriberBadge(),
       // Pillar labels overlaid near bottom of trio
       makeText({ x: 80, y: 470, width: 240, height: 36, content: 'BUILD', fontSize: 22, fontWeight: 700, color: '#3b82f6', scaleX: 1, letterSpacing: 1, lineHeight: 1, zIndex: 15 }),
-      makeText({ x: 80, y: 500, width: 300, height: 24, content: 'Dhaval · Ex-NVIDIA', fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 15 }),
+      makeText({ x: 80, y: 500, width: 300, height: 24, content: 'Dhaval · Ex-NVIDIA', fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 15 }),
       makeText({ x: 410, y: 470, width: 280, height: 36, content: 'ORCHESTRATE', fontSize: 22, fontWeight: 700, color: '#D7EF3F', scaleX: 1, letterSpacing: 1, lineHeight: 1, textAlign: 'center', zIndex: 15 }),
-      makeText({ x: 410, y: 500, width: 280, height: 24, content: 'Hemanand · Ex-Edgewell', fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textAlign: 'center', zIndex: 15 }),
+      makeText({ x: 410, y: 500, width: 280, height: 24, content: 'Hemanand · Ex-Edgewell', fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textAlign: 'center', zIndex: 15 }),
       makeText({ x: 770, y: 470, width: 240, height: 36, content: 'DISTRIBUTE', fontSize: 22, fontWeight: 700, color: '#20C997', scaleX: 1, letterSpacing: 1, lineHeight: 1, textAlign: 'right', zIndex: 15 }),
-      makeText({ x: 770, y: 500, width: 240, height: 24, content: 'Siddhant · AI Engineer', fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textAlign: 'right', zIndex: 15 }),
+      makeText({ x: 770, y: 500, width: 240, height: 24, content: 'Siddhant · AI Engineer', fontSize: 13, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textAlign: 'right', zIndex: 15 }),
       // Headline block (centered)
       makeText({ x: 40, y: 560, width: 1000, height: 60, content: 'MOST BOOTCAMPS TEACH YOU TO', fontSize: 65, color: '#FFFFFF', textAlign: 'center', scaleX: 0.76, zIndex: 10 }),
       makeText({ x: 40, y: 630, width: 1000, height: 60, content: 'BUILD.', fontSize: 65, color: '#3b82f6', textAlign: 'center', scaleX: 0.76, zIndex: 10 }),
@@ -324,9 +324,9 @@ export const TEMPLATES: TemplateInfo[] = [
       makeText({ x: 40, y: 280, width: 600, height: 130, content: '500 SEATS.', fontSize: 120, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 400, width: 700, height: 130, content: 'THEN WE CLOSE.', fontSize: 120, color: '#3b82f6', zIndex: 10 }),
       // Quote
-      makeText({ x: 40, y: 560, width: 500, height: 40, content: '"We intentionally keep the cohort small."', fontSize: 17, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, fontStyle: 'italic', zIndex: 11 }),
+      makeText({ x: 40, y: 560, width: 500, height: 40, content: '"We intentionally keep the cohort small."', fontSize: 17, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, fontStyle: 'italic', zIndex: 11 }),
       // Info line
-      makeText({ x: 40, y: 610, width: 600, height: 24, content: 'AI Engineering Bootcamp · Built for Software Engineers · March 7', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.45)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 11 }),
+      makeText({ x: 40, y: 610, width: 600, height: 24, content: 'AI Engineering Bootcamp · Built for Software Engineers · March 7', fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 11 }),
       // CTA
       makeButton({ x: 300, y: 840, width: 420, height: 58, content: 'CLAIM YOUR SEAT →', bgColor: '#3b82f6', textColor: '#FFFFFF', fontSize: 22, zIndex: 20 }),
       // Bottom strip
@@ -448,7 +448,7 @@ export const TEMPLATES: TemplateInfo[] = [
       // Dhaval hero — tighter mask
       makeImage({ x: 460, y: 40, width: 620, height: 780, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 5 }),
       // Quote above headline
-      makeText({ x: 40, y: 260, width: 500, height: 40, content: '"We intentionally keep the cohort small."', fontSize: 17, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, fontStyle: 'italic', zIndex: 11 }),
+      makeText({ x: 40, y: 260, width: 500, height: 40, content: '"We intentionally keep the cohort small."', fontSize: 17, fontWeight: 400, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, fontStyle: 'italic', zIndex: 11 }),
       // Headline
       makeText({ x: 40, y: 320, width: 700, height: 130, content: '500 ENGINEERS.', fontSize: 110, color: '#FFFFFF', zIndex: 10 }),
       makeText({ x: 40, y: 440, width: 600, height: 130, content: 'ONE ROOM.', fontSize: 110, color: '#3b82f6', zIndex: 10 }),
@@ -478,16 +478,16 @@ export const TEMPLATES: TemplateInfo[] = [
       makeImage({ x: 560, y: 40, width: 520, height: 600, src: '/images/bootcamps/ai-engineering/heroes/dhaval-superhero.png', maskType: 'none', glowColor: '#3b82f6', zIndex: 4 }),
       // Left card — "YOU ENROLL IN"
       makeShape({ x: 50, y: 130, width: 470, height: 280, bgColor: 'rgba(32,201,151,0.06)', borderRadius: 16, borderColor: 'rgba(32,201,151,0.25)', borderWidth: 1, zIndex: 8 }),
-      makeText({ x: 70, y: 145, width: 200, height: 20, content: 'YOU ENROLL IN', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 9 }),
+      makeText({ x: 70, y: 145, width: 200, height: 20, content: 'YOU ENROLL IN', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.65)', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 9 }),
       makeText({ x: 70, y: 175, width: 420, height: 32, content: 'AI Engineering Bootcamp 1.0', fontSize: 22, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 9 }),
       makeText({ x: 70, y: 218, width: 420, height: 24, content: '75 days · Live cohorts · 8+ projects', fontSize: 15, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 9 }),
       makeText({ x: 70, y: 260, width: 200, height: 44, content: '₹36,000', fontSize: 36, fontWeight: 900, color: '#20C997', scaleX: 1, lineHeight: 1, zIndex: 9 }),
       // Right card — "YOU ALSO GET"
       makeShape({ x: 560, y: 130, width: 470, height: 280, bgColor: 'rgba(32,201,151,0.06)', borderRadius: 16, borderColor: 'rgba(32,201,151,0.25)', borderWidth: 1, zIndex: 8 }),
-      makeText({ x: 580, y: 145, width: 200, height: 20, content: 'YOU ALSO GET', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 9 }),
+      makeText({ x: 580, y: 145, width: 200, height: 20, content: 'YOU ALSO GET', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.65)', scaleX: 1, letterSpacing: 2, lineHeight: 1.2, zIndex: 9 }),
       makeText({ x: 580, y: 175, width: 420, height: 32, content: 'Gen AI & Data Science Bootcamp 3.0', fontSize: 20, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 9 }),
       makeText({ x: 580, y: 218, width: 420, height: 24, content: 'Job assistance · Resume · Interviews', fontSize: 15, fontWeight: 400, color: 'rgba(255,255,255,0.55)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 9 }),
-      makeText({ x: 580, y: 260, width: 200, height: 30, content: 'Worth ₹24,500', fontSize: 18, fontWeight: 600, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, lineHeight: 1, zIndex: 9 }),
+      makeText({ x: 580, y: 260, width: 200, height: 30, content: 'Worth ₹24,500', fontSize: 18, fontWeight: 600, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, lineHeight: 1, zIndex: 9 }),
       // "Included for Free" badge
       makeBadge({ x: 580, y: 300, width: 180, height: 34, content: 'Included for Free', bgColor: '#E8795A', textColor: '#FFFFFF', fontSize: 14, borderRadius: 8, zIndex: 10 }),
       // Headline
@@ -560,39 +560,39 @@ export const TEMPLATES: TemplateInfo[] = [
       makeImage({ x: 90, y: 28, width: 120, height: 40, src: '/logos/codebasics-white.svg', zIndex: 30, maskType: 'none', objectFit: 'contain' }),
 
       // ── Element 15: YouTube Badge (top-right) ──
-      makeBadge({ x: 1720, y: 28, width: 210, height: 32, content: '▶ 1.4M+ Subscribers · 4.9★', bgColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.45)', fontSize: 11, borderRadius: 8, zIndex: 30, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1 }),
+      makeBadge({ x: 1720, y: 28, width: 210, height: 32, content: '▶ 1.4M+ Subscribers · 4.9★', bgColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.65)', fontSize: 11, borderRadius: 8, zIndex: 30, borderColor: 'rgba(255,255,255,0.12)', borderWidth: 1 }),
 
       // ── Element 1: Launch Badge (top-left) ──
       makeBadge({ x: 90, y: 80, width: 250, height: 28, content: '● NEW LAUNCH · LIVE COHORT', bgColor: 'rgba(59,130,246,0.1)', textColor: '#3b82f6', fontSize: 11, borderRadius: 100, zIndex: 25, borderColor: 'rgba(59,130,246,0.2)', borderWidth: 1 }),
 
       // ── Element 2: Bootcamp Title Label ──
-      makeText({ x: 90, y: 130, width: 500, height: 20, content: 'AI ENGINEERING BOOTCAMP 1.0', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.25)', letterSpacing: 5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 90, y: 130, width: 500, height: 20, content: 'AI ENGINEERING BOOTCAMP 1.0', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.55)', letterSpacing: 5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
 
       // ── Element 3: "Go From" text ──
-      makeText({ x: 90, y: 160, width: 200, height: 32, content: 'Go From', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 90, y: 160, width: 200, height: 32, content: 'Go From', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
 
       // ── Element 4: "Software Engineer" headline ──
       makeText({ x: 90, y: 190, width: 700, height: 85, content: 'Software Engineer', fontSize: 78, fontWeight: 900, color: '#FFFFFF', letterSpacing: -2, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
 
       // ── Element 5: "to" connector text ──
-      makeText({ x: 90, y: 275, width: 100, height: 32, content: 'to', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 90, y: 275, width: 100, height: 32, content: 'to', fontSize: 26, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
 
       // ── Element 6: "AI Engineer" headline (blue) ──
       makeText({ x: 90, y: 300, width: 600, height: 85, content: 'AI Engineer', fontSize: 78, fontWeight: 900, color: '#3b82f6', letterSpacing: -2, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
 
       // ── Element 7: "in" part ──
-      makeText({ x: 90, y: 385, width: 40, height: 36, content: 'in', fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 90, y: 385, width: 40, height: 36, content: 'in', fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.6)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
       // ── Element 7b: "75 Days." part (lime yellow) ──
       makeText({ x: 130, y: 385, width: 200, height: 36, content: '75 Days.', fontSize: 28, fontWeight: 800, color: '#D7EF3F', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
 
       // ── Element 8: BUILD pillar ──
       makeText({ x: 90, y: 440, width: 120, height: 28, content: 'BUILD', fontSize: 20, fontWeight: 900, color: '#3b82f6', letterSpacing: 4, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
       // Divider line between BUILD and ORCHESTRATE
-      makeShape({ x: 215, y: 440, width: 1, height: 28, bgColor: 'rgba(255,255,255,0.08)', borderRadius: 0, zIndex: 10 }),
+      makeShape({ x: 215, y: 440, width: 2, height: 28, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 10 }),
       // ── Element 9: ORCHESTRATE pillar ──
       makeText({ x: 230, y: 440, width: 220, height: 28, content: 'ORCHESTRATE', fontSize: 20, fontWeight: 900, color: '#D7EF3F', letterSpacing: 4, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
       // Divider line between ORCHESTRATE and DISTRIBUTE
-      makeShape({ x: 455, y: 440, width: 1, height: 28, bgColor: 'rgba(255,255,255,0.08)', borderRadius: 0, zIndex: 10 }),
+      makeShape({ x: 455, y: 440, width: 2, height: 28, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 10 }),
       // ── Element 10: DISTRIBUTE pillar ──
       makeText({ x: 470, y: 440, width: 210, height: 28, content: 'DISTRIBUTE', fontSize: 20, fontWeight: 900, color: '#20C997', letterSpacing: 4, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
 
@@ -600,11 +600,11 @@ export const TEMPLATES: TemplateInfo[] = [
       makeButton({ x: 90, y: 500, width: 230, height: 50, content: 'Explore Bootcamp →', bgColor: '#3b82f6', textColor: '#FFFFFF', fontSize: 15, borderRadius: 12, zIndex: 20 }),
 
       // ── Element 12: "Starts" meta ──
-      makeText({ x: 340, y: 500, width: 130, height: 20, content: 'STARTS', fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.2)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 340, y: 500, width: 130, height: 20, content: 'STARTS', fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
       makeText({ x: 340, y: 520, width: 130, height: 24, content: 'March 7, 2026', fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.75)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
 
       // ── Element 13: "Format" meta ──
-      makeText({ x: 500, y: 500, width: 130, height: 20, content: 'FORMAT', fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.2)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 500, y: 500, width: 130, height: 20, content: 'FORMAT', fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
       makeText({ x: 500, y: 520, width: 130, height: 24, content: 'Live Sessions', fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.75)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
 
       // ── Element 14: Superhero Trio Image ──

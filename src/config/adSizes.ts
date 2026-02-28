@@ -17,6 +17,8 @@ export const AD_SIZES: AdSize[] = [
   { id: 'landscape',     label: 'Landscape',        width: 1200, height: 628,  fontScale: 0.85, layoutMode: 'landscape' },
   { id: 'youtube-thumb', label: 'YouTube Thumb',    width: 1280, height: 720,  fontScale: 1.3,  layoutMode: 'youtube-thumb' },
   { id: 'homepage-banner', label: 'Homepage Banner', width: 1920, height: 680, fontScale: 0.7, layoutMode: 'homepage-banner' },
+  { id: 'homepage-banner-small', label: 'Homepage Small', width: 800, height: 283, fontScale: 0.5, layoutMode: 'homepage-banner' },
+  { id: 'homepage-banner-large', label: 'Homepage Large', width: 1300, height: 500, fontScale: 0.65, layoutMode: 'homepage-banner' },
 ];
 
 export const DEFAULT_AD_SIZE = AD_SIZES[0];
