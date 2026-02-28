@@ -197,12 +197,24 @@ export default function EditorPage() {
     // (draggable, resizable, editable, selectable via Ctrl+A, undo/redo, etc.)
     setIframeMode(false);
     setIframeHtmlPath(null);
+
+    // Auto-switch canvas size if the template specifies a target size
+    if (tmpl.targetSize) {
+      const matchingSize = CANVAS_SIZES.find(
+        s => s.width === tmpl.targetSize!.width && s.height === tmpl.targetSize!.height
+      );
+      if (matchingSize && matchingSize.id !== activeSize.id) {
+        setPerSizeElements(prev => ({ ...prev, [activeSize.id]: structuredClone(elements) }));
+        setActiveSize(matchingSize);
+      }
+    }
+
     const newElements = tmpl.createElements();
     resetHistory(newElements);
     setActiveTemplateId(tmpl.id);
     setSelectedIds([]);
     showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
-  }, [resetHistory, showToast]);
+  }, [resetHistory, showToast, activeSize, elements]);
 
   // ── Element drop from sidebar ──
   const handleElementDragStart = useCallback((item: AssetItem, e: React.DragEvent) => {

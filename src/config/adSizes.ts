@@ -1,4 +1,4 @@
-export type LayoutMode = 'square' | 'portrait' | 'story' | 'landscape' | 'youtube-thumb';
+export type LayoutMode = 'square' | 'portrait' | 'story' | 'landscape' | 'youtube-thumb' | 'homepage-banner';
 
 export interface AdSize {
   id: string;
@@ -16,6 +16,7 @@ export const AD_SIZES: AdSize[] = [
   { id: 'story',         label: 'Story',            width: 1080, height: 1920, fontScale: 1.1,  layoutMode: 'story' },
   { id: 'landscape',     label: 'Landscape',        width: 1200, height: 628,  fontScale: 0.85, layoutMode: 'landscape' },
   { id: 'youtube-thumb', label: 'YouTube Thumb',    width: 1280, height: 720,  fontScale: 1.3,  layoutMode: 'youtube-thumb' },
+  { id: 'homepage-banner', label: 'Homepage Banner', width: 1920, height: 680, fontScale: 0.7, layoutMode: 'homepage-banner' },
 ];
 
 export const DEFAULT_AD_SIZE = AD_SIZES[0];

@@ -204,4 +204,5 @@ export const CANVAS_SIZES: CanvasSize[] = [
   { id: 'landscape', label: '1200 x 628', width: 1200, height: 628, description: 'Facebook/LinkedIn Landscape' },
   { id: 'youtube', label: '1280 x 720', width: 1280, height: 720, description: 'YouTube Thumbnail' },
   { id: 'portrait', label: '1080 x 1350', width: 1080, height: 1350, description: 'Instagram Portrait' },
+  { id: 'homepage-banner', label: '1920 x 680', width: 1920, height: 680, description: 'Homepage Banner' },
 ];
