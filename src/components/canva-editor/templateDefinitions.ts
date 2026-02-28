@@ -611,6 +611,132 @@ export const TEMPLATES: TemplateInfo[] = [
       makeImage({ x: 1200, y: -30, width: 720, height: 720, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio-soft.png', maskType: 'radial', maskParams: 'ellipse 85% 85% at 50% 45%, black 40%, transparent 75%', glowColor: '#3b82f6', zIndex: 5 }),
     ],
   },
+
+  // ── Homepage Banner — SWE to AI Engineer (1300×500) ──
+  {
+    id: 'homepage-banner-large-swe-to-ai',
+    filename: 'homepage-banner-large.html',
+    label: 'Homepage Large — SWE to AI Engineer',
+    shortLabel: 'SWE → AI (Large)',
+    description: '1300×500 banner with superhero trio, headline, three pillars',
+    group: 'banner',
+    thumbnailBg: '#0A0E14',
+    thumbnailAccent: '#3b82f6',
+    thumbnailHeadline: 'SWE → AI ENGINEER',
+    targetSize: { width: 1300, height: 500 },
+    createElements: () => [
+      // ── Ambient glows (scaled from 1920×680) ──
+      makeShape({ x: 745, y: 37, width: 474, height: 368, bgColor: 'rgba(59,130,246,0.12)', borderRadius: 999, zIndex: 1 }),
+      makeShape({ x: 203, y: 110, width: 339, height: 294, bgColor: 'rgba(245,158,11,0.08)', borderRadius: 999, zIndex: 1 }),
+      makeShape({ x: 1016, y: 147, width: 271, height: 257, bgColor: 'rgba(32,201,151,0.08)', borderRadius: 999, zIndex: 1 }),
+
+      // ── Logo (top-left) ──
+      makeImage({ x: 61, y: 21, width: 84, height: 30, src: '/logos/codebasics-white.svg', zIndex: 30, maskType: 'none', objectFit: 'contain' }),
+
+      // ── YouTube Badge (top-right) ──
+      makeBadge({ x: 1090, y: 21, width: 180, height: 26, content: '▶ 1.4M+ Subscribers · 4.9★', bgColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.65)', fontSize: 9, borderRadius: 6, zIndex: 30, borderColor: 'rgba(255,255,255,0.12)', borderWidth: 1 }),
+
+      // ── Launch Badge ──
+      makeBadge({ x: 61, y: 59, width: 200, height: 22, content: '● NEW LAUNCH · LIVE COHORT', bgColor: 'rgba(59,130,246,0.1)', textColor: '#3b82f6', fontSize: 9, borderRadius: 100, zIndex: 25, borderColor: 'rgba(59,130,246,0.2)', borderWidth: 1 }),
+
+      // ── Bootcamp Title ──
+      makeText({ x: 61, y: 96, width: 339, height: 15, content: 'AI ENGINEERING BOOTCAMP 1.0', fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.55)', letterSpacing: 3, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── "Go From" ──
+      makeText({ x: 61, y: 118, width: 135, height: 24, content: 'Go From', fontSize: 18, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── "Software Engineer" headline ──
+      makeText({ x: 61, y: 140, width: 474, height: 63, content: 'Software Engineer', fontSize: 55, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
+
+      // ── "to" connector ──
+      makeText({ x: 61, y: 202, width: 68, height: 24, content: 'to', fontSize: 18, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── "AI Engineer" headline (blue) ──
+      makeText({ x: 61, y: 221, width: 406, height: 63, content: 'AI Engineer', fontSize: 55, fontWeight: 900, color: '#3b82f6', letterSpacing: -1, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
+
+      // ── "in" ──
+      makeText({ x: 61, y: 283, width: 27, height: 26, content: 'in', fontSize: 20, fontWeight: 700, color: 'rgba(255,255,255,0.6)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+      // ── "75 Days." (lime yellow) ──
+      makeText({ x: 88, y: 283, width: 135, height: 26, content: '75 Days.', fontSize: 20, fontWeight: 800, color: '#D7EF3F', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── BUILD pillar ──
+      makeText({ x: 61, y: 324, width: 81, height: 21, content: 'BUILD', fontSize: 14, fontWeight: 900, color: '#3b82f6', letterSpacing: 3, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeShape({ x: 146, y: 324, width: 2, height: 21, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 10 }),
+      // ── ORCHESTRATE pillar ──
+      makeText({ x: 156, y: 324, width: 149, height: 21, content: 'ORCHESTRATE', fontSize: 14, fontWeight: 900, color: '#D7EF3F', letterSpacing: 3, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeShape({ x: 308, y: 324, width: 2, height: 21, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 10 }),
+      // ── DISTRIBUTE pillar ──
+      makeText({ x: 318, y: 324, width: 142, height: 21, content: 'DISTRIBUTE', fontSize: 14, fontWeight: 900, color: '#20C997', letterSpacing: 3, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── CTA Button ──
+      makeButton({ x: 61, y: 368, width: 180, height: 38, content: 'Explore Bootcamp →', bgColor: '#3b82f6', textColor: '#FFFFFF', fontSize: 12, borderRadius: 10, zIndex: 20 }),
+
+      // ── "Starts" meta ──
+      makeText({ x: 260, y: 368, width: 100, height: 15, content: 'STARTS', fontSize: 8, fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 260, y: 383, width: 100, height: 18, content: 'March 7, 2026', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.75)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── "Format" meta ──
+      makeText({ x: 390, y: 368, width: 100, height: 15, content: 'FORMAT', fontSize: 8, fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.5, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 390, y: 383, width: 100, height: 18, content: 'Live Sessions', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.75)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Superhero Trio Image ──
+      makeImage({ x: 812, y: -22, width: 488, height: 530, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio-soft.png', maskType: 'radial', maskParams: 'ellipse 85% 85% at 50% 45%, black 40%, transparent 75%', glowColor: '#3b82f6', zIndex: 5 }),
+    ],
+  },
+
+  // ── Homepage Banner — SWE to AI Engineer (800×283) ──
+  {
+    id: 'homepage-banner-small-swe-to-ai',
+    filename: 'homepage-banner-small.html',
+    label: 'Homepage Small — SWE to AI Engineer',
+    shortLabel: 'SWE → AI (Small)',
+    description: '800×283 compact banner with superhero trio, headline, CTA',
+    group: 'banner',
+    thumbnailBg: '#0A0E14',
+    thumbnailAccent: '#3b82f6',
+    thumbnailHeadline: 'SWE → AI ENGINEER',
+    targetSize: { width: 800, height: 283 },
+    createElements: () => [
+      // ── Single ambient glow ──
+      makeShape({ x: 460, y: 20, width: 300, height: 220, bgColor: 'rgba(59,130,246,0.12)', borderRadius: 999, zIndex: 1 }),
+
+      // ── "Go From" ──
+      makeText({ x: 30, y: 20, width: 80, height: 16, content: 'Go From', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── "Software Engineer" headline ──
+      makeText({ x: 30, y: 36, width: 320, height: 40, content: 'Software Engineer', fontSize: 36, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
+
+      // ── "to" connector ──
+      makeText({ x: 30, y: 76, width: 40, height: 16, content: 'to', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.65)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── "AI Engineer" headline (blue) ──
+      makeText({ x: 30, y: 92, width: 280, height: 40, content: 'AI Engineer', fontSize: 36, fontWeight: 900, color: '#3b82f6', letterSpacing: -1, scaleX: 1, lineHeight: 1.0, zIndex: 10 }),
+
+      // ── "in" ──
+      makeText({ x: 30, y: 135, width: 30, height: 18, content: 'in', fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.6)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+      // ── "75 Days." (lime yellow) ──
+      makeText({ x: 60, y: 135, width: 100, height: 18, content: '75 Days.', fontSize: 14, fontWeight: 800, color: '#D7EF3F', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── BUILD pillar ──
+      makeText({ x: 30, y: 165, width: 55, height: 14, content: 'BUILD', fontSize: 9, fontWeight: 900, color: '#3b82f6', letterSpacing: 2, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeShape({ x: 88, y: 165, width: 2, height: 14, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 10 }),
+      // ── ORCHESTRATE pillar ──
+      makeText({ x: 96, y: 165, width: 95, height: 14, content: 'ORCHESTRATE', fontSize: 9, fontWeight: 900, color: '#D7EF3F', letterSpacing: 2, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeShape({ x: 195, y: 165, width: 2, height: 14, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 10 }),
+      // ── DISTRIBUTE pillar ──
+      makeText({ x: 203, y: 165, width: 90, height: 14, content: 'DISTRIBUTE', fontSize: 9, fontWeight: 900, color: '#20C997', letterSpacing: 2, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── CTA Button ──
+      makeButton({ x: 30, y: 200, width: 160, height: 32, content: 'Explore Bootcamp →', bgColor: '#3b82f6', textColor: '#FFFFFF', fontSize: 10, borderRadius: 8, zIndex: 20 }),
+
+      // ── Compact meta (next to CTA) ──
+      makeText({ x: 210, y: 202, width: 120, height: 13, content: 'STARTS MARCH 7', fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.65)', letterSpacing: 1, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      makeText({ x: 210, y: 217, width: 120, height: 13, content: 'LIVE SESSIONS', fontSize: 8, fontWeight: 600, color: 'rgba(255,255,255,0.5)', letterSpacing: 1, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+
+      // ── Superhero Trio Image (right side, bleeds off edge) ──
+      makeImage({ x: 480, y: -15, width: 340, height: 310, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio-soft.png', maskType: 'radial', maskParams: 'ellipse 85% 85% at 50% 45%, black 40%, transparent 75%', glowColor: '#3b82f6', zIndex: 5 }),
+    ],
+  },
 ];
 
 export function getStandaloneTemplates(): TemplateInfo[] {
