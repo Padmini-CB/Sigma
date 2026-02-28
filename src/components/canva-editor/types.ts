@@ -196,13 +196,16 @@ export interface CanvasSize {
   width: number;
   height: number;
   description: string;
+  category?: 'ad-creatives' | 'homepage-banner';
 }
 
 export const CANVAS_SIZES: CanvasSize[] = [
-  { id: 'square', label: '1080 x 1080', width: 1080, height: 1080, description: 'Instagram/LinkedIn Feed' },
-  { id: 'story', label: '1080 x 1920', width: 1080, height: 1920, description: 'Instagram Story' },
-  { id: 'landscape', label: '1200 x 628', width: 1200, height: 628, description: 'Facebook/LinkedIn Landscape' },
-  { id: 'youtube', label: '1280 x 720', width: 1280, height: 720, description: 'YouTube Thumbnail' },
-  { id: 'portrait', label: '1080 x 1350', width: 1080, height: 1350, description: 'Instagram Portrait' },
-  { id: 'homepage-banner', label: '1920 x 680', width: 1920, height: 680, description: 'Homepage Banner' },
+  { id: 'square', label: '1080 x 1080', width: 1080, height: 1080, description: 'Instagram/LinkedIn Feed', category: 'ad-creatives' },
+  { id: 'story', label: '1080 x 1920', width: 1080, height: 1920, description: 'Instagram Story', category: 'ad-creatives' },
+  { id: 'landscape', label: '1200 x 628', width: 1200, height: 628, description: 'Facebook/LinkedIn Landscape', category: 'ad-creatives' },
+  { id: 'youtube', label: '1280 x 720', width: 1280, height: 720, description: 'YouTube Thumbnail', category: 'ad-creatives' },
+  { id: 'portrait', label: '1080 x 1350', width: 1080, height: 1350, description: 'Instagram Portrait', category: 'ad-creatives' },
+  { id: 'homepage-banner', label: '1920 x 680', width: 1920, height: 680, description: 'Homepage Banner (Full)', category: 'homepage-banner' },
+  { id: 'homepage-banner-small', label: '800 x 283', width: 800, height: 283, description: 'Homepage Small', category: 'homepage-banner' },
+  { id: 'homepage-banner-large', label: '1300 x 500', width: 1300, height: 500, description: 'Homepage Large', category: 'homepage-banner' },
 ];
