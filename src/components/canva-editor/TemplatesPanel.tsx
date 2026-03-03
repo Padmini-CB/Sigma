@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { TEMPLATES, TemplateInfo, getStandaloneTemplates, getCarouselTemplates, getBannerTemplates } from './templateDefinitions';
+import { TEMPLATES, TemplateInfo, getStandaloneTemplates, getCarouselTemplates, getBannerTemplates, getDAStandaloneTemplates } from './templateDefinitions';
 
 interface TemplatesPanelProps {
   onSelectTemplate: (template: TemplateInfo) => void;
@@ -14,6 +14,7 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
   const standaloneTemplates = useMemo(() => getStandaloneTemplates(), []);
   const carouselTemplates = useMemo(() => getCarouselTemplates(), []);
   const bannerTemplates = useMemo(() => getBannerTemplates(), []);
+  const daTemplates = useMemo(() => getDAStandaloneTemplates(), []);
 
   const filterTemplates = (templates: TemplateInfo[]) => {
     if (!searchQuery.trim()) return templates;
@@ -26,6 +27,7 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
   const filteredStandalone = filterTemplates(standaloneTemplates);
   const filteredCarousel = filterTemplates(carouselTemplates);
   const filteredBanners = filterTemplates(bannerTemplates);
+  const filteredDA = filterTemplates(daTemplates);
 
   return (
     <div style={styles.container}>
@@ -55,12 +57,33 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
       </div>
 
       <div style={styles.scrollArea}>
-        {/* Standalone Ads Section */}
+        {/* AI Engineering Bootcamp 1.0 Section */}
         {filteredStandalone.length > 0 && (
           <div style={styles.section}>
-            <div style={styles.sectionLabel}>Standalone Ads</div>
+            <div style={styles.sectionLabel}>AI Engineering Bootcamp 1.0</div>
             <div style={styles.grid}>
               {filteredStandalone.map((template) => (
+                <TemplateThumb
+                  key={template.id}
+                  template={template}
+                  isActive={activeTemplateId === template.id}
+                  onClick={() => onSelectTemplate(template)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Data Analytics Bootcamp 5.0 Section */}
+        {filteredDA.length > 0 && (
+          <div style={styles.section}>
+            <div style={styles.divider}>
+              <span style={styles.dividerLine} />
+              <span style={styles.dividerText}>Data Analytics Bootcamp 5.0</span>
+              <span style={styles.dividerLine} />
+            </div>
+            <div style={styles.grid}>
+              {filteredDA.map((template) => (
                 <TemplateThumb
                   key={template.id}
                   template={template}
@@ -114,7 +137,7 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
           </div>
         )}
 
-        {filteredStandalone.length === 0 && filteredCarousel.length === 0 && filteredBanners.length === 0 && (
+        {filteredStandalone.length === 0 && filteredCarousel.length === 0 && filteredBanners.length === 0 && filteredDA.length === 0 && (
           <div style={styles.emptyState}>No templates match your search.</div>
         )}
       </div>
