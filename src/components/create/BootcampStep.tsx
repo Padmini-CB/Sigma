@@ -7,10 +7,10 @@ interface BootcampOption {
 }
 
 const bootcampOptions: BootcampOption[] = [
-  { id: 'da-bootcamp', name: 'Data Analytics Bootcamp 5.0', details: '₹12,900 · 7+ Projects · Job Assistance' },
+  { id: 'ai-engineering-1.0', name: 'AI Engineering Bootcamp 1.0', details: '75 Days Intensive · Live Sessions · 8+ Projects' },
+  { id: 'data-analytics-5.0', name: 'Data Analytics Bootcamp 5.0', details: '₹12,900 · 7+ Projects · Job Assistance' },
   { id: 'de-bootcamp', name: 'Data Engineering Bootcamp', details: 'AWS, Snowflake, Airflow · 100TB+ Data' },
   { id: 'ds-bootcamp', name: 'GenAI & Data Science 3.0', details: '₹15,000 · RAG, LangChain · Build in Public' },
-  { id: 'ai-engineering-bootcamp', name: 'AI Engineering Bootcamp 1.0', details: '75 Days Intensive · Live Sessions · 8+ Projects' },
   { id: 'bundle', name: 'Bundle (DA + AI Toolkit)', details: 'Best value combination' },
   { id: 'general', name: 'Codebasics — Brand Creatives', details: 'Brand-level creatives' },
 ];
