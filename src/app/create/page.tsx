@@ -3,28 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import CanvasStep from '@/components/create/CanvasStep';
 import BootcampStep from '@/components/create/BootcampStep';
-import IntentStep from '@/components/create/IntentStep';
-import ConceptStep from '@/components/create/ConceptStep';
 
-type Step = 0 | 1 | 2 | 3 | 4;
-
-interface Selections {
-  canvas: string;
-  bootcamp: string;
-  intent: string;
-  customDimensions?: { width: number; height: number };
-}
+type Step = 0 | 1;
 
 export default function CreatePage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(0);
-  const [selections, setSelections] = useState<Selections>({
-    canvas: '',
-    bootcamp: '',
-    intent: '',
-  });
 
   const handleTypeSelect = (type: 'ad' | 'thumbnail') => {
     if (type === 'thumbnail') {
@@ -34,19 +19,9 @@ export default function CreatePage() {
     }
   };
 
-  const handleCanvasSelect = (canvas: string, customDimensions?: { width: number; height: number }) => {
-    setSelections((prev) => ({ ...prev, canvas, customDimensions }));
-    setStep(2);
-  };
-
   const handleBootcampSelect = (bootcamp: string) => {
-    setSelections((prev) => ({ ...prev, bootcamp }));
-    setStep(3);
-  };
-
-  const handleIntentSelect = (intent: string) => {
-    setSelections((prev) => ({ ...prev, intent }));
-    setStep(4);
+    // Navigate directly to editor with bootcamp filter — templates panel will show only matching templates
+    router.push(`/editor/meta-feed-square?bootcamp=${encodeURIComponent(bootcamp)}`);
   };
 
   const goToStep = (targetStep: Step) => {
@@ -68,41 +43,16 @@ export default function CreatePage() {
             {/* Progress indicator */}
             {step > 0 && (
               <div className="hidden sm:flex items-center gap-2">
-                {[1, 2, 3, 4].map((stepNum) => (
-                  <div key={stepNum} className="flex items-center">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-ui text-sm font-semibold transition-colors ${
-                        stepNum === step
-                          ? 'bg-brand-blue text-white'
-                          : stepNum < step
-                          ? 'bg-brand-blue/20 text-brand-blue'
-                          : 'bg-gray-200 text-gray-400'
-                      }`}
-                    >
-                      {stepNum < step ? (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : (
-                        stepNum
-                      )}
-                    </div>
-                    {stepNum < 4 && (
-                      <div
-                        className={`w-8 h-0.5 mx-1 transition-colors ${
-                          stepNum < step ? 'bg-brand-blue/40' : 'bg-gray-200'
-                        }`}
-                      />
-                    )}
-                  </div>
-                ))}
+                <div className="w-8 h-8 rounded-full flex items-center justify-center font-ui text-sm font-semibold bg-brand-blue text-white">
+                  2
+                </div>
               </div>
             )}
 
             {/* Mobile progress */}
             {step > 0 && (
               <div className="sm:hidden font-ui text-sm text-gray-500">
-                Step {step} of 4
+                Step 2 of 2
               </div>
             )}
           </div>
@@ -112,7 +62,6 @@ export default function CreatePage() {
       {/* Main content */}
       <main className="pt-24 pb-16 px-6">
         <div className="container mx-auto">
-          {/* Step content with fade transition */}
           <div className="animate-fade-in">
             {step === 0 && (
               <div className="w-full max-w-3xl mx-auto">
@@ -136,7 +85,7 @@ export default function CreatePage() {
                       Ad Creative
                     </h3>
                     <p className="font-body text-sm text-gray-500">
-                      PPC ads, social media posts, flyers, email headers. Choose bootcamp, intent, and concept.
+                      Select a bootcamp and start designing with pre-made templates.
                     </p>
                     <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <svg className="w-4 h-4 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,25 +117,10 @@ export default function CreatePage() {
                 </div>
               </div>
             )}
-            {step === 1 && <CanvasStep onSelect={handleCanvasSelect} onBack={() => goToStep(0)} />}
-            {step === 2 && (
+            {step === 1 && (
               <BootcampStep
                 onSelect={handleBootcampSelect}
-                onBack={() => goToStep(1)}
-              />
-            )}
-            {step === 3 && (
-              <IntentStep
-                onSelect={handleIntentSelect}
-                onBack={() => goToStep(2)}
-              />
-            )}
-            {step === 4 && (
-              <ConceptStep
-                canvas={selections.canvas}
-                bootcamp={selections.bootcamp}
-                intent={selections.intent}
-                onBack={() => goToStep(3)}
+                onBack={() => goToStep(0)}
               />
             )}
           </div>
@@ -203,7 +137,7 @@ export default function CreatePage() {
             ← Back to Home
           </Link>
           <p className="font-ui text-xs text-gray-500 hidden sm:block">
-            Need help? The intent you choose shapes your creative direction.
+            Select a bootcamp to see its templates in the editor.
           </p>
         </div>
       </footer>

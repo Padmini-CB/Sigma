@@ -253,6 +253,120 @@ export const ASSET_SECTIONS: AssetSection[] = [
       },
     ],
   },
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // Price Update — March 2025 (AI Engineering Bootcamp)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'price-update-march',
+    label: 'Price Update — March 2025',
+    expanded: true,
+    subsections: [
+      {
+        id: 'price-strips-full',
+        label: 'Bottom Strips (Full Price)',
+        items: [
+          // Strip A — Classic
+          {
+            id: aid(), type: 'html-component', label: 'Strip A — Classic',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-a" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Investment updates to <span style="color:#3B82F6;font-weight:700;margin:0 4px;">₹48,000</span> from <span style="color:#D7EF3F;font-weight:700;margin:0 4px;">8th March</span>, 9 am IST</div>',
+            element: {
+              type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Investment updates to ₹48,000 from 8th March, 9 am IST',
+              stripStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
+            },
+          },
+          // Strip B — Side by Side
+          {
+            id: aid(), type: 'html-component', label: 'Strip B — Side by Side',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-b" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;gap:6px;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);"><span style="color:rgba(255,255,255,0.95);font-weight:700;">₹36,000</span> until 7th March · <span style="color:rgba(255,255,255,0.95);font-weight:700;">₹48,000</span> from 8th March onwards</div>',
+            element: {
+              type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: '₹36,000 until 7th March · ₹48,000 from 8th March onwards',
+              stripStyle: { backgroundColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'price-strips-savings',
+        label: 'Bottom Strips (Savings)',
+        items: [
+          // Strip C — Save Amount
+          {
+            id: aid(), type: 'html-component', label: 'Strip C — Save Amount',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-c" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Enroll before 8th March and save <span style="color:#D7EF3F;font-weight:700;margin-left:4px;">₹12,000</span></div>',
+            element: {
+              type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Enroll before 8th March and save ₹12,000',
+              stripStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
+            },
+          },
+          // Strip D — Save Percentage
+          {
+            id: aid(), type: 'html-component', label: 'Strip D — Save 25%',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-d" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Save <span style="color:#D7EF3F;font-weight:700;margin:0 4px;">25%</span> — enroll before 8th March</div>',
+            element: {
+              type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Save 25% — enroll before 8th March',
+              stripStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'price-overlays',
+        label: 'Floating Overlays',
+        items: [
+          // Overlay E — Full Price Pill
+          {
+            id: aid(), type: 'html-component', label: 'Overlay E — Price Pill',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-overlay-e" style="position:absolute;z-index:100;display:inline-flex;flex-direction:column;gap:2px;padding:12px 24px;background:rgba(24,24,48,0.75);border:1px solid rgba(59,130,246,0.15);backdrop-filter:blur(16px);border-radius:16px;font-family:Manrope,sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);line-height:1.5;">Investment updates to <span style="color:#3B82F6;font-weight:700;">₹48,000</span><div style="font-size:13px;">from <span style="color:#D7EF3F;font-weight:700;">8th March</span></div></div>',
+            element: {
+              type: 'badge', width: 320, height: 64, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Investment updates to ₹48,000 from 8th March',
+              badgeStyle: { backgroundColor: 'rgba(24,24,48,0.75)', textColor: 'rgba(255,255,255,0.75)', fontFamily: 'Manrope', fontSize: 14, fontWeight: 600, borderRadius: 16, paddingX: 24, paddingY: 12, borderColor: 'rgba(59,130,246,0.15)', borderWidth: 1 },
+            },
+          },
+          // Overlay F — Savings Pill
+          {
+            id: aid(), type: 'html-component', label: 'Overlay F — Savings Pill',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-overlay-f" style="position:absolute;z-index:100;display:inline-flex;align-items:center;gap:4px;padding:10px 20px;background:rgba(24,24,48,0.75);border:1px solid rgba(59,130,246,0.15);backdrop-filter:blur(16px);border-radius:16px;font-family:Manrope,sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);">Save <span style="color:#D7EF3F;font-weight:700;">₹12,000</span> — enroll before 8th March</div>',
+            element: {
+              type: 'badge', width: 360, height: 44, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Save ₹12,000 — enroll before 8th March',
+              badgeStyle: { backgroundColor: 'rgba(24,24,48,0.75)', textColor: 'rgba(255,255,255,0.75)', fontFamily: 'Manrope', fontSize: 14, fontWeight: 600, borderRadius: 16, paddingX: 20, paddingY: 10, borderColor: 'rgba(59,130,246,0.15)', borderWidth: 1 },
+            },
+          },
+          // Overlay G — Compact Tag
+          {
+            id: aid(), type: 'html-component', label: 'Overlay G — Compact Tag',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-overlay-g" style="position:absolute;z-index:100;display:inline-flex;align-items:center;gap:4px;padding:8px 16px;background:rgba(24,24,48,0.75);border:1px solid rgba(59,130,246,0.15);backdrop-filter:blur(16px);border-radius:16px;font-family:Manrope,sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);">Save <span style="color:#D7EF3F;font-weight:700;">₹12,000</span> before 8th March</div>',
+            element: {
+              type: 'badge', width: 280, height: 36, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Save ₹12,000 before 8th March',
+              badgeStyle: { backgroundColor: 'rgba(24,24,48,0.75)', textColor: 'rgba(255,255,255,0.75)', fontFamily: 'Manrope', fontSize: 12, fontWeight: 600, borderRadius: 16, paddingX: 16, paddingY: 8, borderColor: 'rgba(59,130,246,0.15)', borderWidth: 1 },
+            },
+          },
+        ],
+      },
+      {
+        id: 'price-lp',
+        label: 'Landing Page',
+        items: [
+          // LP Strip — Price Comparison
+          {
+            id: aid(), type: 'html-component', label: 'LP Strip — Price Comparison',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-lp-strip" style="position:absolute;z-index:100;display:inline-flex;align-items:center;gap:32px;padding:16px 36px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.12);backdrop-filter:blur(12px);border-radius:16px;font-family:Manrope,sans-serif;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:15px;font-weight:500;color:rgba(255,255,255,0.65);">Current investment</span><span style="font-size:20px;font-weight:700;color:#FFFFFF;">₹36,000</span></div><span style="font-size:18px;color:rgba(255,255,255,0.25);">→</span><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:15px;font-weight:500;color:rgba(255,255,255,0.65);">From 8th March</span><span style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.4);">₹48,000</span></div><span style="width:1px;height:32px;background:rgba(255,255,255,0.1);"></span><span style="font-size:13px;font-weight:600;color:#D7EF3F;">Enroll before 8th March</span></div>',
+            element: {
+              type: 'badge', width: 640, height: 72, rotation: 0, opacity: 1, locked: false, visible: true,
+              content: 'Current: ₹36,000 → From 8th March: ₹48,000 | Enroll before 8th March',
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.06)', textColor: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 500, borderRadius: 16, paddingX: 36, paddingY: 16, borderColor: 'rgba(59,130,246,0.12)', borderWidth: 1 },
+            },
+          },
+        ],
+      },
+    ],
+  },
   {
     id: 'common',
     label: 'Common',

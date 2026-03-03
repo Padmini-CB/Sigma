@@ -1,15 +1,23 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { TEMPLATES, TemplateInfo, getStandaloneTemplates, getCarouselTemplates, getBannerTemplates, getDAStandaloneTemplates } from './templateDefinitions';
+import { TEMPLATES, TemplateInfo, getStandaloneTemplates, getCarouselTemplates, getBannerTemplates, getDAStandaloneTemplates, getTemplatesByBootcamp } from './templateDefinitions';
 
 interface TemplatesPanelProps {
   onSelectTemplate: (template: TemplateInfo) => void;
   activeTemplateId: string | null;
+  /** When set, only show templates matching this bootcamp */
+  bootcamp?: string | null;
 }
 
-export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: TemplatesPanelProps) {
+export default function TemplatesPanel({ onSelectTemplate, activeTemplateId, bootcamp }: TemplatesPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
+
+  // If a bootcamp filter is active, show only that bootcamp's templates
+  const bootcampTemplates = useMemo(() => {
+    if (bootcamp) return getTemplatesByBootcamp(bootcamp);
+    return null;
+  }, [bootcamp]);
 
   const standaloneTemplates = useMemo(() => getStandaloneTemplates(), []);
   const carouselTemplates = useMemo(() => getCarouselTemplates(), []);
@@ -24,6 +32,54 @@ export default function TemplatesPanel({ onSelectTemplate, activeTemplateId }: T
     );
   };
 
+  // Bootcamp-specific mode: show only matching templates in a single list
+  if (bootcampTemplates) {
+    const filtered = filterTemplates(bootcampTemplates);
+    const bootcampLabel = bootcamp === 'ai-engineering-1.0'
+      ? 'AI Engineering Bootcamp 1.0'
+      : bootcamp === 'data-analytics-5.0'
+        ? 'Data Analytics Bootcamp 5.0'
+        : bootcamp || 'Templates';
+
+    return (
+      <div style={styles.container}>
+        <div style={styles.searchWrapper}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={styles.searchIcon}>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={styles.searchInput}
+          />
+        </div>
+        <div style={styles.scrollArea}>
+          <div style={styles.section}>
+            <div style={styles.sectionLabel}>{bootcampLabel}</div>
+            {filtered.length > 0 ? (
+              <div style={styles.grid}>
+                {filtered.map((template) => (
+                  <TemplateThumb
+                    key={template.id}
+                    template={template}
+                    isActive={activeTemplateId === template.id}
+                    onClick={() => onSelectTemplate(template)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div style={styles.emptyState}>No templates match your search.</div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Default mode: show all templates grouped by section
   const filteredStandalone = filterTemplates(standaloneTemplates);
   const filteredCarousel = filterTemplates(carouselTemplates);
   const filteredBanners = filterTemplates(bannerTemplates);

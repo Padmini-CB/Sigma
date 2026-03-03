@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import templatesData from '@/data/templates.json';
@@ -64,7 +64,9 @@ interface TemplateRecord {
 export default function EditorPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const templateId = params.id as string;
+  const bootcampFilter = searchParams.get('bootcamp') || null;
   const { showToast } = useToast();
   const { data: session } = useSession();
 
@@ -725,7 +727,7 @@ export default function EditorPage() {
   const renderPanelContent = () => {
     switch (activeTab) {
       case 'templates':
-        return <TemplatesPanel onSelectTemplate={handleSelectTemplate} activeTemplateId={activeTemplateId} />;
+        return <TemplatesPanel onSelectTemplate={handleSelectTemplate} activeTemplateId={activeTemplateId} bootcamp={bootcampFilter} />;
       case 'elements':
         return <ElementsPanel onDragStart={handleElementDragStart} onClickAdd={handleClickAddElement} />;
       case 'text':
