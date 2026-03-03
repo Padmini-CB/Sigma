@@ -182,6 +182,21 @@ function makeBottomStrip(content: string, zIndex = 25): CanvasElement {
   return makeStrip({ x: 0, y: 1028, width: 1080, height: 52, content, bgColor: 'rgba(13,17,23,0.95)', textColor: '#20C997', fontSize: 16, zIndex });
 }
 
+// ─── DA Bootcamp Common Elements ─────────────────────────────────────────
+
+function makeDACommon(): CanvasElement[] {
+  return [
+    // Logo amber "C" square
+    makeShape({ x: 40, y: 35, width: 28, height: 28, bgColor: '#E8A030', borderRadius: 6, zIndex: 30 }),
+    makeText({ x: 43, y: 37, width: 22, height: 24, content: 'C', fontSize: 15, fontWeight: 900, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.0, textTransform: 'none', zIndex: 31 }),
+    makeText({ x: 76, y: 42, width: 130, height: 16, content: 'CODEBASICS', fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: 3.5, scaleX: 1, lineHeight: 1.2, zIndex: 30 }),
+    // YouTube badge
+    makeBadge({ x: 780, y: 35, width: 260, height: 30, content: '▶ 1.4M+ Subscribers · 4.9★', bgColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.4)', fontSize: 10, borderRadius: 7, zIndex: 30, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1 }),
+    // Bottom badge
+    makeText({ x: 0, y: 1020, width: 1080, height: 30, content: 'Data Analytics Bootcamp 5.0 · 21K+ Enrolled · US$270', fontSize: 10, fontWeight: 500, color: 'rgba(255,255,255,0.25)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 25 }),
+  ];
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Template Definitions — Matching reference PNGs
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -192,7 +207,7 @@ export interface TemplateInfo {
   label: string;
   shortLabel: string;
   description: string;
-  group: 'standalone' | 'carousel' | 'banner';
+  group: 'standalone' | 'carousel' | 'banner' | 'da-standalone';
   thumbnailBg: string;
   thumbnailAccent: string;
   thumbnailHeadline: string;
@@ -737,6 +752,352 @@ export const TEMPLATES: TemplateInfo[] = [
       makeImage({ x: 480, y: -15, width: 340, height: 310, src: '/images/bootcamps/ai-engineering/heroes/superhero-trio-soft.png', maskType: 'radial', maskParams: 'ellipse 85% 85% at 50% 45%, black 40%, transparent 75%', glowColor: '#3b82f6', zIndex: 5 }),
     ],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // Data Analytics Bootcamp 5.0 Templates
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  // ── DA-01: The Roadmap ──
+  {
+    id: 'da-concept-01',
+    filename: 'da-01-roadmap.html',
+    label: 'DA-01 — The Roadmap',
+    shortLabel: 'DA-01 Roadmap',
+    description: '5-step career roadmap with tool circles',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: 'YOUR DA CAREER IN 5 STEPS',
+    createElements: () => [
+      ...makeDACommon(),
+      // Headline
+      makeText({ x: 70, y: 120, width: 900, height: 50, content: 'YOUR DATA ANALYTICS CAREER', fontSize: 42, fontWeight: 900, color: '#FFFFFF', scaleX: 0.78, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 175, width: 700, height: 50, content: 'IN 5 CLEAR STEPS.', fontSize: 42, fontWeight: 900, color: '#E8A030', scaleX: 0.78, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Roadmap circles — Excel
+      makeShape({ x: 70, y: 260, width: 90, height: 90, bgColor: '#217346', borderRadius: 45, zIndex: 8 }),
+      makeText({ x: 70, y: 290, width: 90, height: 30, content: 'Excel', fontSize: 11, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      makeShape({ x: 160, y: 304, width: 122, height: 2, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 7 }),
+      // SQL
+      makeShape({ x: 282, y: 260, width: 90, height: 90, bgColor: '#CC2927', borderRadius: 45, zIndex: 8 }),
+      makeText({ x: 282, y: 290, width: 90, height: 30, content: 'SQL', fontSize: 11, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      makeShape({ x: 372, y: 304, width: 122, height: 2, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 7 }),
+      // Power BI
+      makeShape({ x: 494, y: 260, width: 90, height: 90, bgColor: '#F2C811', borderRadius: 45, zIndex: 8 }),
+      makeText({ x: 494, y: 290, width: 90, height: 30, content: 'Power BI', fontSize: 11, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      makeShape({ x: 584, y: 304, width: 122, height: 2, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 7 }),
+      // Python
+      makeShape({ x: 706, y: 260, width: 90, height: 90, bgColor: '#3776AB', borderRadius: 45, zIndex: 8 }),
+      makeText({ x: 706, y: 290, width: 90, height: 30, content: 'Python', fontSize: 11, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      makeShape({ x: 796, y: 304, width: 122, height: 2, bgColor: 'rgba(255,255,255,0.15)', borderRadius: 0, zIndex: 7 }),
+      // AI
+      makeShape({ x: 918, y: 260, width: 90, height: 90, bgColor: '#E8A030', borderRadius: 45, zIndex: 8 }),
+      makeText({ x: 918, y: 290, width: 90, height: 30, content: 'AI', fontSize: 11, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      // Subtext
+      makeText({ x: 70, y: 420, width: 600, height: 24, content: '21,000+ learners already on this path.', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 10 }),
+      // CTA
+      makeButton({ x: 430, y: 490, width: 220, height: 44, content: 'Start Your Journey →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+      // Hero image — both heroes
+      makeImage({ x: 100, y: 550, width: 880, height: 420, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+    ],
+  },
+
+  // ── DA-02: The Placement Wall ──
+  {
+    id: 'da-concept-02',
+    filename: 'da-02-placements.html',
+    label: 'DA-02 — The Placement Wall',
+    shortLabel: 'DA-02 Placements',
+    description: '300+ placements with screenshot placeholder',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: '300+ PLACEMENTS',
+    createElements: () => [
+      ...makeDACommon(),
+      // Headlines
+      makeText({ x: 70, y: 100, width: 900, height: 60, content: '300+ PLACEMENTS', fontSize: 52, fontWeight: 900, color: '#FFFFFF', scaleX: 0.78, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 165, width: 800, height: 42, content: 'IN THE LAST 3 MONTHS.', fontSize: 36, fontWeight: 700, color: '#E8A030', scaleX: 1, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Screenshot placeholder area
+      makeShape({ x: 70, y: 240, width: 940, height: 540, bgColor: 'rgba(232,160,48,0.03)', borderRadius: 12, borderColor: 'rgba(232,160,48,0.3)', borderWidth: 2, zIndex: 6 }),
+      makeText({ x: 70, y: 480, width: 940, height: 30, content: 'Paste testimonial screenshot here', fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.2)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      // CTA text
+      makeText({ x: 415, y: 820, width: 250, height: 24, content: 'See All Success Stories →', fontSize: 13, fontWeight: 600, color: '#E8A030', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+    ],
+  },
+
+  // ── DA-03: The Non-Tech Entry Point ──
+  {
+    id: 'da-concept-03',
+    filename: 'da-03-no-cs-degree.html',
+    label: 'DA-03 — No CS Degree',
+    shortLabel: 'DA-03 No CS Degree',
+    description: 'Dhaval hero, non-tech audience messaging',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: 'NO CS DEGREE? NO PROBLEM.',
+    createElements: () => [
+      ...makeDACommon(),
+      // Hero — Dhaval
+      makeImage({ x: 550, y: 80, width: 530, height: 650, src: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+      // Headlines
+      makeText({ x: 70, y: 180, width: 500, height: 55, content: 'NO CS DEGREE?', fontSize: 48, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 250, width: 500, height: 55, content: 'NO CODING', fontSize: 48, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 320, width: 500, height: 55, content: 'BACKGROUND?', fontSize: 48, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 410, width: 500, height: 55, content: 'NO PROBLEM.', fontSize: 48, fontWeight: 900, color: '#E8A030', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Subtext
+      makeText({ x: 70, y: 500, width: 450, height: 50, content: 'Join 21K+ learners who broke into\ntech with AI-powered data skills.', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, zIndex: 10 }),
+      // CTA
+      makeButton({ x: 70, y: 590, width: 220, height: 44, content: 'Explore Bootcamp →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+    ],
+  },
+
+  // ── DA-04: The Tool Stack ──
+  {
+    id: 'da-concept-04',
+    filename: 'da-04-skills.html',
+    label: 'DA-04 — The Tool Stack',
+    shortLabel: 'DA-04 Skills',
+    description: '4 tool icons + AI badge, skills headline',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: '4 SKILLS. 18 PROJECTS.',
+    createElements: () => [
+      ...makeDACommon(),
+      // Tool icons — Excel
+      makeShape({ x: 80, y: 150, width: 120, height: 120, bgColor: '#217346', borderRadius: 16, zIndex: 8 }),
+      makeText({ x: 80, y: 190, width: 120, height: 40, content: 'Excel', fontSize: 14, fontWeight: 800, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      // SQL
+      makeShape({ x: 230, y: 150, width: 120, height: 120, bgColor: '#CC2927', borderRadius: 16, zIndex: 8 }),
+      makeText({ x: 230, y: 190, width: 120, height: 40, content: 'SQL', fontSize: 14, fontWeight: 800, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      // Power BI
+      makeShape({ x: 380, y: 150, width: 120, height: 120, bgColor: '#F2C811', borderRadius: 16, zIndex: 8 }),
+      makeText({ x: 380, y: 190, width: 120, height: 40, content: 'Power BI', fontSize: 14, fontWeight: 800, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      // Python
+      makeShape({ x: 530, y: 150, width: 120, height: 120, bgColor: '#3776AB', borderRadius: 16, zIndex: 8 }),
+      makeText({ x: 530, y: 190, width: 120, height: 40, content: 'Python', fontSize: 14, fontWeight: 800, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 9 }),
+      // "+AI" badge
+      makeBadge({ x: 720, y: 170, width: 80, height: 36, content: '⚡ AI', bgColor: 'transparent', textColor: '#E8A030', fontSize: 14, borderRadius: 8, zIndex: 9, borderColor: 'rgba(232,160,48,0.3)', borderWidth: 1 }),
+      // Headlines
+      makeText({ x: 0, y: 340, width: 1080, height: 60, content: '4 SKILLS. 18 PROJECTS.', fontSize: 52, fontWeight: 900, color: '#FFFFFF', textAlign: 'center', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 0, y: 410, width: 1080, height: 60, content: '1 CAREER CHANGE.', fontSize: 52, fontWeight: 900, color: '#E8A030', textAlign: 'center', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Subtext
+      makeText({ x: 0, y: 500, width: 1080, height: 24, content: '+ AI Automation to make you future-ready.', fontSize: 16, fontWeight: 400, color: 'rgba(255,255,255,0.5)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 10 }),
+      // CTA
+      makeButton({ x: 430, y: 530, width: 220, height: 44, content: 'Enroll Now →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+      // Hero image — both heroes
+      makeImage({ x: 150, y: 560, width: 780, height: 420, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+    ],
+  },
+
+  // ── DA-05: The 5.0 Legacy ──
+  {
+    id: 'da-concept-05',
+    filename: 'da-05-social-proof.html',
+    label: 'DA-05 — The 5.0 Legacy',
+    shortLabel: 'DA-05 Social Proof',
+    description: 'Massive 5.0 with stars and review count',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: 'VERSION 5.0',
+    createElements: () => [
+      ...makeDACommon(),
+      // "VERSION" label
+      makeText({ x: 0, y: 180, width: 1080, height: 24, content: 'VERSION', fontSize: 18, fontWeight: 600, color: 'rgba(255,255,255,0.2)', textAlign: 'center', letterSpacing: 8, scaleX: 1, lineHeight: 1.2, zIndex: 10 }),
+      // "5.0" massive
+      makeText({ x: 290, y: 220, width: 500, height: 200, content: '5.0', fontSize: 180, fontWeight: 900, color: '#E8A030', textAlign: 'center', scaleX: 1, letterSpacing: -4, lineHeight: 0.92, zIndex: 10 }),
+      // Stars
+      makeText({ x: 0, y: 430, width: 1080, height: 40, content: '★★★★★', fontSize: 28, fontWeight: 400, color: '#E8A030', textAlign: 'center', scaleX: 1, letterSpacing: 4, lineHeight: 1.0, textTransform: 'none', zIndex: 10 }),
+      // Review count
+      makeText({ x: 0, y: 480, width: 1080, height: 32, content: '4,803 REVIEWS', fontSize: 24, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 1, lineHeight: 1.2, zIndex: 10 }),
+      // Subtext
+      makeText({ x: 0, y: 530, width: 1080, height: 50, content: "India's most enrolled Data Analytics Bootcamp.\nNow with AI Automation & Data Engineering basics.", fontSize: 15, fontWeight: 400, color: 'rgba(255,255,255,0.45)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.6, textTransform: 'none', zIndex: 10 }),
+      // CTA
+      makeButton({ x: 430, y: 620, width: 220, height: 44, content: 'See Why →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+    ],
+  },
+
+  // ── DA-06: The Simple Promise ──
+  {
+    id: 'da-concept-06',
+    filename: 'da-06-promise.html',
+    label: 'DA-06 — The Simple Promise',
+    shortLabel: 'DA-06 Promise',
+    description: 'Hemanand hero, Learn Data / Build Dashboards / Get Promoted',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: 'LEARN. BUILD. GET PROMOTED.',
+    createElements: () => [
+      ...makeDACommon(),
+      // Hero — Hemanand
+      makeImage({ x: 550, y: 50, width: 530, height: 700, src: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+      // Headlines
+      makeText({ x: 70, y: 200, width: 500, height: 65, content: 'LEARN DATA.', fontSize: 56, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 280, width: 220, height: 65, content: 'BUILD', fontSize: 56, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 230, y: 280, width: 450, height: 65, content: 'DASHBOARDS.', fontSize: 56, fontWeight: 900, color: '#E8A030', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 360, width: 500, height: 65, content: 'GET PROMOTED.', fontSize: 56, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Tool list
+      makeText({ x: 70, y: 470, width: 450, height: 20, content: 'Excel · Python · SQL · Power BI · AI Automation', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.4)', letterSpacing: 1, scaleX: 1, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+      // CTA
+      makeButton({ x: 70, y: 530, width: 220, height: 44, content: 'Start Learning →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+    ],
+  },
+
+  // ── DA-07: The Credibility Template ──
+  {
+    id: 'da-concept-07',
+    filename: 'da-07-instructors.html',
+    label: 'DA-07 — Instructors',
+    shortLabel: 'DA-07 Instructors',
+    description: 'Both instructors side by side with credentials',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: 'LEARN FROM THE BEST',
+    createElements: () => [
+      ...makeDACommon(),
+      // Headline
+      makeText({ x: 0, y: 80, width: 1080, height: 45, content: 'LEARN FROM THE BEST IN DATA.', fontSize: 38, fontWeight: 900, color: '#FFFFFF', textAlign: 'center', scaleX: 0.80, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Dhaval hero — left
+      makeImage({ x: 0, y: 200, width: 540, height: 650, src: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+      // Hemanand hero — right
+      makeImage({ x: 540, y: 200, width: 540, height: 650, src: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+      // Dhaval name card
+      makeText({ x: 100, y: 750, width: 300, height: 24, content: 'Dhaval Patel', fontSize: 18, fontWeight: 800, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 12 }),
+      makeText({ x: 100, y: 778, width: 300, height: 16, content: 'Ex-NVIDIA · Ex-Bloomberg', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.45)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 12 }),
+      makeText({ x: 100, y: 798, width: 300, height: 16, content: '150K+ LinkedIn Followers', fontSize: 11, fontWeight: 600, color: '#E8A030', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 12 }),
+      // Hemanand name card
+      makeText({ x: 600, y: 750, width: 300, height: 24, content: 'Hemanand Vadivel', fontSize: 18, fontWeight: 800, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 12 }),
+      makeText({ x: 600, y: 778, width: 300, height: 16, content: '8+ yrs in Europe · DA Leader', fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.45)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 12 }),
+      // YouTube stat bar
+      makeText({ x: 0, y: 880, width: 1080, height: 20, content: '🔴 1.4M+ YouTube Subscribers · 4.9★ · 21K+ Enrolled', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.6)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+      // CTA
+      makeButton({ x: 390, y: 930, width: 300, height: 44, content: 'Explore Bootcamp →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+    ],
+  },
+
+  // ── DA-08: The AI Urgency ──
+  {
+    id: 'da-concept-08',
+    filename: 'da-08-ai-ready.html',
+    label: 'DA-08 — AI Urgency',
+    shortLabel: 'DA-08 AI Ready',
+    description: 'Dhaval hero, AI urgency messaging',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: "AI WON'T REPLACE YOU",
+    createElements: () => [
+      ...makeDACommon(),
+      // Hero — Dhaval
+      makeImage({ x: 550, y: 80, width: 530, height: 650, src: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+      // Headlines
+      makeText({ x: 70, y: 180, width: 500, height: 60, content: "AI WON'T", fontSize: 52, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 245, width: 500, height: 60, content: 'REPLACE YOU.', fontSize: 52, fontWeight: 900, color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 340, width: 500, height: 48, content: 'BUT SOMEONE', fontSize: 42, fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 70, y: 395, width: 500, height: 48, content: 'USING AI WILL.', fontSize: 42, fontWeight: 900, color: '#E8A030', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Subtext
+      makeText({ x: 70, y: 480, width: 450, height: 50, content: 'Learn to be an AI-enabled Data Analyst.\nDedicated AI Automation module included.', fontSize: 15, fontWeight: 400, color: 'rgba(255,255,255,0.4)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.5, zIndex: 10 }),
+      // CTA
+      makeButton({ x: 70, y: 570, width: 220, height: 44, content: 'Get AI-Ready →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+    ],
+  },
+
+  // ── DA-09: The Job Support System ──
+  {
+    id: 'da-concept-09',
+    filename: 'da-09-job-support.html',
+    label: 'DA-09 — Job Support',
+    shortLabel: 'DA-09 Job Support',
+    description: '4 job support pillars with both heroes',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: 'WE HELP YOU GET HIRED',
+    createElements: () => [
+      ...makeDACommon(),
+      // Headlines
+      makeText({ x: 0, y: 120, width: 1080, height: 50, content: "WE DON'T JUST TEACH.", fontSize: 44, fontWeight: 900, color: '#FFFFFF', textAlign: 'center', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 0, y: 185, width: 1080, height: 50, content: 'WE HELP YOU GET HIRED.', fontSize: 44, fontWeight: 900, color: '#E8A030', textAlign: 'center', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Pillar 1 — Resume Builder
+      makeShape({ x: 80, y: 300, width: 440, height: 120, bgColor: 'rgba(255,255,255,0.03)', borderRadius: 12, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 100, y: 325, width: 400, height: 24, content: '📝 Resume Builder', fontSize: 16, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeText({ x: 100, y: 355, width: 400, height: 18, content: 'AI-powered automated builder', fontSize: 12, fontWeight: 400, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 7 }),
+      // Pillar 2 — Mock Interviews
+      makeShape({ x: 560, y: 300, width: 440, height: 120, bgColor: 'rgba(255,255,255,0.03)', borderRadius: 12, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 580, y: 325, width: 400, height: 24, content: '🎤 Mock Interviews', fontSize: 16, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeText({ x: 580, y: 355, width: 400, height: 18, content: 'With industry experts', fontSize: 12, fontWeight: 400, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 7 }),
+      // Pillar 3 — LinkedIn Optimizer
+      makeShape({ x: 80, y: 440, width: 440, height: 120, bgColor: 'rgba(255,255,255,0.03)', borderRadius: 12, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 100, y: 465, width: 400, height: 24, content: '💼 LinkedIn Optimizer', fontSize: 16, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeText({ x: 100, y: 495, width: 400, height: 18, content: 'Profile + credibility building', fontSize: 12, fontWeight: 400, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 7 }),
+      // Pillar 4 — Job Leads
+      makeShape({ x: 560, y: 440, width: 440, height: 120, bgColor: 'rgba(255,255,255,0.03)', borderRadius: 12, borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 580, y: 465, width: 400, height: 24, content: '🎯 Job Leads', fontSize: 16, fontWeight: 700, color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeText({ x: 580, y: 495, width: 400, height: 18, content: 'Direct referrals to recruiters', fontSize: 12, fontWeight: 400, color: 'rgba(255,255,255,0.4)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 7 }),
+      // Career streams
+      makeText({ x: 0, y: 620, width: 1080, height: 18, content: 'Placements in: Marketing · Finance · FMCG · Banking · Healthcare', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.35)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+      // CTA
+      makeButton({ x: 380, y: 680, width: 320, height: 44, content: 'Join 21K+ Learners →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+      // Hero image — both heroes
+      makeImage({ x: 150, y: 730, width: 780, height: 300, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 32%, black 35%, transparent 70%', zIndex: 5 }),
+    ],
+  },
+
+  // ── DA-10: The Every-Career Template ──
+  {
+    id: 'da-concept-10',
+    filename: 'da-10-careers.html',
+    label: 'DA-10 — Every Career',
+    shortLabel: 'DA-10 Careers',
+    description: 'Career grid, stats row, both heroes',
+    group: 'da-standalone',
+    thumbnailBg: '#0D1117',
+    thumbnailAccent: '#E8A030',
+    thumbnailHeadline: "NOT JUST FOR TECH PEOPLE",
+    createElements: () => [
+      ...makeDACommon(),
+      // Headlines
+      makeText({ x: 0, y: 100, width: 1080, height: 50, content: "DATA ANALYTICS ISN'T", fontSize: 44, fontWeight: 900, color: '#FFFFFF', textAlign: 'center', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      makeText({ x: 0, y: 160, width: 1080, height: 50, content: 'JUST FOR TECH PEOPLE.', fontSize: 44, fontWeight: 900, color: '#E8A030', textAlign: 'center', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
+      // Career grid — Row 1
+      makeShape({ x: 70, y: 260, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 70, y: 275, width: 220, height: 30, content: 'Marketing', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeShape({ x: 310, y: 260, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 310, y: 275, width: 220, height: 30, content: 'Finance', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeShape({ x: 550, y: 260, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 550, y: 275, width: 220, height: 30, content: 'FMCG', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeShape({ x: 790, y: 260, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 790, y: 275, width: 220, height: 30, content: 'Banking', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      // Career grid — Row 2
+      makeShape({ x: 70, y: 330, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 70, y: 345, width: 220, height: 30, content: 'Telecom', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeShape({ x: 310, y: 330, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 310, y: 345, width: 220, height: 30, content: 'Healthcare', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeShape({ x: 550, y: 330, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 550, y: 345, width: 220, height: 30, content: 'HR', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      makeShape({ x: 790, y: 330, width: 220, height: 60, bgColor: 'rgba(232,160,48,0.08)', borderRadius: 8, borderColor: 'rgba(232,160,48,0.15)', borderWidth: 1, zIndex: 6 }),
+      makeText({ x: 790, y: 345, width: 220, height: 30, content: 'Supply Chain', fontSize: 14, fontWeight: 700, color: '#FFFFFF', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 7 }),
+      // Stats row — 7M+
+      makeText({ x: 240, y: 480, width: 200, height: 44, content: '7M+', fontSize: 36, fontWeight: 900, color: '#E8A030', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.0, textTransform: 'none', zIndex: 10 }),
+      makeText({ x: 240, y: 524, width: 200, height: 16, content: 'Rows of Real Data', fontSize: 11, fontWeight: 400, color: 'rgba(255,255,255,0.4)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+      makeShape({ x: 440, y: 486, width: 1, height: 48, bgColor: 'rgba(255,255,255,0.08)', borderRadius: 0, zIndex: 8 }),
+      // 18
+      makeText({ x: 460, y: 480, width: 200, height: 44, content: '18', fontSize: 36, fontWeight: 900, color: '#E8A030', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.0, textTransform: 'none', zIndex: 10 }),
+      makeText({ x: 460, y: 524, width: 200, height: 16, content: 'Business Projects', fontSize: 11, fontWeight: 400, color: 'rgba(255,255,255,0.4)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+      makeShape({ x: 660, y: 486, width: 1, height: 48, bgColor: 'rgba(255,255,255,0.08)', borderRadius: 0, zIndex: 8 }),
+      // AI
+      makeText({ x: 680, y: 480, width: 200, height: 44, content: 'AI', fontSize: 36, fontWeight: 900, color: '#E8A030', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.0, textTransform: 'none', zIndex: 10 }),
+      makeText({ x: 680, y: 524, width: 200, height: 16, content: 'Powered Skills', fontSize: 11, fontWeight: 400, color: 'rgba(255,255,255,0.4)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
+      // CTA
+      makeButton({ x: 390, y: 580, width: 300, height: 44, content: 'Explore Bootcamp →', bgColor: '#E8A030', textColor: '#0D1117', fontSize: 14, borderRadius: 10, zIndex: 20 }),
+      // Hero image — both heroes
+      makeImage({ x: 100, y: 600, width: 880, height: 380, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%', zIndex: 5 }),
+    ],
+  },
 ];
 
 export function getStandaloneTemplates(): TemplateInfo[] {
@@ -749,4 +1110,8 @@ export function getCarouselTemplates(): TemplateInfo[] {
 
 export function getBannerTemplates(): TemplateInfo[] {
   return TEMPLATES.filter(t => t.group === 'banner');
+}
+
+export function getDAStandaloneTemplates(): TemplateInfo[] {
+  return TEMPLATES.filter(t => t.group === 'da-standalone');
 }
