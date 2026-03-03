@@ -1,31 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BootcampStep from '@/components/create/BootcampStep';
 
-type Step = 0 | 1;
-
 export default function CreatePage() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>(0);
-
-  const handleTypeSelect = (type: 'ad' | 'thumbnail') => {
-    if (type === 'thumbnail') {
-      router.push('/thumbnail-maker');
-    } else {
-      setStep(1);
-    }
-  };
 
   const handleBootcampSelect = (bootcamp: string) => {
     // Navigate directly to editor with bootcamp filter — templates panel will show only matching templates
     router.push(`/editor/meta-feed-square?bootcamp=${encodeURIComponent(bootcamp)}`);
-  };
-
-  const goToStep = (targetStep: Step) => {
-    setStep(targetStep);
   };
 
   return (
@@ -39,22 +23,6 @@ export default function CreatePage() {
                 SIGMA
               </h1>
             </Link>
-
-            {/* Progress indicator */}
-            {step > 0 && (
-              <div className="hidden sm:flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center font-ui text-sm font-semibold bg-brand-blue text-white">
-                  2
-                </div>
-              </div>
-            )}
-
-            {/* Mobile progress */}
-            {step > 0 && (
-              <div className="sm:hidden font-ui text-sm text-gray-500">
-                Step 2 of 2
-              </div>
-            )}
           </div>
         </div>
       </header>
@@ -63,66 +31,10 @@ export default function CreatePage() {
       <main className="pt-24 pb-16 px-6">
         <div className="container mx-auto">
           <div className="animate-fade-in">
-            {step === 0 && (
-              <div className="w-full max-w-3xl mx-auto">
-                <h2 className="font-headline text-3xl sm:text-4xl font-bold text-white text-center mb-4">
-                  What do you want to create?
-                </h2>
-                <p className="font-body text-gray-400 text-center mb-12">
-                  Choose your creative type to get started
-                </p>
-                <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  <button
-                    onClick={() => handleTypeSelect('ad')}
-                    className="group relative bg-white rounded-2xl border-2 border-gray-100 p-8 text-left hover:border-brand-blue/50 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
-                  >
-                    <div className="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                      <svg className="w-7 h-7 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <h3 className="font-headline text-xl font-bold text-brand-navy mb-2 group-hover:text-brand-blue transition-colors">
-                      Ad Creative
-                    </h3>
-                    <p className="font-body text-sm text-gray-500">
-                      Select a bootcamp and start designing with pre-made templates.
-                    </p>
-                    <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <svg className="w-4 h-4 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => handleTypeSelect('thumbnail')}
-                    className="group relative bg-white rounded-2xl border-2 border-gray-100 p-8 text-left hover:border-red-400/50 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
-                  >
-                    <div className="w-14 h-14 rounded-xl bg-red-50 flex items-center justify-center mb-4">
-                      <svg className="w-7 h-7 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                      </svg>
-                    </div>
-                    <h3 className="font-headline text-xl font-bold text-brand-navy mb-2 group-hover:text-red-500 transition-colors">
-                      YouTube Thumbnail
-                    </h3>
-                    <p className="font-body text-sm text-gray-500">
-                      1280×720 thumbnails with AI generation, presets, and custom layouts. No course selection needed.
-                    </p>
-                    <div className="absolute top-6 right-6 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
-            {step === 1 && (
-              <BootcampStep
-                onSelect={handleBootcampSelect}
-                onBack={() => goToStep(0)}
-              />
-            )}
+            <BootcampStep
+              onSelect={handleBootcampSelect}
+              onBack={() => router.push('/')}
+            />
           </div>
         </div>
       </main>
@@ -134,11 +46,17 @@ export default function CreatePage() {
             href="/"
             className="font-ui text-sm text-gray-400 hover:text-white transition-colors"
           >
-            ← Back to Home
+            &larr; Back to Home
           </Link>
-          <p className="font-ui text-xs text-gray-500 hidden sm:block">
-            Select a bootcamp to see its templates in the editor.
-          </p>
+          <Link
+            href="/thumbnail-maker"
+            className="font-ui text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"
+          >
+            <svg className="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </svg>
+            YouTube Thumbnail Maker &rarr;
+          </Link>
         </div>
       </footer>
     </div>

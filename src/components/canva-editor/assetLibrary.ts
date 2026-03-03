@@ -418,26 +418,26 @@ export const ASSET_SECTIONS: AssetSection[] = [
     subsections: [
       {
         id: 'da-heroes',
-        label: 'Heroes',
+        label: 'Data Analytics Heroes',
         items: [
           {
-            id: aid(), type: 'hero', label: 'Dhaval DA',
+            id: aid(), type: 'hero', label: 'Dhaval DA Superhero',
             thumbnail: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png',
-              glowColor: '#E8A030',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%' },
+              glowColor: '#3B82F6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%' },
             },
           },
           {
-            id: aid(), type: 'hero', label: 'Hemanand DA',
+            id: aid(), type: 'hero', label: 'Hemanand DA Superhero',
             thumbnail: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png',
-              glowColor: '#E8A030',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%' },
+              glowColor: '#3B82F6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%' },
             },
           },
           {
@@ -446,8 +446,8 @@ export const ASSET_SECTIONS: AssetSection[] = [
             element: {
               type: 'image', width: 800, height: 540, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png',
-              glowColor: '#E8A030',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%' },
+              glowColor: '#3B82F6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%' },
             },
           },
         ],
