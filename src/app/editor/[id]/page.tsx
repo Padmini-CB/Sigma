@@ -22,6 +22,10 @@ import { useKeyboardShortcuts, setClipboard, getClipboard } from '@/components/c
 import { type CanvasElement, type CanvasSize, CANVAS_SIZES } from '@/components/canva-editor/types';
 import { type TemplateInfo } from '@/components/canva-editor/templateDefinitions';
 import { type AssetItem } from '@/components/canva-editor/types';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { loadProject } from '@/lib/projectStorage';
+import SaveIndicator from '@/components/editor/SaveIndicator';
+import ProjectNameEditor from '@/components/editor/ProjectNameEditor';
 
 // Keep legacy exports for other components that import from this file
 export interface EditorFields {
@@ -67,6 +71,7 @@ export default function EditorPage() {
   const searchParams = useSearchParams();
   const templateId = params.id as string;
   const bootcampFilter = searchParams.get('bootcamp') || null;
+  const projectIdParam = searchParams.get('project') || null;
   const { showToast } = useToast();
   const { data: session } = useSession();
 
@@ -95,6 +100,46 @@ export default function EditorPage() {
   // ── Sidebar state ──
   const [activeTab, setActiveTab] = useState<SidebarTab | null>('templates');
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
+
+  // ── Canvas ref (needed by auto-save for thumbnail generation) ──
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // ── Auto-save ──
+  const defaultProjectName = useMemo(() => {
+    const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    return `${template?.name || 'Untitled'} — ${date}`;
+  }, [template]);
+
+  const { saveStatus, projectName, setProjectName } = useAutoSave({
+    projectId: projectIdParam,
+    defaultName: defaultProjectName,
+    bootcamp: bootcampFilter || '',
+    templateId: activeTemplateId || templateId,
+    canvasWidth: activeSize.width,
+    canvasHeight: activeSize.height,
+    elements,
+    canvasRef,
+    debounceMs: 2000,
+  });
+
+  // ── Load existing project on mount ──
+  useEffect(() => {
+    if (!projectIdParam) return;
+    const savedProject = loadProject(projectIdParam);
+    if (savedProject) {
+      // Restore canvas size
+      const matchingSize = CANVAS_SIZES.find(
+        s => s.width === savedProject.canvasWidth && s.height === savedProject.canvasHeight
+      );
+      if (matchingSize) {
+        setActiveSize(matchingSize);
+      }
+      // Restore elements
+      resetHistory(savedProject.elements);
+      setActiveTemplateId(savedProject.templateId);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Iframe mode (for HTML templates) ──
   const [iframeMode, setIframeMode] = useState(false);
@@ -130,7 +175,6 @@ export default function EditorPage() {
     CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
     return initial;
   });
-  const canvasRef = useRef<HTMLDivElement>(null);
   const downloadMenuRef = useRef<HTMLDivElement>(null);
 
   // ── Close download menu on click outside ──
@@ -215,8 +259,13 @@ export default function EditorPage() {
     resetHistory(newElements);
     setActiveTemplateId(tmpl.id);
     setSelectedIds([]);
+
+    // Update project name to reflect new template
+    const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    setProjectName(`${tmpl.shortLabel} — ${date}`);
+
     showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
-  }, [resetHistory, showToast, activeSize, elements]);
+  }, [resetHistory, showToast, activeSize, elements, setProjectName]);
 
   // ── Element drop from sidebar ──
   const handleElementDragStart = useCallback((item: AssetItem, e: React.DragEvent) => {
@@ -788,13 +837,9 @@ export default function EditorPage() {
             Back
           </button>
           <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)' }} />
-          <div>
-            <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff' }}>
-              {activeTemplateId
-                ? `AI Engineering \u2014 ${activeTemplateId.replace('concept-', '').toUpperCase()}`
-                : template.name
-              }
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <ProjectNameEditor name={projectName} onChange={setProjectName} />
+            <SaveIndicator status={saveStatus} />
           </div>
         </div>
 

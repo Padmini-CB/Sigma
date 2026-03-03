@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BootcampStep from '@/components/create/BootcampStep';
+import RecentDesignsGallery from '@/components/recent-designs/RecentDesignsGallery';
 
 type Step = 0 | 1;
 
@@ -62,6 +63,21 @@ export default function CreatePage() {
       {/* Main content */}
       <main className="pt-24 pb-16 px-6">
         <div className="container mx-auto">
+          {/* Recent Designs Gallery */}
+          {step === 0 && (
+            <div style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: 12,
+              padding: '24px 28px',
+              marginBottom: 32,
+              maxWidth: '56rem',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}>
+              <RecentDesignsGallery />
+            </div>
+          )}
+
           <div className="animate-fade-in">
             {step === 0 && (
               <div className="w-full max-w-3xl mx-auto">
@@ -134,7 +150,7 @@ export default function CreatePage() {
             href="/"
             className="font-ui text-sm text-gray-400 hover:text-white transition-colors"
           >
-            ← Back to Home
+            &larr; Back to Home
           </Link>
           <p className="font-ui text-xs text-gray-500 hidden sm:block">
             Select a bootcamp to see its templates in the editor.
