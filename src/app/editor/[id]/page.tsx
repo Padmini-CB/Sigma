@@ -22,6 +22,8 @@ import { useKeyboardShortcuts, setClipboard, getClipboard } from '@/components/c
 import { type CanvasElement, type CanvasSize, CANVAS_SIZES } from '@/components/canva-editor/types';
 import { type TemplateInfo } from '@/components/canva-editor/templateDefinitions';
 import { type AssetItem } from '@/components/canva-editor/types';
+import { useAutoSave } from '@/components/canva-editor/useAutoSave';
+import SaveIndicator from '@/components/canva-editor/SaveIndicator';
 
 // Keep legacy exports for other components that import from this file
 export interface EditorFields {
@@ -116,6 +118,14 @@ export default function EditorPage() {
   const [magicRadius, setMagicRadius] = useState(100);
   const [magicSoftness, setMagicSoftness] = useState(30);
   const eraserMode = false; // Eraser disabled — Coming Soon
+
+  // ── Auto-save ──
+  const { status: saveStatus, conflictWarning, dismissConflict, saveNow } = useAutoSave({
+    creativeId: templateId,
+    elements,
+    activeSize,
+    perSizeElements,
+  });
 
   // ── Shortcuts overlay ──
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -217,6 +227,12 @@ export default function EditorPage() {
     setSelectedIds([]);
     showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
   }, [resetHistory, showToast, activeSize, elements]);
+
+  // ── Save-triggering wrapper for element changes (drag/drop, move, resize) ──
+  const setElementsAndSave = useCallback((newElements: CanvasElement[]) => {
+    setElements(newElements);
+    saveNow();
+  }, [setElements, saveNow]);
 
   // ── Element drop from sidebar ──
   const handleElementDragStart = useCallback((item: AssetItem, e: React.DragEvent) => {
@@ -977,6 +993,9 @@ export default function EditorPage() {
         </div>
       </header>
 
+      {/* Auto-save indicator */}
+      <SaveIndicator status={saveStatus} conflictWarning={conflictWarning} onDismissConflict={dismissConflict} />
+
       {/* Main Editor Area */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
         {/* Canva-Style Sidebar */}
@@ -1065,7 +1084,7 @@ export default function EditorPage() {
               canvasWidth={activeSize.width}
               canvasHeight={activeSize.height}
               zoom={zoom}
-              onElementsChange={setElements}
+              onElementsChange={setElementsAndSave}
               onElementsUpdate={updateWithoutHistory}
               onSelectionChange={setSelectedIds}
               onTextEditStart={() => setIsTextEditing(true)}
