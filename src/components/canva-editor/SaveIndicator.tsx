@@ -7,9 +7,10 @@ interface SaveIndicatorProps {
   status: SaveStatus;
   conflictWarning?: boolean;
   onDismissConflict?: () => void;
+  onRetry?: () => void;
 }
 
-export default function SaveIndicator({ status, conflictWarning, onDismissConflict }: SaveIndicatorProps) {
+export default function SaveIndicator({ status, conflictWarning, onDismissConflict, onRetry }: SaveIndicatorProps) {
   if (status === 'idle' && !conflictWarning) return null;
 
   return (
@@ -53,12 +54,31 @@ export default function SaveIndicator({ status, conflictWarning, onDismissConfli
         )}
         {status === 'error' && (
           <>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            <span style={{ color: '#F59E0B' }}>Save failed — retrying...</span>
+            <span style={{ color: '#EF4444' }}>Save failed</span>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                style={{
+                  marginLeft: 4,
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  border: '1px solid rgba(239,68,68,0.4)',
+                  backgroundColor: 'rgba(239,68,68,0.1)',
+                  color: '#EF4444',
+                  fontFamily: 'Manrope, sans-serif',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Retry
+              </button>
+            )}
           </>
         )}
         {status === 'offline' && (
