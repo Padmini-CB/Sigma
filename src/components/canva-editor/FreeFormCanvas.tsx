@@ -1720,9 +1720,6 @@ export default function FreeFormCanvas({
         flex: 1,
         overflow: 'auto',
         backgroundColor: '#1a1a2e',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         position: 'relative',
         minHeight: 0,
       }}
@@ -1753,6 +1750,7 @@ export default function FreeFormCanvas({
           boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
           flexShrink: 0,
           overflow: 'visible',
+          margin: 'auto',
           cursor: isPanning ? 'grabbing' : isSpaceHeld ? 'grab' : eraserMode ? 'none' : 'default',
         }}
       >
