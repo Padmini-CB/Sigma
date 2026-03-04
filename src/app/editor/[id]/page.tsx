@@ -119,12 +119,27 @@ export default function EditorPage() {
   const [magicSoftness, setMagicSoftness] = useState(30);
   const eraserMode = false; // Eraser disabled — Coming Soon
 
+  // ── Editable project name ──
+  const [projectName, setProjectName] = useState<string>(() => {
+    if (typeof window === 'undefined') return template?.name ?? templateId;
+    try {
+      const saved = localStorage.getItem(`sigma-creative-${templateId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.projectName) return parsed.projectName;
+      }
+    } catch { /* ignore */ }
+    return template?.name ?? templateId;
+  });
+  const [isEditingName, setIsEditingName] = useState(false);
+
   // ── Auto-save ──
   const { status: saveStatus, conflictWarning, dismissConflict, saveNow } = useAutoSave({
     creativeId: templateId,
     elements,
     activeSize,
     perSizeElements,
+    projectName,
   });
 
   // ── Shortcuts overlay ──
@@ -839,12 +854,35 @@ export default function EditorPage() {
           </button>
           <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)' }} />
           <div>
-            <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff' }}>
-              {activeTemplateId
-                ? `AI Engineering \u2014 ${activeTemplateId.replace('concept-', '').toUpperCase()}`
-                : template.name
-              }
-            </span>
+            {isEditingName ? (
+              <input
+                autoFocus
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                onBlur={() => { setIsEditingName(false); saveNow(); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { setIsEditingName(false); saveNow(); } if (e.key === 'Escape') setIsEditingName(false); }}
+                style={{
+                  fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff',
+                  backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(59,130,246,0.5)',
+                  borderRadius: 4, padding: '2px 8px', outline: 'none', width: 220,
+                }}
+              />
+            ) : (
+              <span
+                onClick={() => setIsEditingName(true)}
+                title="Click to rename"
+                style={{
+                  fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff',
+                  cursor: 'pointer', padding: '2px 8px', borderRadius: 4,
+                  border: '1px solid transparent',
+                  transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)')}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'transparent')}
+              >
+                {projectName}
+              </span>
+            )}
           </div>
         </div>
 
@@ -1028,7 +1066,7 @@ export default function EditorPage() {
       </header>
 
       {/* Auto-save indicator */}
-      <SaveIndicator status={saveStatus} conflictWarning={conflictWarning} onDismissConflict={dismissConflict} />
+      <SaveIndicator status={saveStatus} conflictWarning={conflictWarning} onDismissConflict={dismissConflict} onRetry={saveNow} />
 
       {/* Main Editor Area */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>

@@ -8,19 +8,32 @@ interface AutoSaveOptions {
   elements: CanvasElement[];
   activeSize: CanvasSize;
   perSizeElements: Record<string, CanvasElement[]>;
+  projectName?: string;
   enabled?: boolean;
 }
+
+export interface SavedDesign {
+  id: string;
+  projectName: string;
+  lastModified: number;
+  savedAt: string;
+  activeSize: CanvasSize;
+  elements: CanvasElement[];
+  perSizeElements: Record<string, CanvasElement[]>;
+}
+
+export const STORAGE_PREFIX = 'sigma-creative-';
 
 const DEBOUNCE_MS = 2000;
 const INTERVAL_MS = 30000;
 const FADE_DELAY_MS = 3000;
-const STORAGE_PREFIX = 'sigma-creative-';
 
 export function useAutoSave({
   creativeId,
   elements,
   activeSize,
   perSizeElements,
+  projectName,
   enabled = true,
 }: AutoSaveOptions) {
   const [status, setStatus] = useState<SaveStatus>('idle');
@@ -47,6 +60,7 @@ export function useAutoSave({
       localStorage.setItem(key, JSON.stringify({
         ...data,
         id: creativeId,
+        projectName: projectName ?? creativeId,
         lastModified: Date.now(),
         savedAt: new Date().toISOString(),
       }));
@@ -70,9 +84,9 @@ export function useAutoSave({
     if (snapshot === lastSavedRef.current) return;
 
     lastSavedRef.current = snapshot;
-    const data = { elements, activeSize, perSizeElements, lastModified: Date.now() };
+    const data = { elements, activeSize, perSizeElements, projectName, lastModified: Date.now() };
     performSave(data);
-  }, [enabled, getSnapshot, elements, activeSize, perSizeElements, performSave]);
+  }, [enabled, getSnapshot, elements, activeSize, perSizeElements, projectName, performSave]);
 
   // Debounced save — triggers 2 seconds after last change
   const debouncedSave = useCallback(() => {
@@ -115,6 +129,7 @@ export function useAutoSave({
           const key = STORAGE_PREFIX + creativeId;
           localStorage.setItem(key, JSON.stringify({
             id: creativeId,
+            projectName: projectName ?? creativeId,
             elements,
             activeSize,
             perSizeElements,
@@ -128,7 +143,7 @@ export function useAutoSave({
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [enabled, creativeId, elements, activeSize, perSizeElements, getSnapshot]);
+  }, [enabled, creativeId, elements, activeSize, perSizeElements, projectName, getSnapshot]);
 
   // Cleanup timers on unmount
   useEffect(() => {
