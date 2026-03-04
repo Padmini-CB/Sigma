@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 
 export type SidebarTab = 'templates' | 'elements' | 'text' | 'uploads' | 'eraser' | 'settings';
 
@@ -9,6 +9,8 @@ interface CanvaSidebarProps {
   onTabChange: (tab: SidebarTab | null) => void;
   children: React.ReactNode;
 }
+
+const STORAGE_KEY = 'sigma-panel-position';
 
 interface TabDefinition {
   id: SidebarTab;
@@ -75,8 +77,56 @@ const TABS: TabDefinition[] = [
 const ICON_STRIP_WIDTH = 60;
 const PANEL_WIDTH = 280;
 
+function loadPanelPosition(): { x: number; y: number } | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch { /* ignore */ }
+  return null;
+}
+
+function savePanelPosition(pos: { x: number; y: number }) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
+  } catch { /* ignore */ }
+}
+
 export default function CanvaSidebar({ activeTab, onTabChange, children }: CanvaSidebarProps) {
   const isPanelOpen = activeTab !== null;
+
+  // Draggable panel state
+  const defaultPos = { x: ICON_STRIP_WIDTH + 8, y: 56 };
+  const [panelPos, setPanelPos] = useState<{ x: number; y: number }>(() => loadPanelPosition() || defaultPos);
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Persist position changes
+  useEffect(() => {
+    savePanelPosition(panelPos);
+  }, [panelPos]);
+
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: panelPos.x, origY: panelPos.y };
+
+    const handleMouseMove = (ev: MouseEvent) => {
+      if (!dragRef.current) return;
+      const dx = ev.clientX - dragRef.current.startX;
+      const dy = ev.clientY - dragRef.current.startY;
+      const newX = Math.max(0, dragRef.current.origX + dx);
+      const newY = Math.max(0, dragRef.current.origY + dy);
+      setPanelPos({ x: newX, y: newY });
+    };
+
+    const handleMouseUp = () => {
+      dragRef.current = null;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [panelPos]);
 
   const handleTabClick = useCallback(
     (tab: SidebarTab) => {
@@ -89,18 +139,10 @@ export default function CanvaSidebar({ activeTab, onTabChange, children }: Canva
     [activeTab, onTabChange]
   );
 
+  const activeLabel = TABS.find(t => t.id === activeTab)?.label || '';
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        height: '100vh',
-        maxHeight: '100vh',
-        flexShrink: 0,
-        position: 'relative',
-        zIndex: 10,
-      }}
-    >
+    <>
       {/* Icon Strip */}
       <div
         style={{
@@ -113,8 +155,9 @@ export default function CanvaSidebar({ activeTab, onTabChange, children }: Canva
           alignItems: 'center',
           paddingTop: 8,
           gap: 4,
-          zIndex: 2,
+          zIndex: 20,
           borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+          flexShrink: 0,
         }}
       >
         {TABS.map((tab) => {
@@ -196,34 +239,77 @@ export default function CanvaSidebar({ activeTab, onTabChange, children }: Canva
         })}
       </div>
 
-      {/* Slide-out Panel */}
-      <div
-        style={{
-          width: isPanelOpen ? PANEL_WIDTH : 0,
-          minWidth: isPanelOpen ? PANEL_WIDTH : 0,
-          height: '100%',
-          backgroundColor: '#1e1e3a',
-          overflow: 'hidden',
-          transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-          borderRight: isPanelOpen ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
+      {/* Floating Draggable Panel */}
+      {isPanelOpen && (
         <div
+          ref={panelRef}
           style={{
+            position: 'fixed',
+            left: panelPos.x,
+            top: panelPos.y,
             width: PANEL_WIDTH,
-            height: '100%',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            opacity: isPanelOpen ? 1 : 0,
-            transition: 'opacity 0.2s ease',
-            transitionDelay: isPanelOpen ? '0.1s' : '0s',
+            height: 'calc(100vh - 64px)',
+            maxHeight: 'calc(100vh - 64px)',
+            backgroundColor: '#1e1e3a',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 10,
+            zIndex: 100,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
           }}
         >
-          {children}
+          {/* Draggable Header */}
+          <div
+            onMouseDown={handleDragStart}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 12px',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              cursor: 'grab',
+              flexShrink: 0,
+              userSelect: 'none',
+              backgroundColor: 'rgba(255,255,255,0.03)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Drag grip icon */}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2">
+                <circle cx="8" cy="6" r="1.5" fill="rgba(255,255,255,0.3)" />
+                <circle cx="16" cy="6" r="1.5" fill="rgba(255,255,255,0.3)" />
+                <circle cx="8" cy="12" r="1.5" fill="rgba(255,255,255,0.3)" />
+                <circle cx="16" cy="12" r="1.5" fill="rgba(255,255,255,0.3)" />
+                <circle cx="8" cy="18" r="1.5" fill="rgba(255,255,255,0.3)" />
+                <circle cx="16" cy="18" r="1.5" fill="rgba(255,255,255,0.3)" />
+              </svg>
+              <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>
+                {activeLabel}
+              </span>
+            </div>
+            <button
+              onClick={() => onTabChange(null)}
+              style={{
+                width: 22, height: 22, borderRadius: 4,
+                border: 'none', backgroundColor: 'transparent',
+                color: 'rgba(255,255,255,0.4)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14,
+              }}
+              title="Close panel"
+            >
+              &times;
+            </button>
+          </div>
+
+          {/* Panel Content */}
+          <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+            {children}
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
