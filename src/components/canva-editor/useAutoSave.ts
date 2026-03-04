@@ -13,8 +13,8 @@ interface AutoSaveOptions {
 
 const DEBOUNCE_MS = 2000;
 const INTERVAL_MS = 30000;
-const MAX_RETRIES = 3;
 const FADE_DELAY_MS = 3000;
+const STORAGE_PREFIX = 'sigma-creative-';
 
 export function useAutoSave({
   creativeId,
@@ -24,29 +24,17 @@ export function useAutoSave({
   enabled = true,
 }: AutoSaveOptions) {
   const [status, setStatus] = useState<SaveStatus>('idle');
-  const [conflictWarning, setConflictWarning] = useState(false);
 
   const lastSavedRef = useRef<string>('');
-  const lastModifiedRef = useRef<number | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pendingSaveRef = useRef<object | null>(null);
-  const isSavingRef = useRef(false);
-  const retryCountRef = useRef(0);
-  const isOnlineRef = useRef(typeof navigator !== 'undefined' ? navigator.onLine : true);
 
   const getSnapshot = useCallback(() => {
     return JSON.stringify({ elements, activeSize: activeSize.id, perSizeElements });
   }, [elements, activeSize, perSizeElements]);
 
-  const performSave = useCallback(async (data: object): Promise<boolean> => {
-    if (isSavingRef.current) {
-      pendingSaveRef.current = data;
-      return false;
-    }
-
-    isSavingRef.current = true;
+  const performSave = useCallback((data: object): boolean => {
     setStatus('saving');
 
     if (fadeTimerRef.current) {
@@ -55,61 +43,22 @@ export function useAutoSave({
     }
 
     try {
-      const response = await fetch('/api/creatives', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          id: creativeId,
-          clientLastModified: lastModifiedRef.current,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Save failed: ${response.status}`);
-      }
-
-      const result = await response.json();
-      lastModifiedRef.current = result.lastModified;
-      retryCountRef.current = 0;
-
-      if (result.conflict) {
-        setConflictWarning(true);
-      }
+      const key = STORAGE_PREFIX + creativeId;
+      localStorage.setItem(key, JSON.stringify({
+        ...data,
+        id: creativeId,
+        lastModified: Date.now(),
+        savedAt: new Date().toISOString(),
+      }));
 
       setStatus('saved');
       fadeTimerRef.current = setTimeout(() => setStatus('idle'), FADE_DELAY_MS);
-
-      isSavingRef.current = false;
-
-      // Process queued save if any
-      if (pendingSaveRef.current) {
-        const queued = pendingSaveRef.current;
-        pendingSaveRef.current = null;
-        performSave(queued);
-      }
-
       return true;
     } catch {
-      isSavingRef.current = false;
-
-      if (!navigator.onLine) {
-        isOnlineRef.current = false;
-        setStatus('offline');
-        pendingSaveRef.current = data;
-        return false;
-      }
-
-      retryCountRef.current++;
-      if (retryCountRef.current <= MAX_RETRIES) {
-        setStatus('error');
-        const backoff = Math.pow(2, retryCountRef.current) * 1000;
-        await new Promise(resolve => setTimeout(resolve, backoff));
-        return performSave(data);
-      }
-
+      // localStorage might be full or unavailable
       setStatus('error');
-      retryCountRef.current = 0;
+      // Clear error after a few seconds
+      setTimeout(() => setStatus('idle'), FADE_DELAY_MS);
       return false;
     }
   }, [creativeId]);
@@ -156,43 +105,25 @@ export function useAutoSave({
     };
   }, [enabled, save]);
 
-  // Online/offline detection
-  useEffect(() => {
-    const handleOnline = () => {
-      isOnlineRef.current = true;
-      // Retry pending save
-      if (pendingSaveRef.current) {
-        const queued = pendingSaveRef.current;
-        pendingSaveRef.current = null;
-        setStatus('idle');
-        performSave(queued);
-      } else {
-        setStatus('idle');
-      }
-    };
-
-    const handleOffline = () => {
-      isOnlineRef.current = false;
-      setStatus('offline');
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [performSave]);
-
   // Save on beforeunload
   useEffect(() => {
     if (!enabled) return;
     const handleBeforeUnload = () => {
       const snapshot = getSnapshot();
       if (snapshot !== lastSavedRef.current) {
-        // Use sendBeacon for reliability on page close
-        const data = { id: creativeId, elements, activeSize, perSizeElements, lastModified: Date.now(), clientLastModified: lastModifiedRef.current };
-        navigator.sendBeacon('/api/creatives', JSON.stringify(data));
+        try {
+          const key = STORAGE_PREFIX + creativeId;
+          localStorage.setItem(key, JSON.stringify({
+            id: creativeId,
+            elements,
+            activeSize,
+            perSizeElements,
+            lastModified: Date.now(),
+            savedAt: new Date().toISOString(),
+          }));
+        } catch {
+          // Best-effort save on unload
+        }
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -217,12 +148,10 @@ export function useAutoSave({
     save();
   }, [save]);
 
-  const dismissConflict = useCallback(() => setConflictWarning(false), []);
-
   return {
     status,
-    conflictWarning,
-    dismissConflict,
+    conflictWarning: false,
+    dismissConflict: () => {},
     saveNow,
   };
 }

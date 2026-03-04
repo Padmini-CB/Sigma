@@ -5,8 +5,8 @@ import type { SaveStatus } from './useAutoSave';
 
 interface SaveIndicatorProps {
   status: SaveStatus;
-  conflictWarning: boolean;
-  onDismissConflict: () => void;
+  conflictWarning?: boolean;
+  onDismissConflict?: () => void;
 }
 
 export default function SaveIndicator({ status, conflictWarning, onDismissConflict }: SaveIndicatorProps) {
