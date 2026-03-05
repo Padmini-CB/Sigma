@@ -9,6 +9,7 @@ interface AutoSaveOptions {
   activeSize: CanvasSize;
   perSizeElements: Record<string, CanvasElement[]>;
   projectName?: string;
+  canvasBackground?: string;
   enabled?: boolean;
 }
 
@@ -18,6 +19,7 @@ export interface SavedDesign {
   lastModified: number;
   savedAt: string;
   activeSize: CanvasSize;
+  canvasBackground?: string;
   elements: CanvasElement[];
   perSizeElements: Record<string, CanvasElement[]>;
 }
@@ -34,6 +36,7 @@ export function useAutoSave({
   activeSize,
   perSizeElements,
   projectName,
+  canvasBackground,
   enabled = true,
 }: AutoSaveOptions) {
   const [status, setStatus] = useState<SaveStatus>('idle');
@@ -44,8 +47,8 @@ export function useAutoSave({
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getSnapshot = useCallback(() => {
-    return JSON.stringify({ elements, activeSize: activeSize.id, perSizeElements });
-  }, [elements, activeSize, perSizeElements]);
+    return JSON.stringify({ elements, activeSize: activeSize.id, perSizeElements, canvasBackground });
+  }, [elements, activeSize, perSizeElements, canvasBackground]);
 
   const performSave = useCallback((data: object): boolean => {
     setStatus('saving');
@@ -61,6 +64,7 @@ export function useAutoSave({
         ...data,
         id: creativeId,
         projectName: projectName ?? creativeId,
+        canvasBackground,
         lastModified: Date.now(),
         savedAt: new Date().toISOString(),
       }));
@@ -75,7 +79,7 @@ export function useAutoSave({
       setTimeout(() => setStatus('idle'), FADE_DELAY_MS);
       return false;
     }
-  }, [creativeId]);
+  }, [creativeId, projectName, canvasBackground]);
 
   const save = useCallback(() => {
     if (!enabled) return;
@@ -84,9 +88,9 @@ export function useAutoSave({
     if (snapshot === lastSavedRef.current) return;
 
     lastSavedRef.current = snapshot;
-    const data = { elements, activeSize, perSizeElements, projectName, lastModified: Date.now() };
+    const data = { elements, activeSize, perSizeElements, projectName, canvasBackground, lastModified: Date.now() };
     performSave(data);
-  }, [enabled, getSnapshot, elements, activeSize, perSizeElements, projectName, performSave]);
+  }, [enabled, getSnapshot, elements, activeSize, perSizeElements, projectName, canvasBackground, performSave]);
 
   // Debounced save — triggers 2 seconds after last change
   const debouncedSave = useCallback(() => {
@@ -130,6 +134,7 @@ export function useAutoSave({
           localStorage.setItem(key, JSON.stringify({
             id: creativeId,
             projectName: projectName ?? creativeId,
+            canvasBackground,
             elements,
             activeSize,
             perSizeElements,
@@ -143,7 +148,7 @@ export function useAutoSave({
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [enabled, creativeId, elements, activeSize, perSizeElements, projectName, getSnapshot]);
+  }, [enabled, creativeId, elements, activeSize, perSizeElements, projectName, canvasBackground, getSnapshot]);
 
   // Cleanup timers on unmount
   useEffect(() => {
