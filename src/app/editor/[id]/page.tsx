@@ -136,6 +136,9 @@ export default function EditorPage() {
   const [activeTab, setActiveTab] = useState<SidebarTab | null>('templates');
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
 
+  // ── Canvas ref (needed by auto-save for thumbnail generation) ──
+  const canvasRef = useRef<HTMLDivElement>(null);
+
   // ── Iframe mode (for HTML templates) ──
   const [iframeMode, setIframeMode] = useState(false);
   const [iframeHtmlPath, setIframeHtmlPath] = useState<string | null>(null);
@@ -198,7 +201,6 @@ export default function EditorPage() {
     CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
     return initial;
   });
-  const canvasRef = useRef<HTMLDivElement>(null);
   const downloadMenuRef = useRef<HTMLDivElement>(null);
 
   // ── Close download menu on click outside ──
@@ -283,8 +285,13 @@ export default function EditorPage() {
     resetHistory(newElements);
     setActiveTemplateId(tmpl.id);
     setSelectedIds([]);
+
+    // Update project name to reflect new template
+    const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    setProjectName(`${tmpl.shortLabel} — ${date}`);
+
     showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
-  }, [resetHistory, showToast, activeSize, elements]);
+  }, [resetHistory, showToast, activeSize, elements, setProjectName]);
 
   // ── Save-triggering wrapper for element changes (drag/drop, move, resize) ──
   const setElementsAndSave = useCallback((newElements: CanvasElement[]) => {

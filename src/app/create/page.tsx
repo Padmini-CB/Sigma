@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BootcampStep from '@/components/create/BootcampStep';
+import RecentDesignsGallery from '@/components/recent-designs/RecentDesignsGallery';
 
 export default function CreatePage() {
   const router = useRouter();
@@ -30,6 +31,19 @@ export default function CreatePage() {
       {/* Main content */}
       <main className="pt-24 pb-16 px-6">
         <div className="container mx-auto">
+          {/* Recent Designs Gallery */}
+          <div style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 12,
+            padding: '24px 28px',
+            marginBottom: 32,
+            maxWidth: '56rem',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}>
+            <RecentDesignsGallery />
+          </div>
+
           <div className="animate-fade-in">
             <BootcampStep
               onSelect={handleBootcampSelect}
