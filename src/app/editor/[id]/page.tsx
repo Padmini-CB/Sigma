@@ -155,7 +155,7 @@ export default function EditorPage() {
   const [magicTolerance, setMagicTolerance] = useState(25);
   const [magicRadius, setMagicRadius] = useState(100);
   const [magicSoftness, setMagicSoftness] = useState(30);
-  const eraserMode = false; // Eraser disabled — Coming Soon
+  const [eraserMode, setEraserMode] = useState(false);
 
   // ── Background Remover / Magic Eraser state ──
   const [isRemovingBg, setIsRemovingBg] = useState(false);
@@ -914,14 +914,22 @@ export default function EditorPage() {
         return <BackgroundsPanel activeBackground={canvasBackground} onSelectBackground={(css) => { setCanvasBackground(css); saveNow(); }} />;
       case 'eraser':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 24, textAlign: 'center' }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.85)', marginBottom: 4 }}>ERASER TOOL</div>
-            <div style={{ fontSize: 28, marginBottom: 12 }}>&#128295;</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: '#3B82F6', marginBottom: 8 }}>Coming Soon</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
-              This tool is under development and will be available in the next update.
-            </div>
-          </div>
+          <EraserPanel
+            mode={eraserModeType}
+            onModeChange={setEraserModeType}
+            brushSize={eraserBrushSize}
+            softness={eraserSoftness}
+            opacity={eraserOpacity}
+            onBrushSizeChange={setEraserBrushSize}
+            onSoftnessChange={setEraserSoftness}
+            onOpacityChange={setEraserOpacity}
+            magicTolerance={magicTolerance}
+            magicRadius={magicRadius}
+            magicSoftness={magicSoftness}
+            onMagicToleranceChange={setMagicTolerance}
+            onMagicRadiusChange={setMagicRadius}
+            onMagicSoftnessChange={setMagicSoftness}
+          />
         );
       case 'settings':
         return (
@@ -1186,7 +1194,10 @@ export default function EditorPage() {
         {/* Canva-Style Sidebar */}
         <CanvaSidebar
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={(tab) => {
+            setActiveTab(tab);
+            setEraserMode(tab === 'eraser');
+          }}
         >
           {renderPanelContent()}
         </CanvaSidebar>
