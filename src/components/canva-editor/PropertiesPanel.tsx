@@ -15,13 +15,19 @@ interface PropertiesPanelProps {
   onUpdate: (updates: Partial<CanvasElement>) => void;
   /** Bounding rect of the selected element in screen (viewport) coordinates */
   elementScreenRect?: ElementScreenRect | null;
+  /** Called when user clicks "Remove Background" on an image element */
+  onRemoveBackground?: () => void;
+  /** Whether background removal is currently in progress */
+  isRemovingBg?: boolean;
+  /** Called when user clicks "Magic Eraser" on an image element */
+  onMagicErase?: () => void;
 }
 
 const PANEL_WIDTH = 220;
 const PANEL_GAP = 12;
 const MOBILE_BREAKPOINT = 640;
 
-export default function PropertiesPanel({ element, onUpdate, elementScreenRect }: PropertiesPanelProps) {
+export default function PropertiesPanel({ element, onUpdate, elementScreenRect, onRemoveBackground, isRemovingBg, onMagicErase }: PropertiesPanelProps) {
   const [lockAspect, setLockAspect] = useState(true);
   const aspectRatio = element.width / element.height;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -710,6 +716,83 @@ export default function PropertiesPanel({ element, onUpdate, elementScreenRect }
                   style={inputStyle}
                 />
               </div>
+            </div>
+
+            {/* Image Tools */}
+            <div style={sectionTitle}>Image Tools</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {/* Remove Background */}
+              <button
+                onClick={onRemoveBackground}
+                disabled={isRemovingBg}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: 6,
+                  border: '1px solid rgba(59,130,246,0.3)',
+                  backgroundColor: isRemovingBg ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.1)',
+                  color: isRemovingBg ? 'rgba(255,255,255,0.5)' : '#fff',
+                  fontFamily: 'Manrope, sans-serif',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: isRemovingBg ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {isRemovingBg ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 14 14" style={{ animation: 'spin 1s linear infinite' }}>
+                      <circle cx="7" cy="7" r="5.5" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
+                      <path d="M7 1.5 A5.5 5.5 0 0 1 12.5 7" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+                    Removing...
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20.5 11H3.5" />
+                      <path d="M12 2.5v17" />
+                      <path d="M5.5 5.5l13 13" />
+                      <path d="M18.5 5.5l-13 13" />
+                      <circle cx="12" cy="12" r="10" strokeDasharray="4 2" />
+                    </svg>
+                    Remove Background
+                  </>
+                )}
+              </button>
+
+              {/* Magic Eraser */}
+              <button
+                onClick={onMagicErase}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: 6,
+                  border: '1px solid rgba(111,83,193,0.3)',
+                  backgroundColor: 'rgba(111,83,193,0.1)',
+                  color: '#fff',
+                  fontFamily: 'Manrope, sans-serif',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 20H7L3 16c-.6-.6-.6-1.5 0-2.1L13.1 3.8c.6-.6 1.5-.6 2.1 0L20 8.5c.6.6.6 1.5 0 2.1L12 18.5" />
+                  <path d="M6 12l4 4" />
+                </svg>
+                Magic Eraser
+              </button>
             </div>
           </>
         )}

@@ -17,6 +17,7 @@ import EraserPanel, { type EraserMode } from '@/components/canva-editor/EraserPa
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
 import BackgroundsPanel from '@/components/canva-editor/BackgroundsPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
+import MagicEraserOverlay from '@/components/canva-editor/MagicEraserOverlay';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
 import { useCanvasHistory } from '@/components/canva-editor/useCanvasHistory';
 import { useKeyboardShortcuts, setClipboard, getClipboard } from '@/components/canva-editor/useKeyboardShortcuts';
@@ -155,6 +156,10 @@ export default function EditorPage() {
   const [magicRadius, setMagicRadius] = useState(100);
   const [magicSoftness, setMagicSoftness] = useState(30);
   const eraserMode = false; // Eraser disabled — Coming Soon
+
+  // ── Background Remover / Magic Eraser state ──
+  const [isRemovingBg, setIsRemovingBg] = useState(false);
+  const [magicEraserActive, setMagicEraserActive] = useState(false);
 
   // ── Editable project name ──
   const [projectName, setProjectName] = useState<string>(() => {
@@ -522,6 +527,74 @@ export default function EditorPage() {
     });
     setElements(updated);
   }, [elements, selectedIds, setElements]);
+
+  // ── Background Remover handler ──
+  const handleRemoveBackground = useCallback(async () => {
+    if (selectedIds.length !== 1) return;
+    const el = elements.find(e => e.id === selectedIds[0]);
+    if (!el || el.type !== 'image') return;
+
+    setIsRemovingBg(true);
+    try {
+      // Convert image src to base64 data URL if it's a relative path
+      let dataUrl = el.content;
+      if (!dataUrl.startsWith('data:')) {
+        const resp = await fetch(el.content);
+        const blob = await resp.blob();
+        dataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      const res = await fetch('/api/remove-bg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: dataUrl }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Background removal failed');
+      }
+
+      const { image } = await res.json();
+      const updated = elements.map(e =>
+        e.id === el.id ? { ...e, content: image } : e
+      );
+      setElements(updated);
+      showToast('success', 'Background removed');
+    } catch (err) {
+      console.error('Background removal failed:', err);
+      showToast('error', 'Background removal failed');
+    } finally {
+      setIsRemovingBg(false);
+    }
+  }, [elements, selectedIds, setElements, showToast]);
+
+  // ── Magic Eraser handlers ──
+  const handleStartMagicEraser = useCallback(() => {
+    if (selectedIds.length !== 1) return;
+    const el = elements.find(e => e.id === selectedIds[0]);
+    if (!el || el.type !== 'image') return;
+    setMagicEraserActive(true);
+  }, [elements, selectedIds]);
+
+  const handleApplyMagicEraser = useCallback((dataUrl: string) => {
+    if (selectedIds.length !== 1) return;
+    const id = selectedIds[0];
+    const updated = elements.map(e =>
+      e.id === id ? { ...e, content: dataUrl } : e
+    );
+    setElements(updated);
+    setMagicEraserActive(false);
+    showToast('success', 'Eraser applied');
+  }, [elements, selectedIds, setElements, showToast]);
+
+  const handleCancelMagicEraser = useCallback(() => {
+    setMagicEraserActive(false);
+  }, []);
 
   // ── Export helper: render current canvas as dataUrl ──
   const renderCanvasDataUrl = useCallback(async (format: 'png' | 'jpeg', quality: number): Promise<string> => {
@@ -1282,6 +1355,9 @@ export default function EditorPage() {
               element={selectedElement}
               onUpdate={handlePropertyUpdate}
               elementScreenRect={elementScreenRect}
+              onRemoveBackground={handleRemoveBackground}
+              isRemovingBg={isRemovingBg}
+              onMagicErase={handleStartMagicEraser}
             />
           )}
         </div>
@@ -1308,6 +1384,22 @@ export default function EditorPage() {
           {toastMessage}
         </div>
       )}
+
+      {/* Magic Eraser Overlay */}
+      {magicEraserActive && selectedElement && selectedElement.type === 'image' && (() => {
+        const canvasEl = canvasRef.current;
+        if (!canvasEl) return null;
+        const canvasRect = canvasEl.getBoundingClientRect();
+        return (
+          <MagicEraserOverlay
+            element={selectedElement}
+            canvasZoom={zoom}
+            canvasRect={{ top: canvasRect.top, left: canvasRect.left }}
+            onApply={handleApplyMagicEraser}
+            onCancel={handleCancelMagicEraser}
+          />
+        );
+      })()}
 
       {/* Keyboard Shortcuts Overlay */}
       <KeyboardShortcutsOverlay
