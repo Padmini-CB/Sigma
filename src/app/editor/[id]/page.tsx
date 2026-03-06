@@ -15,6 +15,7 @@ import TextPanel from '@/components/canva-editor/TextPanel';
 import UploadsPanel from '@/components/canva-editor/UploadsPanel';
 import EraserPanel, { type EraserMode } from '@/components/canva-editor/EraserPanel';
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
+import BackgroundsPanel from '@/components/canva-editor/BackgroundsPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
 import { useCanvasHistory } from '@/components/canva-editor/useCanvasHistory';
@@ -22,10 +23,8 @@ import { useKeyboardShortcuts, setClipboard, getClipboard } from '@/components/c
 import { type CanvasElement, type CanvasSize, CANVAS_SIZES } from '@/components/canva-editor/types';
 import { type TemplateInfo } from '@/components/canva-editor/templateDefinitions';
 import { type AssetItem } from '@/components/canva-editor/types';
-import { useAutoSave } from '@/hooks/useAutoSave';
-import { loadProject } from '@/lib/projectStorage';
-import SaveIndicator from '@/components/editor/SaveIndicator';
-import ProjectNameEditor from '@/components/editor/ProjectNameEditor';
+import { useAutoSave } from '@/components/canva-editor/useAutoSave';
+import SaveIndicator from '@/components/canva-editor/SaveIndicator';
 
 // Keep legacy exports for other components that import from this file
 export interface EditorFields {
@@ -71,7 +70,6 @@ export default function EditorPage() {
   const searchParams = useSearchParams();
   const templateId = params.id as string;
   const bootcampFilter = searchParams.get('bootcamp') || null;
-  const projectIdParam = searchParams.get('project') || null;
   const { showToast } = useToast();
   const { data: session } = useSession();
 
@@ -90,6 +88,29 @@ export default function EditorPage() {
     toastMessage,
   } = useCanvasHistory([]);
 
+  // ── Restore saved design from localStorage on mount ──
+  const hasRestoredRef = useRef(false);
+  useEffect(() => {
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+    try {
+      const saved = localStorage.getItem(`sigma-creative-${templateId}`);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.elements && data.elements.length > 0) {
+          resetHistory(data.elements);
+        }
+        if (data.perSizeElements) {
+          setPerSizeElements(data.perSizeElements);
+        }
+        if (data.activeSize) {
+          const matchingSize = CANVAS_SIZES.find(s => s.id === data.activeSize.id);
+          if (matchingSize) setActiveSize(matchingSize);
+        }
+      }
+    } catch { /* ignore corrupt data */ }
+  }, [templateId, resetHistory]);
+
   // ── Selection state ──
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -97,49 +118,25 @@ export default function EditorPage() {
   const [activeSize, setActiveSize] = useState<CanvasSize>(CANVAS_SIZES[0]);
   const [perSizeElements, setPerSizeElements] = useState<Record<string, CanvasElement[]>>({});
 
+  // ── Canvas background ──
+  const [canvasBackground, setCanvasBackground] = useState<string>(() => {
+    if (typeof window === 'undefined') return '#181830';
+    try {
+      const saved = localStorage.getItem(`sigma-creative-${templateId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.canvasBackground) return parsed.canvasBackground;
+      }
+    } catch { /* ignore */ }
+    return '#181830';
+  });
+
   // ── Sidebar state ──
   const [activeTab, setActiveTab] = useState<SidebarTab | null>('templates');
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
 
   // ── Canvas ref (needed by auto-save for thumbnail generation) ──
   const canvasRef = useRef<HTMLDivElement>(null);
-
-  // ── Auto-save ──
-  const defaultProjectName = useMemo(() => {
-    const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-    return `${template?.name || 'Untitled'} — ${date}`;
-  }, [template]);
-
-  const { saveStatus, projectName, setProjectName } = useAutoSave({
-    projectId: projectIdParam,
-    defaultName: defaultProjectName,
-    bootcamp: bootcampFilter || '',
-    templateId: activeTemplateId || templateId,
-    canvasWidth: activeSize.width,
-    canvasHeight: activeSize.height,
-    elements,
-    canvasRef,
-    debounceMs: 2000,
-  });
-
-  // ── Load existing project on mount ──
-  useEffect(() => {
-    if (!projectIdParam) return;
-    const savedProject = loadProject(projectIdParam);
-    if (savedProject) {
-      // Restore canvas size
-      const matchingSize = CANVAS_SIZES.find(
-        s => s.width === savedProject.canvasWidth && s.height === savedProject.canvasHeight
-      );
-      if (matchingSize) {
-        setActiveSize(matchingSize);
-      }
-      // Restore elements
-      resetHistory(savedProject.elements);
-      setActiveTemplateId(savedProject.templateId);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // ── Iframe mode (for HTML templates) ──
   const [iframeMode, setIframeMode] = useState(false);
@@ -161,6 +158,30 @@ export default function EditorPage() {
   const [magicRadius, setMagicRadius] = useState(100);
   const [magicSoftness, setMagicSoftness] = useState(30);
   const eraserMode = false; // Eraser disabled — Coming Soon
+
+  // ── Editable project name ──
+  const [projectName, setProjectName] = useState<string>(() => {
+    if (typeof window === 'undefined') return template?.name ?? templateId;
+    try {
+      const saved = localStorage.getItem(`sigma-creative-${templateId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.projectName) return parsed.projectName;
+      }
+    } catch { /* ignore */ }
+    return template?.name ?? templateId;
+  });
+  const [isEditingName, setIsEditingName] = useState(false);
+
+  // ── Auto-save ──
+  const { status: saveStatus, conflictWarning, dismissConflict, saveNow } = useAutoSave({
+    creativeId: templateId,
+    elements,
+    activeSize,
+    perSizeElements,
+    projectName,
+    canvasBackground,
+  });
 
   // ── Shortcuts overlay ──
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -266,6 +287,12 @@ export default function EditorPage() {
 
     showToast('success', 'Template Loaded', `"${tmpl.shortLabel}" loaded onto canvas`);
   }, [resetHistory, showToast, activeSize, elements, setProjectName]);
+
+  // ── Save-triggering wrapper for element changes (drag/drop, move, resize) ──
+  const setElementsAndSave = useCallback((newElements: CanvasElement[]) => {
+    setElements(newElements);
+    saveNow();
+  }, [setElements, saveNow]);
 
   // ── Element drop from sidebar ──
   const handleElementDragStart = useCallback((item: AssetItem, e: React.DragEvent) => {
@@ -740,6 +767,40 @@ export default function EditorPage() {
     ? elements.find(el => el.id === selectedIds[0]) ?? null
     : null;
 
+  // ── Compute selected element screen rect for floating properties panel ──
+  const [elementScreenRect, setElementScreenRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+  useEffect(() => {
+    if (!selectedElement || !canvasRef.current) {
+      setElementScreenRect(null);
+      return;
+    }
+    const update = () => {
+      const canvasEl = canvasRef.current;
+      if (!canvasEl) return;
+      const canvasRect = canvasEl.getBoundingClientRect();
+      const scale = zoom / 100;
+      // The canvas div has transform: scale(scale) with transformOrigin: center center
+      // canvasRect already reflects the scaled dimensions
+      const scaleX = canvasRect.width / canvasEl.offsetWidth;
+      const scaleY = canvasRect.height / canvasEl.offsetHeight;
+      setElementScreenRect({
+        top: canvasRect.top + selectedElement.y * scaleY,
+        left: canvasRect.left + selectedElement.x * scaleX,
+        width: selectedElement.width * scaleX,
+        height: selectedElement.height * scaleY,
+      });
+    };
+    update();
+    // Update on scroll/resize
+    const workspace = canvasRef.current?.parentElement;
+    workspace?.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    return () => {
+      workspace?.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [selectedElement, zoom, selectedElement?.x, selectedElement?.y, selectedElement?.width, selectedElement?.height]);
+
   // ── Not found ──
   if (!template) {
     return (
@@ -783,6 +844,8 @@ export default function EditorPage() {
         return <TextPanel onAddText={handleAddText} />;
       case 'uploads':
         return <UploadsPanel onDragStart={handleUploadDragStart} onClickAdd={handleUploadClickAdd} />;
+      case 'backgrounds':
+        return <BackgroundsPanel activeBackground={canvasBackground} onSelectBackground={(css) => { setCanvasBackground(css); saveNow(); }} />;
       case 'eraser':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 24, textAlign: 'center' }}>
@@ -837,9 +900,36 @@ export default function EditorPage() {
             Back
           </button>
           <div style={{ width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.1)' }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <ProjectNameEditor name={projectName} onChange={setProjectName} />
-            <SaveIndicator status={saveStatus} />
+          <div>
+            {isEditingName ? (
+              <input
+                autoFocus
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                onBlur={() => { setIsEditingName(false); saveNow(); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { setIsEditingName(false); saveNow(); } if (e.key === 'Escape') setIsEditingName(false); }}
+                style={{
+                  fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff',
+                  backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(59,130,246,0.5)',
+                  borderRadius: 4, padding: '2px 8px', outline: 'none', width: 220,
+                }}
+              />
+            ) : (
+              <span
+                onClick={() => setIsEditingName(true)}
+                title="Click to rename"
+                style={{
+                  fontFamily: 'Manrope, sans-serif', fontSize: 14, fontWeight: 700, color: '#fff',
+                  cursor: 'pointer', padding: '2px 8px', borderRadius: 4,
+                  border: '1px solid transparent',
+                  transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)')}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'transparent')}
+              >
+                {projectName}
+              </span>
+            )}
           </div>
         </div>
 
@@ -1022,6 +1112,9 @@ export default function EditorPage() {
         </div>
       </header>
 
+      {/* Auto-save indicator */}
+      <SaveIndicator status={saveStatus} conflictWarning={conflictWarning} onDismissConflict={dismissConflict} onRetry={saveNow} />
+
       {/* Main Editor Area */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
         {/* Canva-Style Sidebar */}
@@ -1110,7 +1203,7 @@ export default function EditorPage() {
               canvasWidth={activeSize.width}
               canvasHeight={activeSize.height}
               zoom={zoom}
-              onElementsChange={setElements}
+              onElementsChange={setElementsAndSave}
               onElementsUpdate={updateWithoutHistory}
               onSelectionChange={setSelectedIds}
               onTextEditStart={() => setIsTextEditing(true)}
@@ -1126,6 +1219,7 @@ export default function EditorPage() {
               eraserMagicRadius={magicRadius}
               eraserMagicSoftness={magicSoftness}
               onFileDrop={handleFileDrop}
+              canvasBackground={canvasBackground}
             />
           )}
 
@@ -1189,11 +1283,12 @@ export default function EditorPage() {
             >Fit</button>
           </div>
 
-          {/* Properties Panel (floating right) */}
+          {/* Properties Panel (floating near element) */}
           {selectedElement && (
             <PropertiesPanel
               element={selectedElement}
               onUpdate={handlePropertyUpdate}
+              elementScreenRect={elementScreenRect}
             />
           )}
         </div>

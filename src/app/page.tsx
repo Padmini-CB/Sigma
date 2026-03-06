@@ -1,6 +1,7 @@
 'use client';
 
 import HeroSection from '@/components/home/HeroSection';
+import RecentDesigns from '@/components/home/RecentDesigns';
 import TwoQuestionsSection from '@/components/home/TwoQuestionsSection';
 import CharacterSection from '@/components/home/CharacterSection';
 import ComingSoonSection from '@/components/home/ComingSoonSection';
@@ -35,6 +36,7 @@ export default function Home() {
       {/* Main content with padding for fixed header */}
       <main className="pt-16">
         <HeroSection />
+        <RecentDesigns />
         <TwoQuestionsSection />
         <CharacterSection />
         <ComingSoonSection />

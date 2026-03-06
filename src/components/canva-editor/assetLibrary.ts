@@ -196,10 +196,10 @@ export const ASSET_SECTIONS: AssetSection[] = [
         items: [
           {
             id: aid(), type: 'html-component', label: 'Price Card',
-            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-card" style="position:absolute;z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:linear-gradient(180deg,rgba(59,130,246,0.08),rgba(13,17,23,0.95));border:1px solid rgba(59,130,246,0.25);border-radius:16px;min-width:340px;font-family:Poppins,sans-serif;"><span style="font-size:11px;font-weight:600;color:#3b82f6;letter-spacing:2.5px;text-transform:uppercase;">Investment</span><div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.7);">\u20B9</span><span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">36,000</span></div><span style="font-size:13px;font-weight:500;color:#20C997;">+ Gen AI &amp; DS Bootcamp Included for Free</span><div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px;"><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 75 days \u00b7 Live cohorts \u00b7 March 7</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 8+ production projects</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 500 seats only</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> Full refund before March 14</div></div><div style="margin-top:8px;padding:14px 40px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:700;color:#fff;text-transform:uppercase;width:100%;text-align:center;">ENROLL NOW \u2014 \u20B936,000 \u2192</div><div style="display:flex;gap:16px;margin-top:2px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">EMI Available \u00b7 No-Risk Refund</span></div></div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-card" style="position:absolute;z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:linear-gradient(180deg,rgba(59,130,246,0.08),rgba(13,17,23,0.95));border:1px solid rgba(59,130,246,0.25);border-radius:16px;min-width:340px;font-family:Poppins,sans-serif;"><span style="font-size:11px;font-weight:600;color:#3b82f6;letter-spacing:2.5px;text-transform:uppercase;">Price</span><div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:800;color:rgba(255,255,255,0.7);">\u20B9</span><span style="font-size:56px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;">36,000</span></div><span style="font-size:13px;font-weight:500;color:#20C997;">+ Gen AI &amp; DS Bootcamp Included for Free</span><div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px;"><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 75 days \u00b7 Live cohorts \u00b7 March 7</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 8+ production projects</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> 500 seats only</div><div style="font-size:13.5px;color:rgba(255,255,255,0.65);"><span style="color:#20C997;font-weight:700;">\u2714</span> Full refund before March 14</div></div><div style="margin-top:8px;padding:14px 40px;background:#3b82f6;border-radius:8px;font-size:16px;font-weight:700;color:#fff;text-transform:uppercase;width:100%;text-align:center;">ENROLL NOW \u2014 \u20B936,000 \u2192</div><div style="display:flex;gap:16px;margin-top:2px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">EMI Available \u00b7 No-Risk Refund</span></div></div>',
             element: {
               type: 'badge', width: 380, height: 340, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: '\u20B936,000 \u2014 Investment',
+              content: '\u20B936,000 \u2014 Price',
               badgeStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: '#ffffff', fontFamily: 'Poppins', fontSize: 16, fontWeight: 700, borderRadius: 16, paddingX: 40, paddingY: 28, borderColor: 'rgba(59,130,246,0.25)', borderWidth: 1 },
             },
           },
@@ -268,21 +268,21 @@ export const ASSET_SECTIONS: AssetSection[] = [
           // Strip A — Classic
           {
             id: aid(), type: 'html-component', label: 'Strip A — Classic',
-            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-a" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Investment updates to <span style="color:#3B82F6;font-weight:700;margin:0 4px;">₹48,000</span> from <span style="color:#D7EF3F;font-weight:700;margin:0 4px;">8th March</span>, 9 am IST</div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-a" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Price changes to <span style="color:#3B82F6;font-weight:700;margin:0 4px;">₹48,000</span> from <span style="color:#D7EF3F;font-weight:700;margin:0 4px;">8th March</span>, 9 am IST</div>',
             element: {
               type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: 'Investment updates to ₹48,000 from 8th March, 9 am IST',
+              content: 'Price changes to ₹48,000 from 8th March, 9 am IST',
               stripStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
             },
           },
           // Strip B — Side by Side
           {
             id: aid(), type: 'html-component', label: 'Strip B — Side by Side',
-            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-b" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;gap:6px;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);"><span style="color:rgba(255,255,255,0.95);font-weight:700;">₹36,000</span> until 7th March · <span style="color:rgba(255,255,255,0.95);font-weight:700;">₹48,000</span> from 8th March onwards</div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-b" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;gap:6px;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.6);"><span style="color:rgba(255,255,255,0.95);font-weight:700;">₹36,000</span> until 7th March · <span style="color:rgba(255,255,255,0.95);font-weight:700;">₹48,000</span> from 8th March onwards</div>',
             element: {
               type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '₹36,000 until 7th March · ₹48,000 from 8th March onwards',
-              stripStyle: { backgroundColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
+              stripStyle: { backgroundColor: 'rgba(255,255,255,0.03)', textColor: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
             },
           },
         ],
@@ -294,10 +294,10 @@ export const ASSET_SECTIONS: AssetSection[] = [
           // Strip C — Save Amount
           {
             id: aid(), type: 'html-component', label: 'Strip C — Save Amount',
-            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-c" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Enroll before 8th March and save <span style="color:#D7EF3F;font-weight:700;margin-left:4px;">₹12,000</span></div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-strip-c" style="position:absolute;z-index:100;width:100%;height:50px;background:rgba(59,130,246,0.08);border-top:1px solid rgba(59,130,246,0.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-family:Manrope,sans-serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);">Save <span style="color:#D7EF3F;font-weight:700;margin:0 4px;">₹12,000</span> if you enroll before 8th March</div>',
             element: {
               type: 'strip', width: 1080, height: 50, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: 'Enroll before 8th March and save ₹12,000',
+              content: 'Save ₹12,000 if you enroll before 8th March',
               stripStyle: { backgroundColor: 'rgba(59,130,246,0.08)', textColor: 'rgba(255,255,255,0.85)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 600, paddingX: 20, paddingY: 10 },
             },
           },
@@ -320,10 +320,10 @@ export const ASSET_SECTIONS: AssetSection[] = [
           // Overlay E — Full Price Pill
           {
             id: aid(), type: 'html-component', label: 'Overlay E — Price Pill',
-            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-overlay-e" style="position:absolute;z-index:100;display:inline-flex;flex-direction:column;gap:2px;padding:12px 24px;background:rgba(24,24,48,0.75);border:1px solid rgba(59,130,246,0.15);backdrop-filter:blur(16px);border-radius:16px;font-family:Manrope,sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);line-height:1.5;">Investment updates to <span style="color:#3B82F6;font-weight:700;">₹48,000</span><div style="font-size:13px;">from <span style="color:#D7EF3F;font-weight:700;">8th March</span></div></div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-overlay-e" style="position:absolute;z-index:100;display:inline-flex;flex-direction:column;gap:2px;padding:12px 24px;background:rgba(24,24,48,0.75);border:1px solid rgba(59,130,246,0.15);backdrop-filter:blur(16px);border-radius:16px;font-family:Manrope,sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.75);line-height:1.5;">Price changes to <span style="color:#3B82F6;font-weight:700;">₹48,000</span><div style="font-size:13px;">from <span style="color:#D7EF3F;font-weight:700;">8th March</span></div></div>',
             element: {
               type: 'badge', width: 320, height: 64, rotation: 0, opacity: 1, locked: false, visible: true,
-              content: 'Investment updates to ₹48,000 from 8th March',
+              content: 'Price changes to ₹48,000 from 8th March',
               badgeStyle: { backgroundColor: 'rgba(24,24,48,0.75)', textColor: 'rgba(255,255,255,0.75)', fontFamily: 'Manrope', fontSize: 14, fontWeight: 600, borderRadius: 16, paddingX: 24, paddingY: 12, borderColor: 'rgba(59,130,246,0.15)', borderWidth: 1 },
             },
           },
@@ -356,11 +356,11 @@ export const ASSET_SECTIONS: AssetSection[] = [
           // LP Strip — Price Comparison
           {
             id: aid(), type: 'html-component', label: 'LP Strip — Price Comparison',
-            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-lp-strip" style="position:absolute;z-index:100;display:inline-flex;align-items:center;gap:32px;padding:16px 36px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.12);backdrop-filter:blur(12px);border-radius:16px;font-family:Manrope,sans-serif;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:15px;font-weight:500;color:rgba(255,255,255,0.65);">Current investment</span><span style="font-size:20px;font-weight:700;color:#FFFFFF;">₹36,000</span></div><span style="font-size:18px;color:rgba(255,255,255,0.25);">→</span><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:15px;font-weight:500;color:rgba(255,255,255,0.65);">From 8th March</span><span style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.4);">₹48,000</span></div><span style="width:1px;height:32px;background:rgba(255,255,255,0.1);"></span><span style="font-size:13px;font-weight:600;color:#D7EF3F;">Enroll before 8th March</span></div>',
+            htmlSnippet: '<div class="sigma-element" data-sigma data-type="price-lp-strip" style="position:absolute;z-index:100;display:inline-flex;align-items:center;gap:24px;padding:18px 32px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.12);backdrop-filter:blur(12px);border-radius:16px;font-family:Manrope,sans-serif;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:15px;font-weight:500;color:rgba(255,255,255,0.65);">Current price</span><span style="font-size:20px;font-weight:700;color:#FFFFFF;">₹36,000</span></div><span style="font-size:18px;color:rgba(255,255,255,0.25);">→</span><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-size:15px;font-weight:500;color:rgba(255,255,255,0.65);">From 8th March</span><span style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.4);">₹48,000</span></div><span style="width:1px;height:32px;background:rgba(255,255,255,0.1);"></span><span style="font-size:13px;font-weight:600;color:#D7EF3F;">Enroll before 8th March</span></div>',
             element: {
               type: 'badge', width: 640, height: 72, rotation: 0, opacity: 1, locked: false, visible: true,
               content: 'Current: ₹36,000 → From 8th March: ₹48,000 | Enroll before 8th March',
-              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.06)', textColor: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 500, borderRadius: 16, paddingX: 36, paddingY: 16, borderColor: 'rgba(59,130,246,0.12)', borderWidth: 1 },
+              badgeStyle: { backgroundColor: 'rgba(59,130,246,0.06)', textColor: 'rgba(255,255,255,0.65)', fontFamily: 'Manrope', fontSize: 15, fontWeight: 500, borderRadius: 16, paddingX: 32, paddingY: 18, borderColor: 'rgba(59,130,246,0.12)', borderWidth: 1 },
             },
           },
         ],
@@ -418,26 +418,26 @@ export const ASSET_SECTIONS: AssetSection[] = [
     subsections: [
       {
         id: 'da-heroes',
-        label: 'Heroes',
+        label: 'Data Analytics Heroes',
         items: [
           {
-            id: aid(), type: 'hero', label: 'Dhaval DA',
+            id: aid(), type: 'hero', label: 'Dhaval DA Superhero',
             thumbnail: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png',
-              glowColor: '#E8A030',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%' },
+              glowColor: '#3B82F6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%' },
             },
           },
           {
-            id: aid(), type: 'hero', label: 'Hemanand DA',
+            id: aid(), type: 'hero', label: 'Hemanand DA Superhero',
             thumbnail: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png',
             element: {
               type: 'image', width: 500, height: 700, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png',
-              glowColor: '#E8A030',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%' },
+              glowColor: '#3B82F6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%' },
             },
           },
           {
@@ -446,8 +446,8 @@ export const ASSET_SECTIONS: AssetSection[] = [
             element: {
               type: 'image', width: 800, height: 540, rotation: 0, opacity: 1, locked: false, visible: true,
               content: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png',
-              glowColor: '#E8A030',
-              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 80% at 50% 42%, black 35%, transparent 70%' },
+              glowColor: '#3B82F6',
+              imageStyle: { objectFit: 'contain', borderRadius: 0, maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%' },
             },
           },
         ],

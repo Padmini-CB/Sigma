@@ -39,6 +39,8 @@ interface FreeFormCanvasProps {
   eraserMagicSoftness?: number;
   // File drop handler for uploads
   onFileDrop?: (dataUrl: string, width: number, height: number, x: number, y: number) => void;
+  // Custom canvas background (CSS value)
+  canvasBackground?: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -46,7 +48,6 @@ interface FreeFormCanvasProps {
 const SNAP_THRESHOLD = 5;
 const MIN_SIZE = 20;
 const HANDLE_SIZE = 8;
-const GRID_SIZE = 40;
 
 const RESIZE_HANDLES: ResizeHandle[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
 
@@ -563,6 +564,7 @@ export default function FreeFormCanvas({
   eraserMagicRadius = 100,
   eraserMagicSoftness = 50,
   onFileDrop,
+  canvasBackground,
 }: FreeFormCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
@@ -1703,14 +1705,6 @@ export default function FreeFormCanvas({
     e.preventDefault();
   }, []);
 
-  // ── Grid background pattern ───────────────────────────────────────────────
-  const gridBackground = useMemo(
-    () =>
-      `linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-       linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-    []
-  );
-
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -1720,9 +1714,6 @@ export default function FreeFormCanvas({
         flex: 1,
         overflow: 'auto',
         backgroundColor: '#1a1a2e',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         position: 'relative',
         minHeight: 0,
       }}
@@ -1747,12 +1738,11 @@ export default function FreeFormCanvas({
           transform: `scale(${scale})`,
           transformOrigin: 'center center',
           position: 'relative',
-          backgroundColor: '#0D1117',
-          backgroundImage: gridBackground,
-          backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
+          background: canvasBackground || '#181830',
           boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
           flexShrink: 0,
           overflow: 'visible',
+          margin: 'auto',
           cursor: isPanning ? 'grabbing' : isSpaceHeld ? 'grab' : eraserMode ? 'none' : 'default',
         }}
       >
