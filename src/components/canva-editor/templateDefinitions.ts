@@ -823,8 +823,8 @@ export const TEMPLATES: TemplateInfo[] = [
       makeText({ x: 70, y: 420, width: 600, height: 24, content: '21,000+ learners already on this path.', fontSize: 16, fontWeight: 400, fontFamily: 'Manrope', color: 'rgba(255,255,255,0.5)', textTransform: 'none', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, zIndex: 10 }),
       // CTA — Blue with borderRadius 16
       makeButton({ x: 430, y: 490, width: 220, height: 44, content: 'Start Your Journey →', bgColor: '#3B82F6', textColor: '#FFFFFF', fontSize: 15, borderRadius: 16, zIndex: 20 }),
-      // Hero drop-zone
-      ...makeDAHeroDropZone({ x: 100, y: 550, width: 880, height: 420, label: 'Drop hero image here', zIndex: 4 }),
+      // Hero — both instructors
+      makeImage({ x: 100, y: 550, width: 880, height: 420, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 50% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
     ],
   },
 
@@ -868,7 +868,7 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       ...makeDACommon(),
       // Hero drop-zone — Dhaval
-      ...makeDAHeroDropZone({ x: 550, y: 80, width: 530, height: 650, label: 'Drop Dhaval hero image here', zIndex: 4 }),
+      makeImage({ x: 550, y: 80, width: 530, height: 650, src: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
       // Headlines — Saira Condensed 900
       makeText({ x: 70, y: 180, width: 500, height: 55, content: 'NO CS DEGREE?', fontSize: 48, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
       makeText({ x: 70, y: 250, width: 500, height: 55, content: 'NO CODING', fontSize: 48, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
@@ -922,8 +922,8 @@ export const TEMPLATES: TemplateInfo[] = [
       makeText({ x: 0, y: 500, width: 1080, height: 24, content: '+ AI Automation to make you future-ready.', fontSize: 16, fontWeight: 400, fontFamily: 'Manrope', color: 'rgba(255,255,255,0.5)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 10 }),
       // CTA — Blue with borderRadius 16
       makeButton({ x: 430, y: 530, width: 220, height: 44, content: 'Enroll Now →', bgColor: '#3B82F6', textColor: '#FFFFFF', fontSize: 15, borderRadius: 16, zIndex: 20 }),
-      // Hero drop-zone — both heroes
-      ...makeDAHeroDropZone({ x: 150, y: 560, width: 780, height: 420, label: 'Drop hero image here', zIndex: 4 }),
+      // Hero — both instructors
+      makeImage({ x: 150, y: 560, width: 780, height: 420, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 50% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
     ],
   },
 
@@ -971,7 +971,7 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       ...makeDACommon(),
       // Hero drop-zone — Hemanand
-      ...makeDAHeroDropZone({ x: 550, y: 50, width: 530, height: 700, label: 'Drop Hemanand hero image here', zIndex: 4 }),
+      makeImage({ x: 550, y: 50, width: 530, height: 700, src: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%', glowColor: '#D7EF3F', zIndex: 4 }),
       // Headlines — Saira Condensed 900
       makeText({ x: 70, y: 200, width: 500, height: 65, content: 'LEARN DATA.', fontSize: 56, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
       makeText({ x: 70, y: 280, width: 220, height: 65, content: 'BUILD', fontSize: 56, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
@@ -1003,9 +1003,9 @@ export const TEMPLATES: TemplateInfo[] = [
       makeText({ x: 540, y: 80, width: 260, height: 45, content: ' THE BEST', fontSize: 38, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#D7EF3F', textAlign: 'left', scaleX: 0.80, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
       makeText({ x: 760, y: 80, width: 250, height: 45, content: ' IN DATA.', fontSize: 38, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', textAlign: 'left', scaleX: 0.80, letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
       // Dhaval hero drop-zone — left
-      ...makeDAHeroDropZone({ x: 0, y: 200, width: 540, height: 650, label: 'Drop Dhaval hero image here', zIndex: 4 }),
-      // Hemanand hero drop-zone — right
-      ...makeDAHeroDropZone({ x: 540, y: 200, width: 540, height: 650, label: 'Drop Hemanand hero image here', zIndex: 4 }),
+      makeImage({ x: 0, y: 200, width: 540, height: 650, src: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
+      // Hemanand hero — right
+      makeImage({ x: 540, y: 200, width: 540, height: 650, src: '/images/bootcamps/data-analytics/heroes/hemanand-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 45% 40%, black 35%, transparent 70%', glowColor: '#D7EF3F', zIndex: 4 }),
       // Dhaval name card — Manrope
       makeText({ x: 100, y: 750, width: 300, height: 24, content: 'Dhaval Patel', fontSize: 18, fontWeight: 800, fontFamily: 'Manrope', color: '#FFFFFF', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 12 }),
       makeText({ x: 100, y: 778, width: 300, height: 16, content: 'Ex-NVIDIA · Ex-Bloomberg', fontSize: 11, fontWeight: 500, fontFamily: 'Manrope', color: 'rgba(255,255,255,0.45)', scaleX: 1, letterSpacing: 0, lineHeight: 1.3, textTransform: 'none', zIndex: 12 }),
@@ -1035,7 +1035,7 @@ export const TEMPLATES: TemplateInfo[] = [
     createElements: () => [
       ...makeDACommon(),
       // Hero drop-zone — Dhaval
-      ...makeDAHeroDropZone({ x: 550, y: 80, width: 530, height: 650, label: 'Drop Dhaval hero image here', zIndex: 4 }),
+      makeImage({ x: 550, y: 80, width: 530, height: 650, src: '/images/bootcamps/data-analytics/heroes/dhaval-da-superhero.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 55% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
       // Headlines — Saira Condensed 900
       makeText({ x: 70, y: 180, width: 500, height: 60, content: 'EVERY ANALYST', fontSize: 52, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
       makeText({ x: 70, y: 245, width: 500, height: 60, content: 'IN 2026 WILL BE', fontSize: 52, fontWeight: 900, fontFamily: 'Saira Condensed', color: '#FFFFFF', letterSpacing: -1, lineHeight: 0.92, zIndex: 10 }),
@@ -1084,8 +1084,8 @@ export const TEMPLATES: TemplateInfo[] = [
       makeText({ x: 0, y: 620, width: 1080, height: 18, content: 'Placements in: Marketing · Finance · FMCG · Banking · Healthcare', fontSize: 12, fontWeight: 500, fontFamily: 'Manrope', color: 'rgba(255,255,255,0.35)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
       // CTA — Blue with borderRadius 16
       makeButton({ x: 380, y: 680, width: 320, height: 44, content: 'Join 21K+ Learners →', bgColor: '#3B82F6', textColor: '#FFFFFF', fontSize: 15, borderRadius: 16, zIndex: 20 }),
-      // Hero drop-zone — both heroes
-      ...makeDAHeroDropZone({ x: 150, y: 730, width: 780, height: 300, label: 'Drop hero image here', zIndex: 4 }),
+      // Hero — both instructors
+      makeImage({ x: 150, y: 730, width: 780, height: 300, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 50% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
     ],
   },
 
@@ -1137,8 +1137,8 @@ export const TEMPLATES: TemplateInfo[] = [
       makeText({ x: 680, y: 524, width: 200, height: 16, content: 'Powered Skills', fontSize: 11, fontWeight: 400, fontFamily: 'Manrope', color: 'rgba(255,255,255,0.4)', textAlign: 'center', scaleX: 1, letterSpacing: 0, lineHeight: 1.2, textTransform: 'none', zIndex: 10 }),
       // CTA — Blue with borderRadius 16
       makeButton({ x: 390, y: 580, width: 300, height: 44, content: 'Explore Bootcamp →', bgColor: '#3B82F6', textColor: '#FFFFFF', fontSize: 15, borderRadius: 16, zIndex: 20 }),
-      // Hero drop-zone — both heroes
-      ...makeDAHeroDropZone({ x: 100, y: 600, width: 880, height: 380, label: 'Drop hero image here', zIndex: 4 }),
+      // Hero — both instructors
+      makeImage({ x: 100, y: 600, width: 880, height: 380, src: '/images/bootcamps/data-analytics/heroes/both-da-superheroes.png', maskType: 'radial', maskParams: 'ellipse 80% 85% at 50% 40%, black 35%, transparent 70%', glowColor: '#3B82F6', zIndex: 4 }),
     ],
   },
 ];

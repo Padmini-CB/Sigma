@@ -15,6 +15,7 @@ import TextPanel from '@/components/canva-editor/TextPanel';
 import UploadsPanel from '@/components/canva-editor/UploadsPanel';
 import EraserPanel, { type EraserMode } from '@/components/canva-editor/EraserPanel';
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
+import BackgroundsPanel from '@/components/canva-editor/BackgroundsPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
 import { useCanvasHistory } from '@/components/canva-editor/useCanvasHistory';
@@ -87,12 +88,48 @@ export default function EditorPage() {
     toastMessage,
   } = useCanvasHistory([]);
 
+  // ── Restore saved design from localStorage on mount ──
+  const hasRestoredRef = useRef(false);
+  useEffect(() => {
+    if (hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+    try {
+      const saved = localStorage.getItem(`sigma-creative-${templateId}`);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.elements && data.elements.length > 0) {
+          resetHistory(data.elements);
+        }
+        if (data.perSizeElements) {
+          setPerSizeElements(data.perSizeElements);
+        }
+        if (data.activeSize) {
+          const matchingSize = CANVAS_SIZES.find(s => s.id === data.activeSize.id);
+          if (matchingSize) setActiveSize(matchingSize);
+        }
+      }
+    } catch { /* ignore corrupt data */ }
+  }, [templateId, resetHistory]);
+
   // ── Selection state ──
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // ── Canvas size (multi-size support) ──
   const [activeSize, setActiveSize] = useState<CanvasSize>(CANVAS_SIZES[0]);
   const [perSizeElements, setPerSizeElements] = useState<Record<string, CanvasElement[]>>({});
+
+  // ── Canvas background ──
+  const [canvasBackground, setCanvasBackground] = useState<string>(() => {
+    if (typeof window === 'undefined') return '#181830';
+    try {
+      const saved = localStorage.getItem(`sigma-creative-${templateId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.canvasBackground) return parsed.canvasBackground;
+      }
+    } catch { /* ignore */ }
+    return '#181830';
+  });
 
   // ── Sidebar state ──
   const [activeTab, setActiveTab] = useState<SidebarTab | null>('templates');
@@ -140,6 +177,7 @@ export default function EditorPage() {
     activeSize,
     perSizeElements,
     projectName,
+    canvasBackground,
   });
 
   // ── Shortcuts overlay ──
@@ -799,6 +837,8 @@ export default function EditorPage() {
         return <TextPanel onAddText={handleAddText} />;
       case 'uploads':
         return <UploadsPanel onDragStart={handleUploadDragStart} onClickAdd={handleUploadClickAdd} />;
+      case 'backgrounds':
+        return <BackgroundsPanel activeBackground={canvasBackground} onSelectBackground={(css) => { setCanvasBackground(css); saveNow(); }} />;
       case 'eraser':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 24, textAlign: 'center' }}>
@@ -1172,6 +1212,7 @@ export default function EditorPage() {
               eraserMagicRadius={magicRadius}
               eraserMagicSoftness={magicSoftness}
               onFileDrop={handleFileDrop}
+              canvasBackground={canvasBackground}
             />
           )}
 
