@@ -604,27 +604,47 @@ export default function EditorPage() {
     if (document.fonts?.ready) await document.fonts.ready;
     await new Promise(r => setTimeout(r, 150));
 
-    // Temporarily remove parent overflow clipping so the full canvas is captured
+    // ── Save original styles that we need to override during capture ──
+    const origTransform = canvasEl.style.transform;
+    const origTransformOrigin = canvasEl.style.transformOrigin;
+    const origBoxShadow = canvasEl.style.boxShadow;
+    const origMargin = canvasEl.style.margin;
     const parent = canvasEl.parentElement;
-    const origParentOverflow = parent?.style.overflow;
+    const origParentOverflow = parent?.style.overflow ?? '';
+
+    // ── Temporarily reset the canvas to its true 1:1 size for capture ──
+    // This is the critical fix: set scale(1) on the actual DOM element so
+    // html-to-image captures the full-size canvas, not the zoomed viewport.
+    canvasEl.style.transform = 'none';
+    canvasEl.style.transformOrigin = 'top left';
+    canvasEl.style.boxShadow = 'none';
+    canvasEl.style.margin = '0';
     if (parent) parent.style.overflow = 'visible';
 
-    const exportOpts = {
-      pixelRatio: 2,
-      width: activeSize.width,
-      height: activeSize.height,
-      canvasWidth: activeSize.width * 2,
-      canvasHeight: activeSize.height * 2,
-      style: {
-        transform: 'none',
-        transformOrigin: 'top left',
-        overflow: 'visible',
-        width: `${activeSize.width}px`,
-        height: `${activeSize.height}px`,
-      },
-    };
+    // Force layout reflow so the browser applies the new styles
+    void canvasEl.offsetWidth;
 
     try {
+      const exportOpts = {
+        pixelRatio: 2,
+        width: activeSize.width,
+        height: activeSize.height,
+        style: {
+          // Reinforce in case html-to-image re-clones with computed styles
+          transform: 'none',
+          transformOrigin: 'top left',
+          overflow: 'visible',
+          margin: '0',
+          boxShadow: 'none',
+        },
+        // Filter out selection outlines / UI overlays
+        filter: (node: HTMLElement) => {
+          // Remove resize handles, selection overlays, eraser cursor, context menu
+          if (node?.dataset?.exportIgnore === 'true') return false;
+          return true;
+        },
+      };
+
       if (format === 'jpeg') {
         return await htmlToImage.toJpeg(canvasEl, {
           ...exportOpts,
@@ -637,7 +657,12 @@ export default function EditorPage() {
         quality: 1.0,
       });
     } finally {
-      if (parent && origParentOverflow !== undefined) parent.style.overflow = origParentOverflow;
+      // ── Restore all original styles ──
+      canvasEl.style.transform = origTransform;
+      canvasEl.style.transformOrigin = origTransformOrigin;
+      canvasEl.style.boxShadow = origBoxShadow;
+      canvasEl.style.margin = origMargin;
+      if (parent) parent.style.overflow = origParentOverflow;
     }
   }, [activeSize]);
 
@@ -693,31 +718,40 @@ export default function EditorPage() {
         const size = CANVAS_SIZES.find(s => s.id === sizeId);
         if (!size) continue;
 
+        // Save originals
         const origW = canvasEl.style.width;
         const origH = canvasEl.style.height;
+        const origTransform = canvasEl.style.transform;
+        const origTransformOrigin = canvasEl.style.transformOrigin;
+        const origBoxShadow = canvasEl.style.boxShadow;
+        const origMargin = canvasEl.style.margin;
+        const parent = canvasEl.parentElement;
+        const origParentOverflow = parent?.style.overflow ?? '';
+
+        // Set to true 1:1 size for this export size
         canvasEl.style.width = `${size.width}px`;
         canvasEl.style.height = `${size.height}px`;
+        canvasEl.style.transform = 'none';
+        canvasEl.style.transformOrigin = 'top left';
+        canvasEl.style.boxShadow = 'none';
+        canvasEl.style.margin = '0';
+        if (parent) parent.style.overflow = 'visible';
+        void canvasEl.offsetWidth; // force reflow
+
         if (document.fonts?.ready) await document.fonts.ready;
         await new Promise(r => setTimeout(r, 100));
-
-        // Temporarily remove parent overflow clipping
-        const parent = canvasEl.parentElement;
-        const origParentOverflow = parent?.style.overflow;
-        if (parent) parent.style.overflow = 'visible';
 
         try {
           const sizeExportOpts = {
             pixelRatio: 2,
             width: size.width,
             height: size.height,
-            canvasWidth: size.width * 2,
-            canvasHeight: size.height * 2,
             style: {
               transform: 'none',
               transformOrigin: 'top left',
               overflow: 'visible',
-              width: `${size.width}px`,
-              height: `${size.height}px`,
+              margin: '0',
+              boxShadow: 'none',
             },
           };
 
@@ -739,7 +773,11 @@ export default function EditorPage() {
         } finally {
           canvasEl.style.width = origW;
           canvasEl.style.height = origH;
-          if (parent && origParentOverflow !== undefined) parent.style.overflow = origParentOverflow;
+          canvasEl.style.transform = origTransform;
+          canvasEl.style.transformOrigin = origTransformOrigin;
+          canvasEl.style.boxShadow = origBoxShadow;
+          canvasEl.style.margin = origMargin;
+          if (parent) parent.style.overflow = origParentOverflow;
         }
       }
 
