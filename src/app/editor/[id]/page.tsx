@@ -603,23 +603,42 @@ export default function EditorPage() {
     const htmlToImage = await import('html-to-image');
     if (document.fonts?.ready) await document.fonts.ready;
     await new Promise(r => setTimeout(r, 150));
-    if (format === 'jpeg') {
-      return await htmlToImage.toJpeg(canvasEl, {
-        quality: quality / 100,
-        pixelRatio: 2,
-        width: activeSize.width,
-        height: activeSize.height,
-        backgroundColor: '#0D1117',
-        style: { transform: 'none', overflow: 'hidden' },
-      });
-    }
-    return await htmlToImage.toPng(canvasEl, {
-      quality: 1.0,
+
+    // Temporarily remove parent overflow clipping so the full canvas is captured
+    const parent = canvasEl.parentElement;
+    const origParentOverflow = parent?.style.overflow;
+    if (parent) parent.style.overflow = 'visible';
+
+    const exportOpts = {
       pixelRatio: 2,
       width: activeSize.width,
       height: activeSize.height,
-      style: { transform: 'none', overflow: 'hidden' },
-    });
+      canvasWidth: activeSize.width * 2,
+      canvasHeight: activeSize.height * 2,
+      style: {
+        transform: 'none',
+        transformOrigin: 'top left',
+        overflow: 'visible',
+        width: `${activeSize.width}px`,
+        height: `${activeSize.height}px`,
+      },
+    };
+
+    try {
+      if (format === 'jpeg') {
+        return await htmlToImage.toJpeg(canvasEl, {
+          ...exportOpts,
+          quality: quality / 100,
+          backgroundColor: '#0D1117',
+        });
+      }
+      return await htmlToImage.toPng(canvasEl, {
+        ...exportOpts,
+        quality: 1.0,
+      });
+    } finally {
+      if (parent && origParentOverflow !== undefined) parent.style.overflow = origParentOverflow;
+    }
   }, [activeSize]);
 
   // ── Export current size ──
@@ -681,24 +700,38 @@ export default function EditorPage() {
         if (document.fonts?.ready) await document.fonts.ready;
         await new Promise(r => setTimeout(r, 100));
 
+        // Temporarily remove parent overflow clipping
+        const parent = canvasEl.parentElement;
+        const origParentOverflow = parent?.style.overflow;
+        if (parent) parent.style.overflow = 'visible';
+
         try {
+          const sizeExportOpts = {
+            pixelRatio: 2,
+            width: size.width,
+            height: size.height,
+            canvasWidth: size.width * 2,
+            canvasHeight: size.height * 2,
+            style: {
+              transform: 'none',
+              transformOrigin: 'top left',
+              overflow: 'visible',
+              width: `${size.width}px`,
+              height: `${size.height}px`,
+            },
+          };
+
           let dataUrl: string;
           if (exportFormat === 'jpeg') {
             dataUrl = await htmlToImage.toJpeg(canvasEl, {
+              ...sizeExportOpts,
               quality: jpegQuality / 100,
-              pixelRatio: 2,
-              width: size.width,
-              height: size.height,
               backgroundColor: '#0D1117',
-              style: { transform: 'none', overflow: 'hidden' },
             });
           } else {
             dataUrl = await htmlToImage.toPng(canvasEl, {
+              ...sizeExportOpts,
               quality: 1.0,
-              pixelRatio: 2,
-              width: size.width,
-              height: size.height,
-              style: { transform: 'none', overflow: 'hidden' },
             });
           }
           const base64 = dataUrl.split(',')[1];
@@ -706,6 +739,7 @@ export default function EditorPage() {
         } finally {
           canvasEl.style.width = origW;
           canvasEl.style.height = origH;
+          if (parent && origParentOverflow !== undefined) parent.style.overflow = origParentOverflow;
         }
       }
 
