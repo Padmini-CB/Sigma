@@ -91,6 +91,7 @@ export default function EditorPage() {
 
   // ── Restore saved design from localStorage on mount ──
   const hasRestoredRef = useRef(false);
+  const [hasRestored, setHasRestored] = useState(false);
   useEffect(() => {
     if (hasRestoredRef.current) return;
     hasRestoredRef.current = true;
@@ -110,6 +111,7 @@ export default function EditorPage() {
         }
       }
     } catch { /* ignore corrupt data */ }
+    setHasRestored(true);
   }, [templateId, resetHistory]);
 
   // ── Selection state ──
@@ -175,7 +177,10 @@ export default function EditorPage() {
   });
   const [isEditingName, setIsEditingName] = useState(false);
 
-  // ── Auto-save ──
+  // ── Canvas ref (declared early for auto-save thumbnail capture) ──
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // ── Auto-save (gated by hasRestored to prevent overwriting with empty data) ──
   const { status: saveStatus, conflictWarning, dismissConflict, saveNow } = useAutoSave({
     creativeId: templateId,
     elements,
@@ -183,6 +188,8 @@ export default function EditorPage() {
     perSizeElements,
     projectName,
     canvasBackground,
+    enabled: hasRestored,
+    canvasRef,
   });
 
   // ── Shortcuts overlay ──
@@ -198,7 +205,6 @@ export default function EditorPage() {
     CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
     return initial;
   });
-  const canvasRef = useRef<HTMLDivElement>(null);
   const downloadMenuRef = useRef<HTMLDivElement>(null);
 
   // ── Close download menu on click outside ──

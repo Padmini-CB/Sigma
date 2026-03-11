@@ -11,6 +11,7 @@ interface DesignCard {
   savedAt: string;
   elementCount: number;
   canvasSize: string;
+  thumbnail?: string;
 }
 
 function getSavedDesigns(): DesignCard[] {
@@ -28,8 +29,9 @@ function getSavedDesigns(): DesignCard[] {
         savedAt: data.savedAt,
         elementCount: data.elements?.length ?? 0,
         canvasSize: data.activeSize
-          ? `${data.activeSize.width}×${data.activeSize.height}`
+          ? `${(data.activeSize as { width?: number }).width ?? '?'}×${(data.activeSize as { height?: number }).height ?? '?'}`
           : 'Unknown',
+        thumbnail: data.thumbnail,
       });
     } catch { /* skip corrupt entries */ }
   }
@@ -157,28 +159,42 @@ export default function RecentDesigns() {
           >
             {/* Thumbnail area */}
             <div style={{
-              height: 120,
+              height: 140,
               backgroundColor: 'rgba(255,255,255,0.02)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               borderBottom: '1px solid rgba(255,255,255,0.06)',
+              overflow: 'hidden',
             }}>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 6,
-              }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="2" />
-                  <line x1="2" y1="8" x2="22" y2="8" />
-                  <line x1="8" y1="2" x2="8" y2="22" />
-                </svg>
-                <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
-                  {design.elementCount} element{design.elementCount !== 1 ? 's' : ''} · {design.canvasSize}
-                </span>
-              </div>
+              {design.thumbnail ? (
+                <img
+                  src={design.thumbnail}
+                  alt={design.projectName}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    padding: 8,
+                  }}
+                />
+              ) : (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 6,
+                }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="2" />
+                    <line x1="2" y1="8" x2="22" y2="8" />
+                    <line x1="8" y1="2" x2="8" y2="22" />
+                  </svg>
+                  <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
+                    {design.elementCount} element{design.elementCount !== 1 ? 's' : ''} · {design.canvasSize}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Info area */}
