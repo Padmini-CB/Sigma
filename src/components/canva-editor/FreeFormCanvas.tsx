@@ -41,6 +41,10 @@ interface FreeFormCanvasProps {
   onFileDrop?: (dataUrl: string, width: number, height: number, x: number, y: number) => void;
   // Custom canvas background (CSS value)
   canvasBackground?: string;
+  // Layer management callbacks
+  onGroup?: () => void;
+  onUngroup?: () => void;
+  onToggleLock?: () => void;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -93,6 +97,11 @@ const CONTEXT_MENU_ITEMS: ContextMenuEntry[] = [
   { label: 'Bring Forward', action: 'bringForward', shortcut: ']' },
   { label: 'Send Backward', action: 'sendBackward', shortcut: '[' },
   { label: 'Send to Back', action: 'sendToBack', shortcut: 'Ctrl+[' },
+  { separator: true },
+  { label: 'Group', action: 'group', shortcut: 'Ctrl+G' },
+  { label: 'Ungroup', action: 'ungroup', shortcut: 'Ctrl+Shift+G' },
+  { separator: true },
+  { label: 'Lock', action: 'toggleLock', shortcut: 'Ctrl+L' },
   { separator: true },
   { label: 'Duplicate', action: 'duplicate', shortcut: 'Ctrl+D' },
   { label: 'Delete', action: 'delete', shortcut: 'Del' },
@@ -565,6 +574,9 @@ export default function FreeFormCanvas({
   eraserMagicSoftness = 50,
   onFileDrop,
   canvasBackground,
+  onGroup,
+  onUngroup,
+  onToggleLock,
 }: FreeFormCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
@@ -847,12 +859,24 @@ export default function FreeFormCanvas({
           updated = updated.filter((e) => e.id !== elementId);
           onSelectionChange(selectedIds.filter((id) => id !== elementId));
           break;
+        case 'group':
+          onGroup?.();
+          setContextMenu(null);
+          return;
+        case 'ungroup':
+          onUngroup?.();
+          setContextMenu(null);
+          return;
+        case 'toggleLock':
+          onToggleLock?.();
+          setContextMenu(null);
+          return;
       }
 
       onElementsChange(updated);
       setContextMenu(null);
     },
-    [elements, selectedIds, onElementsChange, onSelectionChange]
+    [elements, selectedIds, onElementsChange, onSelectionChange, onGroup, onUngroup, onToggleLock]
   );
 
   // ── Pan mouse down (Space+Drag) ──────────────────────────────────────────
@@ -954,7 +978,10 @@ export default function FreeFormCanvas({
       const el = elements.find((el) => el.id === elementId);
       if (!el) return;
 
-      // Update selection
+      // Locked elements: cannot be selected or dragged on canvas
+      if (el.locked) return;
+
+      // Update selection — if element is in a group, select all group members
       let newSelected: string[];
       if (e.shiftKey) {
         if (selectedIds.includes(elementId)) {
@@ -964,17 +991,30 @@ export default function FreeFormCanvas({
         }
       } else {
         if (!selectedIds.includes(elementId)) {
-          newSelected = [elementId];
+          // If element has a groupId, select all group members
+          if (el.groupId) {
+            newSelected = elements.filter(g => g.groupId === el.groupId && !g.locked).map(g => g.id);
+          } else {
+            newSelected = [elementId];
+          }
         } else {
           newSelected = selectedIds;
         }
       }
       onSelectionChange(newSelected);
 
-      // Start drag
+      // Start drag — include all group members of any selected element
       const canvasPos = screenToCanvas(e.clientX, e.clientY);
+      const allDragIds = new Set(newSelected);
+      newSelected.forEach(id => {
+        const elem = elements.find(el => el.id === id);
+        if (elem?.groupId) {
+          elements.filter(g => g.groupId === elem.groupId && !g.locked).forEach(g => allDragIds.add(g.id));
+        }
+      });
+
       const startPositions: Record<string, Position> = {};
-      newSelected.forEach((id) => {
+      allDragIds.forEach((id) => {
         const elem = elements.find((el) => el.id === id);
         if (elem) {
           startPositions[id] = { x: elem.x, y: elem.y };
@@ -1430,10 +1470,10 @@ export default function FreeFormCanvas({
         const rh = Math.abs(canvasPos.y - start.y);
         setSelectionRect({ x: rx, y: ry, width: rw, height: rh });
 
-        // Select elements that intersect
+        // Select elements that intersect (skip locked and hidden)
         const intersecting = elements
           .filter((el) => {
-            if (!el.visible) return false;
+            if (!el.visible || el.locked) return false;
             return !(
               el.x + el.width < rx ||
               el.x > rx + rw ||
@@ -1767,10 +1807,10 @@ export default function FreeFormCanvas({
                 opacity: el.opacity,
                 transform: el.rotation ? `rotate(${el.rotation}deg)` : undefined,
                 zIndex: el.zIndex,
-                cursor: eraserMode && el.type === 'image' ? 'none' : 'move',
-                outline: isSelected ? '2px solid #3B82F6' : 'none',
+                cursor: el.locked ? 'default' : eraserMode && el.type === 'image' ? 'none' : 'move',
+                outline: el.locked ? 'none' : isSelected ? '2px solid #3B82F6' : 'none',
                 outlineOffset: -1,
-                pointerEvents: 'auto',
+                pointerEvents: el.locked ? 'none' : 'auto',
                 overflow: (el.type === 'button' || el.type === 'badge') ? 'visible' : undefined,
               }}
             >
@@ -2028,6 +2068,12 @@ export default function FreeFormCanvas({
                 />
               );
             }
+            // Dynamic label for lock/group based on state
+            let label = item.label;
+            const ctxEl = elements.find(e => e.id === contextMenu.elementId);
+            if (item.action === 'toggleLock' && ctxEl?.locked) label = 'Unlock';
+            if (item.action === 'ungroup' && ctxEl && !ctxEl.groupId) return null;
+            if (item.action === 'group' && selectedIds.length < 2) return null;
             const isDelete = item.action === 'delete';
             return (
               <button
@@ -2055,7 +2101,7 @@ export default function FreeFormCanvas({
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                <span>{item.label}</span>
+                <span>{label}</span>
                 {item.shortcut && (
                   <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 16 }}>
                     {item.shortcut}

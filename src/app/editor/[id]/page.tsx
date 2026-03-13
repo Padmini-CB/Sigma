@@ -16,6 +16,7 @@ import UploadsPanel from '@/components/canva-editor/UploadsPanel';
 import EraserPanel, { type EraserMode } from '@/components/canva-editor/EraserPanel';
 import SettingsPanel from '@/components/canva-editor/SettingsPanel';
 import BackgroundsPanel from '@/components/canva-editor/BackgroundsPanel';
+import LayersPanel from '@/components/canva-editor/LayersPanel';
 import PropertiesPanel from '@/components/canva-editor/PropertiesPanel';
 import MagicEraserOverlay from '@/components/canva-editor/MagicEraserOverlay';
 import KeyboardShortcutsOverlay from '@/components/canva-editor/KeyboardShortcutsOverlay';
@@ -91,6 +92,7 @@ export default function EditorPage() {
 
   // ── Restore saved design from localStorage on mount ──
   const hasRestoredRef = useRef(false);
+  const [hasRestored, setHasRestored] = useState(false);
   useEffect(() => {
     if (hasRestoredRef.current) return;
     hasRestoredRef.current = true;
@@ -110,6 +112,7 @@ export default function EditorPage() {
         }
       }
     } catch { /* ignore corrupt data */ }
+    setHasRestored(true);
   }, [templateId, resetHistory]);
 
   // ── Selection state ──
@@ -175,7 +178,10 @@ export default function EditorPage() {
   });
   const [isEditingName, setIsEditingName] = useState(false);
 
-  // ── Auto-save ──
+  // ── Canvas ref (declared early for auto-save thumbnail capture) ──
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // ── Auto-save (gated by hasRestored to prevent overwriting with empty data) ──
   const { status: saveStatus, conflictWarning, dismissConflict, saveNow } = useAutoSave({
     creativeId: templateId,
     elements,
@@ -183,6 +189,8 @@ export default function EditorPage() {
     perSizeElements,
     projectName,
     canvasBackground,
+    enabled: hasRestored,
+    canvasRef,
   });
 
   // ── Shortcuts overlay ──
@@ -198,7 +206,6 @@ export default function EditorPage() {
     CANVAS_SIZES.forEach((s, i) => { initial[s.id] = i < 2; }); // first 2 checked
     return initial;
   });
-  const canvasRef = useRef<HTMLDivElement>(null);
   const downloadMenuRef = useRef<HTMLDivElement>(null);
 
   // ── Close download menu on click outside ──
@@ -807,7 +814,7 @@ export default function EditorPage() {
       setElements(elements.filter(el => !selectedIds.includes(el.id)));
       setSelectedIds([]);
     },
-    selectAll: () => setSelectedIds(elements.map(el => el.id)),
+    selectAll: () => setSelectedIds(elements.filter(el => !el.locked && el.visible).map(el => el.id)),
     deselectAll: () => setSelectedIds([]),
     copySelected: () => {
       const copied = elements.filter(el => selectedIds.includes(el.id));
@@ -879,17 +886,36 @@ export default function EditorPage() {
       setElements(updated);
     },
     groupSelected: () => {
-      // Simplified grouping - just toast for now
-      showToast('info', 'Group', 'Grouping coming soon');
-    },
-    ungroupSelected: () => {
-      showToast('info', 'Ungroup', 'Ungrouping coming soon');
-    },
-    toggleLock: () => {
+      if (selectedIds.length < 2) return;
+      const groupId = `group_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       const updated = elements.map(el =>
-        selectedIds.includes(el.id) ? { ...el, locked: !el.locked } : el
+        selectedIds.includes(el.id) ? { ...el, groupId } : el
       );
       setElements(updated);
+      showToast('success', 'Grouped', `${selectedIds.length} elements grouped`);
+    },
+    ungroupSelected: () => {
+      // Find groupIds of selected elements
+      const groupIdsToRemove = new Set<string>();
+      selectedIds.forEach(id => {
+        const el = elements.find(e => e.id === id);
+        if (el?.groupId) groupIdsToRemove.add(el.groupId);
+      });
+      if (groupIdsToRemove.size === 0) return;
+      const updated = elements.map(el =>
+        el.groupId && groupIdsToRemove.has(el.groupId) ? { ...el, groupId: undefined } : el
+      );
+      setElements(updated);
+      showToast('success', 'Ungrouped', 'Elements ungrouped');
+    },
+    toggleLock: () => {
+      if (selectedIds.length === 0) return;
+      const allLocked = selectedIds.every(id => elements.find(e => e.id === id)?.locked);
+      const updated = elements.map(el =>
+        selectedIds.includes(el.id) ? { ...el, locked: !allLocked } : el
+      );
+      setElements(updated);
+      if (!allLocked) setSelectedIds([]);
     },
     zoomIn: () => setZoom(z => Math.min(200, z + 25)),
     zoomOut: () => setZoom(z => Math.max(25, z - 25)),
@@ -1001,6 +1027,17 @@ export default function EditorPage() {
             onMagicToleranceChange={setMagicTolerance}
             onMagicRadiusChange={setMagicRadius}
             onMagicSoftnessChange={setMagicSoftness}
+          />
+        );
+      case 'layers':
+        return (
+          <LayersPanel
+            elements={elements}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            onElementsChange={setElements}
+            onGroup={shortcutActions.groupSelected}
+            onUngroup={shortcutActions.ungroupSelected}
           />
         );
       case 'settings':
@@ -1369,6 +1406,9 @@ export default function EditorPage() {
               eraserMagicSoftness={magicSoftness}
               onFileDrop={handleFileDrop}
               canvasBackground={canvasBackground}
+              onGroup={shortcutActions.groupSelected}
+              onUngroup={shortcutActions.ungroupSelected}
+              onToggleLock={shortcutActions.toggleLock}
             />
           )}
 

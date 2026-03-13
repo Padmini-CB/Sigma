@@ -90,6 +90,7 @@ export interface CanvasElement {
   locked: boolean;
   visible: boolean;
   groupId?: string;
+  layerName?: string;
 
   // Content based on type
   content: string; // text content, image src, etc.
