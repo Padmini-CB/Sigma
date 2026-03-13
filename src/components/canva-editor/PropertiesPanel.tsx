@@ -369,6 +369,36 @@ export default function PropertiesPanel({ element, onUpdate, elementScreenRect, 
           </span>
         </div>
 
+        {/* Lock toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+          <button
+            onClick={() => onUpdate({ locked: !element.locked })}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '5px 10px', borderRadius: 6, border: 'none',
+              backgroundColor: element.locked ? 'rgba(212,160,23,0.15)' : 'rgba(255,255,255,0.06)',
+              color: element.locked ? '#D4A017' : 'rgba(255,255,255,0.6)',
+              fontSize: 11, fontWeight: 600, fontFamily: 'Manrope, sans-serif',
+              cursor: 'pointer', flex: 1,
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {element.locked ? (
+                <>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </>
+              ) : (
+                <>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                </>
+              )}
+            </svg>
+            {element.locked ? 'Locked' : 'Unlocked'}
+          </button>
+        </div>
+
         {/* Text-specific properties */}
         {element.type === 'text' && element.textStyle && (
           <>

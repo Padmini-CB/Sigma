@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 
-export type SidebarTab = 'templates' | 'elements' | 'text' | 'uploads' | 'backgrounds' | 'eraser' | 'settings';
+export type SidebarTab = 'templates' | 'elements' | 'text' | 'uploads' | 'backgrounds' | 'eraser' | 'layers' | 'settings';
 
 interface CanvaSidebarProps {
   activeTab: SidebarTab | null;
@@ -67,6 +67,14 @@ const EraserIcon = () => (
   </svg>
 );
 
+const LayersIcon = () => (
+  <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+    <polyline points="2 17 12 22 22 17" />
+    <polyline points="2 12 12 17 22 12" />
+  </svg>
+);
+
 const SettingsIcon = () => (
   <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3" />
@@ -81,6 +89,7 @@ const TABS: TabDefinition[] = [
   { id: 'uploads', label: 'Uploads', icon: <UploadsIcon /> },
   { id: 'backgrounds', label: 'Backgrounds', icon: <BackgroundsIcon /> },
   { id: 'eraser', label: 'Eraser', icon: <EraserIcon /> },
+  { id: 'layers', label: 'Layers', icon: <LayersIcon /> },
   { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
 ];
 
