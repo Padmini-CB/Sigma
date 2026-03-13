@@ -931,39 +931,7 @@ export default function EditorPage() {
     ? elements.find(el => el.id === selectedIds[0]) ?? null
     : null;
 
-  // ── Compute selected element screen rect for floating properties panel ──
-  const [elementScreenRect, setElementScreenRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
-  useEffect(() => {
-    if (!selectedElement || !canvasRef.current) {
-      setElementScreenRect(null);
-      return;
-    }
-    const update = () => {
-      const canvasEl = canvasRef.current;
-      if (!canvasEl) return;
-      const canvasRect = canvasEl.getBoundingClientRect();
-      const scale = zoom / 100;
-      // The canvas div has transform: scale(scale) with transformOrigin: center center
-      // canvasRect already reflects the scaled dimensions
-      const scaleX = canvasRect.width / canvasEl.offsetWidth;
-      const scaleY = canvasRect.height / canvasEl.offsetHeight;
-      setElementScreenRect({
-        top: canvasRect.top + selectedElement.y * scaleY,
-        left: canvasRect.left + selectedElement.x * scaleX,
-        width: selectedElement.width * scaleX,
-        height: selectedElement.height * scaleY,
-      });
-    };
-    update();
-    // Update on scroll/resize
-    const workspace = canvasRef.current?.parentElement;
-    workspace?.addEventListener('scroll', update);
-    window.addEventListener('resize', update);
-    return () => {
-      workspace?.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
-    };
-  }, [selectedElement, zoom, selectedElement?.x, selectedElement?.y, selectedElement?.width, selectedElement?.height]);
+  // (elementScreenRect removed — PropertiesPanel is now a docked sidebar)
 
   // ── Not found ──
   if (!template) {
@@ -1312,7 +1280,7 @@ export default function EditorPage() {
         </CanvaSidebar>
 
         {/* Canvas Area */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
           {iframeMode && iframeHtmlPath ? (
             <div
               onDragOver={(e) => {
@@ -1472,18 +1440,18 @@ export default function EditorPage() {
             >Fit</button>
           </div>
 
-          {/* Properties Panel (floating near element) */}
-          {selectedElement && (
-            <PropertiesPanel
-              element={selectedElement}
-              onUpdate={handlePropertyUpdate}
-              elementScreenRect={elementScreenRect}
-              onRemoveBackground={handleRemoveBackground}
-              isRemovingBg={isRemovingBg}
-              onMagicErase={handleStartMagicEraser}
-            />
-          )}
         </div>
+
+        {/* Properties Panel (docked right sidebar) */}
+        {selectedElement && (
+          <PropertiesPanel
+            element={selectedElement}
+            onUpdate={handlePropertyUpdate}
+            onRemoveBackground={handleRemoveBackground}
+            isRemovingBg={isRemovingBg}
+            onMagicErase={handleStartMagicEraser}
+          />
+        )}
       </div>
 
       {/* Undo/Redo Toast */}

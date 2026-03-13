@@ -41,24 +41,28 @@ export default function MagicEraserOverlay({
     const maskCtx = maskCanvas.getContext('2d');
     if (!ctx || !maskCtx) return;
 
-    canvas.width = element.width;
-    canvas.height = element.height;
-    maskCanvas.width = element.width;
-    maskCanvas.height = element.height;
-
-    // Clear mask (all white = fully opaque)
-    maskCtx.fillStyle = '#ffffff';
-    maskCtx.fillRect(0, 0, element.width, element.height);
-
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
+      // Use natural image dimensions to avoid stretching
+      const natW = img.naturalWidth;
+      const natH = img.naturalHeight;
+
+      canvas.width = natW;
+      canvas.height = natH;
+      maskCanvas.width = natW;
+      maskCanvas.height = natH;
+
+      // Clear mask (all white = fully opaque)
+      maskCtx.fillStyle = '#ffffff';
+      maskCtx.fillRect(0, 0, natW, natH);
+
       originalImageRef.current = img;
-      ctx.drawImage(img, 0, 0, element.width, element.height);
+      ctx.drawImage(img, 0, 0, natW, natH);
       setImageLoaded(true);
     };
     img.src = element.content;
-  }, [element.content, element.width, element.height]);
+  }, [element.content]);
 
   const getCanvasCoords = useCallback(
     (e: React.MouseEvent) => {
