@@ -1,20 +1,11 @@
 'use client';
 
 import { CanvasElement } from './types';
-import { useState, useRef, useEffect, useCallback } from 'react';
-
-interface ElementScreenRect {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-}
+import { useState } from 'react';
 
 interface PropertiesPanelProps {
   element: CanvasElement;
   onUpdate: (updates: Partial<CanvasElement>) => void;
-  /** Bounding rect of the selected element in screen (viewport) coordinates */
-  elementScreenRect?: ElementScreenRect | null;
   /** Called when user clicks "Remove Background" on an image element */
   onRemoveBackground?: () => void;
   /** Whether background removal is currently in progress */
@@ -23,92 +14,11 @@ interface PropertiesPanelProps {
   onMagicErase?: () => void;
 }
 
-const PANEL_WIDTH = 220;
-const PANEL_GAP = 12;
-const MOBILE_BREAKPOINT = 640;
+const PANEL_WIDTH = 240;
 
-export default function PropertiesPanel({ element, onUpdate, elementScreenRect, onRemoveBackground, isRemovingBg, onMagicErase }: PropertiesPanelProps) {
+export default function PropertiesPanel({ element, onUpdate, onRemoveBackground, isRemovingBg, onMagicErase }: PropertiesPanelProps) {
   const [lockAspect, setLockAspect] = useState(true);
   const aspectRatio = element.width / element.height;
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
-  const [panelPos, setPanelPos] = useState<{ x: number; y: number } | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const isDraggingRef = useRef(false);
-
-  // Detect mobile
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  // Reset manual position when element changes (new selection)
-  useEffect(() => {
-    setPanelPos(null);
-  }, [element.id]);
-
-  // Compute auto-position from element's screen rect
-  const computeAutoPosition = useCallback((): { x: number; y: number } => {
-    if (!elementScreenRect) {
-      // Fallback: top-right
-      return { x: window.innerWidth - PANEL_WIDTH - 20, y: 80 };
-    }
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const panelHeight = panelRef.current?.offsetHeight ?? 300;
-
-    // Prefer placing to the right of the element
-    let x = elementScreenRect.left + elementScreenRect.width + PANEL_GAP;
-    let y = elementScreenRect.top;
-
-    // If panel would go off the right edge, place to the left
-    if (x + PANEL_WIDTH > vw - 8) {
-      x = elementScreenRect.left - PANEL_WIDTH - PANEL_GAP;
-    }
-
-    // If still off-screen left, place above/below
-    if (x < 8) {
-      x = Math.max(8, elementScreenRect.left);
-      // Place above the element
-      y = elementScreenRect.top - panelHeight - PANEL_GAP;
-      if (y < 56) {
-        // Not enough space above, place below
-        y = elementScreenRect.top + elementScreenRect.height + PANEL_GAP;
-      }
-    }
-
-    // Clamp within viewport
-    x = Math.max(8, Math.min(vw - PANEL_WIDTH - 8, x));
-    y = Math.max(56, Math.min(vh - 100, y));
-
-    return { x, y };
-  }, [elementScreenRect]);
-
-  // Drag handlers
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    isDraggingRef.current = true;
-    const currentPos = panelPos ?? computeAutoPosition();
-    const offset = { x: e.clientX - currentPos.x, y: e.clientY - currentPos.y };
-    setDragOffset(offset);
-
-    const handleMove = (ev: MouseEvent) => {
-      const newX = Math.max(0, Math.min(window.innerWidth - PANEL_WIDTH, ev.clientX - offset.x));
-      const newY = Math.max(0, Math.min(window.innerHeight - 60, ev.clientY - offset.y));
-      setPanelPos({ x: newX, y: newY });
-    };
-    const handleUp = () => {
-      isDraggingRef.current = false;
-      setDragOffset(null);
-      document.removeEventListener('mousemove', handleMove);
-      document.removeEventListener('mouseup', handleUp);
-    };
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleUp);
-  }, [panelPos, computeAutoPosition]);
 
   const handleWidthChange = (w: number) => {
     if (lockAspect) {
@@ -157,100 +67,41 @@ export default function PropertiesPanel({ element, onUpdate, elementScreenRect, 
     marginTop: 12,
   };
 
-  const pos = panelPos ?? computeAutoPosition();
-
-  // Mobile: bottom sheet
-  if (isMobile) {
-    return (
-      <div
-        ref={panelRef}
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          width: '100%',
-          backgroundColor: '#1a1d27',
-          borderRadius: '12px 12px 0 0',
-          border: '1px solid rgba(59,130,246,0.3)',
-          borderBottom: 'none',
-          padding: 16,
-          zIndex: 9999,
-          boxShadow: '0 -8px 32px rgba(0,0,0,0.4)',
-          maxHeight: '50vh',
-          overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {renderHeader()}
-        {renderContent()}
-      </div>
-    );
-  }
-
-  // Desktop: floating panel near element
+  // Docked right sidebar
   return (
     <div
-      ref={panelRef}
       style={{
-        position: 'fixed',
-        top: pos.y,
-        left: pos.x,
         width: PANEL_WIDTH,
+        minWidth: PANEL_WIDTH,
+        height: '100%',
         backgroundColor: '#1a1d27',
-        borderRadius: 12,
-        border: '1px solid rgba(59,130,246,0.3)',
+        borderLeft: '1px solid rgba(255,255,255,0.08)',
         padding: 16,
         paddingTop: 0,
-        zIndex: 9999,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-        maxHeight: 'calc(100vh - 120px)',
         overflowY: 'auto',
-        transition: dragOffset ? 'none' : 'top 0.15s ease-out, left 0.15s ease-out',
+        overflowX: 'hidden',
+        flexShrink: 0,
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Draggable header */}
+      {/* Header */}
       <div
-        onMouseDown={handleDragStart}
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           padding: '10px 0 6px',
-          cursor: 'grab',
-          userSelect: 'none',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           marginBottom: 4,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {/* Grip icon */}
-          <svg width="10" height="10" viewBox="0 0 10 10" style={{ opacity: 0.3 }}>
-            <circle cx="2" cy="2" r="1" fill="#fff" />
-            <circle cx="2" cy="5" r="1" fill="#fff" />
-            <circle cx="2" cy="8" r="1" fill="#fff" />
-            <circle cx="6" cy="2" r="1" fill="#fff" />
-            <circle cx="6" cy="5" r="1" fill="#fff" />
-            <circle cx="6" cy="8" r="1" fill="#fff" />
-          </svg>
-          <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 12, fontWeight: 700, color: '#fff' }}>
-            {element.type.charAt(0).toUpperCase() + element.type.slice(1)} Properties
-          </span>
-        </div>
+        <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: 12, fontWeight: 700, color: '#fff' }}>
+          {element.type.charAt(0).toUpperCase() + element.type.slice(1)} Properties
+        </span>
       </div>
 
       {renderContent()}
     </div>
   );
-
-  function renderHeader() {
-    return (
-      <div style={{ fontFamily: 'Manrope, sans-serif', fontSize: 12, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
-        {element.type.charAt(0).toUpperCase() + element.type.slice(1)} Properties
-      </div>
-    );
-  }
 
   function renderContent() {
     return (
